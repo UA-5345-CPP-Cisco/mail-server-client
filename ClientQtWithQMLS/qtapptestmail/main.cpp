@@ -1,11 +1,13 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQuickWindow>
+#include <QIcon>
 
 int main(int argc, char *argv[])
 {
     qputenv("QT_QUICK_BACKEND", "software");
     QGuiApplication app(argc, argv);
+    app.setWindowIcon(QIcon(":assets/Icon.png"));
 
     QQmlApplicationEngine engine;
     QObject::connect(

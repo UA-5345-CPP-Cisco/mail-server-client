@@ -285,7 +285,7 @@ Rectangle {
                         //TEMP FORWARD ICON
                         Shape {
                             id: iconToMoveForward
-                            x: 5; y: 2
+                            x: 5; y: 1
                             height: 12; width: 6
 
                             ShapePath {

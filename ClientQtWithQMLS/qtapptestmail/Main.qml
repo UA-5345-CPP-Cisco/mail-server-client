@@ -11,6 +11,31 @@ ApplicationWindow {
     minimumWidth: 750
     title: "Mail Client Interface"
 
+    function closeMessageWindow() {
+            newMessageLoader.active = false
+        }
+
+    Loader {
+        id: newMessageLoader
+        active: false
+        z: 999
+        anchors.rightMargin: 10
+        anchors.bottomMargin: 10
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+
+        width: item ? item.implicitWidth : 0
+        height: item ? item.implicitHeight : 0
+
+        source: ""
+        Behavior on opacity {
+            NumberAnimation { duration: 200 }
+        }
+
+        opacity: status === Loader.Ready ? 1 : 0
+    }
+
+
     RowLayout {
         anchors.fill: parent
         spacing: 0

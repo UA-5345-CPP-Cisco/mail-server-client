@@ -1,22 +1,7 @@
 <RCC>
     <qresource prefix="/pngs">
-        <file>assets/background_Border_Shadow.png</file>
-        <file>assets/background_HorizontalBorder.png</file>
-        <file>assets/draftsListQML.png</file>
-        <file>assets/emailsListQML.png</file>
-        <file>assets/footer.png</file>
-        <file>assets/horizontalBorder.png</file>
-        <file>assets/horizontalBorder_1.png</file>
-        <file>assets/horizontalBorder_2.png</file>
-        <file>assets/horizontalBorder_3.png</file>
-        <file>assets/horizontalBorder_4.png</file>
-        <file>assets/inboxSeparator.png</file>
-        <file>assets/inboxSeparator_1.png</file>
-        <file>assets/navigationQML.png</file>
-        <file>assets/newMessageQML.png</file>
-        <file>assets/overlay_HorizontalBorder.png</file>
-        <file>assets/overlay_HorizontalBorder_1.png</file>
-        <file>assets/settingsQML.png</file>
+        <file>assets/Icon.png</file>
+        <file>assets/ArrowDownToPullEmails.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>
