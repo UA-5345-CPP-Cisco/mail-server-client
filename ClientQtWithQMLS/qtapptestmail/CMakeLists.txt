@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 project(qtapptestmail VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
+set(CMAKE_AUTORCC ON)
 find_package(Qt6 REQUIRED COMPONENTS Quick)
 
 qt_standard_project_setup(REQUIRES 6.10)
@@ -30,6 +30,11 @@ qt_add_qml_module(appqtapptestmail
         ContentPageLetterQML.qml
         SettingsQML.qml
         SwitchAccountQML.qml
+        ListItem.qml
+        RESOURCES resources.qrc
+        QML_FILES
+        QML_FILES DraftItem.qml
+        QML_FILES
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

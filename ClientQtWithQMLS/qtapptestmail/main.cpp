@@ -1,8 +1,10 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQuickWindow>
 
 int main(int argc, char *argv[])
 {
+    qputenv("QT_QUICK_BACKEND", "software");
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;

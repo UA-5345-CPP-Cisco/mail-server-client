@@ -6,7 +6,7 @@ Rectangle {
 
     color: "#ffffff"
 
-    // Header
+    // ── Шапка письма ──────────────────────────────────────────────────────
     Rectangle {
         id: horizontalBorder
 
@@ -17,7 +17,7 @@ Rectangle {
         height: 124
         color: "#ffffff"
 
-        // Bottom border
+        // Нижняя граница
         Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
@@ -39,7 +39,7 @@ Rectangle {
             height: 76
             color: "transparent"
 
-            // Content: theme and sender
+            // Левая часть: тема + отправитель
             Rectangle {
                 id: container_2
 
@@ -49,7 +49,7 @@ Rectangle {
                 height: 76
                 color: "transparent"
 
-                // Theme
+                // Тема
                 Rectangle {
                     id: themeHolder
 
@@ -78,7 +78,7 @@ Rectangle {
                     }
                 }
 
-                // Sender
+                // Отправитель
                 Rectangle {
                     id: container_3
 
@@ -89,7 +89,7 @@ Rectangle {
                     height: 36
                     color: "transparent"
 
-                    // Icon
+                    // Аватар
                     Rectangle {
                         id: background
 
@@ -120,7 +120,7 @@ Rectangle {
                         }
                     }
 
-                    // Name To
+                    // Имя + «to me»
                     Rectangle {
                         id: container_4
 
@@ -188,7 +188,7 @@ Rectangle {
                 }
             }
 
-            // Right part
+            // Правая часть: время + кнопки
             Rectangle {
                 id: container_6
 
@@ -198,7 +198,7 @@ Rectangle {
                 width: 131
                 color: "transparent"
 
-                // Time
+                // Время
                 Rectangle {
                     id: timeHolder
 
@@ -227,7 +227,7 @@ Rectangle {
                     }
                 }
 
-                // Star
+                // Кнопка «звезда»
                 Rectangle {
                     id: buttonToFavourite
 
@@ -238,7 +238,6 @@ Rectangle {
                     color: "transparent"
                     radius: 10
 
-                    // TEMP ICON
                     Rectangle {
                         id: sVG
 
@@ -264,7 +263,7 @@ Rectangle {
                     }
                 }
 
-                // Other button
+                // Кнопка «три точки»
                 Rectangle {
                     id: button
 
@@ -274,7 +273,6 @@ Rectangle {
                     color: "transparent"
                     radius: 10
 
-                    // TEMP ICON
                     Rectangle {
                         id: sVG_1
 
@@ -321,7 +319,7 @@ Rectangle {
         }
     }
 
-    // Main content
+    // ── Тело письма ───────────────────────────────────────────────────────
     Rectangle {
         id: container_7
 
@@ -441,7 +439,7 @@ Rectangle {
         }
     }
 
-    // Footer
+    // ── Футер: Reply / Forward / Archive / Delete ──────────────────────────
     Rectangle {
         id: horizontalBorder_1
 
@@ -452,7 +450,7 @@ Rectangle {
         height: 72
         color: "#ffffff"
 
-        // Top border
+        // Верхняя граница
         Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
@@ -461,7 +459,7 @@ Rectangle {
             color: "#e5e7eb"
         }
 
-        // Reply button
+        // Кнопка Reply
         Rectangle {
             id: buttonToReply
 
@@ -495,7 +493,7 @@ Rectangle {
             }
         }
 
-        // Forward button
+        // Кнопка Forward
         Rectangle {
             id: buttonToForward
 
@@ -531,7 +529,7 @@ Rectangle {
             }
         }
 
-        // Archive and Delete button
+        // Правые кнопки: Archive + Delete
         Rectangle {
             id: container_8
 
@@ -553,7 +551,6 @@ Rectangle {
                 color: "transparent"
                 radius: 10
 
-                // TEMP ICON
                 Rectangle {
                     id: sVG_2
                     x: 8; y: 10
@@ -606,7 +603,6 @@ Rectangle {
                 color: "transparent"
                 radius: 10
 
-                // TEMP ICON
                 Rectangle {
                     id: sVG_3
                     x: 8; y: 10

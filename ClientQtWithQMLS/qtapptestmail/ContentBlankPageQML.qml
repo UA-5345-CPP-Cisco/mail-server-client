@@ -3,40 +3,38 @@ import QtQuick.Shapes
 
 Rectangle {
     id: contentBlankPageQML
-
-    height: 1200
-    width: 1344
-
+    anchors.top:parent.top
+    anchors.right:parent.right
+    anchors.bottom:parent.bottom
+    width:400
+    height:400
     clip: true
     color: "#ffffff"
 
     Rectangle {
         id: background
 
-        height: 1200
-        width: 1344
-
         color: "#ffffff"
+        anchors.centerIn: parent
 
         Rectangle {
             id: container
 
-            height: 1200
-            width: 1344
 
             color: "transparent"
+            anchors.centerIn: parent
 
             Rectangle {
                 id: container_1
 
-                x: 601.50
-                y: 560
 
                 height: 80
                 width: 141
 
                 color: "transparent"
+                anchors.centerIn: parent
 
+                 // TEMP ICON
                 Rectangle {
                     id: sVG
 
