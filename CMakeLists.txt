@@ -31,7 +31,7 @@ FetchContent_MakeAvailable(Boost)
 
 # OTHER DEPENDENCIES
 find_package(Threads REQUIRED)
-find_package(SQLite3 REQUIRED)
+#find_package(SQLite3 REQUIRED) change AFTER!!!!
 
 # CRYPTO++
 
@@ -59,7 +59,7 @@ target_link_libraries(smtp_server
     PRIVATE
     Boost::asio
     Boost::system
-    SQLite::SQLite3
+    #SQLite::SQLite3  change AFTER!!!!
     Threads::Threads
     cryptopp::cryptopp
 )
@@ -89,6 +89,16 @@ target_compile_definitions(smtp_server
 #        target_compile_options(smtp_server PRIVATE -Werror)
 #    endif()
 #endif()
+
+# ---- Test SMTP prototypes (temporary) ----
+add_executable(test_smtp_server server/server.cpp)
+add_executable(test_smtp_client client/client.cpp)
+
+if(WIN32)
+    target_link_libraries(test_smtp_server PRIVATE ws2_32)
+    target_link_libraries(test_smtp_client PRIVATE ws2_32)
+    endif()
+
 
 if(BUILD_TESTS)
     enable_testing()
