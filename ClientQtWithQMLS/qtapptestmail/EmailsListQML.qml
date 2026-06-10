@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Shapes
+import QtQuick.Controls
 
 Rectangle {
     id: emailsListQML
@@ -105,27 +106,58 @@ Rectangle {
 
                 // PlaceHolder
                 Rectangle {
-                    id: container
-                    x: 36.80
-                    y: 9.60
+                    id: search_container
+
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.leftMargin: 36.80
+                    anchors.rightMargin: 8
                     height: 19
-                    width: parent.width - 36.80 - 8
                     clip: true
                     color: "transparent"
 
-                    Text {
-                        id: search_mail
-                        height: 19
-                        width: parent.width
-                        color: "#99a1af"
+                    TextField {
+                        id: search_input
+                        anchors.fill: parent
+                        color: "#1f2937"
                         font.family: "Segoe UI"
                         font.pixelSize: 14
-                        font.weight: Font.Normal
+                        font.weight: Font.Normal // ??
                         horizontalAlignment: Text.AlignLeft
-                        text: "Search mail"
-                        textFormat: Text.PlainText
-                        verticalAlignment: Text.AlignVCenter
-                        wrapMode: Text.Wrap
+                        placeholderText: "Search mail"
+                        placeholderTextColor: "#99a1af"
+
+                        background: Item {}
+
+                        leftPadding: 0
+                        topPadding: 0
+                        bottomPadding: 0
+                        cursorDelegate: Item {}
+                        Rectangle {
+                            id: custom_cursor_for_search_container
+                            width: 1
+                            color: "#1f2937"
+                            height: parent.font.pixelSize
+                            anchors.verticalCenter: parent.verticalCenter
+                            x: parent.cursorRectangle.x
+                            visible: parent.activeFocus
+
+                            // Smooth right/left movement
+                            Behavior on x {
+                                NumberAnimation {
+                                    duration: 80
+                                    easing.type: Easing.OutCubic
+                                }
+                            }
+
+                            // Smooth flashing
+                            SequentialAnimation on opacity {
+                                loops: Animation.Infinite
+                                NumberAnimation { to: 0; duration: 500; easing.type: Easing.InOutSine }
+                                NumberAnimation { to: 1; duration: 500; easing.type: Easing.InOutSine }
+                            }
+                        }
                     }
                 }
             }

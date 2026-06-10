@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Shapes
+import QtQuick.Controls
 
 Rectangle {
     id: newMessageQML
@@ -12,48 +13,11 @@ Rectangle {
     color: "#fcf3e6"
     radius: 14
 
-    Rectangle {
-        id: textarea
 
-        y: 119
-
-        height: 236.40
-        width: 420
-        radius: 14
-
-        clip: true
-        color: "#fcf3e6"
-
-        Rectangle {
-            id: container
-
-            x: 12
-            y: 12
-
-            height: 20
-            width: 396
-            topLeftRadius: 14
-
-            color: "transparent"
-
-            Text {
-                id: write_your_message_
-
-                height: 20
-                width: 397
-
-                color: "#99a1af"
-                font.family: "Segoe UI"
-                font.pixelSize: 14
-                font.weight: Font.Normal
-                horizontalAlignment: Text.AlignLeft
-                lineHeight: 20
-                lineHeightMode: Text.FixedHeight
-                text: "Write your message..."
-                textFormat: Text.PlainText
-                verticalAlignment: Text.AlignVCenter
-                wrapMode: Text.Wrap
-            }
+    MouseArea {
+            anchors.fill: parent
+            onClicked: {
+            newMessageQML.forceActiveFocus()
         }
     }
 
@@ -364,7 +328,7 @@ Rectangle {
     }
 
     Rectangle {
-        id: input_1_bg
+        id: recipient_background
 
         y: 38
 
@@ -377,10 +341,13 @@ Rectangle {
         border.width: 1
 
         Rectangle {
-            id: container_3
+            id: recipient_container
 
-            x: 12
-            y: 8.80
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.leftMargin: 12
+            anchors.rightMargin: 12
 
             height: 19
             width: 396
@@ -388,27 +355,51 @@ Rectangle {
             clip: true
             color: "transparent"
 
-            Text {
-                id: subject
+            TextField {
+                id: recipient_input
+                anchors.fill: parent
 
-                height: 19
-                width: 397
-
-                color: "#99a1af"
+                color: "#1f2937"
                 font.family: "Segoe UI"
-                font.pixelSize: 14
-                font.weight: Font.Normal
-                horizontalAlignment: Text.AlignLeft
-                text: "To"
-                textFormat: Text.PlainText
-                verticalAlignment: Text.AlignVCenter
-                wrapMode: Text.Wrap
+                placeholderText: "To"
+                placeholderTextColor: "#99a1af"
+                background: Item {}
+                leftPadding: 0
+                topPadding: 0
+                bottomPadding: 0
+
+                cursorDelegate: Item {}
+
+                Rectangle {
+                    id: custom_cursor_for_recipient_container
+                    width: 1
+                    color: "#1f2937"
+
+                    height: parent.font.pixelSize
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    x: parent.cursorRectangle.x
+                    visible: parent.activeFocus
+
+                    Behavior on x {
+                        NumberAnimation {
+                            duration: 80
+                            easing.type: Easing.OutCubic
+                        }
+                    }
+                    SequentialAnimation on opacity {
+                        running: parent.activeFocus
+                        loops: Animation.Infinite
+                        NumberAnimation { to: 0; duration: 400; easing.type: Easing.InOutSine }
+                        NumberAnimation { to: 1; duration: 400; easing.type: Easing.InOutSine }
+                    }
+                }
             }
         }
     }
 
     Rectangle {
-        id: input_2_bg
+        id: subject_background
 
         y: 72
 
@@ -423,33 +414,137 @@ Rectangle {
         Rectangle {
             id: container_4
 
-            x: 12
-            y: 8.80
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.leftMargin: 12
+            anchors.rightMargin: 12
 
             height: 19
-            width: 396
-
             clip: true
             color: "transparent"
 
-            Text {
-                id: subject_1
+            TextField {
+                id: subject_input
+                anchors.fill: parent
 
-                height: 19
-                width: 397
-
-                color: "#99a1af"
+                color: "#1f2937"
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Normal
-                horizontalAlignment: Text.AlignLeft
-                text: "Subject"
-                textFormat: Text.PlainText
-                verticalAlignment: Text.AlignVCenter
-                wrapMode: Text.Wrap
+
+                placeholderText: "Subject"
+                placeholderTextColor: "#99a1af"
+                background: Item {}
+
+                leftPadding: 0
+                topPadding: 0
+                bottomPadding: 0
+
+                cursorDelegate: Item {}
+
+                Rectangle {
+                    id: custom_cursor_for_subject_container
+                    width: 1
+                    color: "#1f2937"
+                    height: parent.font.pixelSize
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: parent.cursorRectangle.x
+                    visible: parent.activeFocus
+                    Behavior on x {
+                        NumberAnimation {
+                            duration: 80
+                            easing.type: Easing.OutCubic
+                        }
+                    }
+                    SequentialAnimation on opacity {
+                        loops: Animation.Infinite
+                        NumberAnimation { to: 0; duration: 500; easing.type: Easing.InOutSine }
+                        NumberAnimation { to: 1; duration: 500; easing.type: Easing.InOutSine }
+                    }
+                }
             }
         }
     }
+
+
+    Rectangle {
+        id: textarea
+
+        y: 119
+
+        height: 236.40
+        width: 420
+        radius: 14
+
+        clip: true
+        color: "#fcf3e6"
+
+        Rectangle {
+            id: container
+
+            anchors.fill: parent
+            anchors.margins: 12
+
+            color: "transparent"
+
+            TextArea {
+                id: message_input
+                anchors.fill: parent
+
+                color: "#1f2937"
+                font.family: "Segoe UI"
+                placeholderText: "Write your message..."
+                placeholderTextColor: "#99a1af"
+                wrapMode: Text.Wrap
+
+                background: Item {}
+                leftPadding: 0
+                topPadding: 0
+                bottomPadding: 0
+
+                cursorDelegate: Item {}
+
+                Rectangle {
+                    id: custom_cursor_for_message_input
+                    width: 1
+                    color: "#1f2937"
+
+                    height: message_input.cursorRectangle.height
+
+                    x: message_input.cursorRectangle.x
+                    y: message_input.cursorRectangle.y
+
+                    visible: message_input.activeFocus
+
+                    // Smooth right/left movement
+                    Behavior on x {
+                        NumberAnimation {
+                            duration: 80
+                            easing.type: Easing.OutCubic
+                        }
+                    }
+
+                    // Smooth UP/DOWN movement
+                    Behavior on y {
+                        NumberAnimation {
+                            duration: 80
+                            easing.type: Easing.OutCubic
+                        }
+                    }
+
+                    // Smooth flashing
+                    SequentialAnimation on opacity {
+                        loops: Animation.Infinite
+                        NumberAnimation { to: 0; duration: 500; easing.type: Easing.InOutSine }
+                        NumberAnimation { to: 1; duration: 500; easing.type: Easing.InOutSine }
+                    }
+                }
+            }
+        }
+    }
+
+
 
     Rectangle {
         id: horizontalBorder

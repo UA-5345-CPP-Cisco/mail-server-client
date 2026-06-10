@@ -11,6 +11,19 @@ ApplicationWindow {
     minimumWidth: 750
     title: "Mail Client Interface"
 
+    MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                // Stealing focus
+                window.contentItem.forceActiveFocus()
+            }
+        }
+
+
+
+
+
+
     function closeMessageWindow() {
             newMessageLoader.active = false
         }
