@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Shapes
+import QtQuick.Controls
 
 Rectangle {
     id: emailsListQML
@@ -105,27 +106,58 @@ Rectangle {
 
                 // PlaceHolder
                 Rectangle {
-                    id: container
-                    x: 36.80
-                    y: 9.60
+                    id: search_container
+
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.leftMargin: 36.80
+                    anchors.rightMargin: 8
                     height: 19
-                    width: parent.width - 36.80 - 8
                     clip: true
                     color: "transparent"
 
-                    Text {
-                        id: search_mail
-                        height: 19
-                        width: parent.width
-                        color: "#99a1af"
+                    TextField {
+                        id: search_input
+                        anchors.fill: parent
+                        color: "#1f2937"
                         font.family: "Segoe UI"
                         font.pixelSize: 14
                         font.weight: Font.Normal
                         horizontalAlignment: Text.AlignLeft
-                        text: "Search mail"
-                        textFormat: Text.PlainText
-                        verticalAlignment: Text.AlignVCenter
-                        wrapMode: Text.Wrap
+                        placeholderText: "Search mail"
+                        placeholderTextColor: "#99a1af"
+
+                        background: Item {}
+
+                        leftPadding: 0
+                        topPadding: 0
+                        bottomPadding: 0
+                        cursorDelegate: Item {}
+                        Rectangle {
+                            id: custom_cursor_for_search_container
+                            width: 1
+                            color: "#1f2937"
+                            height: parent.font.pixelSize
+                            anchors.verticalCenter: parent.verticalCenter
+                            x: parent.cursorRectangle.x
+                            visible: parent.activeFocus
+
+                            // Smooth right/left movement
+                            Behavior on x {
+                                NumberAnimation {
+                                    duration: 80
+                                    easing.type: Easing.OutCubic
+                                }
+                            }
+
+                            // Smooth flashing
+                            SequentialAnimation on opacity {
+                                loops: Animation.Infinite
+                                NumberAnimation { to: 0; duration: 500; easing.type: Easing.InOutSine }
+                                NumberAnimation { to: 1; duration: 500; easing.type: Easing.InOutSine }
+                            }
+                        }
                     }
                 }
             }
@@ -240,7 +272,25 @@ Rectangle {
                     width: 15
                     height: 17
                     color: "transparent"
+                    scale: clickAreaMoveBack.containsMouse ? 1.3 : 1.0
 
+                    Behavior on scale {
+                        NumberAnimation {
+                            duration: 150
+                            easing.type: Easing.InOutQuad
+                        }
+                    }
+                    MouseArea {
+                        id: clickAreaMoveBack
+                        anchors.fill: parent
+
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked: {
+                            emailsModel.PrevPage()
+                        }
+                    }
                     Rectangle {
                         id: buttonToMoveBack
                         y: 2
@@ -273,6 +323,25 @@ Rectangle {
                     width: 15
                     height: 18
                     color: "transparent"
+                    scale: clickAreaMoveForvard.containsMouse ? 1.3 : 1.0
+
+                    Behavior on scale {
+                        NumberAnimation {
+                            duration: 150
+                            easing.type: Easing.InOutQuad
+                        }
+                    }
+                    MouseArea {
+                        id: clickAreaMoveForvard
+                        anchors.fill: parent
+
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked: {
+                            emailsModel.NextPage()
+                        }
+                    }
 
                     Rectangle {
                         id: buttonToMoveForward
@@ -301,31 +370,4 @@ Rectangle {
         }
     }
 
-  ListItem{
-      id:itemList
-      theme: "Sea"
-      name: "Fish"
-      preview: "Something..."
-      time: "10:20pm"
-      anchors.top:separator.bottom
-      anchors.leftMargin: 0
-      anchors.rightMargin: 0
-      anchors.topMargin: 0
-  }
-
-  ListItem{
-      id:itemList1
-      anchors.top:itemList.bottom
-      anchors.leftMargin: 0
-      anchors.rightMargin: 0
-      anchors.topMargin: 0
-  }
-
-  ListItem{
-      id:itemList2
-      anchors.top:itemList1.bottom
-      anchors.leftMargin: 0
-      anchors.rightMargin: 0
-      anchors.topMargin: 0
-  }
 }

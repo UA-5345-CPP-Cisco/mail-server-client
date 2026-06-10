@@ -1,9 +1,10 @@
 import QtQuick
 import QtQuick.Shapes
+import QtQuick.Controls
 
-Rectangle {
+Rectangle
+{
     id: newMessageQML
-
     implicitHeight: 398
     implicitWidth: 420
     border.color: "#e5e7eb"
@@ -12,52 +13,17 @@ Rectangle {
     color: "#fcf3e6"
     radius: 14
 
-    Rectangle {
-        id: textarea
-
-        y: 119
-
-        height: 236.40
-        width: 420
-        radius: 14
-
-        clip: true
-        color: "#fcf3e6"
-
-        Rectangle {
-            id: container
-
-            x: 12
-            y: 12
-
-            height: 20
-            width: 396
-            topLeftRadius: 14
-
-            color: "transparent"
-
-            Text {
-                id: write_your_message_
-
-                height: 20
-                width: 397
-
-                color: "#99a1af"
-                font.family: "Segoe UI"
-                font.pixelSize: 14
-                font.weight: Font.Normal
-                horizontalAlignment: Text.AlignLeft
-                lineHeight: 20
-                lineHeightMode: Text.FixedHeight
-                text: "Write your message..."
-                textFormat: Text.PlainText
-                verticalAlignment: Text.AlignVCenter
-                wrapMode: Text.Wrap
-            }
+    MouseArea
+    {
+        anchors.fill: parent
+        onClicked:
+        {
+            newMessageQML.forceActiveFocus()
         }
     }
 
-    Rectangle {
+    Rectangle
+    {
         id: background
 
         height: 38
@@ -66,18 +32,17 @@ Rectangle {
         topRightRadius: 14
 
         color: "#1e2939"
-        MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.OpenHandCursor // Курсор у вигляді відкритої руки
+        MouseArea
+        {
+            anchors.fill: parent
+            cursorShape: Qt.OpenHandCursor
 
-                    // Вказуємо, що тягнемо головний компонент (id: newMessageQML)
-                    drag.target: newMessageQML
-                    drag.axis: Drag.XAndYAxis
+            drag.target: newMessageQML
+            drag.axis: Drag.XAndYAxis
 
-                    // Змінюємо курсор при затисканні
-                    onPressed: cursorShape = Qt.ClosedHandCursor
-                    onReleased: cursorShape = Qt.OpenHandCursor
-                }
+            onPressed: cursorShape = Qt.ClosedHandCursor
+            onReleased: cursorShape = Qt.OpenHandCursor
+        }
 
         Rectangle {
             id: container_1
@@ -112,16 +77,47 @@ Rectangle {
         }
 
         Rectangle {
-            id: buttonToMinimizeWindow
+            id: windowControlsWrapper
 
-            x: 326
+
+            x: 320
             y: 8
+            width: 140
+            height: 38
+            color: "transparent"
 
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.ArrowCursor
+
+            }
+
+            Row {
+                x: 326
+                y: 8
+                anchors.fill: parent
+                spacing: 8
+                Rectangle {
+            id: buttonToMinimizeWindow
             height: 22
             width: 22
 
-            color: "transparent"
+            color: clickAreaMinimizeWindow.pressed ? "#ffdede" : "transparent"
             radius: 4
+
+            MouseArea {
+                id: clickAreaMinimizeWindow
+                anchors.fill: parent
+
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+
+                onClicked: {
+                    closeMessageWindow()
+                }
+            }
+
 
             Rectangle {
                 id: sVG
@@ -134,6 +130,14 @@ Rectangle {
 
                 clip: true
                 color: "transparent"
+                scale: clickAreaMinimizeWindow.containsMouse ? 1.5 : 1.0
+
+                Behavior on scale {
+                    NumberAnimation {
+                        duration: 150
+                        easing.type: Easing.InOutQuad
+                    }
+                }
 
                 Shape {
                     id: _vector
@@ -161,16 +165,26 @@ Rectangle {
             }
         }
 
-        Rectangle {
+                Rectangle {
             id: buttonToMaximizeWindow
-
-            x: 356
-            y: 8
 
             height: 22
             width: 22
 
-            color: "transparent"
+            color: clickAreaMaximizeWindow.pressed ? "#ffdede" : "transparent"
+
+            MouseArea {
+                id: clickAreaMaximizeWindow
+                anchors.fill: parent
+
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+
+                onClicked: {
+                    closeMessageWindow()
+                }
+            }
+
             radius: 4
 
             Rectangle {
@@ -184,6 +198,14 @@ Rectangle {
 
                 clip: true
                 color: "transparent"
+                scale: clickAreaMaximizeWindow.containsMouse ? 1.5 : 1.0
+
+                Behavior on scale {
+                    NumberAnimation {
+                        duration: 150
+                        easing.type: Easing.InOutQuad
+                    }
+                }
 
                 Shape {
                     id: _vector_1
@@ -282,36 +304,45 @@ Rectangle {
             }
         }
 
-        Rectangle {
+                Rectangle {
             id: buttonToCloseWindow
-
-            x: 386
-            y: 8
-
             height: 22
             width: 22
+            radius: 4
 
             color: clickAreaCloseMessageBox.pressed ? "#ffdede" : "transparent"
-            radius: 4
+
             MouseArea {
                 id: clickAreaCloseMessageBox
-                    cursorShape: Qt.PointingHandCursor
-                    anchors.fill: parent
-                    onClicked: {
-                        closeMessageWindow()
-                    }
+                anchors.fill: parent
+
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+
+                onClicked: {
+                    closeMessageWindow()
                 }
+            }
+
             Rectangle {
                 id: sVG_2
 
-                x: 4
-                y: 4
+                anchors.centerIn: parent
 
                 height: 14
                 width: 14
 
                 clip: true
                 color: "transparent"
+
+                scale: clickAreaCloseMessageBox.containsMouse ? 1.5 : 1.0
+
+                Behavior on scale {
+                    NumberAnimation {
+                        duration: 150
+                        easing.type: Easing.InOutQuad
+                    }
+                }
 
                 Shape {
                     id: _vector_5
@@ -336,6 +367,7 @@ Rectangle {
                         }
                     }
                 }
+
                 Shape {
                     id: _vector_6
 
@@ -361,10 +393,13 @@ Rectangle {
                 }
             }
         }
+            }
+        }
     }
 
-    Rectangle {
-        id: input_1_bg
+    Rectangle
+    {
+        id: recipient_background
 
         y: 38
 
@@ -376,39 +411,71 @@ Rectangle {
         border.color: "#e5e7eb"
         border.width: 1
 
-        Rectangle {
-            id: container_3
-
-            x: 12
-            y: 8.80
-
+        Rectangle
+        {
+            id: recipient_container
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.leftMargin: 12
+            anchors.rightMargin: 12
             height: 19
             width: 396
 
             clip: true
             color: "transparent"
 
-            Text {
-                id: subject
-
-                height: 19
-                width: 397
-
-                color: "#99a1af"
-                font.family: "Segoe UI"
+            TextField
+            {
+                id: recipient_input
+                anchors.fill: parent
+                color: "#1f2937"
                 font.pixelSize: 14
-                font.weight: Font.Normal
-                horizontalAlignment: Text.AlignLeft
-                text: "To"
-                textFormat: Text.PlainText
-                verticalAlignment: Text.AlignVCenter
-                wrapMode: Text.Wrap
+                font.family: "Segoe UI"
+                placeholderText: "To"
+                placeholderTextColor: "#99a1af"
+                background: Item {}
+                leftPadding: 0
+                topPadding: 0
+                bottomPadding: 0
+
+                cursorDelegate: Item {}
+
+                Rectangle
+                {
+                    id: custom_cursor_for_recipient_container
+                    width: 1
+                    color: "#1f2937"
+
+                    height: parent.font.pixelSize
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    x: parent.cursorRectangle.x
+                    visible: parent.activeFocus
+
+                    Behavior on x
+                    {
+                        NumberAnimation
+                        {
+                            duration: 80
+                            easing.type: Easing.OutCubic
+                        }
+                    }
+                    SequentialAnimation on opacity
+                    {
+                        running: parent.activeFocus
+                        loops: Animation.Infinite
+                        NumberAnimation { to: 0; duration: 400; easing.type: Easing.InOutSine }
+                        NumberAnimation { to: 1; duration: 400; easing.type: Easing.InOutSine }
+                    }
+                }
             }
         }
     }
 
-    Rectangle {
-        id: input_2_bg
+    Rectangle
+    {
+        id: subject_background
 
         y: 72
 
@@ -420,38 +487,147 @@ Rectangle {
         border.color: "#e5e7eb"
         border.width: 1
 
-        Rectangle {
-            id: container_4
+        Rectangle
+        {
+            id: subject_container
 
-            x: 12
-            y: 8.80
-
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.leftMargin: 12
+            anchors.rightMargin: 12
             height: 19
-            width: 396
 
             clip: true
             color: "transparent"
 
-            Text {
-                id: subject_1
-
-                height: 19
-                width: 397
-
-                color: "#99a1af"
+            TextField
+            {
+                id: subject_input
+                anchors.fill: parent
+                color: "#1f2937"
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Normal
-                horizontalAlignment: Text.AlignLeft
-                text: "Subject"
-                textFormat: Text.PlainText
-                verticalAlignment: Text.AlignVCenter
-                wrapMode: Text.Wrap
+
+                placeholderText: "Subject"
+                placeholderTextColor: "#99a1af"
+                background: Item {}
+
+                leftPadding: 0
+                topPadding: 0
+                bottomPadding: 0
+
+                cursorDelegate: Item {}
+
+                Rectangle
+                {
+                    id: custom_cursor_for_subject_container
+                    width: 1
+                    color: "#1f2937"
+                    height: parent.font.pixelSize
+                    anchors.verticalCenter: parent.verticalCenter
+                    x: parent.cursorRectangle.x
+                    visible: parent.activeFocus
+                    Behavior on x
+                    {
+                        NumberAnimation
+                        {
+                            duration: 80
+                            easing.type: Easing.OutCubic
+                        }
+                    }
+                    SequentialAnimation on opacity
+                    {
+                        loops: Animation.Infinite
+                        NumberAnimation { to: 0; duration: 500; easing.type: Easing.InOutSine }
+                        NumberAnimation { to: 1; duration: 500; easing.type: Easing.InOutSine }
+                    }
+                }
             }
         }
     }
 
-    Rectangle {
+
+    Rectangle
+    {
+        id: textarea
+
+        y: 119
+
+        height: 236.40
+        width: 420
+        radius: 14
+
+        clip: true
+        color: "#fcf3e6"
+
+        Rectangle {
+            id: container
+
+            anchors.fill: parent
+            anchors.margins: 12
+
+            color: "transparent"
+
+            TextArea {
+                id: message_input
+                anchors.fill: parent
+
+                color: "#1f2937"
+                font.family: "Segoe UI"
+                placeholderText: "Write your message..."
+                placeholderTextColor: "#99a1af"
+                wrapMode: Text.Wrap
+
+                background: Item {}
+                leftPadding: 0
+                topPadding: 0
+                bottomPadding: 0
+
+                cursorDelegate: Item {}
+
+                Rectangle {
+                    id: custom_cursor_for_message_input
+                    width: 1
+                    color: "#1f2937"
+
+                    height: message_input.cursorRectangle.height
+
+                    x: message_input.cursorRectangle.x
+                    y: message_input.cursorRectangle.y
+
+                    visible: message_input.activeFocus
+
+                    // Smooth right/left movement
+                    Behavior on x {
+                        NumberAnimation {
+                            duration: 80
+                            easing.type: Easing.OutCubic
+                        }
+                    }
+
+                    // Smooth UP/DOWN movement
+                    Behavior on y {
+                        NumberAnimation {
+                            duration: 80
+                            easing.type: Easing.OutCubic
+                        }
+                    }
+
+                    // Smooth flashing
+                    SequentialAnimation on opacity {
+                        loops: Animation.Infinite
+                        NumberAnimation { to: 0; duration: 500; easing.type: Easing.InOutSine }
+                        NumberAnimation { to: 1; duration: 500; easing.type: Easing.InOutSine }
+                    }
+                }
+            }
+        }
+    }
+
+    Rectangle
+    {
         id: horizontalBorder
 
         y: 340
@@ -466,9 +642,26 @@ Rectangle {
             width: 63
             bottomLeftRadius: 14
             bottomRightRadius: 14
+            color:"#155dfc"
 
-            color: "#155dfc"
+            scale: mouseAreaToSend.containsMouse ? 1.1 : 1.0
+            Behavior on scale {
+                NumberAnimation {
+                    duration: 150
+                    easing.type: Easing.InOutQuad
+                }
+            }
             radius: 26843500
+            MouseArea
+            {
+                id:mouseAreaToSend
+                anchors.fill:parent
+                hoverEnabled: true
+                onPressed:
+                {
+                    emailsModel.AddData("no","no","no","no")
+                }
+            }
 
             Text {
                 id: send
@@ -486,11 +679,13 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 lineHeight: 20
                 lineHeightMode: Text.FixedHeight
+                scale: mouseAreaToSend.containsMouse ? 1.1 : 1.0
                 text: "Send"
                 textFormat: Text.PlainText
                 verticalAlignment: Text.AlignVCenter
             }
         }
+
         Rectangle {
             id: buttonToDelete
 
@@ -502,6 +697,23 @@ Rectangle {
 
             color: "transparent"
             radius: 4
+            scale: mouseAreaToDelete.containsMouse ? 1.3 : 1.0
+            Behavior on scale {
+                NumberAnimation {
+                    duration: 150
+                    easing.type: Easing.InOutQuad
+                }
+            }
+            MouseArea
+            {
+                id:mouseAreaToDelete
+                anchors.fill:parent
+                hoverEnabled: true
+                onPressed:
+                {
+                    //
+                }
+            }
 
             Rectangle {
                 id: sVG_3

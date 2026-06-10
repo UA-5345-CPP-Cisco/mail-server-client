@@ -2,11 +2,10 @@ import QtQuick
 import QtQuick.Shapes
 
 Rectangle {
-    anchors.left: parent.left
-    anchors.right: parent.right
     height: 92
     color: "#ffffff"
 
+    property bool starred: false
     property string theme: "ThemeHolder"
     property string name: "NameHolder"
     property string preview: "TextHolderTextHolderTextHolderTextHolde...."
