@@ -21,11 +21,15 @@ target_include_directories(smtp_server PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${Boost_INCLUDE_DIRS}
 )
-target_compile_definitions(smtp_server PUBLIC BOOST_ERROR_CODE_HEADER_ONLY)
+target_compile_definitions(smtp_server PUBLIC
+    BOOST_ERROR_CODE_HEADER_ONLY
+    _WIN32_WINNT=0x0A00
+)
 target_link_libraries(smtp_server PUBLIC
     OpenSSL::SSL
     OpenSSL::Crypto
     Threads::Threads
+    Boost::boost
 )
 
 if(WIN32)

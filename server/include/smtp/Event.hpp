@@ -20,7 +20,7 @@ enum class SmtpEventType {
 // The session/protocol layer decides what a received message means.
 struct SmtpEvent {
     SmtpEventType type{SmtpEventType::MessageReceived};
-    ConnectionId connectionId;
+    ConnectionId connectionId{0};
     std::string payload;
 };
 
