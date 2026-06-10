@@ -35,6 +35,7 @@ qt_add_qml_module(appqtapptestmail
         QML_FILES
         QML_FILES DraftItem.qml
         QML_FILES
+        SOURCES emaillistmodel.h emaillistmodel.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

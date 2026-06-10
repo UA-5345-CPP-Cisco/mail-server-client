@@ -248,7 +248,12 @@ Rectangle {
                         width: 15
                         clip: true
                         color: "transparent"
-
+                        MouseArea{
+                            anchors.fill:parent
+                            onPressed:{
+                                emailsModel.PrevPage()
+                            }
+                        }
                         //TEMP BACK ICON
                         Shape {
                             id: iconToMoveBack
@@ -281,6 +286,12 @@ Rectangle {
                         width: 15
                         clip: true
                         color: "transparent"
+                        MouseArea{
+                            anchors.fill:parent
+                            onPressed:{
+                                emailsModel.NextPage()
+                            }
+                        }
 
                         //TEMP FORWARD ICON
                         Shape {
@@ -301,31 +312,30 @@ Rectangle {
         }
     }
 
-  ListItem{
-      id:itemList
-      theme: "Sea"
-      name: "Fish"
-      preview: "Something..."
-      time: "10:20pm"
-      anchors.top:separator.bottom
-      anchors.leftMargin: 0
-      anchors.rightMargin: 0
-      anchors.topMargin: 0
-  }
+    ListView {
+        id:listView
+        anchors{
+            top:separator.bottom;
+            right: parent.right;
+            left: parent.left;
+            bottom: parent.bottom;
+        }
 
-  ListItem{
-      id:itemList1
-      anchors.top:itemList.bottom
-      anchors.leftMargin: 0
-      anchors.rightMargin: 0
-      anchors.topMargin: 0
-  }
+        model: emailsModel
 
-  ListItem{
-      id:itemList2
-      anchors.top:itemList1.bottom
-      anchors.leftMargin: 0
-      anchors.rightMargin: 0
-      anchors.topMargin: 0
-  }
+        delegate: ListItem{
+            anchors.left: parent.left
+            anchors.right: parent.right
+            starred: emailsStarred
+            theme:   emailsTheme
+            name:    emailsName
+            preview: emailsPreview
+            time:    emailsTime
+        }
+    }
+
+    Component.onCompleted: {
+        emailsModel.AddData(false, "no","no","no","no")
+        emailsModel.AddData(false, "no","no","no","no")
+    }
 }

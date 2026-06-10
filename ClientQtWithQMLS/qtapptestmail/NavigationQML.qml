@@ -188,6 +188,13 @@ Rectangle {
         height: 76
         color: "transparent"
 
+        MouseArea{
+            anchors.fill:parent
+            onPressed: {
+                emailsModel.AddData("no","no","no","no")
+            }
+        }
+
         Rectangle {
             id: buttonToComposeEmail
 
