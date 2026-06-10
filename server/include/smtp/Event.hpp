@@ -6,16 +6,13 @@
 namespace smtp {
 
 // Stable identifier for one client connection.
-typedef std::uint64_t ConnectionId;
-
-inline bool operator==(ConnectionId left, ConnectionId right) noexcept
-{
-    return left.value == right.value;
-}
+using ConnectionId = std::uint64_t;
 
 enum class SmtpEventType {
     Connected,
     MessageReceived,
+    TlsSucceeded,
+    TlsFailed,
     Disconnected
 };
 

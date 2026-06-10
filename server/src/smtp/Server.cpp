@@ -112,6 +112,7 @@ std::shared_ptr<SmtpSession> SmtpServer::GetOrCreateSession(ConnectionId connect
     }
 
     SmtpSessionContext context{
+        config_,
         dependencies_.socketsManager,
         dependencies_.authService,
         dependencies_.mailStorage,

@@ -6,9 +6,8 @@
 
 namespace smtp {
 
-// Placeholder for database settings used by the future storage component.
 struct dbConfig {
-    //
+    std::string storagePath{"mail-storage"};
 };
 
 // TLS settings used by the sockets manager when encrypted SMTP is enabled.
@@ -24,6 +23,9 @@ struct ServerConfig {
     std::uint16_t port{25};
     std::string serverName{"localhost"};
     std::size_t maxConnections{1024};
+    std::size_t maxMessageSizeBytes{10 * 1024 * 1024};
+    bool requireAuthentication{false};
+    bool allowPlainAuthenticationWithoutTls{false};
     TlsConfig tls;
 };
 

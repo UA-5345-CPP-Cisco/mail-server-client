@@ -2,13 +2,20 @@
 
 #include "smtp/ServerConfig.hpp"
 
+#include <cstdint>
+#include <mutex>
 #include <optional>
+#include <queue>
 #include <string>
 #include <string_view>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
 namespace smtp {
 
 struct AuthRequest {
+    std::string mechanism;
     std::string username;
     std::string secret;
 };
@@ -20,7 +27,7 @@ struct AuthResult {
 
 struct MailMessage {
     std::string sender;
-    std::string recipient;
+    std::vector<std::string> recipients;
     std::string rawContent;
 };
 
@@ -45,7 +52,15 @@ public:
 // It should validate SMTP AUTH credentials and return the authenticated identity.
 class AuthService : public IAuthService {
 public:
+    AuthService() = default;
+    explicit AuthService(std::unordered_map<std::string, std::string> users);
+
+    void AddUser(std::string username, std::string secret);
     AuthResult Authenticate(const AuthRequest& request) override;
+
+private:
+    std::mutex mutex_;
+    std::unordered_map<std::string, std::string> users_;
 };
 
 // Database-facing mail storage boundary.
@@ -67,6 +82,9 @@ public:
 
 private:
     dbConfig config_;
+    std::mutex mutex_;
+    std::uint64_t nextMessageId_{1};
+    std::unordered_map<std::string, MailMessage> messages_;
 };
 
 // Cache boundary for data that should not always hit storage or external APIs.
@@ -84,6 +102,10 @@ class CacheService : public ICacheService {
 public:
     std::optional<std::string> Get(std::string_view key) override;
     void Put(std::string_view key, std::string value) override;
+
+private:
+    std::mutex mutex_;
+    std::unordered_map<std::string, std::string> values_;
 };
 
 // Delivery/notification boundary for accepted mail after storage/session handling.
@@ -99,6 +121,10 @@ public:
 class DeliveryService : public IDeliveryService {
 public:
     void QueueForDelivery(const MailMessage& message) override;
+
+private:
+    std::mutex mutex_;
+    std::queue<MailMessage> queuedMessages_;
 };
 
 // Lookup boundary for the external/free lookup API. A mock implementation can
@@ -114,7 +140,14 @@ public:
 // It should isolate HTTP/API details from SMTP session handling.
 class LookupService : public ILookupService {
 public:
+    void Allow(std::string key);
+    void Block(std::string key);
     LookupResult Lookup(const LookupRequest& request) override;
+
+private:
+    std::mutex mutex_;
+    std::unordered_set<std::string> allowed_;
+    std::unordered_set<std::string> blocked_;
 };
 
 }

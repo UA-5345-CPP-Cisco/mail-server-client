@@ -21,6 +21,7 @@ public:
     virtual void Send(ConnectionId connectionId, std::string_view message) = 0;
     virtual void Close(ConnectionId connectionId) = 0;
     virtual void StartTls(ConnectionId connectionId) = 0;
+    virtual void Continue(ConnectionId connectionId) = 0;
     virtual void Stop() = 0;
 };
 
@@ -47,6 +48,7 @@ public:
     void Send(ConnectionId connectionId, std::string_view message) override;
     void Close(ConnectionId connectionId) override;
     void StartTls(ConnectionId connectionId) override;
+    void Continue(ConnectionId connectionId) override;
     void Stop() override;
 
 private:

@@ -2,6 +2,12 @@
 
 #include <functional>
 #include <future>
+#include <condition_variable>
+#include <cstddef>
+#include <mutex>
+#include <queue>
+#include <thread>
+#include <vector>
 
 namespace smtp {
 
@@ -20,7 +26,22 @@ public:
 // and return the std::future produced by that implementation.
 class ThreadPool : public IThreadPool {
 public:
+    explicit ThreadPool(std::size_t workerCount = std::thread::hardware_concurrency());
+    ~ThreadPool() override;
+
+    ThreadPool(const ThreadPool&) = delete;
+    ThreadPool& operator=(const ThreadPool&) = delete;
+
     std::future<void> Enqueue(std::function<void()> task) override;
+
+private:
+    void Stop();
+
+    std::vector<std::thread> workers_;
+    std::queue<std::packaged_task<void()>> tasks_;
+    std::mutex mutex_;
+    std::condition_variable condition_;
+    bool stopping_{false};
 };
 
 }

@@ -68,6 +68,16 @@ void SmtpSession::ProcessEvent(const SmtpEvent& event) noexcept
         isClosed_.store(true);
     }
 
+    if (state_.phase == SmtpSessionPhase::Closed) {
+        isClosed_.store(true);
+    }
+
+    if (event.type != SmtpEventType::Disconnected &&
+        state_.phase != SmtpSessionPhase::Closing &&
+        state_.phase != SmtpSessionPhase::Closed) {
+        context_.socketsManager.Continue(connectionId_);
+    }
+
     isProcessing_.store(false);
 }
 

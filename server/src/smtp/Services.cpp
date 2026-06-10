@@ -1,75 +1,121 @@
 #include "smtp/Services.hpp"
 
+#include <algorithm>
+#include <sstream>
 #include <utility>
 
 namespace smtp {
 
-AuthResult AuthService::Authenticate(const AuthRequest&)
-{
-    // Validate the requested SMTP AUTH mechanism/credentials.
-    // Check the user database or delegated authentication provider.
-    // Return accepted=true with the authenticated identity on success.
-    // Return accepted=false without leaking sensitive failure details on failure.
+namespace {
 
-    return {};
+std::string ToString(std::uint64_t value)
+{
+    std::ostringstream stream;
+    stream << value;
+    return stream.str();
+}
+
+}
+
+AuthService::AuthService(std::unordered_map<std::string, std::string> users)
+    : users_(std::move(users))
+{
+}
+
+void AuthService::AddUser(std::string username, std::string secret)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    users_[std::move(username)] = std::move(secret);
+}
+
+AuthResult AuthService::Authenticate(const AuthRequest& request)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    const auto user = users_.find(request.username);
+    if (user == users_.end()) {
+        return {};
+    }
+
+    if (user->second != request.secret) {
+        return {};
+    }
+
+    return AuthResult{true, request.username};
 }
 
 dbSQLite::dbSQLite(dbConfig config)
     : config_(std::move(config))
 {
-    // Store database configuration.
-    // Open the SQLite database connection when the storage implementation is ready.
-    // Create or migrate required tables if that belongs to this component.
 }
 
-std::string dbSQLite::Save(const MailMessage&)
+std::string dbSQLite::Save(const MailMessage& message)
 {
-    // Persist the accepted mail message.
-    // Generate or read back a stable message id.
-    // Store sender, recipient, raw content, timestamps, and delivery state.
-    // Return the generated message id.
-
-    return {};
+    std::lock_guard<std::mutex> lock(mutex_);
+    const std::string id = ToString(nextMessageId_++);
+    messages_.emplace(id, message);
+    return id;
 }
 
-std::optional<MailMessage> dbSQLite::Retrieve(std::string_view)
+std::optional<MailMessage> dbSQLite::Retrieve(std::string_view messageId)
 {
-    // Look up a message by id.
-    // Return std::nullopt when the message does not exist.
-    // Reconstruct MailMessage from stored database columns when found.
+    std::lock_guard<std::mutex> lock(mutex_);
+    const auto message = messages_.find(std::string(messageId));
+    if (message == messages_.end()) {
+        return std::nullopt;
+    }
 
-    return std::nullopt;
+    return message->second;
 }
 
-std::optional<std::string> CacheService::Get(std::string_view)
+std::optional<std::string> CacheService::Get(std::string_view key)
 {
-    // Read a cached value by key from the chosen cache backend.
-    // Return std::nullopt for cache misses or expired entries.
-    // Do not call the database or external lookup API from here.
+    std::lock_guard<std::mutex> lock(mutex_);
+    const auto value = values_.find(std::string(key));
+    if (value == values_.end()) {
+        return std::nullopt;
+    }
 
-    return std::nullopt;
+    return value->second;
 }
 
-void CacheService::Put(std::string_view, std::string)
+void CacheService::Put(std::string_view key, std::string value)
 {
-    // Store or update a cached value.
-    // Apply the expiration/eviction policy chosen for this project.
-    // Keep cache failures isolated so they do not break SMTP handling.
+    std::lock_guard<std::mutex> lock(mutex_);
+    values_[std::string(key)] = std::move(value);
 }
 
-void DeliveryService::QueueForDelivery(const MailMessage&)
+void DeliveryService::QueueForDelivery(const MailMessage& message)
 {
-    // Accept a stored/validated mail message for delivery.
-    // Add it to the delivery queue or notification pipeline.
-    // Do not perform long blocking delivery attempts directly in the SMTP session task.
+    std::lock_guard<std::mutex> lock(mutex_);
+    queuedMessages_.push(message);
 }
 
-LookupResult LookupService::Lookup(const LookupRequest&)
+void LookupService::Allow(std::string key)
 {
-    // Call the chosen free lookup API or local lookup table.
-    // Normalize provider-specific responses into LookupResult.
-    // Apply timeout/retry policy here, not inside SmtpSessionHandler.
-    // Cache lookup results through CacheService if that dependency is added later.
+    std::lock_guard<std::mutex> lock(mutex_);
+    allowed_.insert(std::move(key));
+}
+
+void LookupService::Block(std::string key)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    blocked_.insert(std::move(key));
+}
+
+LookupResult LookupService::Lookup(const LookupRequest& request)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (request.key.empty()) {
+        return {};
+    }
+
+    if (blocked_.contains(request.key)) {
+        return {};
+    }
+
+    if (allowed_.empty() || allowed_.contains(request.key)) {
+        return LookupResult{true, request.key};
+    }
 
     return {};
 }

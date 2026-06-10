@@ -2,6 +2,7 @@
 
 #include "smtp/Event.hpp"
 #include "smtp/Logger.hpp"
+#include "smtp/ServerConfig.hpp"
 #include "smtp/Services.hpp"
 #include "smtp/SocketsManager.hpp"
 
@@ -16,6 +17,7 @@ namespace smtp {
 
 // Shared dependencies available while processing one SMTP session event.
 struct SmtpSessionContext {
+    const ServerConfig& config;
     ISocketsManager& socketsManager;
     IAuthService& authService;
     IMailStorage& mailStorage;
@@ -35,14 +37,25 @@ enum class SmtpSessionPhase {
     Closed
 };
 
+enum class SmtpAuthStage {
+    None,
+    PlainResponse,
+    LoginUsername,
+    LoginPassword
+};
+
 // Mutable protocol state owned by one SmtpSession.
 // SmtpSessionHandler updates this while processing queued events.
 struct SmtpSessionState {
     ConnectionId connectionId;
     SmtpSessionPhase phase{SmtpSessionPhase::WaitingForGreeting};
     bool tlsActive{false};
+    bool tlsHandshakePending{false};
     bool authenticated{false};
+    SmtpAuthStage authStage{SmtpAuthStage::None};
     std::string clientName;
+    std::string authenticatedIdentity;
+    std::string pendingAuthUsername;
     std::string sender;
     std::vector<std::string> recipients;
     std::string messageBuffer;

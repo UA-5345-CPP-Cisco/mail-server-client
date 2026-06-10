@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mutex>
 #include <string_view>
 
 namespace smtp {
@@ -23,6 +24,9 @@ public:
 class Logger : public ILogger {
 public:
     void Log(LogLevel level, std::string_view message) override;
+
+private:
+    std::mutex mutex_;
 };
 
 }
