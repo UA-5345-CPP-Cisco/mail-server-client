@@ -14,22 +14,23 @@ SmtpServer::SmtpServer(ServerConfig config, SmtpServerDependencies dependencies)
 
 void SmtpServer::Start()
 {
-    if (isRunning_) {
+    bool expected = false;
+    if (!isRunning_.compare_exchange_strong(expected, true)) {
         return;
     }
 
-    dependencies_.socketsManager.Start(config_);
-    isRunning_ = true;
-}
+    try {
+        dependencies_.socketsManager.Start(config_);
+    } catch (...) {
+        isRunning_.store(false);
+        throw;
+    }
 
-void SmtpServer::Run()
-{
-    Start();
-
-    while (isRunning_) {
+    while (isRunning_.load()) {
         RunOnce();
     }
 }
+
 
 void SmtpServer::RunOnce()
 {
@@ -45,27 +46,38 @@ void SmtpServer::RunOnce()
 
 void SmtpServer::Stop()
 {
-    if (!isRunning_) {
+    bool expected = true;
+    if (!isRunning_.compare_exchange_strong(expected, false)) {
         return;
     }
 
-    isRunning_ = false;
     dependencies_.socketsManager.Stop();
     sessions_.clear();
 }
 
 bool SmtpServer::IsRunning() const
 {
-    return isRunning_;
-}
-
-std::size_t SmtpServer::ConnectionIdHash::operator()(ConnectionId connectionId) const noexcept
-{
-    return std::hash<std::uint64_t>{}(connectionId.value);
+    return isRunning_.load();
 }
 
 void SmtpServer::RouteEvent(SmtpEvent event)
 {
+    auto existing = sessions_.find(event.connectionId);
+    if (existing != sessions_.end()) {
+        existing->second->PushEvent(std::move(event));
+        return;
+    }
+
+    if (event.type == SmtpEventType::Disconnected) {
+        return;
+    }
+
+    if (sessions_.size() >= config_.maxConnections) {
+        dependencies_.logger.Log(LogLevel::Warning, "SMTP connection limit reached");
+        dependencies_.socketsManager.Close(event.connectionId);
+        return;
+    }
+
     std::shared_ptr<SmtpSession> session = GetOrCreateSession(event.connectionId);
     session->PushEvent(std::move(event));
 }

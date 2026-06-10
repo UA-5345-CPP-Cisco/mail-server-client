@@ -6,9 +6,7 @@
 namespace smtp {
 
 // Stable identifier for one client connection.
-struct ConnectionId {
-    std::uint64_t value{0};
-};
+typedef std::uint64_t ConnectionId;
 
 inline bool operator==(ConnectionId left, ConnectionId right) noexcept
 {

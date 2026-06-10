@@ -4,9 +4,12 @@ project(mail_server_client_server VERSION 0.1.0 LANGUAGES CXX)
 
 add_library(smtp_server
     src/smtp/BoostSocketsManager.cpp
+    src/smtp/Logger.cpp
     src/smtp/Server.cpp
+    src/smtp/Services.cpp
     src/smtp/Session.cpp
     src/smtp/SmtpSessionHandler.cpp
+    src/smtp/ThreadPool.cpp
 )
 
 target_compile_features(smtp_server PUBLIC cxx_std_20)

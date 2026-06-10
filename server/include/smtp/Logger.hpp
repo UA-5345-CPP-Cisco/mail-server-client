@@ -18,4 +18,11 @@ public:
     virtual void Log(LogLevel level, std::string_view message) = 0;
 };
 
+// Concrete logger component planned for later implementation.
+// It should decide where logs go: console, file, system logger, or a mix.
+class Logger : public ILogger {
+public:
+    void Log(LogLevel level, std::string_view message) override;
+};
+
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "smtp/ServerConfig.hpp"
+
 #include <optional>
 #include <string>
 #include <string_view>
@@ -39,6 +41,13 @@ public:
     virtual AuthResult Authenticate(const AuthRequest& request) = 0;
 };
 
+// Concrete authentication component planned for later implementation.
+// It should validate SMTP AUTH credentials and return the authenticated identity.
+class AuthService : public IAuthService {
+public:
+    AuthResult Authenticate(const AuthRequest& request) override;
+};
+
 // Database-facing mail storage boundary.
 class IMailStorage {
 public:
@@ -50,7 +59,14 @@ public:
 
 // SQLite-backed storage component planned for later implementation.
 class dbSQLite : public IMailStorage {
+public:
+    explicit dbSQLite(dbConfig config);
 
+    std::string Save(const MailMessage& message) override;
+    std::optional<MailMessage> Retrieve(std::string_view messageId) override;
+
+private:
+    dbConfig config_;
 };
 
 // Cache boundary for data that should not always hit storage or external APIs.
@@ -62,12 +78,27 @@ public:
     virtual void Put(std::string_view key, std::string value) = 0;
 };
 
+// Concrete cache component planned for later implementation.
+// It should hide the chosen cache backend from SMTP protocol code.
+class CacheService : public ICacheService {
+public:
+    std::optional<std::string> Get(std::string_view key) override;
+    void Put(std::string_view key, std::string value) override;
+};
+
 // Delivery/notification boundary for accepted mail after storage/session handling.
 class IDeliveryService {
 public:
     virtual ~IDeliveryService() = default;
 
     virtual void QueueForDelivery(const MailMessage& message) = 0;
+};
+
+// Concrete delivery component planned for later implementation.
+// It should queue accepted mail for downstream delivery or notification work.
+class DeliveryService : public IDeliveryService {
+public:
+    void QueueForDelivery(const MailMessage& message) override;
 };
 
 // Lookup boundary for the external/free lookup API. A mock implementation can
@@ -79,6 +110,11 @@ public:
     virtual LookupResult Lookup(const LookupRequest& request) = 0;
 };
 
-
+// External/free lookup API component planned for later implementation.
+// It should isolate HTTP/API details from SMTP session handling.
+class LookupService : public ILookupService {
+public:
+    LookupResult Lookup(const LookupRequest& request) override;
+};
 
 }
