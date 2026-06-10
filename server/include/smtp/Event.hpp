@@ -5,6 +5,7 @@
 
 namespace smtp {
 
+// Stable identifier for one client connection.
 struct ConnectionId {
     std::uint64_t value{0};
 };
@@ -20,6 +21,8 @@ enum class SmtpEventType {
     Disconnected
 };
 
+// Complete event produced by the sockets manager and routed to one session.
+// The session/protocol layer decides what a received message means.
 struct SmtpEvent {
     SmtpEventType type{SmtpEventType::MessageReceived};
     ConnectionId connectionId;

@@ -3,8 +3,10 @@ cmake_minimum_required(VERSION 3.20)
 project(mail_server_client_server VERSION 0.1.0 LANGUAGES CXX)
 
 add_library(smtp_server
+    src/smtp/BoostSocketsManager.cpp
     src/smtp/Server.cpp
     src/smtp/Session.cpp
+    src/smtp/SmtpSessionHandler.cpp
 )
 
 target_compile_features(smtp_server PUBLIC cxx_std_20)

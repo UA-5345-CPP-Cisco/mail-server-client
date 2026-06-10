@@ -14,10 +14,11 @@
 
 namespace smtp {
 
+// References to the infrastructure and service components used by the server.
 struct SmtpServerDependencies {
     ISocketsManager& socketsManager;
     IThreadPool& threadPool;
-    ISmtpSessionHandler& sessionHandler;
+    SmtpSessionHandler& sessionHandler;
     IAuthService& authService;
     IMailStorage& mailStorage;
     ICacheService& cacheService;
@@ -26,6 +27,8 @@ struct SmtpServerDependencies {
     ILogger& logger;
 };
 
+// Orchestrates the SMTP server lifecycle: starts sockets, routes socket events
+// to sessions, schedules session tasks on the thread pool, and stops cleanly.
 class SmtpServer {
 public:
     SmtpServer(ServerConfig config, SmtpServerDependencies dependencies);

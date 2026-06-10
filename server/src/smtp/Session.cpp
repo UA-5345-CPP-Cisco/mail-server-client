@@ -7,10 +7,11 @@ namespace smtp {
 
 SmtpSession::SmtpSession(ConnectionId connectionId,
                          SmtpSessionContext context,
-                         ISmtpSessionHandler& handler)
+                         SmtpSessionHandler& handler)
     : connectionId_(connectionId),
       context_(context),
-      handler_(handler)
+      handler_(handler),
+      state_{connectionId}
 {
 }
 
@@ -54,7 +55,7 @@ bool SmtpSession::IsReadyForRemoval() const
 void SmtpSession::ProcessEvent(const SmtpEvent& event) noexcept
 {
     try {
-        handler_.HandleEvent(event, context_);
+        handler_.HandleEvent(event, state_, context_);
     } catch (const std::exception& exception) {
         context_.logger.Log(LogLevel::Error, exception.what());
         context_.socketsManager.Close(connectionId_);

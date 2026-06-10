@@ -10,6 +10,7 @@ enum class LogLevel {
     Error
 };
 
+// Logging boundary shared by server, sessions, and infrastructure components.
 class ILogger {
 public:
     virtual ~ILogger() = default;

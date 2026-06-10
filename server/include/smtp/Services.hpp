@@ -31,7 +31,7 @@ struct LookupResult {
     std::string value;
 };
 
-//register, auth
+// User registration/authentication boundary used by SMTP AUTH behavior.
 class IAuthService {
 public:
     virtual ~IAuthService() = default;
@@ -39,7 +39,7 @@ public:
     virtual AuthResult Authenticate(const AuthRequest& request) = 0;
 };
 
-//db
+// Database-facing mail storage boundary.
 class IMailStorage {
 public:
     virtual ~IMailStorage() = default;
@@ -48,7 +48,12 @@ public:
     virtual std::optional<MailMessage> Retrieve(std::string_view messageId) = 0;
 };
 
-//cache
+// SQLite-backed storage component planned for later implementation.
+class dbSQLite : public IMailStorage {
+
+};
+
+// Cache boundary for data that should not always hit storage or external APIs.
 class ICacheService {
 public:
     virtual ~ICacheService() = default;
@@ -57,7 +62,7 @@ public:
     virtual void Put(std::string_view key, std::string value) = 0;
 };
 
-//notifications, delivery
+// Delivery/notification boundary for accepted mail after storage/session handling.
 class IDeliveryService {
 public:
     virtual ~IDeliveryService() = default;
@@ -65,12 +70,15 @@ public:
     virtual void QueueForDelivery(const MailMessage& message) = 0;
 };
 
-//lookup (make mock for now)
+// Lookup boundary for the external/free lookup API. A mock implementation can
+// satisfy this interface until the real API integration is ready.
 class ILookupService {
 public:
     virtual ~ILookupService() = default;
 
     virtual LookupResult Lookup(const LookupRequest& request) = 0;
 };
+
+
 
 }
