@@ -10,18 +10,25 @@ ApplicationWindow {
     minimumHeight: 500
     minimumWidth: 750
     title: "Mail Client Interface"
-    MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    window.contentItem.forceActiveFocus()
-                }
-            }
 
-    function closeMessageWindow() {
-            newMessageLoader.active = false
+    MouseArea
+    {
+        anchors.fill: parent
+        onClicked:
+        {
+            window.contentItem.forceActiveFocus()
         }
+    }
 
-    Loader {
+    function closeMessageWindow()
+    {
+        newMessageLoader.active = false
+        newMessageLoader.source = ""
+    }
+
+    //new message loader
+    Loader
+    {
         id: newMessageLoader
         active: false
         z: 999
@@ -34,7 +41,8 @@ ApplicationWindow {
         height: item ? item.implicitHeight : 0
 
         source: ""
-        Behavior on opacity {
+        Behavior on opacity
+        {
             NumberAnimation { duration: 200 }
         }
 
@@ -42,18 +50,21 @@ ApplicationWindow {
     }
 
 
-    RowLayout {
+    RowLayout
+    {
         anchors.fill: parent
         spacing: 0
 
-        NavigationQML {
+        NavigationQML
+        {
             id: navMenu
 
             Layout.preferredWidth: 250
             Layout.fillHeight: true
         }
 
-        SplitView {
+        SplitView
+        {
             id: splitView
 
             Layout.fillWidth: true
@@ -73,13 +84,15 @@ ApplicationWindow {
                 }
             }
 
-            EmailsListQML {
+            EmailsListQML
+            {
                 SplitView.preferredWidth: 350
                 SplitView.minimumWidth: 250
                 SplitView.fillHeight: true
             }
 
-            ContentBlankPageQML {
+            ContentBlankPageQML
+            {
                 SplitView.fillWidth: true
                 SplitView.fillHeight: true
                 SplitView.minimumWidth: 250

@@ -369,5 +369,31 @@ Rectangle {
             }
         }
     }
+    ListView {
+            id:listView
+            anchors{
+                top:separator.bottom;
+                right: parent.right;
+                left: parent.left;
+                bottom: parent.bottom;
+            }
+
+            model: emailsModel
+
+            delegate: ListItem{
+                anchors.left: parent.left
+                anchors.right: parent.right
+                starred: emailsStarred
+                theme:   emailsTheme
+                name:    emailsName
+                preview: emailsPreview
+                time:    emailsTime
+            }
+        }
+
+        Component.onCompleted: {
+            emailsModel.AddData(false, "no","no","no","no")
+            emailsModel.AddData(false, "no","no","no","no")
+        }
 
 }

@@ -254,12 +254,16 @@ Rectangle {
                     cursorShape: Qt.PointingHandCursor
                 }
 
-                TapHandler {
-                    onTapped: {
+                TapHandler
+                {
+                    onTapped:
+                    {
                         newMessageLoader.active = true
-                        if (String(newMessageLoader.source) === "") {
+                        if (String(newMessageLoader.source) === "")
+                        {
                             newMessageLoader.source = "NewMessageQML.qml"
-                        } else {
+                        } else
+                        {
                             newMessageLoader.source = ""
                         }
                     }

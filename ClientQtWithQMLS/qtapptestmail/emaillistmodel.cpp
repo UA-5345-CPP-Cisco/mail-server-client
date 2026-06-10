@@ -1,4 +1,5 @@
 #include "emaillistmodel.h"
+#include <QTime>
 
 EmailListModel::EmailListModel(QObject *parent)
     : QAbstractListModel{parent}
@@ -80,8 +81,9 @@ void EmailListModel::SetPage(int page)
     emit currentPageChanged();
 }
 
-void EmailListModel::AddData(bool is_starred, QString theme, QString name, QString preview, QString time)
+void EmailListModel::AddData(bool is_starred, QString theme, QString name, QString preview)
 {
+    QString time = QTime::currentTime().toString("hh:mm");
     AddData({is_starred, theme, name, preview, time});
 }
 

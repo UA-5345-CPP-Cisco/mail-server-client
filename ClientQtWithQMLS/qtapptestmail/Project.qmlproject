@@ -16,27 +16,12 @@ Project {
             "NewMessageQML.qml",
             "SettingsQML.qml",
             "SwitchAccountQML.qml"
+            "ListItemQML.qml"
         ]
     }
     ImageFiles {
         files: [
-            "assets/background_Border_Shadow.png",
-            "assets/background_HorizontalBorder.png",
-            "assets/draftsListQML.png",
-            "assets/emailsListQML.png",
-            "assets/footer.png",
-            "assets/horizontalBorder.png",
-            "assets/horizontalBorder_1.png",
-            "assets/horizontalBorder_2.png",
-            "assets/horizontalBorder_3.png",
-            "assets/horizontalBorder_4.png",
-            "assets/inboxSeparator.png",
-            "assets/inboxSeparator_1.png",
-            "assets/navigationQML.png",
-            "assets/newMessageQML.png",
-            "assets/overlay_HorizontalBorder.png",
-            "assets/overlay_HorizontalBorder_1.png",
-            "assets/settingsQML.png"
+
         ]
     }
 }

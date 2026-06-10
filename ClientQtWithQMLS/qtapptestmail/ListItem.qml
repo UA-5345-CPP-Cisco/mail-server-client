@@ -121,7 +121,7 @@ Rectangle {
 
                     Text {
                         id: aM
-                        x: 8
+                        x: 12
                         height: 16
                         width: 52
                         color: "#6a7282"

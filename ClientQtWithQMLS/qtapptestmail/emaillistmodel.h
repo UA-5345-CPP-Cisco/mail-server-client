@@ -7,7 +7,8 @@
 #include <QtMath>
 #include <QString>
 
-struct EmailData{
+struct EmailData
+{
     bool is_starred;
     QString theme;
     QString name;
@@ -20,7 +21,8 @@ class EmailListModel : public QAbstractListModel
     Q_OBJECT
 public:
 
-    enum Role{
+    enum Role
+    {
         StarredRole = Qt::UserRole+1,
         ThemeRole,
         NameRole,
@@ -38,7 +40,7 @@ public:
     Q_INVOKABLE void NextPage();
     Q_INVOKABLE void PrevPage();
     Q_INVOKABLE void SetPage(int page);
-    Q_INVOKABLE void AddData(bool is_starred, QString theme, QString name, QString preview, QString time);
+    Q_INVOKABLE void AddData(bool is_starred, QString theme, QString name, QString preview);
 
     void AddData(const EmailData& item);
     int CountPage() const;

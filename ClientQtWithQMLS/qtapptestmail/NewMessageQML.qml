@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Shapes
 import QtQuick.Controls
-
 Rectangle
 {
     id: newMessageQML
@@ -45,7 +44,7 @@ Rectangle
         }
 
         Rectangle {
-            id: container_1
+            id: drag_container
 
             x: 12
             y: 9
@@ -83,7 +82,7 @@ Rectangle
             x: 320
             y: 8
             width: 140
-            height: 38
+            height: 45
             color: "transparent"
 
             MouseArea {
@@ -93,30 +92,36 @@ Rectangle
 
             }
 
-            Row {
-                x: 326
+            Row
+            {
+                id:new_message_controls
+                x: 340
                 y: 8
                 anchors.fill: parent
                 spacing: 8
-                Rectangle {
-            id: buttonToMinimizeWindow
-            height: 22
-            width: 22
+                //button to minimize window
+                Rectangle
+                {
+                    id: buttonToMinimizeWindow
+                    height: 22
+                    width: 22
 
-            color: clickAreaMinimizeWindow.pressed ? "#ffdede" : "transparent"
-            radius: 4
+                    color: clickAreaMinimizeWindow.pressed ? "#ffdede" : "transparent"
+                    radius: 4
 
-            MouseArea {
-                id: clickAreaMinimizeWindow
-                anchors.fill: parent
+                    MouseArea
+                    {
+                        id: clickAreaMinimizeWindow
+                        anchors.fill: parent
 
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
 
-                onClicked: {
-                    closeMessageWindow()
-                }
-            }
+                        onClicked:
+                        {
+                            // MinimizeWindow
+                        }
+                    }
 
 
             Rectangle {
@@ -165,29 +170,34 @@ Rectangle
             }
         }
 
-                Rectangle {
-            id: buttonToMaximizeWindow
+                //button to maximize window
+                Rectangle
+                {
+                id: buttonToMaximizeWindow
 
-            height: 22
-            width: 22
+                height: 22
+                width: 22
 
-            color: clickAreaMaximizeWindow.pressed ? "#ffdede" : "transparent"
+                color: clickAreaMaximizeWindow.pressed ? "#ffdede" : "transparent"
 
-            MouseArea {
-                id: clickAreaMaximizeWindow
-                anchors.fill: parent
+                MouseArea
+                {
+                    id: clickAreaMaximizeWindow
+                    anchors.fill: parent
 
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
 
-                onClicked: {
-                    closeMessageWindow()
+                    onClicked:
+                    {
+                        //MaximizeWindow
+                    }
                 }
-            }
 
             radius: 4
 
-            Rectangle {
+            Rectangle
+            {
                 id: sVG_1
 
                 x: 4
@@ -200,8 +210,10 @@ Rectangle
                 color: "transparent"
                 scale: clickAreaMaximizeWindow.containsMouse ? 1.5 : 1.0
 
-                Behavior on scale {
-                    NumberAnimation {
+                Behavior on scale
+                {
+                    NumberAnimation
+                    {
                         duration: 150
                         easing.type: Easing.InOutQuad
                     }
@@ -304,96 +316,109 @@ Rectangle
             }
         }
 
-                Rectangle {
-            id: buttonToCloseWindow
-            height: 22
-            width: 22
-            radius: 4
+                //button to close window
+                Rectangle
+                {
+                id: buttonToCloseWindow
+                height: 22
+                width: 22
+                radius: 4
 
-            color: clickAreaCloseMessageBox.pressed ? "#ffdede" : "transparent"
+                color: clickAreaCloseMessageBox.pressed ? "#ffdede" : "transparent"
 
-            MouseArea {
-                id: clickAreaCloseMessageBox
-                anchors.fill: parent
+                MouseArea
+                {
+                    id: clickAreaCloseMessageBox
+                    anchors.fill: parent
 
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
 
-                onClicked: {
-                    closeMessageWindow()
-                }
-            }
-
-            Rectangle {
-                id: sVG_2
-
-                anchors.centerIn: parent
-
-                height: 14
-                width: 14
-
-                clip: true
-                color: "transparent"
-
-                scale: clickAreaCloseMessageBox.containsMouse ? 1.5 : 1.0
-
-                Behavior on scale {
-                    NumberAnimation {
-                        duration: 150
-                        easing.type: Easing.InOutQuad
+                    onClicked:
+                    {
+                        closeMessageWindow()
                     }
                 }
 
-                Shape {
-                    id: _vector_5
+                Rectangle
+                {
+                    id: sVG_2
 
-                    x: 3.50
-                    y: 3.50
+                    anchors.centerIn: parent
 
-                    height: 7
-                    width: 7
+                    height: 14
+                    width: 14
 
-                    ShapePath {
-                        id: _vector_5_ShapePath0
+                    clip: true
+                    color: "transparent"
 
-                        fillColor: "#00000000"
-                        strokeColor: "#ffffff"
-                        strokeWidth: 1.17
+                    scale: clickAreaCloseMessageBox.containsMouse ? 1.5 : 1.0
 
-                        PathSvg {
-                            id: _vector_5_ShapePath0_PathSvg0
-
-                            path: "M 7 0 L 0 7"
+                    Behavior on scale
+                    {
+                        NumberAnimation
+                        {
+                            duration: 150
+                            easing.type: Easing.InOutQuad
                         }
                     }
-                }
 
-                Shape {
-                    id: _vector_6
+                    Shape
+                    {
+                        id: _vector_5
 
-                    x: 3.50
-                    y: 3.50
+                        x: 3.50
+                        y: 3.50
 
-                    height: 7
-                    width: 7
+                        height: 7
+                        width: 7
 
-                    ShapePath {
-                        id: _vector_6_ShapePath0
+                        ShapePath
+                        {
+                            id: _vector_5_ShapePath0
 
-                        fillColor: "#00000000"
-                        strokeColor: "#ffffff"
-                        strokeWidth: 1.17
+                            fillColor: "#00000000"
+                            strokeColor: "#ffffff"
+                            strokeWidth: 1.17
 
-                        PathSvg {
-                            id: _vector_6_ShapePath0_PathSvg0
+                            PathSvg
+                            {
+                                id: _vector_5_ShapePath0_PathSvg0
 
-                            path: "M 0 0 L 7 7"
+                                path: "M 7 0 L 0 7"
+                            }
+                        }
+                    }
+
+                    Shape
+                    {
+                        id: _vector_6
+
+                        x: 3.50
+                        y: 3.50
+
+                        height: 7
+                        width: 7
+
+                        ShapePath
+                        {
+                            id: _vector_6_ShapePath0
+
+                            fillColor: "#00000000"
+                            strokeColor: "#ffffff"
+                            strokeWidth: 1.17
+
+                            PathSvg
+                            {
+                                id: _vector_6_ShapePath0_PathSvg0
+
+                                path: "M 0 0 L 7 7"
+                            }
                         }
                     }
                 }
             }
         }
-            }
         }
     }
 
@@ -652,6 +677,12 @@ Rectangle
                 }
             }
             radius: 26843500
+            ToolTip {
+                id: popup_test
+                text: subject_input.text + " " + recipient_input.text + " " + message_input.text
+                visible: false
+                timeout: 2000
+            }
             MouseArea
             {
                 id:mouseAreaToSend
@@ -659,7 +690,8 @@ Rectangle
                 hoverEnabled: true
                 onPressed:
                 {
-                    emailsModel.AddData("no","no","no","no")
+                    popup_test.visible = true
+                    emailsModel.AddData(false, subject_input.text, recipient_input.text, message_input.text)
                 }
             }
 
@@ -711,7 +743,9 @@ Rectangle
                 hoverEnabled: true
                 onPressed:
                 {
-                    //
+                    message_input.clear()
+                    recipient_input.clear()
+                    subject_input.clear()
                 }
             }
 
