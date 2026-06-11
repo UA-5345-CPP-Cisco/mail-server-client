@@ -115,14 +115,16 @@ Rectangle {
                     id: timeHolder
                     anchors.right: parent.right
                     y: 2
+                    x: 30
+                    anchors.rightMargin: -8
                     height: 16
                     width: 59
                     color: "transparent"
 
                     Text {
                         id: aM
-                        x: 12
                         height: 16
+                        x:30
                         width: 52
                         color: "#6a7282"
                         font.family: "Segoe UI"
