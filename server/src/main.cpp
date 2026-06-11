@@ -24,9 +24,12 @@ std::uint16_t ReadPort()
     return static_cast<std::uint16_t>(std::stoul(value));
 }
 
-bool ReadFlag(const char* name)
+bool ReadFlag(const char* name, bool fallback = false)
 {
     const std::string value = ReadEnv(name);
+    if (value.empty()) {
+        return fallback;
+    }
     return value == "1" || value == "true" || value == "TRUE" || value == "yes";
 }
 
@@ -39,7 +42,7 @@ int main()
     config.port = ReadPort();
     config.serverName = ReadEnv("SMTP_SERVER_NAME", "localhost");
     config.requireAuthentication = ReadFlag("SMTP_REQUIRE_AUTH");
-    config.allowPlainAuthenticationWithoutTls = ReadFlag("SMTP_ALLOW_PLAIN_AUTH_WITHOUT_TLS");
+    config.allowPlainAuthenticationWithoutTls = ReadFlag("SMTP_ALLOW_PLAIN_AUTH_WITHOUT_TLS", true);
 
     const std::string certificate = ReadEnv("SMTP_TLS_CERT");
     const std::string privateKey = ReadEnv("SMTP_TLS_KEY");

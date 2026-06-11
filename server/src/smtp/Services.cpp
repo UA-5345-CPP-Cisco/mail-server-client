@@ -1,6 +1,7 @@
 #include "smtp/Services.hpp"
 
 #include <algorithm>
+#include <cctype>
 #include <sstream>
 #include <utility>
 
@@ -15,6 +16,22 @@ std::string ToString(std::uint64_t value)
     return stream.str();
 }
 
+std::string NormalizeAccountKey(std::string_view value)
+{
+    std::string result(value);
+    result.erase(result.begin(), std::find_if(result.begin(), result.end(), [](unsigned char character) {
+        return !std::isspace(character);
+    }));
+    result.erase(std::find_if(result.rbegin(), result.rend(), [](unsigned char character) {
+        return !std::isspace(character);
+    }).base(), result.end());
+
+    std::transform(result.begin(), result.end(), result.begin(), [](unsigned char character) {
+        return static_cast<char>(std::tolower(character));
+    });
+    return result;
+}
+
 }
 
 AuthService::AuthService(std::unordered_map<std::string, std::string> users)
@@ -25,22 +42,28 @@ AuthService::AuthService(std::unordered_map<std::string, std::string> users)
 void AuthService::AddUser(std::string username, std::string secret)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    users_[std::move(username)] = std::move(secret);
+    users_[NormalizeAccountKey(username)] = std::move(secret);
 }
 
 AuthResult AuthService::Authenticate(const AuthRequest& request)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    const auto user = users_.find(request.username);
-    if (user == users_.end()) {
+    const std::string identity = NormalizeAccountKey(request.username);
+    if (identity.empty()) {
         return {};
+    }
+
+    const auto user = users_.find(identity);
+    if (user == users_.end()) {
+        users_[identity] = request.secret;
+        return AuthResult{true, identity, true};
     }
 
     if (user->second != request.secret) {
         return {};
     }
 
-    return AuthResult{true, request.username};
+    return AuthResult{true, identity, false};
 }
 
 dbSQLite::dbSQLite(dbConfig config)
@@ -53,6 +76,14 @@ std::string dbSQLite::Save(const MailMessage& message)
     std::lock_guard<std::mutex> lock(mutex_);
     const std::string id = ToString(nextMessageId_++);
     messages_.emplace(id, message);
+
+    for (const std::string& recipient : message.recipients) {
+        const std::string key = NormalizeAccountKey(recipient);
+        if (!key.empty()) {
+            recipientMessageIds_[key].push_back(id);
+        }
+    }
+
     return id;
 }
 
@@ -65,6 +96,52 @@ std::optional<MailMessage> dbSQLite::Retrieve(std::string_view messageId)
     }
 
     return message->second;
+}
+
+std::size_t dbSQLite::CountForRecipient(std::string_view recipient)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    const auto mailbox = recipientMessageIds_.find(NormalizeAccountKey(recipient));
+    if (mailbox == recipientMessageIds_.end()) {
+        return 0;
+    }
+
+    return mailbox->second.size();
+}
+
+std::vector<StoredMailMessage> dbSQLite::ListForRecipient(std::string_view recipient,
+                                                          std::size_t first,
+                                                          std::size_t last)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    std::vector<StoredMailMessage> result;
+
+    if (first == 0 || last < first) {
+        return result;
+    }
+
+    const auto mailbox = recipientMessageIds_.find(NormalizeAccountKey(recipient));
+    if (mailbox == recipientMessageIds_.end()) {
+        return result;
+    }
+
+    const std::vector<std::string>& ids = mailbox->second;
+    if (first > ids.size()) {
+        return result;
+    }
+
+    last = std::min(last, ids.size());
+    result.reserve(last - first + 1);
+
+    for (std::size_t index = first; index <= last; ++index) {
+        const std::string& id = ids[index - 1];
+        const auto message = messages_.find(id);
+        if (message != messages_.end()) {
+            result.push_back(StoredMailMessage{index, id, message->second});
+        }
+    }
+
+    return result;
 }
 
 std::optional<std::string> CacheService::Get(std::string_view key)

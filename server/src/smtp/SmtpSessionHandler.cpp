@@ -3,10 +3,12 @@
 #include <algorithm>
 #include <array>
 #include <cctype>
+#include <cstdint>
 #include <optional>
 #include <sstream>
 #include <stdexcept>
 #include <string_view>
+#include <vector>
 
 namespace smtp {
 
@@ -128,6 +130,41 @@ std::optional<std::string> DecodeBase64(std::string_view input)
     return output;
 }
 
+std::string EncodeBase64(std::string_view input)
+{
+    static constexpr std::array<char, 64> alphabet{
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+        'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+        'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+        'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+        'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+        'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+        'w', 'x', 'y', 'z', '0', '1', '2', '3',
+        '4', '5', '6', '7', '8', '9', '+', '/'
+    };
+
+    std::string output;
+    output.reserve(((input.size() + 2) / 3) * 4);
+
+    for (std::size_t index = 0; index < input.size(); index += 3) {
+        const std::uint32_t byte0 = static_cast<unsigned char>(input[index]);
+        const std::uint32_t byte1 = index + 1 < input.size()
+                                        ? static_cast<unsigned char>(input[index + 1])
+                                        : 0;
+        const std::uint32_t byte2 = index + 2 < input.size()
+                                        ? static_cast<unsigned char>(input[index + 2])
+                                        : 0;
+        const std::uint32_t triple = (byte0 << 16) | (byte1 << 8) | byte2;
+
+        output.push_back(alphabet[(triple >> 18) & 0x3F]);
+        output.push_back(alphabet[(triple >> 12) & 0x3F]);
+        output.push_back(index + 1 < input.size() ? alphabet[(triple >> 6) & 0x3F] : '=');
+        output.push_back(index + 2 < input.size() ? alphabet[triple & 0x3F] : '=');
+    }
+
+    return output;
+}
+
 bool ParsePlainAuth(std::string_view encoded, std::string& username, std::string& secret)
 {
     const std::optional<std::string> decoded = DecodeBase64(encoded);
@@ -162,6 +199,33 @@ void MarkAuthenticated(SmtpSessionState& state, const AuthResult& result)
     state.authenticatedIdentity = result.identity;
     state.authStage = SmtpAuthStage::None;
     state.pendingAuthUsername.clear();
+}
+
+std::string AuthSuccessMessage(const AuthResult& result)
+{
+    return result.registered ? "Authentication successful; account created"
+                             : "Authentication successful";
+}
+
+bool ParseMailboxRange(std::string_view argument, std::size_t& first, std::size_t& last)
+{
+    std::istringstream stream{std::string(argument)};
+    stream >> first >> last;
+    return !stream.fail() && first > 0 && last >= first;
+}
+
+void SendStoredMessages(SmtpSessionContext& context,
+                        ConnectionId connectionId,
+                        const std::vector<StoredMailMessage>& messages)
+{
+    for (const StoredMailMessage& message : messages) {
+        context.socketsManager.Send(
+            connectionId,
+            "250-MAIL " + std::to_string(message.index) + " " + message.messageId + " " +
+                EncodeBase64(message.message.rawContent) + "\r\n");
+    }
+
+    context.socketsManager.Send(connectionId, "250 OK\r\n");
 }
 
 }
@@ -218,9 +282,10 @@ void SmtpSessionHandler::HandleMessageReceived(const SmtpEvent& event,
             return;
         }
 
-        MarkAuthenticated(state, context.authService.Authenticate(AuthRequest{"PLAIN", username, secret}));
+        const AuthResult result = context.authService.Authenticate(AuthRequest{"PLAIN", username, secret});
+        MarkAuthenticated(state, result);
         SendReply(context, state.connectionId, state.authenticated ? 235 : 535,
-                  state.authenticated ? "Authentication successful" : "Authentication failed");
+                  state.authenticated ? AuthSuccessMessage(result) : "Authentication failed");
         return;
     }
 
@@ -247,10 +312,11 @@ void SmtpSessionHandler::HandleMessageReceived(const SmtpEvent& event,
             return;
         }
 
-        MarkAuthenticated(state, context.authService.Authenticate(
-                                      AuthRequest{"LOGIN", state.pendingAuthUsername, *secret}));
+        const AuthResult result = context.authService.Authenticate(
+            AuthRequest{"LOGIN", state.pendingAuthUsername, *secret});
+        MarkAuthenticated(state, result);
         SendReply(context, state.connectionId, state.authenticated ? 235 : 535,
-                  state.authenticated ? "Authentication successful" : "Authentication failed");
+                  state.authenticated ? AuthSuccessMessage(result) : "Authentication failed");
         return;
     }
 
@@ -302,6 +368,7 @@ void SmtpSessionHandler::HandleMessageReceived(const SmtpEvent& event,
             if (!state.authenticated && IsAuthAllowed(state, context)) {
                 context.socketsManager.Send(state.connectionId, "250-AUTH PLAIN LOGIN\r\n");
             }
+            context.socketsManager.Send(state.connectionId, "250-MAILBOX MAILCOUNT GETMAILS\r\n");
             context.socketsManager.Send(state.connectionId,
                                         "250 SIZE " + std::to_string(context.config.maxMessageSizeBytes) + "\r\n");
         } else {
@@ -365,9 +432,10 @@ void SmtpSessionHandler::HandleMessageReceived(const SmtpEvent& event,
                 return;
             }
 
-            MarkAuthenticated(state, context.authService.Authenticate(AuthRequest{"PLAIN", username, secret}));
+            const AuthResult result = context.authService.Authenticate(AuthRequest{"PLAIN", username, secret});
+            MarkAuthenticated(state, result);
             SendReply(context, state.connectionId, state.authenticated ? 235 : 535,
-                      state.authenticated ? "Authentication successful" : "Authentication failed");
+                      state.authenticated ? AuthSuccessMessage(result) : "Authentication failed");
             return;
         }
 
@@ -391,6 +459,39 @@ void SmtpSessionHandler::HandleMessageReceived(const SmtpEvent& event,
         }
 
         SendReply(context, state.connectionId, 504, "Unsupported authentication mechanism");
+        return;
+    }
+
+    if (command == "MAILCOUNT") {
+        if (!state.authenticated) {
+            SendReply(context, state.connectionId, 530, "Authentication required");
+            return;
+        }
+
+        SendReply(context,
+                  state.connectionId,
+                  250,
+                  std::to_string(context.mailStorage.CountForRecipient(state.authenticatedIdentity)));
+        return;
+    }
+
+    if (command == "GETMAILS") {
+        if (!state.authenticated) {
+            SendReply(context, state.connectionId, 530, "Authentication required");
+            return;
+        }
+
+        std::size_t first = 0;
+        std::size_t last = 0;
+        if (!ParseMailboxRange(argument, first, last)) {
+            SendReply(context, state.connectionId, 501, "Expected GETMAILS <first> <last>");
+            return;
+        }
+
+        SendStoredMessages(
+            context,
+            state.connectionId,
+            context.mailStorage.ListForRecipient(state.authenticatedIdentity, first, last));
         return;
     }
 
@@ -476,7 +577,7 @@ void SmtpSessionHandler::HandleMessageReceived(const SmtpEvent& event,
 
     if (command == "HELP") {
         SendReply(context, state.connectionId, 214,
-                  "Commands: HELO EHLO MAIL RCPT DATA RSET VRFY EXPN HELP NOOP QUIT STARTTLS AUTH");
+                  "Commands: HELO EHLO MAIL RCPT DATA RSET VRFY EXPN HELP NOOP QUIT STARTTLS AUTH MAILCOUNT GETMAILS");
         return;
     }
 

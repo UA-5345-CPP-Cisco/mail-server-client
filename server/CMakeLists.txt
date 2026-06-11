@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 3.20)
 
 project(mail_server_client_server VERSION 0.1.0 LANGUAGES CXX)
 
+include(CTest)
+
+if(MSVC AND VCPKG_TARGET_TRIPLET MATCHES "-static")
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+
 find_package(OpenSSL REQUIRED)
 find_package(Threads REQUIRED)
 find_package(Boost REQUIRED)
@@ -49,4 +55,30 @@ if(MSVC)
 else()
     target_compile_options(smtp_server PRIVATE -Wall -Wextra -Wpedantic)
     target_compile_options(smtp_server_app PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+
+if(BUILD_TESTING)
+    find_package(GTest CONFIG REQUIRED)
+    include(GoogleTest)
+
+    add_executable(smtp_server_tests
+        tests/ServerTests.cpp
+        tests/ServicesTests.cpp
+        tests/SessionTests.cpp
+        tests/SmtpSessionHandlerTests.cpp
+        tests/ThreadPoolTests.cpp
+    )
+
+    target_link_libraries(smtp_server_tests PRIVATE
+        smtp_server
+        GTest::gtest_main
+    )
+
+    if(MSVC)
+        target_compile_options(smtp_server_tests PRIVATE /W4)
+    else()
+        target_compile_options(smtp_server_tests PRIVATE -Wall -Wextra -Wpedantic)
+    endif()
+
+    gtest_discover_tests(smtp_server_tests)
 endif()

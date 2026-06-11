@@ -21,6 +21,7 @@ x86/
 ipch/
 out/
 build/
+build-*/
 
 # C/C++ compiled files
 *.obj

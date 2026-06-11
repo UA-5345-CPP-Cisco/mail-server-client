@@ -23,12 +23,19 @@ struct AuthRequest {
 struct AuthResult {
     bool accepted{false};
     std::string identity;
+    bool registered{false};
 };
 
 struct MailMessage {
     std::string sender;
     std::vector<std::string> recipients;
     std::string rawContent;
+};
+
+struct StoredMailMessage {
+    std::size_t index{0};
+    std::string messageId;
+    MailMessage message;
 };
 
 struct LookupRequest {
@@ -70,6 +77,10 @@ public:
 
     virtual std::string Save(const MailMessage& message) = 0;
     virtual std::optional<MailMessage> Retrieve(std::string_view messageId) = 0;
+    virtual std::size_t CountForRecipient(std::string_view recipient) = 0;
+    virtual std::vector<StoredMailMessage> ListForRecipient(std::string_view recipient,
+                                                            std::size_t first,
+                                                            std::size_t last) = 0;
 };
 
 // SQLite-backed storage component planned for later implementation.
@@ -79,12 +90,17 @@ public:
 
     std::string Save(const MailMessage& message) override;
     std::optional<MailMessage> Retrieve(std::string_view messageId) override;
+    std::size_t CountForRecipient(std::string_view recipient) override;
+    std::vector<StoredMailMessage> ListForRecipient(std::string_view recipient,
+                                                    std::size_t first,
+                                                    std::size_t last) override;
 
 private:
     dbConfig config_;
     std::mutex mutex_;
     std::uint64_t nextMessageId_{1};
     std::unordered_map<std::string, MailMessage> messages_;
+    std::unordered_map<std::string, std::vector<std::string>> recipientMessageIds_;
 };
 
 // Cache boundary for data that should not always hit storage or external APIs.
