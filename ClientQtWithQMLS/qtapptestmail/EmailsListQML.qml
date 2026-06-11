@@ -230,7 +230,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: "Inbox"
+                    text: selectedFolder
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                 }

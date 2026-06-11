@@ -354,9 +354,11 @@ Rectangle {
             anchors.right: parent.right
             anchors.leftMargin: 8
             anchors.rightMargin: 8
-            color: hoverHandlerInboxButton.hovered ? "#dbdbdb" : "#f3f4f6"
             height: 40
             radius: 10
+            property bool isInboxSelected: selectedFolder === "inbox"
+
+            color: isInboxSelected ? "#dbdbdb" : (hoverHandlerInboxButton.hovered ? "#f3f4f6" : "#ffffff")
 
             HoverHandler {
                 id: hoverHandlerInboxButton
@@ -365,7 +367,7 @@ Rectangle {
 
             TapHandler {
                 onTapped: {
-                    //
+                    window.selectedFolder = "inbox"
                 }
             }
 
@@ -431,10 +433,122 @@ Rectangle {
                     id: element
                     height: 16; width: parent.width
                     color: "#6a7282"
-                    font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
+                    font.family: "Segoe UI";
+                    font.pixelSize: 12;
+                    font.weight: Font.Normal
                     horizontalAlignment: Text.AlignHCenter
-                    lineHeight: 16; lineHeightMode: Text.FixedHeight
-                    text: "2"; textFormat: Text.PlainText
+                    lineHeight: 16;
+                    lineHeightMode: Text.FixedHeight
+                    text: inboxCount;
+                    textFormat: Text.PlainText
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+        }
+
+        // Sent button
+        Rectangle {
+            id: buttonToOpenSent
+
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 8
+            anchors.rightMargin: 8
+            anchors.top: buttonToOpenInbox.bottom
+            anchors.topMargin: 4
+            property bool isSentSelected: selectedFolder === "sent"
+
+            color: isSentSelected ? "#dbdbdb" : (hoverHandlerSentButton.hovered ? "#f3f4f6" : "#ffffff")
+            height: 40
+            radius: 10
+
+            HoverHandler {
+                id: hoverHandlerSentButton
+                cursorShape: Qt.PointingHandCursor
+            }
+
+            TapHandler {
+                onTapped: {
+                    window.selectedFolder = "sent"
+                }
+            }
+
+            // TEMP ICON
+            Rectangle {
+                id: sVG_4
+                x: 12; y: 11
+                height: 18; width: 18
+                clip: true; color: "transparent"
+
+                Shape {
+                    id: _vector_6
+                    x: 1.50; y: 1.50
+                    height: 15; width: 15
+                    ShapePath {
+                        fillColor: "#00000000"
+                        fillRule: ShapePath.WindingFill
+                        strokeColor: "#4a5565"
+                        strokeWidth: 1.50
+                        PathSvg {
+                            path: "M 9.401853977814605 14.766372688144887 C 9.430347521927061 14.837384828933395 9.47988206190733 14.897980605755722 9.543808633718157 14.940028192573893 C 9.607735205528984 14.982075779392064 9.682994383876357 15.003562323341457 9.759484696122433 15.00160312652979 C 9.835975008368509 14.999643929718124 9.910035211384658 14.974332706010829 9.971725385329629 14.929067614003824 C 10.0334155592746 14.883802521996818 10.079782642408281 14.820750277653895 10.104603446215288 14.74837256283202 L 14.979603291261048 0.49837314988562886 C 15.003606300741279 0.4319183614653377 15.008187348749008 0.3600020648104543 14.992809772774867 0.2910389360664543 C 14.977432196800727 0.2220758073224543 14.942731719476587 0.15891819128414295 14.89276981700083 0.10895628880838547 C 14.842807914525071 0.058994386332627984 14.77965172899819 0.02429462077174245 14.710688600254189 0.008917044797601699 C 14.641725471510188 -0.0064605311765390545 14.569807923157805 -0.0018798414951582687 14.503353134737514 0.022123167985071822 L 0.2533539229567919 4.8971234195531235 C 0.18097620813491716 4.921944223360129 0.11792306972235041 4.968311306493811 0.07265797771534546 5.0300014804387825 C 0.027392885708340517 5.091691654383754 0.0020821971549869964 5.165751857399902 0.00012300034332049208 5.242242169645978 C -0.0018361964683460122 5.318732481892054 0.0196499911410338 5.3939916602394264 0.06169757795920439 5.457918232050253 C 0.10374516477737498 5.52184480386108 0.16434165685541638 5.571379343841349 0.2353537976439248 5.599872887953804 L 6.18285421746118 7.984873041027251 C 6.370869039153704 8.060148675843994 6.541693125605491 8.172718213004975 6.685028102103587 8.315795395697322 C 6.828363078601683 8.458872578389668 6.941239851619684 8.629493744560058 7.016853824741159 8.817372757073779 L 9.401853977814605 14.766372688144887 Z"
+                        }
+                    }
+                }
+                Shape {
+                    id: _vector_7
+                    x: 8.19; y: 1.61
+                    height: 8.20; width: 8.20
+                    ShapePath {
+                        fillColor: "#00000000"
+                        strokeColor: "#4a5565"
+                        strokeWidth: 1.50
+                        PathSvg { path: "M 8.204999923706055 0 L 0 8.20425033569336" }
+                    }
+                }
+            }
+
+            Rectangle {
+                id: container_4
+                x: 42; y: 8
+                height: 24
+                color: "transparent"
+
+                Text {
+                    id: sent
+                    height: 24; width: parent.width
+                    color: "#4a5565"
+                    font.family: "Segoe UI";
+                    font.pixelSize: 16;
+                    font.weight: Font.Normal
+                    horizontalAlignment: Text.AlignLeft
+                    lineHeight: 24;
+                    lineHeightMode: Text.FixedHeight
+                    text: "Sent";
+                    textFormat: Text.PlainText
+                    verticalAlignment: Text.AlignVCenter; wrapMode: Text.Wrap
+                }
+            }
+
+            Rectangle {
+                id: amountOfSentHolder
+                anchors.right: parent.right
+                anchors.rightMargin: 12
+                anchors.verticalCenter: parent.verticalCenter
+                height: 16; width: 20
+                color: "transparent"
+
+                Text {
+                    id: element_2
+                    height: 16; width: parent.width
+                    color: "#6a7282"
+                    font.family: "Segoe UI";
+                    font.pixelSize: 12;
+                    font.weight: Font.Normal
+                    horizontalAlignment: Text.AlignHCenter
+                    lineHeight: 16;
+                    lineHeightMode: Text.FixedHeight
+                    text: sentCount;
+                    textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                 }
             }
@@ -448,10 +562,12 @@ Rectangle {
             anchors.right: parent.right
             anchors.leftMargin: 8
             anchors.rightMargin: 8
-            anchors.top: buttonToOpenInbox.bottom
+            anchors.top: buttonToOpenSent.bottom
             anchors.topMargin: 4
+            property bool isStarredSelected: selectedFolder === "starred"
 
-            color: hoverHandlerStarredButton.hovered ? "#f3f4f6" : "#ffffff"
+
+            color: isStarredSelected ? "#dbdbdb" : (hoverHandlerStarredButton.hovered ? "#f3f4f6" : "#ffffff")
             height: 40
             radius: 10
 
@@ -462,7 +578,7 @@ Rectangle {
 
             TapHandler {
                 onTapped: {
-                    //
+                    window.selectedFolder = "starred"
                 }
             }
 
@@ -519,109 +635,14 @@ Rectangle {
                     id: element_1
                     height: 16; width: parent.width
                     color: "#6a7282"
-                    font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
+                    font.family: "Segoe UI";
+                    font.pixelSize: 12;
+                    font.weight: Font.Normal
                     horizontalAlignment: Text.AlignHCenter
-                    lineHeight: 16; lineHeightMode: Text.FixedHeight
-                    text: "2"; textFormat: Text.PlainText
-                    verticalAlignment: Text.AlignVCenter
-                }
-            }
-        }
-
-        // Sent button
-        Rectangle {
-            id: buttonToOpenSent
-
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 8
-            anchors.rightMargin: 8
-            anchors.top: buttonToOpenStarred.bottom
-            anchors.topMargin: 4
-
-            color: hoverHandlerSentButton.hovered ? "#f3f4f6" : "#ffffff"
-            height: 40
-            radius: 10
-
-            HoverHandler {
-                id: hoverHandlerSentButton
-                cursorShape: Qt.PointingHandCursor
-            }
-
-            TapHandler {
-                onTapped: {
-                    //
-                }
-            }
-
-            // TEMP ICON
-            Rectangle {
-                id: sVG_4
-                x: 12; y: 11
-                height: 18; width: 18
-                clip: true; color: "transparent"
-
-                Shape {
-                    id: _vector_6
-                    x: 1.50; y: 1.50
-                    height: 15; width: 15
-                    ShapePath {
-                        fillColor: "#00000000"
-                        fillRule: ShapePath.WindingFill
-                        strokeColor: "#4a5565"
-                        strokeWidth: 1.50
-                        PathSvg {
-                            path: "M 9.401853977814605 14.766372688144887 C 9.430347521927061 14.837384828933395 9.47988206190733 14.897980605755722 9.543808633718157 14.940028192573893 C 9.607735205528984 14.982075779392064 9.682994383876357 15.003562323341457 9.759484696122433 15.00160312652979 C 9.835975008368509 14.999643929718124 9.910035211384658 14.974332706010829 9.971725385329629 14.929067614003824 C 10.0334155592746 14.883802521996818 10.079782642408281 14.820750277653895 10.104603446215288 14.74837256283202 L 14.979603291261048 0.49837314988562886 C 15.003606300741279 0.4319183614653377 15.008187348749008 0.3600020648104543 14.992809772774867 0.2910389360664543 C 14.977432196800727 0.2220758073224543 14.942731719476587 0.15891819128414295 14.89276981700083 0.10895628880838547 C 14.842807914525071 0.058994386332627984 14.77965172899819 0.02429462077174245 14.710688600254189 0.008917044797601699 C 14.641725471510188 -0.0064605311765390545 14.569807923157805 -0.0018798414951582687 14.503353134737514 0.022123167985071822 L 0.2533539229567919 4.8971234195531235 C 0.18097620813491716 4.921944223360129 0.11792306972235041 4.968311306493811 0.07265797771534546 5.0300014804387825 C 0.027392885708340517 5.091691654383754 0.0020821971549869964 5.165751857399902 0.00012300034332049208 5.242242169645978 C -0.0018361964683460122 5.318732481892054 0.0196499911410338 5.3939916602394264 0.06169757795920439 5.457918232050253 C 0.10374516477737498 5.52184480386108 0.16434165685541638 5.571379343841349 0.2353537976439248 5.599872887953804 L 6.18285421746118 7.984873041027251 C 6.370869039153704 8.060148675843994 6.541693125605491 8.172718213004975 6.685028102103587 8.315795395697322 C 6.828363078601683 8.458872578389668 6.941239851619684 8.629493744560058 7.016853824741159 8.817372757073779 L 9.401853977814605 14.766372688144887 Z"
-                        }
-                    }
-                }
-                Shape {
-                    id: _vector_7
-                    x: 8.19; y: 1.61
-                    height: 8.20; width: 8.20
-                    ShapePath {
-                        fillColor: "#00000000"
-                        strokeColor: "#4a5565"
-                        strokeWidth: 1.50
-                        PathSvg { path: "M 8.204999923706055 0 L 0 8.20425033569336" }
-                    }
-                }
-            }
-
-            Rectangle {
-                id: container_4
-                x: 42; y: 8
-                height: 24
-                color: "transparent"
-
-                Text {
-                    id: sent
-                    height: 24; width: parent.width
-                    color: "#4a5565"
-                    font.family: "Segoe UI"; font.pixelSize: 16; font.weight: Font.Normal
-                    horizontalAlignment: Text.AlignLeft
-                    lineHeight: 24; lineHeightMode: Text.FixedHeight
-                    text: "Sent"; textFormat: Text.PlainText
-                    verticalAlignment: Text.AlignVCenter; wrapMode: Text.Wrap
-                }
-            }
-
-            Rectangle {
-                id: amountOfSentHolder
-                anchors.right: parent.right
-                anchors.rightMargin: 12
-                anchors.verticalCenter: parent.verticalCenter
-                height: 16; width: 20
-                color: "transparent"
-
-                Text {
-                    id: element_2
-                    height: 16; width: parent.width
-                    color: "#6a7282"
-                    font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
-                    horizontalAlignment: Text.AlignHCenter
-                    lineHeight: 16; lineHeightMode: Text.FixedHeight
-                    text: "2"; textFormat: Text.PlainText
+                    lineHeight: 16;
+                    lineHeightMode: Text.FixedHeight
+                    text: starredCount;
+                    textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                 }
             }
@@ -635,10 +656,11 @@ Rectangle {
             anchors.right: parent.right
             anchors.leftMargin: 8
             anchors.rightMargin: 8
-            anchors.top: buttonToOpenSent.bottom
+            anchors.top: buttonToOpenStarred.bottom
             anchors.topMargin: 4
+            property bool isDraftsSelected: selectedFolder === "drafts"
 
-            color: hoverHandlerDraftsButton.hovered ? "#f3f4f6" : "#ffffff"
+            color: isDraftsSelected ? "#dbdbdb" : (hoverHandlerDraftsButton.hovered ? "#f3f4f6" : "#ffffff")
             height: 40
             radius: 10
 
@@ -649,7 +671,7 @@ Rectangle {
 
             TapHandler {
                 onTapped: {
-                    //
+                    window.selectedFolder = "drafts"
                 }
             }
 
@@ -752,8 +774,10 @@ Rectangle {
                     color: "#6a7282"
                     font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
                     horizontalAlignment: Text.AlignHCenter
-                    lineHeight: 16; lineHeightMode: Text.FixedHeight
-                    text: "2"; textFormat: Text.PlainText
+                    lineHeight: 16;
+                    lineHeightMode: Text.FixedHeight
+                    text: draftsCount;
+                    textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                 }
             }

@@ -99,6 +99,8 @@ void EmailListModel::AddData(const EmailData &item)
     }
 
     emit pageCountChanged();
+
+    emit totalEmailsCountChanged();
 }
 
 int EmailListModel::CountPage() const
@@ -109,4 +111,8 @@ int EmailListModel::CountPage() const
 int EmailListModel::CurrentPage() const
 {
     return m_current_page;
+}
+int EmailListModel::TotalEmailsCount() const
+{
+    return static_cast<int>(m_data.size());
 }

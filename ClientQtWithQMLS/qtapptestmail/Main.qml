@@ -4,6 +4,15 @@ import QtQuick.Layouts
 import QtQuick.Effects
 
 ApplicationWindow {
+    //properties
+    property string selectedFolder: "inbox"
+    property int inboxCount: emailsModel.totalEmailsCount
+    property int starredCount: 0
+    property int sentCount: 0
+    property int draftsCount: 0
+
+
+    //blocks
     id: window
     visible: true
     width: 1024
