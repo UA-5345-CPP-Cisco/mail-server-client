@@ -10,6 +10,7 @@ ApplicationWindow {
     property int starredCount: 0
     property int sentCount: 0
     property int draftsCount: 0
+    property string amountText: emailsModel.pageAmountText
 
 
     //blocks

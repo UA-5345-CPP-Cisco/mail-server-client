@@ -249,7 +249,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: "Amount"
+                    text: amountText
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                 }

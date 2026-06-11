@@ -42,15 +42,18 @@ public:
     Q_INVOKABLE void SetPage(int page);
     Q_INVOKABLE void AddData(bool is_starred, QString theme, QString name, QString preview);
     Q_PROPERTY(int totalEmailsCount READ totalEmailsCount NOTIFY totalEmailsCountChanged)
+    Q_PROPERTY(QString pageAmountText READ pageAmountText NOTIFY pageAmountTextChanged)
 
     void AddData(const EmailData& item);
     int CountPage() const;
     int CurrentPage() const;
     int TotalEmailsCount() const;
+    QString PageAmountText() const;
 signals:
     void currentPageChanged();
     void pageCountChanged();
     void totalEmailsCountChanged();
+    void pageAmountTextChanged();
 private:
     std::vector<EmailData> m_data;
     int m_current_page;

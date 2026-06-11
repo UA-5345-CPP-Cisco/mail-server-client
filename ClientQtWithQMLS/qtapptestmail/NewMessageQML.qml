@@ -137,8 +137,10 @@ Rectangle
                 color: "transparent"
                 scale: clickAreaMinimizeWindow.containsMouse ? 1.5 : 1.0
 
-                Behavior on scale {
-                    NumberAnimation {
+                Behavior on scale
+                {
+                    NumberAnimation
+                    {
                         duration: 150
                         easing.type: Easing.InOutQuad
                     }

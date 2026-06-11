@@ -11,7 +11,24 @@ Rectangle {
     color: "#ffffff"
     radius: 14
 
-    Rectangle {
+    Loader
+    {
+        id: generalSettingsLoader
+
+        anchors.fill: parent
+
+        z: 99
+
+        focus: true
+
+        opacity: status === Loader.Ready ? 1.0 : 0.0
+        Behavior on opacity {
+            NumberAnimation { duration: 250 }
+        }
+    }
+
+    Rectangle
+    {
         id: container
 
         x: 16
@@ -40,7 +57,8 @@ Rectangle {
             verticalAlignment: Text.AlignVCenter
         }
     }
-    Rectangle {
+    Rectangle
+    {
         id: buttonToCloseWindow
 
         x: 348.40
@@ -130,8 +148,10 @@ Rectangle {
             }
         }
     }
-    Rectangle {
-        id: container_1
+
+    Rectangle
+    {
+        id: container_2
 
         x: 11
         y: 284
@@ -161,15 +181,16 @@ Rectangle {
             verticalAlignment: Text.AlignVCenter
         }
     }
-    Rectangle {
-        id: container_2
+
+    Rectangle
+    {
+        id: preferences
 
         y: 64
 
         height: 220
         width: 382.40
 
-        color: "transparent"
 
         Rectangle {
             id: container_3
@@ -502,15 +523,6 @@ Rectangle {
 
                     color: "#ffffff"
                     radius: 26843500
-
-                    Image {
-                        id: overlay_Shadow
-
-                        x: -3
-                        y: -2
-
-                        source: Qt.resolvedUrl("assets/overlay_Shadow.png")
-                    }
                 }
             }
         }
@@ -523,8 +535,26 @@ Rectangle {
             height: 60
             width: 350.40
 
-            color: "transparent"
             radius: 10
+            color: clickAreaAccountSettings.hovered ? "#fff0f0" : "transparent"
+
+            HoverHandler
+            {
+                id: clickAreaAccountSettings
+                cursorShape: Qt.PointingHandCursor
+            }
+
+            TapHandler
+            {
+                onTapped: {
+                    if (String(generalSettingsLoader.source) === "") {
+                        generalSettingsLoader.active = true
+                        generalSettingsLoader.source = "SettingsGeneralQML.qml"
+                    } else {
+                        generalSettingsLoader.source = ""
+                    }
+                }
+            }
 
             Rectangle {
                 id: sVG_2
@@ -652,6 +682,7 @@ Rectangle {
                 }
             }
         }
+
         Rectangle {
             id: buttonToGeneralSettings
 
@@ -660,9 +691,26 @@ Rectangle {
 
             height: 60
             width: 350.40
-
-            color: "transparent"
             radius: 10
+            color: clickAreaGeneralSettings.hovered ? "#fff0f0" : "transparent"
+
+            HoverHandler
+            {
+                id: clickAreaGeneralSettings
+                cursorShape: Qt.PointingHandCursor
+            }
+
+            TapHandler
+            {
+                onTapped: {
+                    if (String(generalSettingsLoader.source) === "") {
+                        generalSettingsLoader.active = true
+                        generalSettingsLoader.source = "SettingsGeneralQML.qml"
+                    } else {
+                        generalSettingsLoader.source = ""
+                    }
+                }
+            }
 
             Rectangle {
                 id: sVG_3
