@@ -47,7 +47,12 @@ if(NOT cryptopp_cmake_POPULATED)
 endif()
 
 add_executable(smtp_server
-    main.cpp
+        #main.cpp
+        include/MailBuilder.hpp
+        src/MailBuilder.cpp
+        include/SmtpClient.hpp
+        src/SmtpClient.cpp
+        tests/Tests.cpp
 )
 
 target_include_directories(smtp_server
@@ -89,6 +94,15 @@ target_compile_definitions(smtp_server
 #        target_compile_options(smtp_server PRIVATE -Werror)
 #    endif()
 #endif()
+#MY VLAD TEST
+add_executable(my_tests
+        tests/Tests.cpp
+        src/MailBuilder.cpp
+        src/SmtpClient.cpp
+)
+##
+target_include_directories(my_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(my_tests PRIVATE Boost::asio Boost::system Threads::Threads ws2_32 mswsock)
 
 if(BUILD_TESTS)
     enable_testing()
@@ -107,6 +121,7 @@ if(BUILD_TESTS)
 
     add_executable(smtp_server_tests
         tests/test_basic.cpp
+            tests/Tests.cpp
     )
 
     target_include_directories(smtp_server_tests
