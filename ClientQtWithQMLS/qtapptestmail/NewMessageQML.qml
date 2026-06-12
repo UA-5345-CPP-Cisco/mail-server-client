@@ -1,10 +1,9 @@
 import QtQuick
 import QtQuick.Shapes
 import QtQuick.Controls
-
-Rectangle {
+Rectangle
+{
     id: newMessageQML
-
     implicitHeight: 398
     implicitWidth: 420
     border.color: "#e5e7eb"
@@ -13,15 +12,17 @@ Rectangle {
     color: "#fcf3e6"
     radius: 14
 
-
-    MouseArea {
-            anchors.fill: parent
-            onClicked: {
+    MouseArea
+    {
+        anchors.fill: parent
+        onClicked:
+        {
             newMessageQML.forceActiveFocus()
         }
     }
 
-    Rectangle {
+    Rectangle
+    {
         id: background
 
         height: 38
@@ -30,21 +31,20 @@ Rectangle {
         topRightRadius: 14
 
         color: "#1e2939"
-        MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.OpenHandCursor // Курсор у вигляді відкритої руки
+        MouseArea
+        {
+            anchors.fill: parent
+            cursorShape: Qt.OpenHandCursor
 
-                    // Вказуємо, що тягнемо головний компонент (id: newMessageQML)
-                    drag.target: newMessageQML
-                    drag.axis: Drag.XAndYAxis
+            drag.target: newMessageQML
+            drag.axis: Drag.XAndYAxis
 
-                    // Змінюємо курсор при затисканні
-                    onPressed: cursorShape = Qt.ClosedHandCursor
-                    onReleased: cursorShape = Qt.OpenHandCursor
-                }
+            onPressed: cursorShape = Qt.ClosedHandCursor
+            onReleased: cursorShape = Qt.OpenHandCursor
+        }
 
         Rectangle {
-            id: container_1
+            id: drag_container
 
             x: 12
             y: 9
@@ -76,16 +76,53 @@ Rectangle {
         }
 
         Rectangle {
-            id: buttonToMinimizeWindow
+            id: windowControlsWrapper
 
-            x: 326
+
+            x: 320
             y: 8
-
-            height: 22
-            width: 22
-
+            width: 140
+            height: 45
             color: "transparent"
-            radius: 4
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.ArrowCursor
+
+            }
+
+            Row
+            {
+                id:new_message_controls
+                x: 340
+                y: 8
+                anchors.fill: parent
+                spacing: 8
+                //button to minimize window
+                Rectangle
+                {
+                    id: buttonToMinimizeWindow
+                    height: 22
+                    width: 22
+
+                    color: clickAreaMinimizeWindow.pressed ? "#ffdede" : "transparent"
+                    radius: 4
+
+                    MouseArea
+                    {
+                        id: clickAreaMinimizeWindow
+                        anchors.fill: parent
+
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked:
+                        {
+                            // MinimizeWindow
+                        }
+                    }
+
 
             Rectangle {
                 id: sVG
@@ -98,6 +135,14 @@ Rectangle {
 
                 clip: true
                 color: "transparent"
+                scale: clickAreaMinimizeWindow.containsMouse ? 1.5 : 1.0
+
+                Behavior on scale {
+                    NumberAnimation {
+                        duration: 150
+                        easing.type: Easing.InOutQuad
+                    }
+                }
 
                 Shape {
                     id: _vector
@@ -125,19 +170,34 @@ Rectangle {
             }
         }
 
-        Rectangle {
-            id: buttonToMaximizeWindow
+                //button to maximize window
+                Rectangle
+                {
+                id: buttonToMaximizeWindow
 
-            x: 356
-            y: 8
+                height: 22
+                width: 22
 
-            height: 22
-            width: 22
+                color: clickAreaMaximizeWindow.pressed ? "#ffdede" : "transparent"
 
-            color: "transparent"
+                MouseArea
+                {
+                    id: clickAreaMaximizeWindow
+                    anchors.fill: parent
+
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+
+                    onClicked:
+                    {
+                        //MaximizeWindow
+                    }
+                }
+
             radius: 4
 
-            Rectangle {
+            Rectangle
+            {
                 id: sVG_1
 
                 x: 4
@@ -148,6 +208,16 @@ Rectangle {
 
                 clip: true
                 color: "transparent"
+                scale: clickAreaMaximizeWindow.containsMouse ? 1.5 : 1.0
+
+                Behavior on scale
+                {
+                    NumberAnimation
+                    {
+                        duration: 150
+                        easing.type: Easing.InOutQuad
+                    }
+                }
 
                 Shape {
                     id: _vector_1
@@ -246,88 +316,114 @@ Rectangle {
             }
         }
 
-        Rectangle {
-            id: buttonToCloseWindow
+                //button to close window
+                Rectangle
+                {
+                id: buttonToCloseWindow
+                height: 22
+                width: 22
+                radius: 4
 
-            x: 386
-            y: 8
+                color: clickAreaCloseMessageBox.pressed ? "#ffdede" : "transparent"
 
-            height: 22
-            width: 22
-
-            color: clickAreaCloseMessageBox.pressed ? "#ffdede" : "transparent"
-            radius: 4
-            MouseArea {
-                id: clickAreaCloseMessageBox
-                    cursorShape: Qt.PointingHandCursor
+                MouseArea
+                {
+                    id: clickAreaCloseMessageBox
                     anchors.fill: parent
-                    onClicked: {
+
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+
+                    onClicked:
+                    {
                         closeMessageWindow()
                     }
                 }
-            Rectangle {
-                id: sVG_2
 
-                x: 4
-                y: 4
+                Rectangle
+                {
+                    id: sVG_2
 
-                height: 14
-                width: 14
+                    anchors.centerIn: parent
 
-                clip: true
-                color: "transparent"
+                    height: 14
+                    width: 14
 
-                Shape {
-                    id: _vector_5
+                    clip: true
+                    color: "transparent"
 
-                    x: 3.50
-                    y: 3.50
+                    scale: clickAreaCloseMessageBox.containsMouse ? 1.5 : 1.0
 
-                    height: 7
-                    width: 7
-
-                    ShapePath {
-                        id: _vector_5_ShapePath0
-
-                        fillColor: "#00000000"
-                        strokeColor: "#ffffff"
-                        strokeWidth: 1.17
-
-                        PathSvg {
-                            id: _vector_5_ShapePath0_PathSvg0
-
-                            path: "M 7 0 L 0 7"
+                    Behavior on scale
+                    {
+                        NumberAnimation
+                        {
+                            duration: 150
+                            easing.type: Easing.InOutQuad
                         }
                     }
-                }
-                Shape {
-                    id: _vector_6
 
-                    x: 3.50
-                    y: 3.50
+                    Shape
+                    {
+                        id: _vector_5
 
-                    height: 7
-                    width: 7
+                        x: 3.50
+                        y: 3.50
 
-                    ShapePath {
-                        id: _vector_6_ShapePath0
+                        height: 7
+                        width: 7
 
-                        fillColor: "#00000000"
-                        strokeColor: "#ffffff"
-                        strokeWidth: 1.17
+                        ShapePath
+                        {
+                            id: _vector_5_ShapePath0
 
-                        PathSvg {
-                            id: _vector_6_ShapePath0_PathSvg0
+                            fillColor: "#00000000"
+                            strokeColor: "#ffffff"
+                            strokeWidth: 1.17
 
-                            path: "M 0 0 L 7 7"
+                            PathSvg
+                            {
+                                id: _vector_5_ShapePath0_PathSvg0
+
+                                path: "M 7 0 L 0 7"
+                            }
+                        }
+                    }
+
+                    Shape
+                    {
+                        id: _vector_6
+
+                        x: 3.50
+                        y: 3.50
+
+                        height: 7
+                        width: 7
+
+                        ShapePath
+                        {
+                            id: _vector_6_ShapePath0
+
+                            fillColor: "#00000000"
+                            strokeColor: "#ffffff"
+                            strokeWidth: 1.17
+
+                            PathSvg
+                            {
+                                id: _vector_6_ShapePath0_PathSvg0
+
+                                path: "M 0 0 L 7 7"
+                            }
                         }
                     }
                 }
             }
         }
+        }
     }
 
-    Rectangle {
+    Rectangle
+    {
         id: recipient_background
 
         y: 38
@@ -340,26 +436,26 @@ Rectangle {
         border.color: "#e5e7eb"
         border.width: 1
 
-        Rectangle {
+        Rectangle
+        {
             id: recipient_container
-
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: 12
             anchors.rightMargin: 12
-
             height: 19
             width: 396
 
             clip: true
             color: "transparent"
 
-            TextField {
+            TextField
+            {
                 id: recipient_input
                 anchors.fill: parent
-
                 color: "#1f2937"
+                font.pixelSize: 14
                 font.family: "Segoe UI"
                 placeholderText: "To"
                 placeholderTextColor: "#99a1af"
@@ -370,7 +466,8 @@ Rectangle {
 
                 cursorDelegate: Item {}
 
-                Rectangle {
+                Rectangle
+                {
                     id: custom_cursor_for_recipient_container
                     width: 1
                     color: "#1f2937"
@@ -381,13 +478,16 @@ Rectangle {
                     x: parent.cursorRectangle.x
                     visible: parent.activeFocus
 
-                    Behavior on x {
-                        NumberAnimation {
+                    Behavior on x
+                    {
+                        NumberAnimation
+                        {
                             duration: 80
                             easing.type: Easing.OutCubic
                         }
                     }
-                    SequentialAnimation on opacity {
+                    SequentialAnimation on opacity
+                    {
                         running: parent.activeFocus
                         loops: Animation.Infinite
                         NumberAnimation { to: 0; duration: 400; easing.type: Easing.InOutSine }
@@ -398,7 +498,8 @@ Rectangle {
         }
     }
 
-    Rectangle {
+    Rectangle
+    {
         id: subject_background
 
         y: 72
@@ -411,23 +512,24 @@ Rectangle {
         border.color: "#e5e7eb"
         border.width: 1
 
-        Rectangle {
-            id: container_4
+        Rectangle
+        {
+            id: subject_container
 
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: 12
             anchors.rightMargin: 12
-
             height: 19
+
             clip: true
             color: "transparent"
 
-            TextField {
+            TextField
+            {
                 id: subject_input
                 anchors.fill: parent
-
                 color: "#1f2937"
                 font.family: "Segoe UI"
                 font.pixelSize: 14
@@ -443,7 +545,8 @@ Rectangle {
 
                 cursorDelegate: Item {}
 
-                Rectangle {
+                Rectangle
+                {
                     id: custom_cursor_for_subject_container
                     width: 1
                     color: "#1f2937"
@@ -451,13 +554,16 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     x: parent.cursorRectangle.x
                     visible: parent.activeFocus
-                    Behavior on x {
-                        NumberAnimation {
+                    Behavior on x
+                    {
+                        NumberAnimation
+                        {
                             duration: 80
                             easing.type: Easing.OutCubic
                         }
                     }
-                    SequentialAnimation on opacity {
+                    SequentialAnimation on opacity
+                    {
                         loops: Animation.Infinite
                         NumberAnimation { to: 0; duration: 500; easing.type: Easing.InOutSine }
                         NumberAnimation { to: 1; duration: 500; easing.type: Easing.InOutSine }
@@ -468,7 +574,8 @@ Rectangle {
     }
 
 
-    Rectangle {
+    Rectangle
+    {
         id: textarea
 
         y: 119
@@ -544,9 +651,8 @@ Rectangle {
         }
     }
 
-
-
-    Rectangle {
+    Rectangle
+    {
         id: horizontalBorder
 
         y: 340
@@ -561,9 +667,33 @@ Rectangle {
             width: 63
             bottomLeftRadius: 14
             bottomRightRadius: 14
+            color:"#155dfc"
 
-            color: "#155dfc"
+            scale: mouseAreaToSend.containsMouse ? 1.1 : 1.0
+            Behavior on scale {
+                NumberAnimation {
+                    duration: 150
+                    easing.type: Easing.InOutQuad
+                }
+            }
             radius: 26843500
+            ToolTip {
+                id: popup_test
+                text: subject_input.text + " " + recipient_input.text + " " + message_input.text
+                visible: false
+                timeout: 2000
+            }
+            MouseArea
+            {
+                id:mouseAreaToSend
+                anchors.fill:parent
+                hoverEnabled: true
+                onPressed:
+                {
+                    popup_test.visible = true
+                    emailsModel.AddData(false, subject_input.text, recipient_input.text, message_input.text)
+                }
+            }
 
             Text {
                 id: send
@@ -581,11 +711,13 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 lineHeight: 20
                 lineHeightMode: Text.FixedHeight
+                scale: mouseAreaToSend.containsMouse ? 1.1 : 1.0
                 text: "Send"
                 textFormat: Text.PlainText
                 verticalAlignment: Text.AlignVCenter
             }
         }
+
         Rectangle {
             id: buttonToDelete
 
@@ -597,6 +729,25 @@ Rectangle {
 
             color: "transparent"
             radius: 4
+            scale: mouseAreaToDelete.containsMouse ? 1.3 : 1.0
+            Behavior on scale {
+                NumberAnimation {
+                    duration: 150
+                    easing.type: Easing.InOutQuad
+                }
+            }
+            MouseArea
+            {
+                id:mouseAreaToDelete
+                anchors.fill:parent
+                hoverEnabled: true
+                onPressed:
+                {
+                    message_input.clear()
+                    recipient_input.clear()
+                    subject_input.clear()
+                }
+            }
 
             Rectangle {
                 id: sVG_3

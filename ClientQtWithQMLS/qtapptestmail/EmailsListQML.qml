@@ -123,7 +123,7 @@ Rectangle {
                         color: "#1f2937"
                         font.family: "Segoe UI"
                         font.pixelSize: 14
-                        font.weight: Font.Normal // ??
+                        font.weight: Font.Normal
                         horizontalAlignment: Text.AlignLeft
                         placeholderText: "Search mail"
                         placeholderTextColor: "#99a1af"
@@ -272,7 +272,25 @@ Rectangle {
                     width: 15
                     height: 17
                     color: "transparent"
+                    scale: clickAreaMoveBack.containsMouse ? 1.3 : 1.0
 
+                    Behavior on scale {
+                        NumberAnimation {
+                            duration: 150
+                            easing.type: Easing.InOutQuad
+                        }
+                    }
+                    MouseArea {
+                        id: clickAreaMoveBack
+                        anchors.fill: parent
+
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked: {
+                            emailsModel.PrevPage()
+                        }
+                    }
                     Rectangle {
                         id: buttonToMoveBack
                         y: 2
@@ -305,6 +323,25 @@ Rectangle {
                     width: 15
                     height: 18
                     color: "transparent"
+                    scale: clickAreaMoveForvard.containsMouse ? 1.3 : 1.0
+
+                    Behavior on scale {
+                        NumberAnimation {
+                            duration: 150
+                            easing.type: Easing.InOutQuad
+                        }
+                    }
+                    MouseArea {
+                        id: clickAreaMoveForvard
+                        anchors.fill: parent
+
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked: {
+                            emailsModel.NextPage()
+                        }
+                    }
 
                     Rectangle {
                         id: buttonToMoveForward
@@ -332,32 +369,31 @@ Rectangle {
             }
         }
     }
+    ListView {
+            id:listView
+            anchors{
+                top:separator.bottom;
+                right: parent.right;
+                left: parent.left;
+                bottom: parent.bottom;
+            }
 
-  ListItem{
-      id:itemList
-      theme: "Sea"
-      name: "Fish"
-      preview: "Something..."
-      time: "10:20pm"
-      anchors.top:separator.bottom
-      anchors.leftMargin: 0
-      anchors.rightMargin: 0
-      anchors.topMargin: 0
-  }
+            model: emailsModel
 
-  ListItem{
-      id:itemList1
-      anchors.top:itemList.bottom
-      anchors.leftMargin: 0
-      anchors.rightMargin: 0
-      anchors.topMargin: 0
-  }
+            delegate: ListItem{
+                anchors.left: parent.left
+                anchors.right: parent.right
+                starred: emailsStarred
+                theme:   emailsTheme
+                name:    emailsName
+                preview: emailsPreview
+                time:    emailsTime
+            }
+        }
 
-  ListItem{
-      id:itemList2
-      anchors.top:itemList1.bottom
-      anchors.leftMargin: 0
-      anchors.rightMargin: 0
-      anchors.topMargin: 0
-  }
+        Component.onCompleted: {
+            emailsModel.AddData(false, "no","no","no","no")
+            emailsModel.AddData(false, "no","no","no","no")
+        }
+
 }
