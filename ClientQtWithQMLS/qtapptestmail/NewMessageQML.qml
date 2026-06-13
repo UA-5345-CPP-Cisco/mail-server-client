@@ -606,7 +606,7 @@ Rectangle
                 placeholderText: "Write your message..."
                 placeholderTextColor: "#99a1af"
                 wrapMode: Text.Wrap
-
+                font.pixelSize: 14
                 background: Item {}
                 leftPadding: 0
                 topPadding: 0

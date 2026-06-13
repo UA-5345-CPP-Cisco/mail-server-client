@@ -18,7 +18,6 @@ Rectangle {
         height: 60
         color: "#ffffff"
 
-        // Set z-index for the entire header so it stays above the email list
         z: 10
 
         // Bottom border
@@ -31,8 +30,8 @@ Rectangle {
         }
 
         // Icon
-        Rectangle {
-            id: background
+        Image {
+            id: avatar
 
             x: 12
             y: 14
@@ -40,34 +39,17 @@ Rectangle {
             height: 32
             width: 32
 
-            color: "#2b7fff"
-            radius: 16
+            source: currentUser.avatarPath
 
-            Text {
-                id: a
-                anchors.centerIn: parent
-
-                height: 20
-                width: 12
-
-                color: "#ffffff"
-                font.family: "Segoe UI"
-                font.pixelSize: 14
-                font.weight: Font.Black
-                horizontalAlignment: Text.AlignHCenter
-                lineHeight: 20
-                lineHeightMode: Text.FixedHeight
-                text: "A"
-                textFormat: Text.PlainText
-                verticalAlignment: Text.AlignVCenter
-            }
+            cache: false
+            fillMode: Image.PreserveAspectFit
         }
 
         // Content
         Rectangle {
             id: container
 
-            anchors.left: background.right
+            anchors.left: avatar.right
             anchors.leftMargin: 8
             anchors.right: dropdownWrapper.left // Anchor to the dropdown wrapper
             anchors.rightMargin: 4
@@ -75,6 +57,9 @@ Rectangle {
 
             height: 36
             color: "transparent"
+            Component.onCompleted: {
+                console.log("username =", currentUser.username)
+            }
 
             Rectangle {
                 id: nameHolder
@@ -98,7 +83,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 20
                     lineHeightMode: Text.FixedHeight
-                    text: "NameHolder"
+                    text: currentUser.username
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     wrapMode: Text.Wrap
@@ -128,7 +113,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: "EmailHolder"
+                    text: currentUser.email
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     wrapMode: Text.Wrap

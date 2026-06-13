@@ -221,7 +221,14 @@ Rectangle {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    // onClicked: AccountController.setActive(model.accountId)
+                    onClicked: {
+                        currentUser.authorize
+                        (
+                            accountName,
+                            accountEmail,
+                            avatarUrl
+                        )
+                    }
                 }
             }
         }

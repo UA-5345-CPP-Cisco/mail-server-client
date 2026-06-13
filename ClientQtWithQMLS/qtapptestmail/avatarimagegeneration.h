@@ -1,0 +1,11 @@
+#ifndef AVATARIMAGEGENERATION_H
+#define AVATARIMAGEGENERATION_H
+
+
+
+namespace ISXAvatarImageGenerator
+{
+
+}
+
+#endif // AVATARIMAGEGENERATION_H

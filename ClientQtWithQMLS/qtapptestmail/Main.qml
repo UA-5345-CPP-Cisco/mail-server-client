@@ -14,6 +14,12 @@ ApplicationWindow {
 
 
     //blocks
+    ToolTip {
+        id: popup_test
+        text: currentUser.email + " " + currentUser.username
+        visible: true
+        timeout: 5000
+    }
     id: window
     visible: true
     width: 1024
@@ -68,7 +74,6 @@ ApplicationWindow {
                     }
                 }
             }
-
 
             NavigationQML {
                 id: navMenu

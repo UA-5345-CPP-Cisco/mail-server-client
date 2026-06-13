@@ -38,6 +38,11 @@ qt_add_qml_module(appqtapptestmail
         SOURCES emaillistmodel.h
         SOURCES emaillistmodel.cpp
         QML_FILES SettingsGeneralQML.qml
+        SOURCES currentuser.h
+        SOURCES databasemanager.h
+        SOURCES hotkeysmanager.h
+        SOURCES avatarimagegeneration.h
+        SOURCES currentuser.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
