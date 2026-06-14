@@ -1,6 +1,7 @@
 import QtQuick
 
 Rectangle {
+    id:root
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
@@ -11,6 +12,12 @@ Rectangle {
     property string name: "ceo@company.com"
     property string preview: "Draft of the quarterly summary for leadership review..."
     property string time: "Jun 4"
+
+    signal clicked()
+
+    Behavior on color {
+        ColorAnimation { duration: 150; easing.type: Easing.OutCubic }
+    }
 
     Rectangle {
         anchors.left: parent.left
@@ -140,5 +147,18 @@ Rectangle {
             text: "Draft"; textFormat: Text.PlainText
             verticalAlignment: Text.AlignVCenter
         }
+    }
+    MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+
+        onEntered:  root.color = "#f9fafb"
+        onExited:   root.color = "#ffffff"
+        onPressed:  root.color = "#f3f4f6"
+        onReleased: {
+            root.color = containsMouse ? "#f9fafb" : "#ffffff"
+            root.clicked()
+        }
+        onCanceled: root.color = "#ffffff"
     }
 }

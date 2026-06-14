@@ -1,9 +1,39 @@
 import QtQuick
 import QtQuick.Shapes
+import QtQuick.Controls
 
 Rectangle {
     id: emailsListQML
     color: "#ffffff"
+
+    property bool isDraftMode: false
+    property var sourceModel: inboxModel
+
+    Component {
+        id: draftDelegate
+
+        DraftItem {
+            width: parent.width
+
+            theme: parent.pTheme
+            name: parent.pName
+            preview: parent.pPreview
+            time: parent.pTime
+        }
+    }
+
+    Component {
+        id: emailsDelegate
+
+        ListItem {
+            width: parent.width
+
+            theme: parent.pTheme
+            name: parent.pName
+            preview: parent.pPreview
+            time: parent.pTime
+        }
+    }
 
     // Right border (handle of SplitView)
     Rectangle {
@@ -105,27 +135,58 @@ Rectangle {
 
                 // PlaceHolder
                 Rectangle {
-                    id: container
-                    x: 36.80
-                    y: 9.60
+                    id: search_container
+
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.leftMargin: 36.80
+                    anchors.rightMargin: 8
                     height: 19
-                    width: parent.width - 36.80 - 8
                     clip: true
                     color: "transparent"
 
-                    Text {
-                        id: search_mail
-                        height: 19
-                        width: parent.width
-                        color: "#99a1af"
+                    TextField {
+                        id: search_input
+                        anchors.fill: parent
+                        color: "#1f2937"
                         font.family: "Segoe UI"
                         font.pixelSize: 14
                         font.weight: Font.Normal
                         horizontalAlignment: Text.AlignLeft
-                        text: "Search mail"
-                        textFormat: Text.PlainText
-                        verticalAlignment: Text.AlignVCenter
-                        wrapMode: Text.Wrap
+                        placeholderText: "Search mail"
+                        placeholderTextColor: "#99a1af"
+
+                        background: Item {}
+
+                        leftPadding: 0
+                        topPadding: 0
+                        bottomPadding: 0
+                        cursorDelegate: Item {}
+                        Rectangle {
+                            id: custom_cursor_for_search_container
+                            width: 1
+                            color: "#1f2937"
+                            height: parent.font.pixelSize
+                            anchors.verticalCenter: parent.verticalCenter
+                            x: parent.cursorRectangle.x
+                            visible: parent.activeFocus
+
+                            // Smooth right/left movement
+                            Behavior on x {
+                                NumberAnimation {
+                                    duration: 80
+                                    easing.type: Easing.OutCubic
+                                }
+                            }
+
+                            // Smooth flashing
+                            SequentialAnimation on opacity {
+                                loops: Animation.Infinite
+                                NumberAnimation { to: 0; duration: 500; easing.type: Easing.InOutSine }
+                                NumberAnimation { to: 1; duration: 500; easing.type: Easing.InOutSine }
+                            }
+                        }
                     }
                 }
             }
@@ -240,7 +301,25 @@ Rectangle {
                     width: 15
                     height: 17
                     color: "transparent"
+                    scale: clickAreaMoveBack.containsMouse ? 1.3 : 1.0
 
+                    Behavior on scale {
+                        NumberAnimation {
+                            duration: 150
+                            easing.type: Easing.InOutQuad
+                        }
+                    }
+                    MouseArea {
+                        id: clickAreaMoveBack
+                        anchors.fill: parent
+
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked: {
+                            emailsModel.PrevPage()
+                        }
+                    }
                     Rectangle {
                         id: buttonToMoveBack
                         y: 2
@@ -248,12 +327,7 @@ Rectangle {
                         width: 15
                         clip: true
                         color: "transparent"
-                        MouseArea{
-                            anchors.fill:parent
-                            onPressed:{
-                                emailsModel.PrevPage()
-                            }
-                        }
+
                         //TEMP BACK ICON
                         Shape {
                             id: iconToMoveBack
@@ -278,6 +352,25 @@ Rectangle {
                     width: 15
                     height: 18
                     color: "transparent"
+                    scale: clickAreaMoveForvard.containsMouse ? 1.3 : 1.0
+
+                    Behavior on scale {
+                        NumberAnimation {
+                            duration: 150
+                            easing.type: Easing.InOutQuad
+                        }
+                    }
+                    MouseArea {
+                        id: clickAreaMoveForvard
+                        anchors.fill: parent
+
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked: {
+                            emailsModel.NextPage()
+                        }
+                    }
 
                     Rectangle {
                         id: buttonToMoveForward
@@ -286,17 +379,11 @@ Rectangle {
                         width: 15
                         clip: true
                         color: "transparent"
-                        MouseArea{
-                            anchors.fill:parent
-                            onPressed:{
-                                emailsModel.NextPage()
-                            }
-                        }
 
                         //TEMP FORWARD ICON
                         Shape {
                             id: iconToMoveForward
-                            x: 5; y: 2
+                            x: 5; y: 1
                             height: 12; width: 6
 
                             ShapePath {
@@ -311,31 +398,28 @@ Rectangle {
             }
         }
     }
-
     ListView {
-        id:listView
-        anchors{
-            top:separator.bottom;
-            right: parent.right;
-            left: parent.left;
-            bottom: parent.bottom;
+            id:listView
+            anchors{
+                top:separator.bottom;
+                right: parent.right;
+                left: parent.left;
+                bottom: parent.bottom;
+            }
+
+            model: sourceModel
+
+            delegate: Loader {
+                width: listView.width
+
+                property string pTheme: emailsTheme
+                property string pName: emailsName
+                property string pPreview: emailsPreview
+                property string pTime: emailsTime
+
+                sourceComponent: isDraftMode
+                                 ? draftDelegate
+                                 : emailsDelegate
+            }
         }
-
-        model: emailsModel
-
-        delegate: ListItem{
-            anchors.left: parent.left
-            anchors.right: parent.right
-            starred: emailsStarred
-            theme:   emailsTheme
-            name:    emailsName
-            preview: emailsPreview
-            time:    emailsTime
-        }
-    }
-
-    Component.onCompleted: {
-        emailsModel.AddData(false, "no","no","no","no")
-        emailsModel.AddData(false, "no","no","no","no")
-    }
 }

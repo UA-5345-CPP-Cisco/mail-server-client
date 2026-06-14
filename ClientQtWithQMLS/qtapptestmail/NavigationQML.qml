@@ -1,10 +1,16 @@
 import QtQuick
+import QtQuick.Effects
 import QtQuick.Shapes
 
 Rectangle {
     id: navigationQML
 
     color: "#ffffff"
+
+    signal inboxClicked
+    signal starredClicked
+    signal sentClicked
+    signal draftClicked
 
     // Header
     Rectangle {
@@ -16,6 +22,9 @@ Rectangle {
 
         height: 60
         color: "#ffffff"
+
+        // Set z-index for the entire header so it stays above the email list
+        z: 10
 
         // Bottom border
         Rectangle {
@@ -41,7 +50,6 @@ Rectangle {
 
             Text {
                 id: a
-
                 anchors.centerIn: parent
 
                 height: 20
@@ -66,7 +74,7 @@ Rectangle {
 
             anchors.left: background.right
             anchors.leftMargin: 8
-            anchors.right: buttonBurgerToPullEmails.left
+            anchors.right: dropdownWrapper.left // Anchor to the dropdown wrapper
             anchors.rightMargin: 4
             anchors.verticalCenter: parent.verticalCenter
 
@@ -133,49 +141,94 @@ Rectangle {
             }
         }
 
-        // Arrow button
-        Rectangle {
-            id: buttonBurgerToPullEmails
+        // Wrapper for the Button and Loader
+        Item {
+            id: dropdownWrapper
 
             anchors.right: parent.right
-            anchors.rightMargin: 12
-            anchors.verticalCenter: parent.verticalCenter
-
-            height: 24
-            width: 24
-
-            color: "transparent"
-            radius: 4
-
-            // TEMP ICON
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: 48
             Rectangle {
-                id: sVG
+                id: buttonBurgerToPullEmails
 
-                x: 4
-                y: 4
-                height: 16
-                width: 16
-                clip: true
-                color: "transparent"
+                anchors.centerIn: parent
+                height: 24
+                width: 24
 
-                Shape {
-                    id: _vector
+                color: clickAreaPullEmails.pressed ? "#ffdede" : "transparent"
+                radius: 4
 
-                    x: 4
-                    y: 6
-                    height: 4
-                    width: 8
+                Rectangle {
+                    id: sVG
+                    anchors.centerIn: parent
+                    height: 16
+                    width: 16
+                    clip: true
+                    color: "transparent"
 
-                    ShapePath {
-                        fillColor: "#00000000"
-                        strokeColor: "#4a5565"
-                        strokeWidth: 1.33
-                        PathSvg { path: "M 0 0 L 4 4 L 8 0" }
+                    scale: clickAreaPullEmails.hovered ? 1.5 : 1.0
+
+                    Behavior on scale {
+                        NumberAnimation {
+                            duration: 150
+                            easing.type: Easing.InOutQuad
+                        }
+                    }
+
+                    Shape {
+                        id: _vector
+                        anchors.centerIn: parent
+                        height: 4
+                        width: 8
+
+                        ShapePath {
+                            fillColor: "transparent"
+                            strokeColor: "#4a5565"
+                            strokeWidth: 1.33
+                            PathSvg { path: "M 0 0 L 4 4 L 8 0" }
+                        }
+                    }
+                }
+
+                HoverHandler {
+                    id: clickAreaPullEmails
+                    cursorShape: Qt.PointingHandCursor
+                }
+
+                TapHandler {
+                    onTapped: {
+                        if (String(accountChangeLoader.source) === "") {
+                            accountChangeLoader.source = "SwitchAccountQML.qml"
+                        } else {
+                            accountChangeLoader.source = ""
+                        }
                     }
                 }
             }
         }
-    }
+
+        //Loader for Account change popup
+        Loader {
+            id: accountChangeLoader
+            z: 999
+            anchors.top: parent.bottom
+            anchors.topMargin: 4
+            anchors.left: background.left
+            anchors.leftMargin: -12
+
+            width: item ? item.implicitWidth : 0
+            height: item ? item.implicitHeight : 0
+
+            source: ""
+            Behavior on opacity {
+                NumberAnimation { duration: 200 }
+            }
+
+            opacity: status === Loader.Ready ? 1 : 0
+           //
+        }
+}
 
     // Compose button
     Rectangle {
@@ -188,13 +241,6 @@ Rectangle {
         height: 76
         color: "transparent"
 
-        MouseArea{
-            anchors.fill:parent
-            onPressed: {
-                emailsModel.AddData("no","no","no","no")
-            }
-        }
-
         Rectangle {
             id: buttonToComposeEmail
 
@@ -205,8 +251,28 @@ Rectangle {
 
             height: 44
 
-            color: "#155dfc"
+            color: hoverHandlerComposeEmails.hovered ? "#0c43f7" : "#155dfc"
             radius: 10
+
+            HoverHandler {
+                    id: hoverHandlerComposeEmails
+                    cursorShape: Qt.PointingHandCursor
+                }
+
+                TapHandler
+                {
+                    onTapped:
+                    {
+                        newMessageLoader.active = true
+                        if (String(newMessageLoader.source) === "")
+                        {
+                            newMessageLoader.source = "NewMessageQML.qml"
+                        } else
+                        {
+                            newMessageLoader.source = ""
+                        }
+                    }
+                }
 
             // TEMP ICON
             Rectangle {
@@ -271,6 +337,7 @@ Rectangle {
                 verticalAlignment: Text.AlignVCenter
             }
         }
+
     }
 
     // Navigation
@@ -292,10 +359,20 @@ Rectangle {
             anchors.right: parent.right
             anchors.leftMargin: 8
             anchors.rightMargin: 8
-
+            color: hoverHandlerInboxButton.hovered ? "#dbdbdb" : "#f3f4f6"
             height: 40
-            color: "#f3f4f6"
             radius: 10
+
+            HoverHandler {
+                id: hoverHandlerInboxButton
+                cursorShape: Qt.PointingHandCursor
+            }
+
+            TapHandler {
+                onTapped: {
+                    inboxClicked()
+                }
+            }
 
             // TEMP ICON
             Rectangle {
@@ -362,7 +439,7 @@ Rectangle {
                     font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
                     horizontalAlignment: Text.AlignHCenter
                     lineHeight: 16; lineHeightMode: Text.FixedHeight
-                    text: "2"; textFormat: Text.PlainText
+                    text: inboxModel.emailsCount; textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                 }
             }
@@ -379,9 +456,20 @@ Rectangle {
             anchors.top: buttonToOpenInbox.bottom
             anchors.topMargin: 4
 
+            color: hoverHandlerStarredButton.hovered ? "#f3f4f6" : "#ffffff"
             height: 40
-            color: "transparent"
             radius: 10
+
+            HoverHandler {
+                id: hoverHandlerStarredButton
+                cursorShape: Qt.PointingHandCursor
+            }
+
+            TapHandler {
+                onTapped: {
+                    starredClicked()
+                }
+            }
 
             // TEMP ICON
             Rectangle {
@@ -439,7 +527,7 @@ Rectangle {
                     font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
                     horizontalAlignment: Text.AlignHCenter
                     lineHeight: 16; lineHeightMode: Text.FixedHeight
-                    text: "2"; textFormat: Text.PlainText
+                    text: starredModel.emailsCount; textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                 }
             }
@@ -456,9 +544,20 @@ Rectangle {
             anchors.top: buttonToOpenStarred.bottom
             anchors.topMargin: 4
 
+            color: hoverHandlerSentButton.hovered ? "#f3f4f6" : "#ffffff"
             height: 40
-            color: "transparent"
             radius: 10
+
+            HoverHandler {
+                id: hoverHandlerSentButton
+                cursorShape: Qt.PointingHandCursor
+            }
+
+            TapHandler {
+                onTapped: {
+                    sentClicked()
+                }
+            }
 
             // TEMP ICON
             Rectangle {
@@ -527,7 +626,7 @@ Rectangle {
                     font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
                     horizontalAlignment: Text.AlignHCenter
                     lineHeight: 16; lineHeightMode: Text.FixedHeight
-                    text: "2"; textFormat: Text.PlainText
+                    text: sentModel.emailsCount; textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                 }
             }
@@ -544,9 +643,20 @@ Rectangle {
             anchors.top: buttonToOpenSent.bottom
             anchors.topMargin: 4
 
+            color: hoverHandlerDraftsButton.hovered ? "#f3f4f6" : "#ffffff"
             height: 40
-            color: "transparent"
             radius: 10
+
+            HoverHandler {
+                id: hoverHandlerDraftsButton
+                cursorShape: Qt.PointingHandCursor
+            }
+
+            TapHandler {
+                onTapped: {
+                    draftClicked()
+                }
+            }
 
             // TEMP ICON
             Rectangle {
@@ -648,7 +758,7 @@ Rectangle {
                     font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
                     horizontalAlignment: Text.AlignHCenter
                     lineHeight: 16; lineHeightMode: Text.FixedHeight
-                    text: "2"; textFormat: Text.PlainText
+                    text: draftModel.emailsCount; textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                 }
             }
