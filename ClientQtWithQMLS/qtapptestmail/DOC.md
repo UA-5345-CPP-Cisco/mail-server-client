@@ -1,74 +1,79 @@
-\### EmailListModel
+# EmailListModel
 
+## Overview
 
+`EmailListModel` is a custom `QAbstractListModel` implementation designed for displaying email messages in QML applications. It provides efficient pagination and role-based data access for seamless UI integration.
 
-`EmailListModel` is a custom `QAbstractListModel` implementation designed for displaying email messages in QML applications.
+---
 
+## ✨ Key Features
 
+### Data Storage
+- **Starred Status** - Track favorited emails
+- **Subject/Theme** - Email subject line
+- **Sender Name** - Name of the email sender
+- **Message Preview** - Short preview of email content
+- **Timestamp** - Email date and time
 
-\#### Features
+### Pagination
+- Fixed page size: **8 emails per page**
+- Navigation methods:
+  - `NextPage()` - Move to the next page
+  - `PrevPage()` - Move to the previous page
+  - `SetPage(int page)` - Jump to a specific page
+- Automatic UI notifications on page or page count changes
 
+### Additional Features
+- Dynamic insertion of email entries
+- Exposes data to QML through custom roles
+- Reactive updates for ListView components
 
+---
 
-\* Stores email information:
+## 📋 Roles Reference
 
+| Role | Type | Description |
+|------|------|-------------|
+| `StarredRole` | `bool` | Indicates whether the email is starred/favorited |
+| `ThemeRole` | `QString` | Email subject/theme line |
+| `NameRole` | `QString` | Sender's name |
+| `PreviewRole` | `QString` | Short preview of the email body |
+| `TimeRole` | `QString` | Email timestamp (formatted) |
 
+---
 
-&#x20; \* Starred status
-
-&#x20; \* Subject/theme
-
-&#x20; \* Sender name
-
-&#x20; \* Message preview
-
-&#x20; \* Timestamp
-
-\* Exposes data to QML through custom roles.
-
-\* Supports pagination with a fixed page size of \*\*8 emails per page\*\*.
-
-\* Provides methods for navigating between pages:
-
-
-
-&#x20; \* `NextPage()`
-
-&#x20; \* `PrevPage()`
-
-&#x20; \* `SetPage(int page)`
-
-\* Allows dynamic insertion of email entries.
-
-\* Notifies the UI when the current page or total page count changes.
-
-
-
-\#### Roles
-
-
-
-| Role          | Description                            |
-
-| ------------- | -------------------------------------- |
-
-| `StarredRole` | Indicates whether the email is starred |
-
-| `ThemeRole`   | Email subject/theme                    |
-
-| `NameRole`    | Sender name                            |
-
-| `PreviewRole` | Short preview of the email content     |
-
-| `TimeRole`    | Email timestamp                        |
-
-
-
-\#### Purpose
-
-
+## 🎯 Purpose
 
 This model is intended for use with QML views such as `ListView`, providing an efficient and scalable way to display large email collections while keeping only a subset of items visible through pagination.
 
+---
 
+## 💡 Usage Example
 
+```qml
+ListView {
+    model: emailListModel
+    delegate: EmailItem {
+        starred: model.StarredRole
+        subject: model.ThemeRole
+        sender: model.NameRole
+        preview: model.PreviewRole
+        timestamp: model.TimeRole
+    }
+}
+```
+
+---
+
+## 🔄 Navigation Example
+
+```cpp
+// Move to next page
+emailListModel->NextPage();
+
+// Move to previous page
+emailListModel->PrevPage();
+
+// Jump to page 3
+emailListModel->SetPage(3);
+```
