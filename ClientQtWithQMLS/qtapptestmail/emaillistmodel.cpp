@@ -2,38 +2,34 @@
 #include <QTime>
 
 EmailListModel::EmailListModel(QObject *parent)
-    : QAbstractListModel{parent}
-    , m_current_page(0)
+
+        : QAbstractListModel(parent)
 {}
 
 int EmailListModel::rowCount(const QModelIndex &parent) const
 {
-    if(parent.isValid()) return 0;
-    int start = m_data_per_page * m_current_page;
-    int remain = static_cast<int>(m_data.size()) - start;
-
-    int result = qMax(0, qMin(m_data_per_page, remain));
-
-    return result;
+    if (parent.isValid()) return 0;
+    return static_cast<int>(m_data.size());
 }
 
 QVariant EmailListModel::data(const QModelIndex &index, int role) const
 {
-    if(!index.isValid()) return {};
+    if (!index.isValid()) return {};
+    if (index.row() >= static_cast<int>(m_data.size())) return {};
 
-    int real_index = m_data_per_page * m_current_page + index.row();
+    const auto& item = m_data[index.row()];
 
-    if(real_index >= m_data.size()) return {};
-
-    const auto& item = m_data[real_index];
-
-    switch(role){
-    case Role::ThemeRole: return item.theme;
-    case Role::NameRole: return item.name;
-    case Role::PreviewRole: return item.preview;
-    case Role::TimeRole: return item.time;
+    switch (role) {
+        case StarredRole: return item.is_starred;
+        case SentRole: return item.is_sent;
+        case DraftRole: return item.is_draft;
+        case ThemeRole: return item.theme;
+        case NameRole: return item.name;
+        case SendToRole: return item.sendTo;
+        case PreviewRole: return item.preview;
+        case ContentRole: return item.content;
+        case TimeRole: return item.time;
     }
-
     return {};
 }
 
@@ -41,97 +37,43 @@ QHash<int, QByteArray> EmailListModel::roleNames() const
 {
     return {
         {StarredRole, "emailsStarred"},
+        {SentRole, "emailsSent"},
+        {DraftRole, "emailsDraft"},
         {ThemeRole, "emailsTheme"},
         {NameRole, "emailsName"},
+        {SendToRole, "emailsSendTo"},
         {PreviewRole, "emailsPreview"},
+        {ContentRole, "emailsContent"},
         {TimeRole, "emailsTime"}
     };
 }
 
-void EmailListModel::NextPage()
+void EmailListModel::AddData(bool is_starred, bool is_sent, bool is_draft,
+             const QString& theme, const QString& name,
+             const QString& sendTo, const QString& content, const QString& time)
 {
-    if(m_current_page + 1 >= CountPage()) return;
-
-    beginResetModel();
-    ++m_current_page;
-    endResetModel();
-
-    emit currentPageChanged();
-    emit pageAmountTextChanged();
+    QString t = time.isEmpty() ? QTime::currentTime().toString("hh:mm") : time;
+    QString preview = makePreview(content, 30);
+    AddData({is_starred, is_sent, is_draft, theme, name, sendTo, preview, content, t});
 }
 
-void EmailListModel::PrevPage()
+QString EmailListModel::makePreview(const QString& text, int maxLen)
 {
-    if(m_current_page == 0) return;
+    if (text.length() <= maxLen)
+        return text;
 
-    beginResetModel();
-    --m_current_page;
-    endResetModel();
+    int pos = text.lastIndexOf(' ', maxLen);
 
-    emit currentPageChanged();
-    emit pageAmountTextChanged();
-}
+    if (pos < 0)
+        pos = maxLen;
 
-void EmailListModel::SetPage(int page)
-{
-    if(page < 0 || page >= CountPage()) return;
-
-    beginResetModel();
-    m_current_page = page;
-    endResetModel();
-
-    emit currentPageChanged();
-}
-
-void EmailListModel::AddData(bool is_starred, QString theme, QString name, QString preview)
-{
-    QString time = QTime::currentTime().toString("hh:mm");
-    AddData({is_starred, theme, name, preview, time});
-    emit pageAmountTextChanged();
+    return text.left(pos) + "...";
 }
 
 void EmailListModel::AddData(const EmailData &item)
 {
-    int row = m_data.size();
+    beginInsertRows(QModelIndex(), m_data.size(), m_data.size());
     m_data.push_back(item);
-
-    if (row < m_data_per_page * (m_current_page + 1)) {
-        int local_row = row - m_data_per_page * m_current_page;
-        beginInsertRows(QModelIndex(), local_row, local_row);
-        endInsertRows();
-    }
-
-    emit pageCountChanged();
-
-    emit totalEmailsCountChanged();
-}
-
-int EmailListModel::CountPage() const
-{
-    return (m_data.size() + m_data_per_page - 1) / m_data_per_page;
-}
-
-int EmailListModel::CurrentPage() const
-{
-    return m_current_page;
-}
-int EmailListModel::TotalEmailsCount() const
-{
-    return static_cast<int>(m_data.size());
-}
-QString EmailListModel::PageAmountText() const
-{
-    if (m_data.empty())
-    {
-        return QString("0-0 з 0");
-    }
-
-    int start_idx = m_current_page * m_data_per_page + 1;
-
-    int end_idx = qMin(static_cast<int>(m_data.size()), (m_current_page + 1) * m_data_per_page);
-
-    return QString("%1-%2 of %3")
-        .arg(start_idx)
-        .arg(end_idx)
-        .arg(m_data.size());
+    endInsertRows();
+    emit dataAdded();
 }

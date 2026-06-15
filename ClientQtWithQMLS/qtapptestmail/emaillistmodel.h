@@ -10,54 +10,52 @@
 struct EmailData
 {
     bool is_starred;
+    bool is_sent;
+    bool is_draft;
     QString theme;
     QString name;
+    QString sendTo;
     QString preview;
+    QString content;
     QString time;
+};
+
+enum EmailRole
+{
+    StarredRole = Qt::UserRole+1,
+    SentRole,
+    DraftRole,
+    ThemeRole,
+    NameRole,
+    SendToRole,
+    PreviewRole,
+    ContentRole,
+    TimeRole
 };
 
 class EmailListModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_ENUM(EmailRole)
+
 public:
-
-    enum Role
-    {
-        StarredRole = Qt::UserRole+1,
-        ThemeRole,
-        NameRole,
-        PreviewRole,
-        TimeRole
-    };
-
     explicit EmailListModel(QObject *parent = nullptr);
 
-
-    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    int      rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
 
-    Q_INVOKABLE void NextPage();
-    Q_INVOKABLE void PrevPage();
-    Q_INVOKABLE void SetPage(int page);
-    Q_INVOKABLE void AddData(bool is_starred, QString theme, QString name, QString preview);
-    Q_PROPERTY(int totalEmailsCount READ totalEmailsCount NOTIFY totalEmailsCountChanged)
-    Q_PROPERTY(QString pageAmountText READ pageAmountText NOTIFY pageAmountTextChanged)
-
+    Q_INVOKABLE void AddData(bool is_starred, bool is_sent, bool is_draft,
+                             const QString& theme, const QString& name,
+                             const QString& sendTo, const QString& content, const QString& time);
     void AddData(const EmailData& item);
-    int CountPage() const;
-    int CurrentPage() const;
-    int TotalEmailsCount() const;
-    QString PageAmountText() const;
+
 signals:
-    void currentPageChanged();
-    void pageCountChanged();
-    void totalEmailsCountChanged();
-    void pageAmountTextChanged();
+    void dataAdded();
 private:
+    QString makePreview(const QString& text, int maxLen = 50);
     std::vector<EmailData> m_data;
-    int m_current_page;
-    static constexpr int m_data_per_page = 8;
 };
+
 
 #endif // EMAILLISTMODEL_H

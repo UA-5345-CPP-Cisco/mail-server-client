@@ -7,6 +7,35 @@ Rectangle
     id: emailsListQML
     color: "#ffffff"
 
+    property bool isDraftMode: false
+    property var sourceModel: inboxModel
+
+    Component {
+        id: draftDelegate
+
+        DraftItem {
+            width: parent.width
+
+            theme: parent.pTheme
+            name: parent.pName
+            preview: parent.pPreview
+            time: parent.pTime
+        }
+    }
+
+    Component {
+        id: emailsDelegate
+
+        ListItem {
+            width: parent.width
+
+            theme: parent.pTheme
+            name: parent.pName
+            preview: parent.pPreview
+            time: parent.pTime
+        }
+    }
+
     // Right border (handle of SplitView)
     Rectangle
     {
@@ -72,7 +101,6 @@ Rectangle
                 color: "#ffffff"
                 radius: 10
 
-                // TEMP SEARCH ICON
                 Item
                 {
                     id: searchIconArea
@@ -93,8 +121,7 @@ Rectangle
                 // PlaceHolder
                 Rectangle
                 {
-                    id: search_container
-
+		    id: search_container
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
@@ -306,7 +333,6 @@ Rectangle
                         clip: true
                         color: "transparent"
 
-                        //TEMP BACK ICON
                         Image
                         {
                             source: "qrc:/pngs/assets/ic_button_back.svg"
@@ -327,6 +353,17 @@ Rectangle
                     height: 18
                     color: "transparent"
                     scale: clickAreaMoveForvard.containsMouse ? 1.3 : 1.0
+                    MouseArea {
+                        id: clickAreaMoveForvard
+                        anchors.fill: parent
+
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked: {
+                            emailsModel.NextPage()
+                        }
+                    }
 
                     Behavior on scale
                     {
@@ -334,19 +371,6 @@ Rectangle
                         {
                             duration: 150
                             easing.type: Easing.InOutQuad
-                        }
-                    }
-                    MouseArea
-                    {
-                        id: clickAreaMoveForvard
-                        anchors.fill: parent
-
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-
-                        onClicked:
-                        {
-                            emailsModel.NextPage()
                         }
                     }
 
@@ -359,7 +383,6 @@ Rectangle
                         clip: true
                         color: "transparent"
 
-                        //TEMP FORWARD ICON
                         Image
                         {
                             source: "qrc:/pngs/assets/ic_button_forward.svg"
@@ -385,23 +408,20 @@ Rectangle
             bottom: parent.bottom;
         }
 
-        model: emailsModel
+        model: sourceModel
 
-        delegate: ListItem
+        delegate: Loader
         {
-            anchors.left: parent.left
-            anchors.right: parent.right
-            starred: emailsStarred
-            theme:   emailsTheme
-            name:    emailsName
-            preview: emailsPreview
-            time:    emailsTime
-        }
-    }
+            width: listView.width
 
-    Component.onCompleted:
-    {
-        emailsModel.AddData(false, "no","no","no","no")
-        emailsModel.AddData(false, "no","no","no","no")
+            property string pTheme: emailsTheme
+            property string pName: emailsName
+            property string pPreview: emailsPreview
+            property string pTime: emailsTime
+
+            sourceComponent: isDraftMode
+                             ? draftDelegate
+                             : emailsDelegate
+        }
     }
 }

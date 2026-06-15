@@ -3,6 +3,8 @@ import QtQuick.Shapes
 import QtQuick.Controls
 Rectangle
 {
+    //properties
+
     id: newMessageQML
     implicitHeight: 398
     implicitWidth: 420
@@ -332,7 +334,28 @@ Rectangle
 
                     onClicked:
                     {
-                        closeMessageWindow()
+                        if(subject_input.text.trim() === "" && recipient_input.text.trim() === "" && message_input.text.trim() === "")
+                        {
+                            closeMessageWindow()
+                        }
+                        else
+                        {
+                            let subject_text = (subject_input.text.trim() === "") ? "empty" : subject_input.text;
+                            let recipient_text = (recipient_input.text.trim() === "") ? "empty" : recipient_input.text;
+                            let message_text = (message_input.text.trim() === "") ? "empty" : message_input.text;
+
+                            emailsModel.AddData(
+                                false,
+                                false,
+                                true,
+                                subject_text,
+                                currentUser.username,
+                                recipient_input.text,
+                                message_text,
+                                ""
+                            );
+                            closeMessageWindow()
+                        }
                     }
                 }
 
@@ -686,8 +709,31 @@ Rectangle
                 hoverEnabled: true
                 onPressed:
                 {
-                    popup_test.visible = true
-                    emailsModel.AddData(false, subject_input.text, recipient_input.text, message_input.text)
+                    if(recipient_input.text === "")
+                    {
+                        recipient_input.text = "Enter Recipient!"
+                    }
+                    else
+                    {
+
+                        let subject_text = (subject_input.text.trim() === "") ? "empty" : subject_input.text;
+                        let message_text = (message_input.text.trim() === "") ? "empty" : message_input.text;
+
+                        emailsModel.AddData(
+                            false,
+                            true,
+                            false,
+                            subject_text,
+                            currentUser.username,
+                            recipient_input.text,
+                            message_text,
+                            ""
+                        );
+                        message_input.clear()
+                        recipient_input.clear()
+                        subject_input.clear()
+
+                    }
                 }
             }
 

@@ -8,6 +8,11 @@ Rectangle
 
     color: "#ffffff"
 
+    signal inboxClicked
+    signal starredClicked
+    signal sentClicked
+    signal draftClicked
+
     // Header
     Rectangle
     {
@@ -21,6 +26,7 @@ Rectangle
         color: "#ffffff"
 
         z: 10
+
 
         // Bottom border
         Rectangle
@@ -158,29 +164,20 @@ Rectangle
 
                     scale: clickAreaPullEmails.hovered ? 1.5 : 1.0
 
-                    Behavior on scale
-                    {
-                        NumberAnimation
-                        {
+                    Behavior on scale {
+                        NumberAnimation {
                             duration: 150
                             easing.type: Easing.InOutQuad
                         }
                     }
 
-                    Shape
+                    Image
                     {
-                        id: _vector
+                        source: "qrc:/pngs/assets/ic_arrow_down.svg"
+                        width: 18
+                        height: 18
+                        fillMode: Image.PreserveAspectFit
                         anchors.centerIn: parent
-                        height: 4
-                        width: 8
-
-                        ShapePath
-                        {
-                            fillColor: "transparent"
-                            strokeColor: "#4a5565"
-                            strokeWidth: 1.33
-                            PathSvg { path: "M 0 0 L 4 4 L 8 0" }
-                        }
                     }
                 }
 
@@ -276,7 +273,6 @@ Rectangle
                     }
                 }
 
-            // TEMP ICON
             Rectangle
             {
                 id: sVG_1
@@ -319,6 +315,7 @@ Rectangle
                 verticalAlignment: Text.AlignVCenter
             }
         }
+
     }
 
     // Navigation
@@ -455,7 +452,7 @@ Rectangle
             {
                 onTapped:
                 {
-                    window.selectedFolder = "sent"
+                    sentClicked()
                 }
             }
 
@@ -556,7 +553,7 @@ Rectangle
             {
                 onTapped:
                 {
-                    window.selectedFolder = "starred"
+                    starredClicked()
                 }
             }
 
@@ -652,7 +649,7 @@ Rectangle
             {
                 onTapped:
                 {
-                    window.selectedFolder = "drafts"
+                    draftClicked()
                 }
             }
 

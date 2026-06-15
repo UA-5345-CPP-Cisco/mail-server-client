@@ -4,6 +4,8 @@
 #include <QIcon>
 #include <QQmlContext>
 #include "emaillistmodel.h"
+#include "emailfilterproxy.h"
+#include "emailpageproxy.h"
 #include "currentuser.h"
 
 int main(int argc, char *argv[])
@@ -13,9 +15,33 @@ int main(int argc, char *argv[])
     app.setWindowIcon(QIcon("qrc:/pngs/assets/Icon.png"));
     QQmlApplicationEngine engine;
 
-    //emails model
-    EmailListModel model{};
-    engine.rootContext()->setContextProperty("emailsModel", &model);
+    auto* model = new EmailListModel(&app);
+
+    auto* inboxFilter = new EmailFilterProxy(EmailFilterProxy::Inbox, &app);
+    auto* sentFilter = new EmailFilterProxy(EmailFilterProxy::Sent, &app);
+    auto* starredFilter = new EmailFilterProxy(EmailFilterProxy::Starred, &app);
+    auto* draftFilter = new EmailFilterProxy(EmailFilterProxy::Draft, &app);
+
+    inboxFilter->setSourceModel(model);
+    sentFilter->setSourceModel(model);
+    starredFilter->setSourceModel(model);
+    draftFilter->setSourceModel(model);
+
+    auto* inbox = new EmailPageProxy(&app);
+    auto* sent = new EmailPageProxy(&app);
+    auto* starred = new EmailPageProxy(&app);
+    auto* draft = new EmailPageProxy(&app);
+
+    inbox->setSourceModel(inboxFilter);
+    sent->setSourceModel(sentFilter);
+    starred->setSourceModel(starredFilter);
+    draft->setSourceModel(draftFilter);
+
+    engine.rootContext()->setContextProperty("emailsModel", model);
+    engine.rootContext()->setContextProperty("inboxModel", inbox);
+    engine.rootContext()->setContextProperty("sentModel", sent);
+    engine.rootContext()->setContextProperty("starredModel", starred);
+    engine.rootContext()->setContextProperty("draftModel", draft);
     //current user in system
     engine.rootContext()->setContextProperty(
         "currentUser",

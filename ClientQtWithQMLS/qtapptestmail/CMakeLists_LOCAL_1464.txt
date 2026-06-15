@@ -39,10 +39,6 @@ qt_add_qml_module(appqtapptestmail
         SOURCES
         emaillistmodel.h
         emaillistmodel.cpp
-        emailfilterproxy.h
-        emailfilterproxy.cpp
-        emailpageproxy.h  
-        emailpageproxy.cpp
         currentuser.h
         databasemanager.h
         hotkeysmanager.h

@@ -6,20 +6,28 @@ import QtQuick.Effects
 ApplicationWindow {
     //properties
     property string selectedFolder: "inbox"
-    property int inboxCount: emailsModel.totalEmailsCount
-    property int starredCount: 0
-    property int sentCount: 0
-    property int draftsCount: 0
-    property string amountText: emailsModel.pageAmountText
+    property int inboxCount: inboxModel.totalEmailsCount
+    property int starredCount: starredModel.totalEmailsCount
+    property int sentCount: sentModel.totalEmailsCount
+    property int draftsCount: draftModel.totalEmailsCount
+    property string amountText: emailList.sourceModel ? emailList.sourceModel.pageAmountText : "0-0 of 0"
+
+    //FunctionSorter
+    function closeMessageWindow()
+    {
+        newMessageLoader.active = false
+        newMessageLoader.source = ""
+
+    }
+
+    function closeSettingsWindow()
+    {
+        settingsLoader.active = false
+        settingsLoader.source = ""
+    }
 
 
     //blocks
-    ToolTip {
-        id: popup_test
-        text: currentUser.email + " " + currentUser.username
-        visible: true
-        timeout: 5000
-    }
     id: window
     visible: true
     width: 1024
@@ -28,33 +36,64 @@ ApplicationWindow {
     minimumWidth: 750
     title: "Mail Client Interface"
 
-    MouseArea {
+    Component.onCompleted:
+    {
+        emailsModel.AddData(false, false, false, "no", "no", "no", "no", "no")
+
+        emailsModel.AddData(true, false, false, "no", "no", "no", "no", "no")
+        emailsModel.AddData(true, false, false, "no", "no", "no", "no", "no")
+        emailsModel.AddData(true, false, false, "no", "no", "no", "no", "no")
+
+        emailsModel.AddData(false, false, true, "no", "no", "no", "no", "no")
+        emailsModel.AddData(false, false, true, "no", "no", "no", "no", "no")
+    }
+
+    MouseArea
+    {
         anchors.fill: parent
-        onClicked: {
+        onClicked:
+        {
             window.contentItem.forceActiveFocus()
         }
     }
 
-    function closeMessageWindow() {
-        newMessageLoader.active = false
-        newMessageLoader.source = ""
+    //new message loader
+    Loader
+    {
+        id: newMessageLoader
+        active: false
+        z: 999
+        anchors.rightMargin: 10
+        anchors.bottomMargin: 10
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+
+        width: item ? item.implicitWidth : 0
+        height: item ? item.implicitHeight : 0
+
+        source: ""
+        Behavior on opacity
+        {
+            NumberAnimation { duration: 200 }
+        }
+
+        opacity: status === Loader.Ready ? 1 : 0
     }
 
-    function closeSettingsWindow() {
-        settingsLoader.active = false
-        settingsLoader.source = ""
-    }
 
-    Item {
-        id: mainContent
+    RowLayout
+    {
         anchors.fill: parent
+        spacing: 0
 
-        SplitView {
+        SplitView
+        {
             id: splitView
             anchors.fill: parent
             orientation: Qt.Horizontal
 
-            handle: Rectangle {
+            handle: Rectangle
+            {
                 id: handleDelegate
                 color: "transparent"
                 containmentMask: Item
@@ -75,21 +114,49 @@ ApplicationWindow {
                 }
             }
 
-            NavigationQML {
+            NavigationQML
+            {
                 id: navMenu
+
+                Layout.preferredWidth: 250
+                Layout.fillHeight: true
                 SplitView.preferredWidth: 250
                 SplitView.minimumWidth: 180
                 SplitView.maximumWidth: 350
                 SplitView.fillHeight: true
-            }
 
-            EmailsListQML {
+                onInboxClicked:
+                {
+                    emailList.isDraftMode = false
+                    emailList.sourceModel = inboxModel
+                }
+                onStarredClicked:
+                {
+                    emailList.isDraftMode = false
+                    emailList.sourceModel = starredModel
+                }
+                onSentClicked:
+                {
+                    emailList.isDraftMode = false
+                    emailList.sourceModel = sentModel
+                }
+                onDraftClicked:
+                {
+                    emailList.isDraftMode = true
+                    emailList.sourceModel = draftModel
+                }
+            }
+            EmailsListQML
+            {
+                id:emailList
                 SplitView.preferredWidth: 350
                 SplitView.minimumWidth: 250
                 SplitView.fillHeight: true
             }
 
-            ContentBlankPageQML {
+            ContentBlankPageQML
+            {
+
                 SplitView.fillWidth: true
                 SplitView.fillHeight: true
                 SplitView.minimumWidth: 250
@@ -136,25 +203,6 @@ ApplicationWindow {
                 wheel.accepted = true
             }
         }
-    }
-
-    Loader {
-        id: newMessageLoader
-        active: false
-        z: 999
-        anchors.rightMargin: 10
-        anchors.bottomMargin: 10
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-
-        width: item ? item.implicitWidth : 0
-        height: item ? item.implicitHeight : 0
-        source: ""
-
-        Behavior on opacity {
-            NumberAnimation { duration: 200 }
-        }
-        opacity: status === Loader.Ready ? 1 : 0
     }
 
     Loader {
