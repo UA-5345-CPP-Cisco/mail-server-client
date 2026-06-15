@@ -1,53 +1,83 @@
-#include <iostream>
+#include "SMTP_Server.hpp"
+
+#include "smtp/Logger.hpp"
+#include "smtp/Services.hpp"
+#include "smtp/SocketsManager.hpp"
+#include "smtp/ThreadPool.hpp"
+
+#include <cstdlib>
 #include <string>
 
-// Boost includes
-#include <boost/asio.hpp>
+namespace {
 
-// Crypto++ includes
-#include <cryptopp/cryptlib.h>
-#include <cryptopp/sha.h>
-#include <cryptopp/hex.h>
+std::string ReadEnv(const char* name, std::string fallback = {})
+{
+    if (const char* value = std::getenv(name)) {
+        return value;
+    }
+    return fallback;
+}
 
-int main() {
-    std::cout << "--- Mail Server Component Quick Test ---\n" << std::endl;
+std::uint16_t ReadPort()
+{
+    const std::string value = ReadEnv("SMTP_PORT", "2525");
+    return static_cast<std::uint16_t>(std::stoul(value));
+}
 
-    try {
-        // 1. Use Boost.Asio to parse/validate an IP address string
-        std::string ip_string = "127.0.0.1";
-        boost::system::error_code ec;
-        boost::asio::ip::address ip_address = boost::asio::ip::make_address(ip_string, ec);
+bool ReadFlag(const char* name)
+{
+    const std::string value = ReadEnv(name);
+    return value == "1" || value == "true" || value == "TRUE" || value == "yes";
+}
 
-        if (ec) {
-            std::cerr << "Boost Error: Invalid IP address: " << ec.message() << std::endl;
-            return 1;
-        }
-        std::cout << "[Boost Asio] Successfully validated IP: " << ip_address.to_string() << std::endl;
+}
 
-        // 2. Use Crypto++ to compute a SHA-256 hash of the IP address
-        std::string hash_input = "Server-IP:" + ip_address.to_string();
-        std::string hash_output;
+int main()
+{
+    smtp::ServerConfig config;
+    config.host = ReadEnv("SMTP_HOST", "0.0.0.0");
+    config.port = ReadPort();
+    config.serverName = ReadEnv("SMTP_SERVER_NAME", "localhost");
+    config.requireAuthentication = ReadFlag("SMTP_REQUIRE_AUTH");
+    config.allowPlainAuthenticationWithoutTls = ReadFlag("SMTP_ALLOW_PLAIN_AUTH_WITHOUT_TLS");
 
-        CryptoPP::SHA256 hash;
-        CryptoPP::StringSource ss(
-            hash_input,
-            true,
-            new CryptoPP::HashFilter(
-                hash,
-                new CryptoPP::HexEncoder(
-                    new CryptoPP::StringSink(hash_output),
-                    true // UpperCase output
-                )
-            )
-        );
-
-        std::cout << "[Crypto++] Input string:  " << hash_input << std::endl;
-        std::cout << "[Crypto++] SHA-256 Hash: " << hash_output << std::endl;
-
-    } catch (const std::exception& e) {
-        std::cerr << "Standard Exception caught: " << e.what() << std::endl;
-        return 1;
+    const std::string certificate = ReadEnv("SMTP_TLS_CERT");
+    const std::string privateKey = ReadEnv("SMTP_TLS_KEY");
+    if (!certificate.empty() && !privateKey.empty()) {
+        config.tls.enabled = true;
+        config.tls.certificatePath = certificate;
+        config.tls.privateKeyPath = privateKey;
     }
 
+    smtp::BoostSocketsManager socketsManager;
+    smtp::ThreadPool threadPool;
+    smtp::SmtpSessionHandler sessionHandler;
+    smtp::AuthService authService;
+    smtp::dbSQLite mailStorage({ReadEnv("SMTP_STORAGE_PATH", "mail-storage")});
+    smtp::CacheService cacheService;
+    smtp::DeliveryService deliveryService;
+    smtp::LookupService lookupService;
+    smtp::Logger logger;
+
+    const std::string username = ReadEnv("SMTP_AUTH_USER");
+    const std::string password = ReadEnv("SMTP_AUTH_PASSWORD");
+    if (!username.empty()) {
+        authService.AddUser(username, password);
+    }
+
+    smtp::SmtpServerDependencies dependencies{
+        socketsManager,
+        threadPool,
+        sessionHandler,
+        authService,
+        mailStorage,
+        cacheService,
+        deliveryService,
+        lookupService,
+        logger
+    };
+
+    smtp::SmtpServer server(config, dependencies);
+    server.Start();
     return 0;
 }

@@ -25,3 +25,20 @@ target_compile_definitions(mail_storage_tests
 
 include(GoogleTest)
 gtest_discover_tests(mail_storage_tests)
+
+add_executable(smtp_client_tests
+	smtp_client/SmtpClientTests.cpp
+)
+
+target_link_libraries(smtp_client_tests
+	PRIVATE
+		smtp_client
+		GTest::gtest_main
+)
+
+target_compile_features(smtp_client_tests
+	PRIVATE
+		cxx_std_17
+)
+
+gtest_discover_tests(smtp_client_tests)
