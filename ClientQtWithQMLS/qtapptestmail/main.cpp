@@ -7,6 +7,7 @@
 #include "emailfilterproxy.h"
 #include "emailpageproxy.h"
 #include "currentuser.h"
+#include "messagesearchmodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -15,33 +16,47 @@ int main(int argc, char *argv[])
     app.setWindowIcon(QIcon("qrc:/pngs/assets/Icon.png"));
     QQmlApplicationEngine engine;
 
-    auto* model = new EmailListModel(&app);
+    auto* model = new ISXMail::EmailListModel(&app);
 
-    auto* inboxFilter = new EmailFilterProxy(EmailFilterProxy::Inbox, &app);
-    auto* sentFilter = new EmailFilterProxy(EmailFilterProxy::Sent, &app);
-    auto* starredFilter = new EmailFilterProxy(EmailFilterProxy::Starred, &app);
-    auto* draftFilter = new EmailFilterProxy(EmailFilterProxy::Draft, &app);
+    auto* inboxFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Inbox, &app);
+    auto* sentFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Sent, &app);
+    auto* starredFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Starred, &app);
+    auto* draftFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Draft, &app);
 
     inboxFilter->setSourceModel(model);
     sentFilter->setSourceModel(model);
     starredFilter->setSourceModel(model);
     draftFilter->setSourceModel(model);
 
-    auto* inbox = new EmailPageProxy(&app);
-    auto* sent = new EmailPageProxy(&app);
-    auto* starred = new EmailPageProxy(&app);
-    auto* draft = new EmailPageProxy(&app);
+    auto* inboxSearch = new ISXMail::MessageSearchModel(&app);
+    auto* sentSearch = new ISXMail::MessageSearchModel(&app);
+    auto* starredSearch = new ISXMail::MessageSearchModel(&app);
+    auto* draftSearch = new ISXMail::MessageSearchModel(&app);
 
-    inbox->setSourceModel(inboxFilter);
-    sent->setSourceModel(sentFilter);
-    starred->setSourceModel(starredFilter);
-    draft->setSourceModel(draftFilter);
+    inboxSearch->setSourceModel(inboxFilter);
+    sentSearch->setSourceModel(sentFilter);
+    starredSearch->setSourceModel(starredFilter);
+    draftSearch->setSourceModel(draftFilter);
+
+    auto* inbox = new ISXMail::EmailPageProxy(&app);
+    auto* sent = new ISXMail::EmailPageProxy(&app);
+    auto* starred = new ISXMail::EmailPageProxy(&app);
+    auto* draft = new ISXMail::EmailPageProxy(&app);
+
+    inbox->setSourceModel(inboxSearch);
+    sent->setSourceModel(sentSearch);
+    starred->setSourceModel(starredSearch);
+    draft->setSourceModel(draftSearch);
 
     engine.rootContext()->setContextProperty("emailsModel", model);
     engine.rootContext()->setContextProperty("inboxModel", inbox);
     engine.rootContext()->setContextProperty("sentModel", sent);
     engine.rootContext()->setContextProperty("starredModel", starred);
     engine.rootContext()->setContextProperty("draftModel", draft);
+    engine.rootContext()->setContextProperty("inboxSearchModel", inboxSearch);
+    engine.rootContext()->setContextProperty("sentSearchModel", sentSearch);
+    engine.rootContext()->setContextProperty("starredSearchModel", starredSearch);
+    engine.rootContext()->setContextProperty("draftSearchModel", draftSearch);
     //current user in system
     engine.rootContext()->setContextProperty(
         "currentUser",
@@ -58,3 +73,4 @@ int main(int argc, char *argv[])
 
     return QGuiApplication::exec();
 }
+

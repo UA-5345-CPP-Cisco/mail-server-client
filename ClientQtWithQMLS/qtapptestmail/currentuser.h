@@ -1,5 +1,4 @@
-#ifndef CURRENTUSER_H
-#define CURRENTUSER_H
+#pragma once
 
 #include <QObject>
 #include <QString>
@@ -53,5 +52,3 @@ private:
 };
 
 }
-
-#endif // CURRENTUSER_H

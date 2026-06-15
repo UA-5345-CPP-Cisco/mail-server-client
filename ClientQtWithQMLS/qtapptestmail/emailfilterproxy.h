@@ -1,8 +1,7 @@
-#ifndef EMAILFILTERPROXY_H
-#define EMAILFILTERPROXY_H
-
+#pragma once
 #include <QSortFilterProxyModel>
 #include "emaillistmodel.h"
+namespace ISXMail{
 
 class EmailFilterProxy : public QSortFilterProxyModel
 {
@@ -20,4 +19,4 @@ private:
     FolderType m_type;
 };
 
-#endif // EMAILFILTERPROXY_H
+}

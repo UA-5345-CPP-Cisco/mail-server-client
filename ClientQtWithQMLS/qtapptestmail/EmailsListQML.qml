@@ -10,6 +10,24 @@ Rectangle
     property bool isDraftMode: false
     property var sourceModel: inboxModel
 
+    function activeSearchModel() {
+        if (sourceModel === inboxModel)
+            return inboxSearchModel
+        if (sourceModel === sentModel)
+            return sentSearchModel
+        if (sourceModel === starredModel)
+            return starredSearchModel
+        if (sourceModel === draftModel)
+            return draftSearchModel
+        return inboxSearchModel
+    }
+
+    onSourceModelChanged: {
+        var searchProxy = activeSearchModel()
+        if (searchProxy && search_input.text !== searchProxy.searchedText)
+            search_input.text = searchProxy.searchedText
+    }
+
     Component {
         id: draftDelegate
 
@@ -20,6 +38,7 @@ Rectangle
             name: parent.pName
             preview: parent.pPreview
             time: parent.pTime
+            searchModel: parent.pSearchModel
         }
     }
 
@@ -33,6 +52,7 @@ Rectangle
             name: parent.pName
             preview: parent.pPreview
             time: parent.pTime
+            searchModel: parent.pSearchModel
         }
     }
 
@@ -144,6 +164,12 @@ Rectangle
                         horizontalAlignment: Text.AlignLeft
                         placeholderText: "Search mail"
                         placeholderTextColor: "#99a1af"
+
+                        onTextChanged: {
+                            var searchProxy = emailsListQML.activeSearchModel()
+                            if (searchProxy)
+                                searchProxy.searchedText = text
+                        }
 
                         background: Item {}
 
@@ -323,7 +349,8 @@ Rectangle
 
                         onClicked:
                         {
-                            emailList.sourceModel.prevPage()
+                                    if (listView.model)
+                                        listView.model.prevPage()
                         }
                     }
                     Rectangle
@@ -363,7 +390,8 @@ Rectangle
                         cursorShape: Qt.PointingHandCursor
 
                         onClicked: {
-                            emailList.sourceModel.nextPage()
+                            if (listView.model)
+                                listView.model.nextPage()
                         }
                     }
 
@@ -422,6 +450,7 @@ Rectangle
             property string pName: emailsName
             property string pPreview: emailsPreview
             property string pTime: emailsTime
+            property var pSearchModel: emailsListQML.activeSearchModel()
 
             sourceComponent: isDraftMode
                              ? draftDelegate

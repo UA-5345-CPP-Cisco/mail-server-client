@@ -1,11 +1,13 @@
-#ifndef EMAILLISTMODEL_H
-#define EMAILLISTMODEL_H
+#pragma once
 
 #include <QObject>
 #include <QAbstractListModel>
 #include <vector>
 #include <QtMath>
 #include <QString>
+
+namespace ISXMail
+{
 
 struct EmailData
 {
@@ -14,7 +16,7 @@ struct EmailData
     bool is_draft;
     QString theme;
     QString name;
-    QString sendTo;
+    QString send_to;
     QString preview;
     QString content;
     QString time;
@@ -22,7 +24,7 @@ struct EmailData
 
 enum EmailRole
 {
-    StarredRole = Qt::UserRole+1,
+    StarredRole = Qt::UserRole + 1,
     SentRole,
     DraftRole,
     ThemeRole,
@@ -39,23 +41,23 @@ class EmailListModel : public QAbstractListModel
     Q_ENUM(EmailRole)
 
 public:
-    explicit EmailListModel(QObject *parent = nullptr);
+    explicit EmailListModel(QObject* parent = nullptr);
 
-    int      rowCount(const QModelIndex& parent = QModelIndex()) const override;
+    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
 
     Q_INVOKABLE void AddData(bool is_starred, bool is_sent, bool is_draft,
                              const QString& theme, const QString& name,
-                             const QString& sendTo, const QString& content, const QString& time);
+                             const QString& send_to, const QString& content, const QString& time);
     void AddData(const EmailData& item);
 
 signals:
     void dataAdded();
+
 private:
     QString makePreview(const QString& text, int maxLen = 50);
     std::vector<EmailData> m_data;
 };
 
-
-#endif // EMAILLISTMODEL_H
+} // namespace ISXMail

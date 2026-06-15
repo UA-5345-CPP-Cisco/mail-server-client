@@ -1,4 +1,5 @@
 #include "emailfilterproxy.h"
+namespace ISXMail{
 
 EmailFilterProxy::EmailFilterProxy(FolderType type, QObject *parent)
     : QSortFilterProxyModel(parent), m_type(type)
@@ -22,4 +23,5 @@ bool EmailFilterProxy::filterAcceptsRow(int sourceRow, const QModelIndex& source
         case Draft:   return  is_draft;
     }
     return true;
+}
 }

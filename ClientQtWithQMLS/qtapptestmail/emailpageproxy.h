@@ -1,6 +1,7 @@
-#ifndef EMAILPAGEPROXY_H
-#define EMAILPAGEPROXY_H
+#pragma once
 #include <QSortFilterProxyModel>
+namespace ISXMail{
+
 class EmailPageProxy : public QSortFilterProxyModel
 {
     Q_OBJECT
@@ -37,4 +38,4 @@ private:
     int m_emails_count = 0;
     static constexpr int m_per_page = 8;
 };
-#endif // EMAILPAGEPROXY_H
+}

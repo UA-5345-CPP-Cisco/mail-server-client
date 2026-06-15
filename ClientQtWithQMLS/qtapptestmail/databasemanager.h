@@ -1,10 +1,6 @@
-#ifndef DATABASEMANAGER_H
-#define DATABASEMANAGER_H
-
-
+#pragma once
 namespace ISXDatabaseManager
 {
 
 }
 
-#endif // DATABASEMANAGER_H

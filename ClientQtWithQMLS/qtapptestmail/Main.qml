@@ -129,21 +129,25 @@ ApplicationWindow {
                 {
                     emailList.isDraftMode = false
                     emailList.sourceModel = inboxModel
+                    selectedFolder = "inbox"
                 }
                 onStarredClicked:
                 {
                     emailList.isDraftMode = false
                     emailList.sourceModel = starredModel
+                    selectedFolder = "starred"
                 }
                 onSentClicked:
                 {
                     emailList.isDraftMode = false
                     emailList.sourceModel = sentModel
+                    selectedFolder = "sent"
                 }
                 onDraftClicked:
                 {
                     emailList.isDraftMode = true
                     emailList.sourceModel = draftModel
+                    selectedFolder = "drafts"
                 }
             }
             EmailsListQML

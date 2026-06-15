@@ -1,4 +1,5 @@
 #include "emailpageproxy.h"
+namespace ISXMail{
 
 EmailPageProxy::EmailPageProxy(QObject* parent)
     : QSortFilterProxyModel(parent) {}
@@ -119,4 +120,5 @@ QString EmailPageProxy::pageAmountText() const
     int start_idx = m_current_page * m_per_page + 1;
     int end_idx   = qMin(m_emails_count, (m_current_page + 1) * m_per_page);
     return QStringLiteral("%1-%2 of %3").arg(start_idx).arg(end_idx).arg(m_emails_count);
+}
 }

@@ -1,10 +1,7 @@
-#ifndef HOTKEYSMANAGER_H
-#define HOTKEYSMANAGER_H
+#pragma once
 
 
 namespace ISXHotkeysManager
 {
 
 }
-
-#endif // HOTKEYSMANAGER_H

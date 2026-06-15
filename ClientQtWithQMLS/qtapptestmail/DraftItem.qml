@@ -12,6 +12,7 @@ Rectangle {
     property string name: "ceo@company.com"
     property string preview: "Draft of the quarterly summary for leadership review..."
     property string time: "Jun 4"
+    property var searchModel: null
 
     signal clicked()
 
@@ -63,8 +64,8 @@ Rectangle {
                     font.family: "Segoe UI"; font.pixelSize: 14; font.weight: Font.Normal
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 20; lineHeightMode: Text.FixedHeight
-                    text: name
-                    textFormat: Text.PlainText; verticalAlignment: Text.AlignVCenter
+                    text: searchModel ? searchModel.highlightAllFoundWords(name, searchModel.searchedText) : name
+                    textFormat: Text.RichText; verticalAlignment: Text.AlignVCenter
                 }
             }
 
@@ -105,8 +106,8 @@ Rectangle {
                 font.family: "Segoe UI"; font.pixelSize: 14; font.weight: Font.Normal
                 horizontalAlignment: Text.AlignLeft
                 lineHeight: 20; lineHeightMode: Text.FixedHeight
-                text: theme
-                textFormat: Text.PlainText; verticalAlignment: Text.AlignVCenter
+                    text: searchModel ? searchModel.highlightAllFoundWords(theme, searchModel.searchedText) : theme
+                    textFormat: Text.RichText; verticalAlignment: Text.AlignVCenter
                 wrapMode: Text.Wrap
             }
         }
@@ -128,8 +129,8 @@ Rectangle {
                 font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
                 horizontalAlignment: Text.AlignLeft
                 lineHeight: 16; lineHeightMode: Text.FixedHeight
-                text: preview
-                textFormat: Text.PlainText; verticalAlignment: Text.AlignVCenter
+                    text: searchModel ? searchModel.highlightAllFoundWords(preview, searchModel.searchedText) : preview
+                    textFormat: Text.RichText; verticalAlignment: Text.AlignVCenter
                 wrapMode: Text.Wrap
             }
         }
