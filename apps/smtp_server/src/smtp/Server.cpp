@@ -73,7 +73,9 @@ void SmtpServer::RouteEvent(SmtpEvent event)
     }
 
     if (sessions_.size() >= config_.maxConnections) {
-        dependencies_.logger.Log(LogLevel::Warning, "SMTP connection limit reached");
+        dependencies_.logger.Log(
+            Logging::LogLevel::Warning,
+            "SMTP connection limit reached");
         dependencies_.socketsManager.Close(event.connectionId);
         return;
     }

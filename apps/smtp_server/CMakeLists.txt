@@ -1,20 +1,16 @@
 add_library(smtp_server_core
 	src/smtp/BoostSocketsManager.cpp
-	src/smtp/Logger.cpp
 	src/smtp/Server.cpp
 	src/smtp/Services.cpp
 	src/smtp/Session.cpp
 	src/smtp/SmtpSessionHandler.cpp
-	src/smtp/ThreadPool.cpp
 	include/SMTP_Server.hpp
 	include/smtp/Event.hpp
-	include/smtp/Logger.hpp
 	include/smtp/Server.hpp
 	include/smtp/ServerConfig.hpp
 	include/smtp/Services.hpp
 	include/smtp/Session.hpp
 	include/smtp/SocketsManager.hpp
-	include/smtp/ThreadPool.hpp
 )
 
 target_include_directories(smtp_server_core
@@ -29,6 +25,8 @@ target_link_libraries(smtp_server_core
 		OpenSSL::SSL
 		OpenSSL::Crypto
 		Threads::Threads
+		mail_logger
+		mail_thread_pool
 	PRIVATE
 		cryptopp::cryptopp
 )

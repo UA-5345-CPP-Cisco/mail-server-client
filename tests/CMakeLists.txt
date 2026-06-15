@@ -42,3 +42,37 @@ target_compile_features(smtp_client_tests
 )
 
 gtest_discover_tests(smtp_client_tests)
+
+add_executable(logger_tests
+	logger/LoggerTests.cpp
+)
+
+target_link_libraries(logger_tests
+	PRIVATE
+		mail_logger
+		GTest::gtest_main
+)
+
+target_compile_features(logger_tests
+	PRIVATE
+		cxx_std_17
+)
+
+gtest_discover_tests(logger_tests)
+
+add_executable(thread_pool_tests
+	thread_pool/ThreadPoolTests.cpp
+)
+
+target_link_libraries(thread_pool_tests
+	PRIVATE
+		mail_thread_pool
+		GTest::gtest_main
+)
+
+target_compile_features(thread_pool_tests
+	PRIVATE
+		cxx_std_17
+)
+
+gtest_discover_tests(thread_pool_tests)

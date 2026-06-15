@@ -1,7 +1,7 @@
 #pragma once
 
+#include "logger/Logger.h"
 #include "smtp/Event.hpp"
-#include "smtp/Logger.hpp"
 #include "smtp/ServerConfig.hpp"
 #include "smtp/Services.hpp"
 #include "smtp/SocketsManager.hpp"
@@ -24,7 +24,7 @@ struct SmtpSessionContext {
     ICacheService& cacheService;
     IDeliveryService& deliveryService;
     ILookupService& lookupService;
-    ILogger& logger;
+    Logging::ILogger& logger;
 };
 
 // High-level state of the SMTP conversation for one client.

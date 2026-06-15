@@ -57,10 +57,12 @@ void SmtpSession::ProcessEvent(const SmtpEvent& event) noexcept
     try {
         handler_.HandleEvent(event, state_, context_);
     } catch (const std::exception& exception) {
-        context_.logger.Log(LogLevel::Error, exception.what());
+        context_.logger.Log(Logging::LogLevel::Error, exception.what());
         context_.socketsManager.Close(connectionId_);
     } catch (...) {
-        context_.logger.Log(LogLevel::Error, "Unhandled SMTP session error");
+        context_.logger.Log(
+            Logging::LogLevel::Error,
+            "Unhandled SMTP session error");
         context_.socketsManager.Close(connectionId_);
     }
 

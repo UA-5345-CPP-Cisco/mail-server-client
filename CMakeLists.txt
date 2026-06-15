@@ -41,6 +41,8 @@ find_package(Threads REQUIRED)
 
 add_subdirectory(libs/smtp_client)
 add_subdirectory(libs/storage)
+add_subdirectory(libs/logger)
+add_subdirectory(libs/thread_pool)
 add_subdirectory(apps/smtp_server)
 
 if(MAIL_BUILD_TESTS)

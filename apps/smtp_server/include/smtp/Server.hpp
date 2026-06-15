@@ -1,12 +1,12 @@
 #pragma once
 
+#include "logger/Logger.h"
 #include "smtp/Event.hpp"
-#include "smtp/Logger.hpp"
 #include "smtp/ServerConfig.hpp"
 #include "smtp/Services.hpp"
 #include "smtp/Session.hpp"
 #include "smtp/SocketsManager.hpp"
-#include "smtp/ThreadPool.hpp"
+#include "thread_pool/ThreadPool.h"
 
 #include <atomic>
 #include <cstddef>
@@ -19,14 +19,14 @@ namespace smtp {
 // SmtpServer coordinates these objects but does not own them.
 struct SmtpServerDependencies {
     ISocketsManager& socketsManager;
-    IThreadPool& threadPool;
+    Concurrency::IThreadPool& threadPool;
     SmtpSessionHandler& sessionHandler;
     IAuthService& authService;
     IMailStorage& mailStorage;
     ICacheService& cacheService;
     IDeliveryService& deliveryService;
     ILookupService& lookupService;
-    ILogger& logger;
+    Logging::ILogger& logger;
 };
 
 // Server-level orchestrator.

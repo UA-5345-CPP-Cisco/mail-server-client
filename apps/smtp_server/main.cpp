@@ -1,9 +1,9 @@
 #include "SMTP_Server.hpp"
 
-#include "smtp/Logger.hpp"
+#include "logger/Logger.h"
 #include "smtp/Services.hpp"
 #include "smtp/SocketsManager.hpp"
-#include "smtp/ThreadPool.hpp"
+#include "thread_pool/ThreadPool.h"
 
 #include <cstdlib>
 #include <string>
@@ -50,14 +50,14 @@ int main()
     }
 
     smtp::BoostSocketsManager socketsManager;
-    smtp::ThreadPool threadPool;
+    Concurrency::ThreadPool threadPool;
     smtp::SmtpSessionHandler sessionHandler;
     smtp::AuthService authService;
     smtp::dbSQLite mailStorage({ReadEnv("SMTP_STORAGE_PATH", "mail-storage")});
     smtp::CacheService cacheService;
     smtp::DeliveryService deliveryService;
     smtp::LookupService lookupService;
-    smtp::Logger logger;
+    Logging::Logger logger;
 
     const std::string username = ReadEnv("SMTP_AUTH_USER");
     const std::string password = ReadEnv("SMTP_AUTH_PASSWORD");
