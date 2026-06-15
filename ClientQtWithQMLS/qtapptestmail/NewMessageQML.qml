@@ -3,8 +3,6 @@ import QtQuick.Shapes
 import QtQuick.Controls
 Rectangle
 {
-    //properties
-
     id: newMessageQML
     implicitHeight: 398
     implicitWidth: 420
@@ -44,7 +42,8 @@ Rectangle
             onReleased: cursorShape = Qt.OpenHandCursor
         }
 
-        Rectangle {
+        Rectangle
+        {
             id: drag_container
 
             x: 12
@@ -56,7 +55,8 @@ Rectangle
             clip: true
             color: "transparent"
 
-            Text {
+            Text
+            {
                 id: new_Message
 
                 height: 20
@@ -76,7 +76,8 @@ Rectangle
             }
         }
 
-        Rectangle {
+        Rectangle
+        {
             id: windowControlsWrapper
             x: 320
             y: 8
@@ -84,7 +85,8 @@ Rectangle
             height: 45
             color: "transparent"
 
-            MouseArea {
+            MouseArea
+            {
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.ArrowCursor
@@ -121,198 +123,99 @@ Rectangle
                             // MinimizeWindow
                         }
                     }
-
-
-            Rectangle {
-                id: sVG
-
-                x: 4
-                y: 4
-
-                height: 14
-                width: 14
-
-                clip: true
-                color: "transparent"
-                scale: clickAreaMinimizeWindow.containsMouse ? 1.5 : 1.0
-
-                Behavior on scale
-                {
-                    NumberAnimation
+                    Rectangle
                     {
-                        duration: 150
-                        easing.type: Easing.InOutQuad
-                    }
-                }
+                        id: sVG
 
-                Shape {
-                    id: _vector
+                        x: 4
+                        y: 4
 
-                    x: 2.92
-                    y: 7
+                        height: 14
+                        width: 14
 
-                    height: 0
-                    width: 8.17
+                        clip: true
+                        color: "transparent"
+                        scale: clickAreaMinimizeWindow.containsMouse ? 1.5 : 1.0
 
-                    ShapePath {
-                        id: _vector_ShapePath0
+                        Behavior on scale
+                        {
+                            NumberAnimation
+                            {
+                                duration: 150
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
 
-                        fillColor: "#00000000"
-                        strokeColor: "#ffffff"
-                        strokeWidth: 1.17
-
-                        PathSvg {
-                            id: _vector_ShapePath0_PathSvg0
-
-                            path: "M 0 0 L 8.166666030883789 0"
+                        Image
+                        {
+                           source: "qrc:/pngs/assets/ic_minimize_window.svg"
+                           width: 14
+                           height: 14
+                           sourceSize.width: 120
+                           sourceSize.height: 120
+                           fillMode: Image.PreserveAspectFit
+                           anchors.centerIn: parent
                         }
                     }
                 }
-            }
-        }
 
                 //button to maximize window
                 Rectangle
                 {
-                id: buttonToMaximizeWindow
+                    id: buttonToMaximizeWindow
 
-                height: 22
-                width: 22
+                    height: 22
+                    width: 22
+                    radius: 4
 
-                color: clickAreaMaximizeWindow.pressed ? "#ffdede" : "transparent"
+                    color: clickAreaMaximizeWindow.pressed ? "#ffdede" : "transparent"
 
-                MouseArea
-                {
-                    id: clickAreaMaximizeWindow
-                    anchors.fill: parent
-
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-
-                    onClicked:
+                    MouseArea
                     {
-                        //MaximizeWindow
+                        id: clickAreaMaximizeWindow
+                        anchors.fill: parent
+
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked:
+                        {
+                            //MaximizeWindow
+                        }
                     }
-                }
 
-            radius: 4
-
-            Rectangle
-            {
-                id: sVG_1
-                x: 4
-                y: 4
-                height: 14
-                width: 14
-                clip: true
-                color: "transparent"
-                scale: clickAreaMaximizeWindow.containsMouse ? 1.5 : 1.0
-
-                Behavior on scale
-                {
-                    NumberAnimation
+                    Rectangle
                     {
-                        duration: 150
-                        easing.type: Easing.InOutQuad
-                    }
-                }
+                        id: sVG_1
+                        x: 4
+                        y: 4
+                        height: 14
+                        width: 14
+                        clip: true
+                        color: "transparent"
+                        scale: clickAreaMaximizeWindow.containsMouse ? 1.5 : 1.0
 
-                Shape {
-                    id: _vector_1
+                        Behavior on scale
+                        {
+                            NumberAnimation
+                            {
+                                duration: 150
+                                easing.type: Easing.InOutQuad
+                            }
+                        }
 
-                    x: 8.75
-                    y: 1.75
-
-                    height: 3.50
-                    width: 3.50
-
-                    ShapePath {
-                        id: _vector_1_ShapePath0
-
-                        fillColor: "#00000000"
-                        fillRule: ShapePath.WindingFill
-                        strokeColor: "#ffffff"
-                        strokeWidth: 1.17
-
-                        PathSvg {
-                            id: _vector_1_ShapePath0_PathSvg0
-
-                            path: "M 0 0 L 3.5 0 L 3.5 3.5"
+                        Image
+                        {
+                           source: "qrc:/pngs/assets/ic_extend_window.svg"
+                           width: 14
+                           height: 14
+                           sourceSize.width: 120
+                           sourceSize.height: 120
+                           fillMode: Image.PreserveAspectFit
+                           anchors.centerIn: parent
                         }
                     }
                 }
-                Shape {
-                    id: _vector_2
-
-                    x: 1.75
-                    y: 8.75
-
-                    height: 3.50
-                    width: 3.50
-
-                    ShapePath {
-                        id: _vector_2_ShapePath0
-
-                        fillColor: "#00000000"
-                        fillRule: ShapePath.WindingFill
-                        strokeColor: "#ffffff"
-                        strokeWidth: 1.17
-
-                        PathSvg {
-                            id: _vector_2_ShapePath0_PathSvg0
-
-                            path: "M 3.5 3.5 L 0 3.5 L 0 0"
-                        }
-                    }
-                }
-                Shape {
-                    id: _vector_3
-
-                    x: 8.17
-                    y: 1.75
-
-                    height: 4.08
-                    width: 4.08
-
-                    ShapePath {
-                        id: _vector_3_ShapePath0
-
-                        fillColor: "#00000000"
-                        strokeColor: "#ffffff"
-                        strokeWidth: 1.17
-
-                        PathSvg {
-                            id: _vector_3_ShapePath0_PathSvg0
-
-                            path: "M 4.0833330154418945 0 L 0 4.0833330154418945"
-                        }
-                    }
-                }
-                Shape {
-                    id: _vector_4
-
-                    x: 1.75
-                    y: 8.17
-
-                    height: 4.08
-                    width: 4.08
-
-                    ShapePath {
-                        id: _vector_4_ShapePath0
-
-                        fillColor: "#00000000"
-                        strokeColor: "#ffffff"
-                        strokeWidth: 1.17
-
-                        PathSvg {
-                            id: _vector_4_ShapePath0_PathSvg0
-
-                            path: "M 0 4.0833330154418945 L 4.0833330154418945 0"
-                        }
-                    }
-                }
-            }
-        }
 
                 //button to close window
                 Rectangle
@@ -382,65 +285,21 @@ Rectangle
                         }
                     }
 
-                    Shape
+                    Image
                     {
-                        id: _vector_5
-
-                        x: 3.50
-                        y: 3.50
-
-                        height: 7
-                        width: 7
-
-                        ShapePath
-                        {
-                            id: _vector_5_ShapePath0
-
-                            fillColor: "#00000000"
-                            strokeColor: "#ffffff"
-                            strokeWidth: 1.17
-
-                            PathSvg
-                            {
-                                id: _vector_5_ShapePath0_PathSvg0
-
-                                path: "M 7 0 L 0 7"
-                            }
-                        }
-                    }
-
-                    Shape
-                    {
-                        id: _vector_6
-
-                        x: 3.50
-                        y: 3.50
-
-                        height: 7
-                        width: 7
-
-                        ShapePath
-                        {
-                            id: _vector_6_ShapePath0
-
-                            fillColor: "#00000000"
-                            strokeColor: "#ffffff"
-                            strokeWidth: 1.17
-
-                            PathSvg
-                            {
-                                id: _vector_6_ShapePath0_PathSvg0
-
-                                path: "M 0 0 L 7 7"
-                            }
-                        }
+                       source: "qrc:/pngs/assets/ic_close_window.svg"
+                       width: 14
+                       height: 14
+                       sourceSize.width: 120
+                       sourceSize.height: 120
+                       fillMode: Image.PreserveAspectFit
+                       anchors.centerIn: parent
                     }
                 }
             }
         }
-        }
     }
-
+    }
     Rectangle
     {
         id: recipient_background
@@ -592,7 +451,6 @@ Rectangle
         }
     }
 
-
     Rectangle
     {
         id: textarea
@@ -606,7 +464,8 @@ Rectangle
         clip: true
         color: "#fcf3e6"
 
-        Rectangle {
+        Rectangle
+        {
             id: container
 
             anchors.fill: parent
@@ -614,7 +473,8 @@ Rectangle
 
             color: "transparent"
 
-            TextArea {
+            TextArea
+            {
                 id: message_input
                 anchors.fill: parent
 
@@ -631,7 +491,8 @@ Rectangle
 
                 cursorDelegate: Item {}
 
-                Rectangle {
+                Rectangle
+                {
                     id: custom_cursor_for_message_input
                     width: 1
                     color: "#1f2937"
@@ -644,23 +505,28 @@ Rectangle
                     visible: message_input.activeFocus
 
                     // Smooth right/left movement
-                    Behavior on x {
-                        NumberAnimation {
+                    Behavior on x
+                    {
+                        NumberAnimation
+                        {
                             duration: 80
                             easing.type: Easing.OutCubic
                         }
                     }
 
                     // Smooth UP/DOWN movement
-                    Behavior on y {
-                        NumberAnimation {
+                    Behavior on y
+                    {
+                        NumberAnimation
+                        {
                             duration: 80
                             easing.type: Easing.OutCubic
                         }
                     }
 
                     // Smooth flashing
-                    SequentialAnimation on opacity {
+                    SequentialAnimation on opacity
+                    {
                         loops: Animation.Infinite
                         NumberAnimation { to: 0; duration: 500; easing.type: Easing.InOutSine }
                         NumberAnimation { to: 1; duration: 500; easing.type: Easing.InOutSine }
@@ -676,7 +542,8 @@ Rectangle
 
         y: 340
 
-        Rectangle {
+        Rectangle
+        {
             id: buttonToSend
 
             x: 12
@@ -684,19 +551,20 @@ Rectangle
 
             height: 32
             width: 63
-            bottomLeftRadius: 14
-            bottomRightRadius: 14
             color:"#155dfc"
 
             scale: mouseAreaToSend.containsMouse ? 1.1 : 1.0
-            Behavior on scale {
-                NumberAnimation {
+            Behavior on scale
+            {
+                NumberAnimation
+                {
                     duration: 150
                     easing.type: Easing.InOutQuad
                 }
             }
-            radius: 26843500
-            ToolTip {
+            radius: 14
+            ToolTip
+            {
                 id: popup_test
                 text: subject_input.text + " " + recipient_input.text + " " + message_input.text
                 visible: false
@@ -732,12 +600,12 @@ Rectangle
                         message_input.clear()
                         recipient_input.clear()
                         subject_input.clear()
-
                     }
                 }
             }
 
-            Text {
+            Text
+            {
                 id: send
 
                 x: 16
@@ -759,8 +627,8 @@ Rectangle
                 verticalAlignment: Text.AlignVCenter
             }
         }
-
-        Rectangle {
+        Rectangle
+        {
             id: buttonToDelete
 
             x: 83
@@ -772,8 +640,10 @@ Rectangle
             color: "transparent"
             radius: 4
             scale: mouseAreaToDelete.containsMouse ? 1.3 : 1.0
-            Behavior on scale {
-                NumberAnimation {
+            Behavior on scale
+            {
+                NumberAnimation
+                {
                     duration: 150
                     easing.type: Easing.InOutQuad
                 }
@@ -791,7 +661,8 @@ Rectangle
                 }
             }
 
-            Rectangle {
+            Rectangle
+            {
                 id: sVG_3
 
                 x: 6
@@ -803,120 +674,15 @@ Rectangle
                 clip: true
                 color: "transparent"
 
-                Shape {
-                    id: _vector_7
-
-                    x: 2
-                    y: 4
-
-                    height: 0
-                    width: 12
-
-                    ShapePath {
-                        id: _vector_7_ShapePath0
-
-                        fillColor: "#00000000"
-                        strokeColor: "#6a7282"
-                        strokeWidth: 1.33
-
-                        PathSvg {
-                            id: _vector_7_ShapePath0_PathSvg0
-
-                            path: "M 0 0 L 12 0"
-                        }
-                    }
-                }
-                Shape {
-                    id: _vector_8
-
-                    x: 3.33
-                    y: 4
-
-                    height: 10.67
-                    width: 9.33
-
-                    ShapePath {
-                        id: _vector_8_ShapePath0
-
-                        fillColor: "#00000000"
-                        strokeColor: "#6a7282"
-                        strokeWidth: 1.33
-
-                        PathSvg {
-                            id: _vector_8_ShapePath0_PathSvg0
-
-                            path: "M 9.333333969116211 0 L 9.333333969116211 9.333333611488342 C 9.333333969116211 10.000000298023224 8.666667257036481 10.666666984558105 8.000000544956752 10.666666984558105 L 1.3333334241594588 10.666666984558105 C 0.6666667120797294 10.666666984558105 0 10.000000298023224 0 9.333333611488342 L 0 0"
-                        }
-                    }
-                }
-                Shape {
-                    id: _vector_9
-
-                    x: 5.33
-                    y: 1.33
-
-                    height: 2.67
-                    width: 5.33
-
-                    ShapePath {
-                        id: _vector_9_ShapePath0
-
-                        fillColor: "#00000000"
-                        strokeColor: "#6a7282"
-                        strokeWidth: 1.33
-
-                        PathSvg {
-                            id: _vector_9_ShapePath0_PathSvg0
-
-                            path: "M 0 2.6666667461395264 L 0 1.3333333730697632 C 0 0.6666666865348816 0.6666666865348816 0 1.3333333730697632 0 L 4.0000001192092896 0 C 4.666666805744171 0 5.333333492279053 0.6666666865348816 5.333333492279053 1.3333333730697632 L 5.333333492279053 2.6666667461395264"
-                        }
-                    }
-                }
-                Shape {
-                    id: _vector_10
-
-                    x: 6.67
-                    y: 7.33
-
-                    height: 4
-                    width: 0
-
-                    ShapePath {
-                        id: _vector_10_ShapePath0
-
-                        fillColor: "#00000000"
-                        strokeColor: "#6a7282"
-                        strokeWidth: 1.33
-
-                        PathSvg {
-                            id: _vector_10_ShapePath0_PathSvg0
-
-                            path: "M 0 0 L 0 4"
-                        }
-                    }
-                }
-                Shape {
-                    id: _vector_11
-
-                    x: 9.33
-                    y: 7.33
-
-                    height: 4
-                    width: 0
-
-                    ShapePath {
-                        id: _vector_11_ShapePath0
-
-                        fillColor: "#00000000"
-                        strokeColor: "#6a7282"
-                        strokeWidth: 1.33
-
-                        PathSvg {
-                            id: _vector_11_ShapePath0_PathSvg0
-
-                            path: "M 0 0 L 0 4"
-                        }
-                    }
+                Image
+                {
+                   source: "qrc:/pngs/assets/ic_bin.svg"
+                   width: 16
+                   height: 16
+                   sourceSize.width: 120
+                   sourceSize.height: 120
+                   fillMode: Image.PreserveAspectFit
+                   anchors.centerIn: parent
                 }
             }
         }

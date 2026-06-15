@@ -111,8 +111,10 @@ Rectangle
                     Image
                     {
                         source: "qrc:/pngs/assets/ic_search.svg"
-                        width: 16
-                        height: 16
+                        width: 15
+                        height: 15
+                        sourceSize.width: 120
+                        sourceSize.height: 120
                         fillMode: Image.PreserveAspectFit
                         anchors.centerIn: parent
                     }
@@ -388,6 +390,8 @@ Rectangle
                             source: "qrc:/pngs/assets/ic_button_forward.svg"
                             width: 15
                             height: 15
+                            sourceSize.width: 120
+                            sourceSize.height: 120
                             fillMode: Image.PreserveAspectFit
                             anchors.centerIn: parent
                         }

@@ -18,5 +18,9 @@
         <file>assets/ic_search.svg</file>
         <file>assets/ic_button_back.svg</file>
         <file>assets/ic_button_forward.svg</file>
+        <file>assets/ic_bin.svg</file>
+        <file>assets/ic_close_window.svg</file>
+        <file>assets/ic_extend_window.svg</file>
+        <file>assets/ic_minimize_window.svg</file>
     </qresource>
 </RCC>
