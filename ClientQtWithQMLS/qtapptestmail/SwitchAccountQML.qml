@@ -3,7 +3,8 @@ import QtQuick.Effects
 import QtQuick.Shapes
 
 // SwitchAccountQML.qml
-Rectangle {
+Rectangle
+{
     id: switchAccountQML
 
     implicitWidth: 287
@@ -14,7 +15,8 @@ Rectangle {
     radius: 14
 
     // Header
-    Rectangle {
+    Rectangle
+    {
         id: header
         anchors.top: parent.top
         anchors.left: parent.left
@@ -22,7 +24,8 @@ Rectangle {
         height: 52
         color: "transparent"
 
-        Text {
+        Text
+        {
             x: 16
             y: 16
             height: 20
@@ -34,15 +37,18 @@ Rectangle {
             verticalAlignment: Text.AlignVCenter
         }
 
-        Rectangle {
+        Rectangle
+        {
             x: 254
             y: 18
             width: 16
             height: 16
             color: "transparent"
 
-            Shape {
-                ShapePath {
+            Shape
+            {
+                ShapePath
+                {
                     fillColor: "transparent"
                     strokeColor: "#6a7282"
                     strokeWidth: 1.33
@@ -58,7 +64,8 @@ Rectangle {
                 }
             }
 
-            MouseArea {
+            MouseArea
+            {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onClicked: switchAccountQML.parent.source = ""
@@ -67,7 +74,8 @@ Rectangle {
     }
 
     // Розділювач після header
-    Rectangle {
+    Rectangle
+    {
         anchors.top: header.bottom
         anchors.left: parent.left
         anchors.right: parent.right
@@ -78,7 +86,8 @@ Rectangle {
     }
 
     // Список акаунтів
-    ListView {
+    ListView
+    {
         id: accountList
 
         anchors.top: header.bottom
@@ -91,8 +100,10 @@ Rectangle {
         clip: false
 
         // Тимчасова модель — замінити на AccountController.accountModel
-        model: ListModel {
-            ListElement {
+        model: ListModel
+        {
+            ListElement
+            {
                 accountName: "Personal"
                 accountEmail: "alexm@gmail.com"
                 avatarUrl: ""        // шлях до зображення або ""
@@ -100,7 +111,8 @@ Rectangle {
                 avatarInitial: "P"
                 isActive: true
             }
-            ListElement {
+            ListElement
+            {
                 accountName: "Work"
                 accountEmail: "alex@company.com"
                 avatarUrl: ""
@@ -110,13 +122,15 @@ Rectangle {
             }
         }
 
-        delegate: Rectangle {
+        delegate: Rectangle
+        {
             id: delegateRoot
             width: accountList.width
             height: 72
             color: "transparent"
 
-            Rectangle {
+            Rectangle
+            {
                 id: buttonToSelectAccount
                 x: 8
                 y: 8
@@ -126,7 +140,8 @@ Rectangle {
                 color: delegateMouseArea.containsMouse ? "#f9fafb" : "transparent"
 
                 // Аватарка
-                Rectangle {
+                Rectangle
+                {
                     id: avatarContainer
                     x: 12
                     y: 10
@@ -136,28 +151,34 @@ Rectangle {
                     color: model.avatarUrl !== "" ? "transparent" : model.avatarColor
 
                     // Зображення якщо є
-                    Image {
+                    Image
+                    {
                         anchors.fill: parent
                         source: model.avatarUrl !== "" ? model.avatarUrl : ""
                         visible: model.avatarUrl !== ""
                         fillMode: Image.PreserveAspectCrop
                         layer.enabled: true
-                        layer.effect: Component {
-                                MultiEffect {
-                                    maskEnabled: true
-                                    maskSource: ShaderEffectSource {
-                                        sourceItem: Rectangle {
-                                            width: avatarContainer.width
-                                            height: avatarContainer.height
-                                            radius: avatarContainer.radius
-                                        }
+                        layer.effect: Component
+                        {
+                            MultiEffect
+                            {
+                                maskEnabled: true
+                                maskSource: ShaderEffectSource
+                                {
+                                    sourceItem: Rectangle
+                                    {
+                                        width: avatarContainer.width
+                                        height: avatarContainer.height
+                                        radius: avatarContainer.radius
                                     }
                                 }
                             }
+                        }
                     }
 
                     // Фоллбек — ініціал
-                    Text {
+                    Text
+                    {
                         anchors.centerIn: parent
                         visible: model.avatarUrl === ""
                         text: model.avatarInitial
@@ -169,13 +190,15 @@ Rectangle {
                 }
 
                 // Ім'я + email
-                Column {
+                Column
+                {
                     x: 60
                     y: 10
                     width: parent.width - 88
                     spacing: 0
 
-                    Text {
+                    Text
+                    {
                         width: parent.width
                         height: 20
                         text: model.accountName
@@ -187,7 +210,8 @@ Rectangle {
                         elide: Text.ElideRight
                     }
 
-                    Text {
+                    Text
+                    {
                         width: parent.width
                         height: 16
                         text: model.accountEmail
@@ -201,14 +225,16 @@ Rectangle {
                 }
 
                 // Галочка активного акаунту
-                Shape {
+                Shape
+                {
                     x: parent.width - 28
                     y: 20
                     width: 16
                     height: 16
                     visible: model.isActive
 
-                    ShapePath {
+                    ShapePath
+                    {
                         fillColor: "transparent"
                         strokeColor: "#2b7fff"
                         strokeWidth: 1.33
@@ -216,12 +242,14 @@ Rectangle {
                     }
                 }
 
-                MouseArea {
+                MouseArea
+                {
                     id: delegateMouseArea
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: {
+                    onClicked:
+                    {
                         currentUser.authorize
                         (
                             accountName,
@@ -235,7 +263,8 @@ Rectangle {
     }
 
     // Розділювач перед кнопкою
-    Rectangle {
+    Rectangle
+    {
         id: divider
         anchors.top: accountList.bottom
         anchors.left: parent.left
@@ -247,7 +276,8 @@ Rectangle {
     }
 
     // Кнопка "Add account"
-    Rectangle {
+    Rectangle
+    {
         id: addButton
         anchors.top: divider.bottom
         anchors.left: parent.left
@@ -255,7 +285,8 @@ Rectangle {
         height: 72
         color: "transparent"
 
-        Rectangle {
+        Rectangle
+        {
             x: 8
             y: 8
             width: parent.width - 16
@@ -264,7 +295,8 @@ Rectangle {
             color: addMouseArea.containsMouse ? "#f9fafb" : "transparent"
 
             // Іконка аватарки з плюсом
-            Rectangle {
+            Rectangle
+            {
                 x: 12
                 y: 10
                 width: 36
@@ -274,26 +306,18 @@ Rectangle {
                 border.color: "#e5e7eb"
                 border.width: 1
 
-                Shape {
-                    x: 10; y: 10
-                    width: 16; height: 16
-
-                    ShapePath {
-                        fillColor: "transparent"
-                        strokeColor: "#6a7282"
-                        strokeWidth: 1.33
-                        PathSvg { path: "M 9.33 4 L 9.33 2.67 C 9.33 1.19 8.14 0 6.67 0 L 2.67 0 C 1.19 0 0 1.19 0 2.67 L 0 4" }
-                    }
-                    ShapePath {
-                        fillColor: "transparent"
-                        strokeColor: "#6a7282"
-                        strokeWidth: 1.33
-                        PathSvg { path: "M 5.33 2.67 C 5.33 4.14 4.14 5.33 2.67 5.33 C 1.19 5.33 0 4.14 0 2.67 C 0 1.19 1.19 0 2.67 0 C 4.14 0 5.33 1.19 5.33 2.67 Z" }
-                    }
+                Image
+                {
+                    source: "qrc:/pngs/assets/ic_plus.svg"
+                    width: 12
+                    height: 12
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
                 }
             }
 
-            Text {
+            Text
+            {
                 x: 60
                 y: 18
                 height: 20
@@ -305,12 +329,18 @@ Rectangle {
                 verticalAlignment: Text.AlignVCenter
             }
 
-            MouseArea {
+            MouseArea
+            {
                 id: addMouseArea
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 // onClicked: AccountController.startOAuth()
+                onClicked: loginPopup.open()
+            }
+            AddAccountQML
+            {
+                id: loginPopup
             }
         }
     }

@@ -29,7 +29,6 @@ Rectangle
         width: 420
         topLeftRadius: 14
         topRightRadius: 14
-
         color: "#1e2939"
         MouseArea
         {
@@ -77,8 +76,6 @@ Rectangle
 
         Rectangle {
             id: windowControlsWrapper
-
-
             x: 320
             y: 8
             width: 140
@@ -201,13 +198,10 @@ Rectangle
             Rectangle
             {
                 id: sVG_1
-
                 x: 4
                 y: 4
-
                 height: 14
                 width: 14
-
                 clip: true
                 color: "transparent"
                 scale: clickAreaMaximizeWindow.containsMouse ? 1.5 : 1.0
