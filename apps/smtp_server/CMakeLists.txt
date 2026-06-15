@@ -1,14 +1,18 @@
 add_library(smtp_server_core
+	src/smtp/AuthService.cpp
 	src/smtp/BoostSocketsManager.cpp
+	src/smtp/Configuration.cpp
+	src/smtp/QueueDispatcher.cpp
 	src/smtp/Server.cpp
-	src/smtp/Services.cpp
 	src/smtp/Session.cpp
 	src/smtp/SmtpSessionHandler.cpp
 	include/SMTP_Server.hpp
+	include/smtp/AuthService.hpp
+	include/smtp/Configuration.hpp
 	include/smtp/Event.hpp
+	include/smtp/QueueDispatcher.hpp
 	include/smtp/Server.hpp
 	include/smtp/ServerConfig.hpp
-	include/smtp/Services.hpp
 	include/smtp/Session.hpp
 	include/smtp/SocketsManager.hpp
 )
@@ -26,8 +30,10 @@ target_link_libraries(smtp_server_core
 		OpenSSL::Crypto
 		Threads::Threads
 		mail_logger
+		mail_storage
 		mail_thread_pool
 	PRIVATE
+		Boost::property_tree
 		cryptopp::cryptopp
 )
 
@@ -53,7 +59,6 @@ add_executable(smtp_server
 target_link_libraries(smtp_server
 	PRIVATE
 		smtp_server_core
-		mail_storage
 )
 
 target_compile_features(smtp_server

@@ -1,11 +1,21 @@
 #include "SMTP_Server.hpp"
 
 #include "logger/Logger.h"
-#include "smtp/Services.hpp"
+#include "smtp/AuthService.hpp"
+#include "smtp/Configuration.hpp"
+#include "smtp/QueueDispatcher.hpp"
 #include "smtp/SocketsManager.hpp"
+#include "storage/Database.h"
+#include "storage/MailMessageRepository.h"
+#include "storage/MessageRecipientRepository.h"
+#include "storage/MigrationRunner.h"
+#include "storage/UserRepository.h"
 #include "thread_pool/ThreadPool.h"
 
 #include <cstdlib>
+#include <exception>
+#include <iostream>
+#include <mutex>
 #include <string>
 
 namespace {
@@ -18,66 +28,62 @@ std::string ReadEnv(const char* name, std::string fallback = {})
     return fallback;
 }
 
-std::uint16_t ReadPort()
-{
-    const std::string value = ReadEnv("SMTP_PORT", "2525");
-    return static_cast<std::uint16_t>(std::stoul(value));
 }
 
-bool ReadFlag(const char* name)
+int main(int argumentCount, char* arguments[])
 {
-    const std::string value = ReadEnv(name);
-    return value == "1" || value == "true" || value == "TRUE" || value == "yes";
-}
+    try {
+        const std::string configurationPath =
+            argumentCount > 1 ? arguments[1] : "config/smtp_server.json";
+        const smtp::Configuration configuration(configurationPath);
 
-}
+        smtp::BoostSocketsManager socketsManager;
+        smtp::SmtpSessionHandler sessionHandler;
+        smtp::AuthService authService;
+        Storage::Database database(configuration.Database().storagePath);
+        Storage::MigrationRunner migrationRunner(
+            database,
+            configuration.Database().migrationsPath);
+        migrationRunner.Run();
+        Storage::MailMessageRepository mailMessages(database);
+        Storage::MessageRecipientRepository messageRecipients(database);
+        Storage::UserRepository users(database);
+        std::mutex storageMutex;
+        Logging::Logger logger;
+        Concurrency::ThreadPool threadPool;
+        smtp::QueueDispatcher queueDispatcher(
+            configuration.Server().delivery,
+            threadPool,
+            users,
+            mailMessages,
+            messageRecipients,
+            storageMutex,
+            logger);
 
-int main()
-{
-    smtp::ServerConfig config;
-    config.host = ReadEnv("SMTP_HOST", "0.0.0.0");
-    config.port = ReadPort();
-    config.serverName = ReadEnv("SMTP_SERVER_NAME", "localhost");
-    config.requireAuthentication = ReadFlag("SMTP_REQUIRE_AUTH");
-    config.allowPlainAuthenticationWithoutTls = ReadFlag("SMTP_ALLOW_PLAIN_AUTH_WITHOUT_TLS");
+        const std::string username = ReadEnv("SMTP_AUTH_USER");
+        const std::string password = ReadEnv("SMTP_AUTH_PASSWORD");
+        if (!username.empty()) {
+            authService.AddUser(username, password);
+        }
 
-    const std::string certificate = ReadEnv("SMTP_TLS_CERT");
-    const std::string privateKey = ReadEnv("SMTP_TLS_KEY");
-    if (!certificate.empty() && !privateKey.empty()) {
-        config.tls.enabled = true;
-        config.tls.certificatePath = certificate;
-        config.tls.privateKeyPath = privateKey;
+        smtp::SmtpServerDependencies dependencies{
+            socketsManager,
+            threadPool,
+            sessionHandler,
+            authService,
+            database,
+            mailMessages,
+            messageRecipients,
+            storageMutex,
+            queueDispatcher,
+            logger
+        };
+
+        smtp::SmtpServer server(configuration.Server(), dependencies);
+        server.Start();
+        return 0;
+    } catch (const std::exception& error) {
+        std::cerr << "SMTP server startup failed: " << error.what() << '\n';
+        return 1;
     }
-
-    smtp::BoostSocketsManager socketsManager;
-    Concurrency::ThreadPool threadPool;
-    smtp::SmtpSessionHandler sessionHandler;
-    smtp::AuthService authService;
-    smtp::dbSQLite mailStorage({ReadEnv("SMTP_STORAGE_PATH", "mail-storage")});
-    smtp::CacheService cacheService;
-    smtp::DeliveryService deliveryService;
-    smtp::LookupService lookupService;
-    Logging::Logger logger;
-
-    const std::string username = ReadEnv("SMTP_AUTH_USER");
-    const std::string password = ReadEnv("SMTP_AUTH_PASSWORD");
-    if (!username.empty()) {
-        authService.AddUser(username, password);
-    }
-
-    smtp::SmtpServerDependencies dependencies{
-        socketsManager,
-        threadPool,
-        sessionHandler,
-        authService,
-        mailStorage,
-        cacheService,
-        deliveryService,
-        lookupService,
-        logger
-    };
-
-    smtp::SmtpServer server(config, dependencies);
-    server.Start();
-    return 0;
 }

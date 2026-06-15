@@ -6,18 +6,22 @@
 
 namespace smtp {
 
-struct dbConfig {
+struct DbConfig {
     std::string storagePath{"mail-storage"};
+    std::string migrationsPath{"libs/storage/migrations"};
 };
 
-// TLS settings used by the sockets manager when encrypted SMTP is enabled.
 struct TlsConfig {
     bool enabled{false};
     std::string certificatePath;
     std::string privateKeyPath;
 };
 
-// Runtime settings that describe how the SMTP server should listen and identify itself.
+struct DeliveryConfig {
+    std::size_t batchSize{32};
+    std::uint32_t pollIntervalMilliseconds{100};
+};
+
 struct ServerConfig {
     std::string host{"0.0.0.0"};
     std::uint16_t port{25};
@@ -27,6 +31,7 @@ struct ServerConfig {
     bool requireAuthentication{false};
     bool allowPlainAuthenticationWithoutTls{false};
     TlsConfig tls;
+    DeliveryConfig delivery;
 };
 
 }

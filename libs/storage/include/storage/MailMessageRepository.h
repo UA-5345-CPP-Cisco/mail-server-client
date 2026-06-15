@@ -39,6 +39,7 @@ public:
 		MailMessageStatus expected_status,
 		MailMessageStatus new_status
 	);
+	bool FinalizeDelivery(std::int64_t message_id);
 
 private:
 	Database& m_database;

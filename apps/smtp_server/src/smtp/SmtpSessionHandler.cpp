@@ -70,16 +70,6 @@ std::string ExtractPathArgument(std::string_view commandArgument)
     return value;
 }
 
-std::string ExtractDomainOrMailboxKey(std::string_view value)
-{
-    std::string key = Trim(value);
-    const std::size_t at = key.find('@');
-    if (at != std::string::npos && at + 1 < key.size()) {
-        key = key.substr(at + 1);
-    }
-    return ToUpper(key);
-}
-
 std::optional<std::string> DecodeBase64(std::string_view input)
 {
     static const std::array<int, 256> table = [] {
@@ -256,11 +246,12 @@ void SmtpSessionHandler::HandleMessageReceived(const SmtpEvent& event,
 
     if (state.phase == SmtpSessionPhase::ReceivingMessage) {
         if (line == ".") {
-            MailMessage message{state.sender, state.recipients, state.messageBuffer};
-            const std::string messageId = context.mailStorage.Save(message);
-            context.cacheService.Put("message:" + messageId, message.rawContent);
-            context.deliveryService.QueueForDelivery(message);
-            SendReply(context, state.connectionId, 250, "Message accepted as " + messageId);
+            const std::int64_t messageId = StoreMessage(state, context);
+            SendReply(
+                context,
+                state.connectionId,
+                250,
+                "Message accepted as " + std::to_string(messageId));
             ResetMailTransaction(state);
             return;
         }
@@ -434,12 +425,6 @@ void SmtpSessionHandler::HandleMessageReceived(const SmtpEvent& event,
             return;
         }
 
-        const LookupResult lookup = context.lookupService.Lookup(LookupRequest{ExtractDomainOrMailboxKey(recipient)});
-        if (!lookup.found) {
-            SendReply(context, state.connectionId, 550, "Recipient rejected");
-            return;
-        }
-
         state.recipients.push_back(recipient);
         state.phase = SmtpSessionPhase::MailTransaction;
         SendReply(context, state.connectionId, 250, "Recipient OK");
@@ -501,6 +486,41 @@ void SmtpSessionHandler::HandleDisconnected(const SmtpEvent&,
 {
     ResetMailTransaction(state);
     state.phase = SmtpSessionPhase::Closed;
+}
+
+std::int64_t SmtpSessionHandler::StoreMessage(
+    const SmtpSessionState& state,
+    SmtpSessionContext& context)
+{
+    std::lock_guard<std::mutex> lock(context.storageMutex);
+    context.database.Execute("BEGIN IMMEDIATE;");
+
+    try {
+        const std::int64_t messageId = context.mailMessages.CreateMessage(
+            std::nullopt,
+            state.sender,
+            std::nullopt,
+            state.messageBuffer,
+            std::nullopt,
+            Storage::MailMessageStatus::Queued);
+
+        for (const std::string& recipient : state.recipients) {
+            context.messageRecipients.CreateRecipient(
+                messageId,
+                recipient,
+                Storage::RecipientType::To,
+                Storage::DeliveryStatus::Queued);
+        }
+
+        context.database.Execute("COMMIT;");
+        return messageId;
+    } catch (...) {
+        try {
+            context.database.Execute("ROLLBACK;");
+        } catch (...) {
+        }
+        throw;
+    }
 }
 
 void SmtpSessionHandler::ResetMailTransaction(SmtpSessionState& state)

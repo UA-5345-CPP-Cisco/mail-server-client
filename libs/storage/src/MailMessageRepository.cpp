@@ -174,6 +174,49 @@ bool MailMessageRepository::UpdateStatus(
 	return statement.ChangedRowCount() > 0;
 }
 
+bool MailMessageRepository::FinalizeDelivery(std::int64_t message_id)
+{
+	Statement statement(
+		m_database,
+		R"SQL(
+			UPDATE mail_messages
+			SET status = CASE
+				WHEN EXISTS (
+					SELECT 1
+					FROM message_recipients
+					WHERE
+						message_id = ?
+						AND delivery_status = 'delivered'
+				)
+				THEN 'sent'
+				ELSE 'failed'
+			END
+			WHERE
+				id = ?
+				AND status IN ('queued', 'sending')
+				AND NOT EXISTS (
+					SELECT 1
+					FROM message_recipients
+					WHERE
+						message_id = ?
+						AND delivery_status IN (
+							'pending',
+							'queued',
+							'delivering',
+							'temporary_failed'
+						)
+				);
+		)SQL"
+	);
+
+	statement.BindInt64(1, message_id);
+	statement.BindInt64(2, message_id);
+	statement.BindInt64(3, message_id);
+	statement.Step();
+
+	return statement.ChangedRowCount() > 0;
+}
+
 MailMessageRecord MailMessageRepository::ReadMessage(
 	const Statement& statement
 ) const

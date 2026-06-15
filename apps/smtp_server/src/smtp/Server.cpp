@@ -40,6 +40,7 @@ void SmtpServer::RunOnce()
         RouteEvent(std::move(event));
     }
 
+    dependencies_.queueDispatcher.Poll();
     ScheduleReadySessions();
     RemoveClosedSessions();
 }
@@ -117,10 +118,10 @@ std::shared_ptr<SmtpSession> SmtpServer::GetOrCreateSession(ConnectionId connect
         config_,
         dependencies_.socketsManager,
         dependencies_.authService,
-        dependencies_.mailStorage,
-        dependencies_.cacheService,
-        dependencies_.deliveryService,
-        dependencies_.lookupService,
+        dependencies_.database,
+        dependencies_.mailMessages,
+        dependencies_.messageRecipients,
+        dependencies_.storageMutex,
         dependencies_.logger
     };
 

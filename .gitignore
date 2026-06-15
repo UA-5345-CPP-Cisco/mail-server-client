@@ -42,6 +42,13 @@ compile_commands.json
 *.cache
 *.lastbuildstate
 
+data/*
+!data/mail-server-example.db
+
+*.db
+*.db-wal
+*.db-shm
+
 .idea/
 .vs/
 *.VC.db

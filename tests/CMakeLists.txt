@@ -76,3 +76,27 @@ target_compile_features(thread_pool_tests
 )
 
 gtest_discover_tests(thread_pool_tests)
+
+add_executable(smtp_server_configuration_tests
+	smtp_server/ConfigurationTests.cpp
+	smtp_server/QueueDispatcherTests.cpp
+	smtp_server/SessionStorageTests.cpp
+)
+
+target_link_libraries(smtp_server_configuration_tests
+	PRIVATE
+		smtp_server_core
+		GTest::gtest_main
+)
+
+target_compile_features(smtp_server_configuration_tests
+	PRIVATE
+		cxx_std_17
+)
+
+target_compile_definitions(smtp_server_configuration_tests
+	PRIVATE
+		SMTP_SERVER_TEST_MIGRATIONS_DIR="${PROJECT_SOURCE_DIR}/libs/storage/migrations"
+)
+
+gtest_discover_tests(smtp_server_configuration_tests)

@@ -1,16 +1,21 @@
 #pragma once
 
 #include "logger/Logger.h"
+#include "smtp/AuthService.hpp"
 #include "smtp/Event.hpp"
+#include "smtp/QueueDispatcher.hpp"
 #include "smtp/ServerConfig.hpp"
-#include "smtp/Services.hpp"
 #include "smtp/Session.hpp"
 #include "smtp/SocketsManager.hpp"
+#include "storage/Database.h"
+#include "storage/MailMessageRepository.h"
+#include "storage/MessageRecipientRepository.h"
 #include "thread_pool/ThreadPool.h"
 
 #include <atomic>
 #include <cstddef>
 #include <memory>
+#include <mutex>
 #include <unordered_map>
 
 namespace smtp {
@@ -22,26 +27,14 @@ struct SmtpServerDependencies {
     Concurrency::IThreadPool& threadPool;
     SmtpSessionHandler& sessionHandler;
     IAuthService& authService;
-    IMailStorage& mailStorage;
-    ICacheService& cacheService;
-    IDeliveryService& deliveryService;
-    ILookupService& lookupService;
+    Storage::Database& database;
+    Storage::MailMessageRepository& mailMessages;
+    Storage::MessageRecipientRepository& messageRecipients;
+    std::mutex& storageMutex;
+    QueueDispatcher& queueDispatcher;
     Logging::ILogger& logger;
 };
 
-// Server-level orchestrator.
-//
-// Responsibilities:
-// - start and stop the sockets manager;
-// - run the listening/scheduling loop;
-// - route completed socket events to the correct SmtpSession;
-// - create one SmtpSession per connection id;
-// - ask sessions for safe-to-run tasks;
-// - enqueue those tasks into the thread pool;
-// - remove closed sessions after their queued work is complete.
-//
-// It should not parse SMTP commands, touch raw sockets directly, or implement
-// storage/auth/delivery/lookup behavior.
 class SmtpServer {
 public:
     SmtpServer(ServerConfig config, SmtpServerDependencies dependencies);

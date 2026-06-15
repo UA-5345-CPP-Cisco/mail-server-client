@@ -15,7 +15,7 @@ option(MAIL_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 
 include(FetchContent)
 
-set(BOOST_INCLUDE_LIBRARIES asio system)
+set(BOOST_INCLUDE_LIBRARIES asio property_tree system)
 set(BOOST_ENABLE_MPI OFF)
 set(BOOST_ENABLE_PYTHON OFF)
 set(BUILD_TESTING OFF)

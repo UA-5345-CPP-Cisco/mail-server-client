@@ -16,7 +16,7 @@
 namespace smtp {
 
 namespace asio = boost::asio;
-namespace ssl = boost::asio::ssl;
+namespace ssl = asio::ssl;
 using tcp = asio::ip::tcp;
 
 struct BoostSocketsManager::Implementation {

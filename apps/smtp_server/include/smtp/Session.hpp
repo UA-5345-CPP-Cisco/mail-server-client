@@ -1,14 +1,19 @@
 #pragma once
 
 #include "logger/Logger.h"
+#include "smtp/AuthService.hpp"
 #include "smtp/Event.hpp"
 #include "smtp/ServerConfig.hpp"
-#include "smtp/Services.hpp"
 #include "smtp/SocketsManager.hpp"
+#include "storage/Database.h"
+#include "storage/MailMessageRepository.h"
+#include "storage/MessageRecipientRepository.h"
 
 #include <atomic>
+#include <cstdint>
 #include <functional>
 #include <memory>
+#include <mutex>
 #include <queue>
 #include <string>
 #include <vector>
@@ -20,10 +25,10 @@ struct SmtpSessionContext {
     const ServerConfig& config;
     ISocketsManager& socketsManager;
     IAuthService& authService;
-    IMailStorage& mailStorage;
-    ICacheService& cacheService;
-    IDeliveryService& deliveryService;
-    ILookupService& lookupService;
+    Storage::Database& database;
+    Storage::MailMessageRepository& mailMessages;
+    Storage::MessageRecipientRepository& messageRecipients;
+    std::mutex& storageMutex;
     Logging::ILogger& logger;
 };
 
@@ -66,9 +71,6 @@ struct SmtpSessionState {
     std::string messageBuffer;
 };
 
-// Concrete SMTP protocol component. This class is responsible for interpreting
-// session events: greeting, command parsing, transaction state, STARTTLS handoff,
-// auth/storage/cache/delivery/lookup calls, and socket responses.
 class SmtpSessionHandler {
 public:
     void HandleEvent(const SmtpEvent& event,
@@ -85,6 +87,9 @@ private:
     void HandleDisconnected(const SmtpEvent& event,
                             SmtpSessionState& state,
                             SmtpSessionContext& context);
+    std::int64_t StoreMessage(
+        const SmtpSessionState& state,
+        SmtpSessionContext& context);
     void ResetMailTransaction(SmtpSessionState& state);
     void SendReply(SmtpSessionContext& context,
                    ConnectionId connectionId,
