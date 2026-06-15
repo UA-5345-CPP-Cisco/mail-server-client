@@ -42,12 +42,12 @@ compile_commands.json
 *.cache
 *.lastbuildstate
 
-data/*
-!data/mail-server-example.db
-
 *.db
 *.db-wal
 *.db-shm
+
+data/*
+!*mail-server-example.db
 
 .idea/
 .vs/
