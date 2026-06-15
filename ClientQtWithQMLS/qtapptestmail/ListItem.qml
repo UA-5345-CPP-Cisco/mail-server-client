@@ -104,8 +104,8 @@ Rectangle {
                         horizontalAlignment: Text.AlignLeft
                         lineHeight: 20
                         lineHeightMode: Text.FixedHeight
-                        text: name
-                        textFormat: Text.PlainText
+                        text: searchModel.highlightAllFoundWords(name, searchModel.getSearchedText)
+                        textFormat: Text.RichText
                         verticalAlignment: Text.AlignVCenter
                         wrapMode: Text.Wrap
                     }
@@ -161,8 +161,8 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 20
                     lineHeightMode: Text.FixedHeight
-                    text: theme
-                    textFormat: Text.PlainText
+                    text: searchModel.highlightAllFoundWords(theme, searchModel.getSearchedText)
+                    textFormat: Text.RichText
                     verticalAlignment: Text.AlignVCenter
                     wrapMode: Text.Wrap
                 }
@@ -189,8 +189,8 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: preview
-                    textFormat: Text.PlainText
+                    text: searchModel.highlightAllFoundWords(preview, searchModel.getSearchedText)
+                    textFormat: Text.RichText
                     verticalAlignment: Text.AlignVCenter
                     wrapMode: Text.Wrap
                 }

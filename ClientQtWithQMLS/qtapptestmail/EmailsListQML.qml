@@ -116,6 +116,8 @@ Rectangle
                         placeholderText: "Search mail"
                         placeholderTextColor: "#99a1af"
 
+                        onTextChanged: searchModel.getSearchedText = text
+
                         background: Item {}
 
                         leftPadding: 0
@@ -385,7 +387,7 @@ Rectangle
             bottom: parent.bottom;
         }
 
-        model: emailsModel
+        model: searchModel
 
         delegate: ListItem
         {

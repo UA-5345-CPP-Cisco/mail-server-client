@@ -5,6 +5,7 @@
 #include <QQmlContext>
 #include "emaillistmodel.h"
 #include "currentuser.h"
+#include "MessageSearchModel.h"
 
 int main(int argc, char *argv[])
 {
@@ -15,7 +16,10 @@ int main(int argc, char *argv[])
 
     //emails model
     EmailListModel model{};
+    MessageSearchModel searchModel{};
+    searchModel.setSourceModel(&model);
     engine.rootContext()->setContextProperty("emailsModel", &model);
+    engine.rootContext()->setContextProperty("searchModel", &searchModel);
     //current user in system
     engine.rootContext()->setContextProperty(
         "currentUser",
