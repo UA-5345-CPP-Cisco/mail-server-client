@@ -356,6 +356,7 @@ Rectangle
                 onTapped:
                 {
                     window.selectedFolder = "inbox"
+                    inboxClicked()
                 }
             }
 
@@ -452,6 +453,7 @@ Rectangle
             {
                 onTapped:
                 {
+                    window.selectedFolder = "sent"
                     sentClicked()
                 }
             }
@@ -553,6 +555,7 @@ Rectangle
             {
                 onTapped:
                 {
+                     window.selectedFolder = "starred"
                     starredClicked()
                 }
             }
@@ -649,6 +652,7 @@ Rectangle
             {
                 onTapped:
                 {
+                    window.selectedFolder = "drafts"
                     draftClicked()
                 }
             }

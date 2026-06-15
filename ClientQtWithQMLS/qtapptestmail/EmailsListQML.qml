@@ -321,7 +321,7 @@ Rectangle
 
                         onClicked:
                         {
-                            emailsModel.PrevPage()
+                            emailList.sourceModel.prevPage()
                         }
                     }
                     Rectangle
@@ -361,7 +361,7 @@ Rectangle
                         cursorShape: Qt.PointingHandCursor
 
                         onClicked: {
-                            emailsModel.NextPage()
+                            emailList.sourceModel.nextPage()
                         }
                     }
 

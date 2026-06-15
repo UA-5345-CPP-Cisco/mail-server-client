@@ -114,7 +114,7 @@ int EmailPageProxy::totalEmailsCount() const
 QString EmailPageProxy::pageAmountText() const
 {
     if (m_emails_count == 0)
-        return QStringLiteral("0-0 з 0");
+        return QStringLiteral("0-0 of 0");
 
     int start_idx = m_current_page * m_per_page + 1;
     int end_idx   = qMin(m_emails_count, (m_current_page + 1) * m_per_page);
