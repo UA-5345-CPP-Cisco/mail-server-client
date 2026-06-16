@@ -41,6 +41,19 @@ Rectangle {
         }
         height: 60
         color: "transparent"
+        MouseArea
+        {
+            id: clickAreaFavourite
+            anchors.fill: parent
+
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+
+            onClicked:
+            {
+                // MinimizeWindow
+            }
+        }
 
         // Star icon
         Rectangle {
@@ -53,16 +66,28 @@ Rectangle {
             Rectangle {
                 id: buttonToFavouriteHolder_1
                 y: 2
-                height: 15
-                width: 15
+                height: 18
+                width: 18
                 clip: true
                 color: "transparent"
+                scale: clickAreaFavourite.containsMouse ? 1.2 : 1.0
+
+                Behavior on scale
+                {
+                    NumberAnimation
+                    {
+                        duration: 150
+                        easing.type: Easing.InOutQuad
+                    }
+                }
 
                 Image
                 {
                    source: "qrc:/pngs/assets/ic_star.svg"
                    width: 18
                    height: 18
+                   sourceSize.width: width * Screen.devicePixelRatio
+                   sourceSize.height: height * Screen.devicePixelRatio
                    fillMode: Image.PreserveAspectFit
                    anchors.centerIn: parent
                 }

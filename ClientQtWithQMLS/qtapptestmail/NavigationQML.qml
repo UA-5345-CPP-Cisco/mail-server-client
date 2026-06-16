@@ -176,6 +176,8 @@ Rectangle
                         source: "qrc:/pngs/assets/ic_arrow_down.svg"
                         width: 18
                         height: 18
+                        sourceSize.width: width * Screen.devicePixelRatio
+                        sourceSize.height: height * Screen.devicePixelRatio
                         fillMode: Image.PreserveAspectFit
                         anchors.centerIn: parent
                     }
@@ -289,6 +291,8 @@ Rectangle
                     source: "qrc:/pngs/assets/ic_compose.svg"
                     width: 18
                     height: 18
+                    sourceSize.width: width * Screen.devicePixelRatio
+                    sourceSize.height: height * Screen.devicePixelRatio
                     fillMode: Image.PreserveAspectFit
                     anchors.centerIn: parent
                 }
@@ -373,6 +377,8 @@ Rectangle
                     source: "qrc:/pngs/assets/ic_inbox.svg"
                     width: 18
                     height: 18
+                    sourceSize.width: width * Screen.devicePixelRatio
+                    sourceSize.height: height * Screen.devicePixelRatio
                     fillMode: Image.PreserveAspectFit
                     anchors.centerIn: parent
                 }
@@ -471,6 +477,8 @@ Rectangle
                     source: "qrc:/pngs/assets/ic_sent.svg"
                     width: 18
                     height: 18
+                    sourceSize.width: width * Screen.devicePixelRatio
+                    sourceSize.height: height * Screen.devicePixelRatio
                     fillMode: Image.PreserveAspectFit
                     anchors.centerIn: parent
                 }
@@ -573,6 +581,8 @@ Rectangle
                     source: "qrc:/pngs/assets/ic_star.svg"
                     width: 18
                     height: 18
+                    sourceSize.width: width * Screen.devicePixelRatio
+                    sourceSize.height: height * Screen.devicePixelRatio
                     fillMode: Image.PreserveAspectFit
                     anchors.centerIn: parent
                 }
@@ -668,6 +678,8 @@ Rectangle
                     source: "qrc:/pngs/assets/ic_drafts.svg"
                     width: 18
                     height: 18
+                    sourceSize.width: width * Screen.devicePixelRatio
+                    sourceSize.height: height * Screen.devicePixelRatio
                     fillMode: Image.PreserveAspectFit
                     anchors.centerIn: parent
                 }
@@ -820,6 +832,8 @@ Rectangle
                         source: "qrc:/pngs/assets/ic_settings.svg"
                         width: 16
                         height: 16
+                        sourceSize.width: width * Screen.devicePixelRatio
+                        sourceSize.height: height * Screen.devicePixelRatio
                         fillMode: Image.PreserveAspectFit
                         anchors.centerIn: parent
                     }

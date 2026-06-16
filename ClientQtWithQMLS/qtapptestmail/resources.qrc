@@ -5,6 +5,7 @@
         <file>assets/ic_add_account.svg</file>
         <file>assets/ic_login.svg</file>
         <file>assets/ic_star.svg</file>
+        <file>assets/ic_star_active.svg</file>
         <file>assets/ic_compose.svg</file>
         <file>assets/ic_drafts.svg</file>
         <file>assets/ic_inbox.svg</file>
@@ -22,5 +23,7 @@
         <file>assets/ic_close_window.svg</file>
         <file>assets/ic_extend_window.svg</file>
         <file>assets/ic_minimize_window.svg</file>
+        <file>assets/ic_three_dots.svg</file>
+        <file>assets/ic_archive.svg</file>
     </qresource>
 </RCC>
