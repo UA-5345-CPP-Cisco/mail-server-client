@@ -176,8 +176,6 @@ Rectangle
                         source: "qrc:/pngs/assets/ic_arrow_down.svg"
                         width: 18
                         height: 18
-                        sourceSize.width: width * Screen.devicePixelRatio
-                        sourceSize.height: height * Screen.devicePixelRatio
                         fillMode: Image.PreserveAspectFit
                         anchors.centerIn: parent
                     }
@@ -195,7 +193,7 @@ Rectangle
                     {
                         if (String(accountChangeLoader.source) === "")
                         {
-                            accountChangeLoader.source = "SwitchAccountQML.qml"
+                            accountChangeLoader.source = "account/SwitchAccountQML.qml"
                         } else
                         {
                             accountChangeLoader.source = ""
@@ -226,7 +224,7 @@ Rectangle
 
             opacity: status === Loader.Ready ? 1 : 0
         }
-}
+    }
 
     // Compose button
     Rectangle
@@ -267,7 +265,7 @@ Rectangle
                         newMessageLoader.active = true
                         if (String(newMessageLoader.source) === "")
                         {
-                            newMessageLoader.source = "NewMessageQML.qml"
+                            newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml"
                         } else
                         {
                             newMessageLoader.source = ""
@@ -781,7 +779,7 @@ Rectangle
                         settingsLoader.active = true
                         if (String( settingsLoader.source) === "")
                         {
-                             settingsLoader.source = "SettingsQML.qml"
+                             settingsLoader.source = "screens/navigation/settings/SettingsQML.qml"
                         } else
                         {
                              settingsLoader.source = ""
