@@ -54,7 +54,16 @@ Rectangle {
                 // MinimizeWindow
             }
         }
+        scale: clickAreaFavourite.containsMouse ? 1.1 : 1.0
 
+        Behavior on scale
+        {
+            NumberAnimation
+            {
+                duration: 150
+                easing.type: Easing.InOutQuad
+            }
+        }
         // Star icon
         Rectangle {
             id: button_margin_2
@@ -70,16 +79,6 @@ Rectangle {
                 width: 18
                 clip: true
                 color: "transparent"
-                scale: clickAreaFavourite.containsMouse ? 1.2 : 1.0
-
-                Behavior on scale
-                {
-                    NumberAnimation
-                    {
-                        duration: 150
-                        easing.type: Easing.InOutQuad
-                    }
-                }
 
                 Image
                 {
