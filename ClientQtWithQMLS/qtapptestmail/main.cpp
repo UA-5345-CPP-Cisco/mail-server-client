@@ -3,11 +3,11 @@
 #include <QQuickWindow>
 #include <QIcon>
 #include <QQmlContext>
-#include "emaillistmodel.h"
-#include "emailfilterproxy.h"
-#include "emailpageproxy.h"
-#include "currentuser.h"
-#include "messagesearchmodel.h"
+#include "headers\mail\emaillistmodel.h"
+#include "headers\mail\emailfilterproxy.h"
+#include "headers\mail\emailpageproxy.h"
+#include "headers\users\currentuser.h"
+#include "headers\search\messagesearchmodel.h"
 
 int main(int argc, char *argv[])
 {

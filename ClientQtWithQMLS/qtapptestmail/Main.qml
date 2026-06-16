@@ -201,7 +201,8 @@ ApplicationWindow {
         }
     }
 
-    MultiEffect {
+    MultiEffect
+    {
         id: blurEffect
         anchors.fill: mainContent
         source: mainContent

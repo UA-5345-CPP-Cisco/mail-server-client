@@ -1,4 +1,4 @@
-#include "emailpageproxy.h"
+#include "headers/mail/emailpageproxy.h"
 namespace ISXMail{
 
 EmailPageProxy::EmailPageProxy(QObject* parent)

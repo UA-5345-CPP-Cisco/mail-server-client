@@ -1,4 +1,4 @@
-#include "emaillistmodel.h"
+#include "headers/mail/emaillistmodel.h"
 #include <QTime>
 
 namespace ISXMail
