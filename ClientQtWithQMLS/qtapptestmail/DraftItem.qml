@@ -11,10 +11,12 @@ Rectangle {
     property string theme: "Quarterly Report Summary"
     property string name: "ceo@company.com"
     property string preview: "Draft of the quarterly summary for leadership review..."
+    property string content: preview
+    property string sendTo: ""
     property string time: "Jun 4"
     property var searchModel: null
 
-    signal clicked()
+    signal openRequested(string theme, string name, string sendTo, string content, string time)
 
     Behavior on color {
         ColorAnimation { duration: 150; easing.type: Easing.OutCubic }
@@ -158,7 +160,7 @@ Rectangle {
         onPressed:  root.color = "#f3f4f6"
         onReleased: {
             root.color = containsMouse ? "#f9fafb" : "#ffffff"
-            root.clicked()
+            root.openRequested(root.theme, root.name, root.sendTo, root.content, root.time)
         }
         onCanceled: root.color = "#ffffff"
     }

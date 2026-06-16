@@ -5,6 +5,12 @@ Rectangle {
     id: contentPageLetterQML
 
     color: "#ffffff"
+    property string letterTheme: "ThemeHolder"
+    property string letterName: "NameHolder"
+    property string letterSendTo: "me"
+    property string letterContent: ""
+    property string letterTime: "10:30"
+    property bool letterStarred: false
 
     // Header
     Rectangle {
@@ -71,7 +77,7 @@ Rectangle {
                         horizontalAlignment: Text.AlignLeft
                         lineHeight: 28
                         lineHeightMode: Text.FixedHeight
-                        text: "ThemeHolder"
+                        text: contentPageLetterQML.letterTheme
                         textFormat: Text.PlainText
                         verticalAlignment: Text.AlignVCenter
                         wrapMode: Text.Wrap
@@ -114,7 +120,7 @@ Rectangle {
                             horizontalAlignment: Text.AlignHCenter
                             lineHeight: 20
                             lineHeightMode: Text.FixedHeight
-                            text: "S"
+                            text: contentPageLetterQML.letterName.length > 0 ? contentPageLetterQML.letterName.charAt(0).toUpperCase() : ""
                             textFormat: Text.PlainText
                             verticalAlignment: Text.AlignVCenter
                         }
@@ -151,7 +157,7 @@ Rectangle {
                                 horizontalAlignment: Text.AlignLeft
                                 lineHeight: 20
                                 lineHeightMode: Text.FixedHeight
-                                text: "NameHolder"
+                                text: contentPageLetterQML.letterName
                                 textFormat: Text.PlainText
                                 verticalAlignment: Text.AlignVCenter
                             }
@@ -179,7 +185,7 @@ Rectangle {
                                 horizontalAlignment: Text.AlignLeft
                                 lineHeight: 16
                                 lineHeightMode: Text.FixedHeight
-                                text: "to me"
+                                text: contentPageLetterQML.letterSendTo.length > 0 ? "to " + contentPageLetterQML.letterSendTo : "to me"
                                 textFormat: Text.PlainText
                                 verticalAlignment: Text.AlignVCenter
                             }
@@ -193,7 +199,8 @@ Rectangle {
                 id: container_6
 
                 anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
+                anchors.top: parent.top
+                anchors.topMargin: 34
                 height: 34
                 width: 131
                 color: "transparent"
@@ -221,7 +228,7 @@ Rectangle {
                         horizontalAlignment: Text.AlignLeft
                         lineHeight: 16
                         lineHeightMode: Text.FixedHeight
-                        text: "10:30 AM"
+                        text: contentPageLetterQML.letterTime
                         textFormat: Text.PlainText
                         verticalAlignment: Text.AlignVCenter
                     }
@@ -339,17 +346,16 @@ Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
+            anchors.bottom: parent.bottom
             anchors.margins: 24
-            height: 320
             color: "transparent"
 
             Text {
-                id: hi_team_
+                id: letterBody
 
-                y: 0
-                height: 23
-                width: parent.width
-
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
                 color: "#4a5565"
                 font.family: "Segoe UI"
                 font.pixelSize: 14
@@ -357,86 +363,10 @@ Rectangle {
                 horizontalAlignment: Text.AlignLeft
                 lineHeight: 22.75
                 lineHeightMode: Text.FixedHeight
-                text: "Hi team,"
+                text: contentPageLetterQML.letterContent
                 textFormat: Text.PlainText
-                verticalAlignment: Text.AlignVCenter
-            }
-
-            Text {
-                id: i_wanted_to_share
-
-                y: 45
-                height: 23
-                width: parent.width
-
-                color: "#4a5565"
-                font.family: "Segoe UI"
-                font.pixelSize: 14
-                font.weight: Font.Normal
-                horizontalAlignment: Text.AlignLeft
-                lineHeight: 22.75
-                lineHeightMode: Text.FixedHeight
-                text: "I wanted to share the latest updates on our Q2 projects. We've made significant progress on the main deliverables and are on track to meet our deadlines."
-                textFormat: Text.PlainText
-                verticalAlignment: Text.AlignVCenter
+                verticalAlignment: Text.AlignTop
                 wrapMode: Text.Wrap
-            }
-
-            Text {
-                id: key_highlights
-
-                y: 91
-                height: 91
-                width: parent.width
-
-                color: "#4a5565"
-                font.family: "Segoe UI"
-                font.pixelSize: 14
-                font.weight: Font.Normal
-                horizontalAlignment: Text.AlignLeft
-                lineHeight: 22.75
-                lineHeightMode: Text.FixedHeight
-                text: "Key highlights:\n- Project Alpha is 80% complete\n- Beta testing starts next week\n- Budget is within expected range"
-                textFormat: Text.PlainText
-                verticalAlignment: Text.AlignVCenter
-            }
-
-            Text {
-                id: let_me_know
-
-                y: 204
-                height: 23
-                width: parent.width
-
-                color: "#4a5565"
-                font.family: "Segoe UI"
-                font.pixelSize: 14
-                font.weight: Font.Normal
-                horizontalAlignment: Text.AlignLeft
-                lineHeight: 22.75
-                lineHeightMode: Text.FixedHeight
-                text: "Let me know if you have any questions."
-                textFormat: Text.PlainText
-                verticalAlignment: Text.AlignVCenter
-            }
-
-            Text {
-                id: best_sarah
-
-                y: 250
-                height: 46
-                width: parent.width
-
-                color: "#4a5565"
-                font.family: "Segoe UI"
-                font.pixelSize: 14
-                font.weight: Font.Normal
-                horizontalAlignment: Text.AlignLeft
-                lineHeight: 22.75
-                lineHeightMode: Text.FixedHeight
-                text: "Best,\nSarah"
-                textFormat: Text.PlainText
-                verticalAlignment: Text.AlignVCenter
             }
         }
     }
@@ -475,6 +405,17 @@ Rectangle {
             color: "#155dfc"
             radius: 10
 
+            MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+
+                    onClicked: {
+                        console.log("Reply clicked")
+                        // add reply logic here
+                    }
+                }
+
             Text {
                 id: reply
 
@@ -510,6 +451,17 @@ Rectangle {
             border.width: 1
             color: "transparent"
             radius: 10
+
+            MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+
+                    onClicked: {
+                        console.log("Forward clicked")
+                        // add forward logic here
+                    }
+                }
 
             Text {
                 id: forward
