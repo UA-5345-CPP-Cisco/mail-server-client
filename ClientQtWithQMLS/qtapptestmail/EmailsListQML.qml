@@ -9,6 +9,7 @@ Rectangle
 
     property bool isDraftMode: false
     property var sourceModel: inboxModel
+    signal emailOpenRequested(string theme, string name, string sendTo, string content, string time, bool starred)
 
     function activeSearchModel() {
         if (sourceModel === inboxModel)
@@ -37,8 +38,13 @@ Rectangle
             theme: parent.pTheme
             name: parent.pName
             preview: parent.pPreview
+            content: parent.pContent
+            sendTo: parent.pSendTo
             time: parent.pTime
             searchModel: parent.pSearchModel
+            onOpenRequested: function(theme, name, sendTo, content, time) {
+                emailsListQML.emailOpenRequested(theme, name, sendTo, content, time, false)
+            }
         }
     }
 
@@ -51,8 +57,14 @@ Rectangle
             theme: parent.pTheme
             name: parent.pName
             preview: parent.pPreview
+            content: parent.pContent
+            sendTo: parent.pSendTo
             time: parent.pTime
+            starred: parent.pStarred
             searchModel: parent.pSearchModel
+            onOpenRequested: function(theme, name, sendTo, content, time, starred) {
+                emailsListQML.emailOpenRequested(theme, name, sendTo, content, time, starred)
+            }
         }
     }
 
@@ -448,8 +460,11 @@ Rectangle
 
             property string pTheme: emailsTheme
             property string pName: emailsName
+            property string pSendTo: emailsSendTo
             property string pPreview: emailsPreview
+            property string pContent: emailsContent
             property string pTime: emailsTime
+            property bool pStarred: emailsStarred
             property var pSearchModel: emailsListQML.activeSearchModel()
 
             sourceComponent: isDraftMode

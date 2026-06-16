@@ -11,6 +11,7 @@ ApplicationWindow {
     property int sentCount: sentModel.totalEmailsCount
     property int draftsCount: draftModel.totalEmailsCount
     property string amountText: emailList.sourceModel ? emailList.sourceModel.pageAmountText : "0-0 of 0"
+    property var selectedEmail: null
 
     //FunctionSorter
     function closeMessageWindow()
@@ -129,24 +130,28 @@ ApplicationWindow {
                 {
                     emailList.isDraftMode = false
                     emailList.sourceModel = inboxModel
+                    window.selectedEmail = null
                     selectedFolder = "inbox"
                 }
                 onStarredClicked:
                 {
                     emailList.isDraftMode = false
                     emailList.sourceModel = starredModel
+                    window.selectedEmail = null
                     selectedFolder = "starred"
                 }
                 onSentClicked:
                 {
                     emailList.isDraftMode = false
                     emailList.sourceModel = sentModel
+                    window.selectedEmail = null
                     selectedFolder = "sent"
                 }
                 onDraftClicked:
                 {
                     emailList.isDraftMode = true
                     emailList.sourceModel = draftModel
+                    window.selectedEmail = null
                     selectedFolder = "drafts"
                 }
             }
@@ -156,14 +161,42 @@ ApplicationWindow {
                 SplitView.preferredWidth: 350
                 SplitView.minimumWidth: 250
                 SplitView.fillHeight: true
+                onEmailOpenRequested: function(theme, name, sendTo, content, time, starred) {
+                    window.selectedEmail = {
+                        "theme": theme,
+                        "name": name,
+                        "sendTo": sendTo,
+                        "content": content,
+                        "time": time,
+                        "starred": starred
+                    }
+                }
             }
 
-            ContentBlankPageQML
+            Item
             {
-
                 SplitView.fillWidth: true
                 SplitView.fillHeight: true
                 SplitView.minimumWidth: 250
+
+                ContentBlankPageQML
+                {
+                    anchors.fill: parent
+                    visible: window.selectedEmail === null
+                }
+
+                ContentPageLetterQML
+                {
+                    anchors.fill: parent
+                    visible: window.selectedEmail !== null
+
+                    letterTheme: window.selectedEmail ? window.selectedEmail.theme : ""
+                    letterName: window.selectedEmail ? window.selectedEmail.name : ""
+                    letterSendTo: window.selectedEmail ? window.selectedEmail.sendTo : ""
+                    letterContent: window.selectedEmail ? window.selectedEmail.content : ""
+                    letterTime: window.selectedEmail ? window.selectedEmail.time : ""
+                    letterStarred: window.selectedEmail ? window.selectedEmail.starred : false
+                }
             }
         }
     }

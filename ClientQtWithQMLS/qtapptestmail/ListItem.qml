@@ -9,10 +9,12 @@ Rectangle {
     property string theme: "ThemeHolder"
     property string name: "NameHolder"
     property string preview: "TextHolderTextHolderTextHolderTextHolde...."
+    property string content: preview
+    property string sendTo: ""
     property string time: "10:30 AM"
     property var searchModel: null
 
-    signal clicked()
+    signal openRequested(string theme, string name, string sendTo, string content, string time, bool starred)
 
     color: "#ffffff"
 
@@ -186,7 +188,7 @@ Rectangle {
         onPressed:  root.color = "#f3f4f6"
         onReleased: {
             root.color = containsMouse ? "#f9fafb" : "#ffffff"
-            root.clicked()
+            root.openRequested(root.theme, root.name, root.sendTo, root.content, root.time, root.starred)
         }
         onCanceled: root.color = "#ffffff"
     }
