@@ -63,6 +63,15 @@ int main(int argc, char *argv[])
         &ISXCurrentUser::CurrentUser::get_instance()
         );
 
+    // main.cpp
+    qmlRegisterUncreatableMetaObject(
+        ISXMail::staticMetaObject,
+        "ISXMail",
+        1, 0,
+        "EmailRole",
+        "Not creatable"
+        );
+
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,

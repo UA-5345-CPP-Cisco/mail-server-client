@@ -15,6 +15,7 @@ Rectangle {
     property var searchModel: null
 
     signal openRequested(string theme, string name, string sendTo, string content, string time, bool starred)
+    signal starredClicked()
 
     color: "#ffffff"
 
@@ -72,6 +73,7 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             color: "transparent"
 
+
             Rectangle {
                 id: buttonToFavouriteHolder_1
                 y: 2
@@ -82,13 +84,23 @@ Rectangle {
 
                 Image
                 {
-                   source: "qrc:/pngs/assets/ic_star.svg"
+                   source: starred ? "qrc:/pngs/assets/ic_plus.svg" : "qrc:/pngs/assets/ic_star.svg"
                    width: 18
                    height: 18
                    sourceSize.width: width * Screen.devicePixelRatio
                    sourceSize.height: height * Screen.devicePixelRatio
                    fillMode: Image.PreserveAspectFit
                    anchors.centerIn: parent
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    anchors.margins: -8
+                    z: 10
+                    onClicked: {
+                        root.starred = !root.starred
+                        root.starredClicked()
+                    }
                 }
             }
         }
@@ -206,13 +218,19 @@ Rectangle {
     MouseArea {
         anchors.fill: parent
         hoverEnabled: true
+        propagateComposedEvents: true
 
         onEntered:  root.color = "#f9fafb"
         onExited:   root.color = "#ffffff"
         onPressed:  root.color = "#f3f4f6"
-        onReleased: {
+        onReleased: (mouse) => {
             root.color = containsMouse ? "#f9fafb" : "#ffffff"
-            root.openRequested(root.theme, root.name, root.sendTo, root.content, root.time, root.starred)
+            var starPos = button_margin_2.mapToItem(root, 0, 0)
+            var inStarZone = (mouse.x >= starPos.x - 8 && mouse.x <= starPos.x + button_margin_2.width + 8 &&
+                            mouse.y >= starPos.y - 8 && mouse.y <= starPos.y + button_margin_2.height + 8)
+            if (!inStarZone) {
+                root.openRequested(root.theme, root.name, root.sendTo, root.content, root.time, root.starred)
+            }
         }
         onCanceled: root.color = "#ffffff"
     }

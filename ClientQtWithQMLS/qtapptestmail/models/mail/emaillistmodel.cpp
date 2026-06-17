@@ -61,6 +61,14 @@ QHash<int, QByteArray> EmailListModel::roleNames() const
     };
 }
 
+void EmailListModel::RemoveData(int row)
+{
+    if (row < 0 || row >= static_cast<int>(m_data.size())) return;
+    beginRemoveRows(QModelIndex(), row, row);
+    m_data.erase(m_data.begin() + row);
+    endRemoveRows();
+}
+
 void EmailListModel::AddData(bool is_starred, bool is_sent, bool is_draft,
                              const QString& theme, const QString& name,
                              const QString& send_to, const QString& content, const QString& time)
@@ -93,6 +101,26 @@ void EmailListModel::AddData(const EmailData& item)
     m_data.push_back(item);
     endInsertRows();
     emit dataAdded();
+}
+
+bool EmailListModel::setData(const QModelIndex& index, const QVariant& value, int role){
+    if (!index.isValid() || index.row() >= static_cast<int>(m_data.size()))
+        return false;
+
+    switch (role) {
+    case StarredRole:
+        m_data[index.row()].is_starred = value.toBool();
+        break;
+    default:
+        return false;
+    }
+
+    emit dataChanged(index, index, {role});
+    return true;
+}
+
+Qt::ItemFlags EmailListModel::flags(const QModelIndex& index) const {
+    return QAbstractListModel::flags(index) | Qt::ItemIsEditable;
 }
 
 } // namespace ISXMail

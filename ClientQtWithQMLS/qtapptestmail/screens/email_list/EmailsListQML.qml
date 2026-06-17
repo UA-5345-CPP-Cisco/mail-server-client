@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Shapes
 import QtQuick.Controls
+import ISXMail 1.0
 
 Rectangle
 {
@@ -62,8 +63,18 @@ Rectangle
             time: parent.pTime
             starred: parent.pStarred
             searchModel: parent.pSearchModel
+
             onOpenRequested: function(theme, name, sendTo, content, time, starred) {
                 emailsListQML.emailOpenRequested(theme, name, sendTo, content, time, starred)
+            }
+
+            onStarredClicked: {
+                if(starred){
+                    sourceModel.setEmailData(parent.pIndex, true, parseInt(EmailRole.StarredRole))
+                }
+                else{
+                    sourceModel.setEmailData(parent.pIndex, false, parseInt(EmailRole.StarredRole))
+                }
             }
         }
     }
@@ -466,6 +477,7 @@ Rectangle
             property string pTime: emailsTime
             property bool pStarred: emailsStarred
             property var pSearchModel: emailsListQML.activeSearchModel()
+            property var pIndex: index
 
             sourceComponent: isDraftMode
                              ? draftDelegate

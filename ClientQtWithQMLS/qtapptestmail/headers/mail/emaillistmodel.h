@@ -8,7 +8,7 @@
 
 namespace ISXMail
 {
-
+    Q_NAMESPACE
 struct EmailData
 {
     bool is_starred;
@@ -21,6 +21,7 @@ struct EmailData
     QString content;
     QString time;
 };
+
 
 enum EmailRole
 {
@@ -35,11 +36,11 @@ enum EmailRole
     TimeRole
 };
 
+Q_ENUM_NS(EmailRole)
+
 class EmailListModel : public QAbstractListModel
 {
     Q_OBJECT
-    Q_ENUM(EmailRole)
-
 public:
     explicit EmailListModel(QObject* parent = nullptr);
 
@@ -47,11 +48,14 @@ public:
     QVariant data(const QModelIndex& index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
 
+    void RemoveData(int row);
     Q_INVOKABLE void AddData(bool is_starred, bool is_sent, bool is_draft,
                              const QString& theme, const QString& name,
                              const QString& send_to, const QString& content, const QString& time);
     void AddData(const EmailData& item);
 
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
 signals:
     void dataAdded();
 

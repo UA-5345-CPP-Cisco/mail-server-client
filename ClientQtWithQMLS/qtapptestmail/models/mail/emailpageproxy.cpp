@@ -121,4 +121,31 @@ QString EmailPageProxy::pageAmountText() const
     int end_idx   = qMin(m_emails_count, (m_current_page + 1) * m_per_page);
     return QStringLiteral("%1-%2 of %3").arg(start_idx).arg(end_idx).arg(m_emails_count);
 }
+
+bool EmailPageProxy::setEmailData(int proxyRow, const QVariant& value, int role) {
+    QModelIndex proxyIndex = index(proxyRow, 0);
+    QModelIndex sourceIndex = mapToSource(proxyIndex);
+
+    auto* filterProxy = qobject_cast<QAbstractProxyModel*>(sourceModel());
+    if (filterProxy) {
+        QModelIndex modelIndex = filterProxy->mapToSource(sourceIndex);
+        return filterProxy->sourceModel()->setData(modelIndex, value, role);
+    }
+    return false;
+}
+
+void EmailPageProxy::removeEmailData(int proxyRow)
+{
+    QModelIndex proxyIndex = index(proxyRow, 0);
+    QModelIndex sourceIndex = mapToSource(proxyIndex);
+
+    auto* filterProxy = qobject_cast<QAbstractProxyModel*>(sourceModel());
+    if (filterProxy) {
+        QModelIndex modelIndex = filterProxy->mapToSource(sourceIndex);
+        auto* model = qobject_cast<EmailListModel*>(
+            const_cast<QAbstractItemModel*>(modelIndex.model()));
+        model->RemoveData(modelIndex.row());
+    }
+}
+
 }

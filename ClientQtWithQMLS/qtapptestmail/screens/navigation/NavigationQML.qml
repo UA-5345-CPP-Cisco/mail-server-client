@@ -2,6 +2,8 @@ import QtQuick
 import QtQuick.Effects
 import QtQuick.Shapes
 import QtQuick.Controls
+import ISXMail 1.0
+
 Rectangle
 {
     id: navigationQML

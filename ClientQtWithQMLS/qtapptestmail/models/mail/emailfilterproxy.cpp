@@ -3,7 +3,9 @@ namespace ISXMail{
 
 EmailFilterProxy::EmailFilterProxy(FolderType type, QObject *parent)
     : QSortFilterProxyModel(parent), m_type(type)
-{}
+{
+    setDynamicSortFilter(true);
+}
 
 bool EmailFilterProxy::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
 {
