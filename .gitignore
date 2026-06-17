@@ -1,0 +1,15 @@
+
+cat <<EOF > .gitignore
+
+Imap_server
+*.o
+*.a
+*.so
+
+
+*.log
+
+
+.vscode/
+.DS_Store
+EOF
