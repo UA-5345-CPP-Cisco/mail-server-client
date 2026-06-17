@@ -73,9 +73,55 @@ ApplicationWindow {
         height: item ? item.implicitHeight : 0
 
         source: ""
+        property var selectedItem: null
+
         Behavior on opacity
         {
             NumberAnimation { duration: 200 }
+        }
+
+        onLoaded: {
+            connections.target = item
+            if (item && selectedItem)
+            {
+                item.newRecipient = selectedItem.sendTo
+                item.newSubject = selectedItem.subject
+                item.newText = selectedItem.content
+                item.newIndex = selectedItem.index
+                item.isDraft = selectedItem.isDraft === true
+                if(item.isDraft) item.newTitle = "Draft"
+                else item.newTitle = "New Message"
+            }
+        }
+
+        Connections {
+            id: connections
+            target: null
+
+            function onDraftChanged(index, subject, recipient, text) {
+                if(newMessageLoader.selectedItem != null)
+                {
+                    draftModel.setEmailData(parseInt(index), recipient, parseInt(EmailRole.SendToRole))
+                    draftModel.setEmailData(parseInt(index), subject, parseInt(EmailRole.ThemeRole))
+                    draftModel.setEmailData(parseInt(index), text, parseInt(EmailRole.ContentRole))
+                }
+
+                newMessageLoader.selectedItem = null
+            }
+
+            function onDraftFinished(index, subject, recipient, text) {
+                if(newMessageLoader.selectedItem != null)
+                {
+                    draftModel.removeEmailData(parseInt(index))
+                    emailsModel.AddData(
+                        false, true, false,
+                        subject, currentUser.username,
+                        recipient, text, ""
+                    )
+                }
+
+                newMessageLoader.selectedItem = null
+            }
         }
 
         opacity: status === Loader.Ready ? 1 : 0

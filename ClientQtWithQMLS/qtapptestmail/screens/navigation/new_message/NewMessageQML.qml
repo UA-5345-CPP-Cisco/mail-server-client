@@ -8,6 +8,16 @@ Rectangle
     implicitWidth: 420
     border.color: "#e5e7eb"
 
+    property bool isDraft: false
+    property string newIndex: ""
+    property string newTitle: "New Message"
+    property string newSubject: ""
+    property string newRecipient: ""
+    property string newText: ""
+
+    signal draftFinished(string index, string subject, string recipient, string text)
+    signal draftChanged(string index, string subject, string recipient, string text)
+
     clip: true
     color: "#fcf3e6"
     radius: 14
@@ -69,7 +79,7 @@ Rectangle
                 horizontalAlignment: Text.AlignLeft
                 lineHeight: 20
                 lineHeightMode: Text.FixedHeight
-                text: "New Message"
+                text: newTitle
                 textFormat: Text.PlainText
                 verticalAlignment: Text.AlignVCenter
                 wrapMode: Text.Wrap
@@ -237,26 +247,29 @@ Rectangle
 
                     onClicked:
                     {
-                        if(subject_input.text.trim() === "" && recipient_input.text.trim() === "" && message_input.text.trim() === "")
+                        if (subject_input.text.trim() === "" && recipient_input.text.trim() === "" && message_input.text.trim() === "")
                         {
                             closeMessageWindow()
                         }
                         else
                         {
-                            let subject_text = (subject_input.text.trim() === "") ? "empty" : subject_input.text;
-                            let recipient_text = (recipient_input.text.trim() === "") ? "empty" : recipient_input.text;
-                            let message_text = (message_input.text.trim() === "") ? "empty" : message_input.text;
+                            let subject_text  = subject_input.text.trim()  === "" ? "empty" : subject_input.text
+                            let recipient_text = recipient_input.text.trim() === "" ? "empty" : recipient_input.text
+                            let message_text  = message_input.text.trim()  === "" ? "empty" : message_input.text
 
-                            emailsModel.AddData(
-                                false,
-                                false,
-                                true,
-                                subject_text,
-                                currentUser.username,
-                                recipient_input.text,
-                                message_text,
-                                ""
-                            );
+                            if (isDraft)
+                            {
+                                draftChanged(newIndex, subject_text, recipient_text, message_text)
+                            }
+                            else
+                            {
+                                // Новое письмо — создаём новый черновик
+                                emailsModel.AddData(
+                                    false, false, true,
+                                    subject_text, currentUser.username,
+                                    recipient_text, message_text, ""
+                                )
+                            }
                             closeMessageWindow()
                         }
                     }
@@ -344,6 +357,8 @@ Rectangle
 
                 cursorDelegate: Item {}
 
+                text: newRecipient
+
                 Rectangle
                 {
                     id: custom_cursor_for_recipient_container
@@ -423,6 +438,8 @@ Rectangle
 
                 cursorDelegate: Item {}
 
+                text: newSubject
+
                 Rectangle
                 {
                     id: custom_cursor_for_subject_container
@@ -490,6 +507,8 @@ Rectangle
                 bottomPadding: 0
 
                 cursorDelegate: Item {}
+
+                text: newText
 
                 Rectangle
                 {
@@ -577,29 +596,33 @@ Rectangle
                 hoverEnabled: true
                 onPressed:
                 {
-                    if(recipient_input.text === "")
+                    if (recipient_input.text.trim() === "")
                     {
                         recipient_input.text = "Enter Recipient!"
                     }
                     else
                     {
+                        let recipient_text = recipient_input.text.trim() === "" ? "empty" : recipient_input.text
+                        let subject_text   = subject_input.text.trim()   === "" ? "empty" : subject_input.text
+                        let message_text   = message_input.text.trim()   === "" ? "empty" : message_input.text
 
-                        let subject_text = (subject_input.text.trim() === "") ? "empty" : subject_input.text;
-                        let message_text = (message_input.text.trim() === "") ? "empty" : message_input.text;
+                        if (!isDraft)
+                        {
+                            emailsModel.AddData(
+                                false, true, false,
+                                subject_text, currentUser.username,
+                                recipient_text, message_text, ""
+                            )
+                        }
+                        else
+                        {
+                            draftFinished(newIndex, subject_text, recipient_text, message_text)
+                        }
 
-                        emailsModel.AddData(
-                            false,
-                            true,
-                            false,
-                            subject_text,
-                            currentUser.username,
-                            recipient_input.text,
-                            message_text,
-                            ""
-                        );
                         message_input.clear()
                         recipient_input.clear()
                         subject_input.clear()
+                        closeMessageWindow()
                     }
                 }
             }

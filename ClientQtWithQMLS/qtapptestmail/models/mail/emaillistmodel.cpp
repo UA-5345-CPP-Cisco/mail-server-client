@@ -63,10 +63,8 @@ QHash<int, QByteArray> EmailListModel::roleNames() const
 
 void EmailListModel::RemoveData(int row)
 {
-    qDebug() << "Row: " << row;
     if (row < 0 || row >= static_cast<int>(m_data.size())) return;
     beginRemoveRows(QModelIndex(), row, row);
-    qDebug() << "Delete";
     m_data.erase(m_data.begin() + row);
     endRemoveRows();
 }
@@ -109,12 +107,22 @@ bool EmailListModel::setData(const QModelIndex& index, const QVariant& value, in
     if (!index.isValid() || index.row() >= static_cast<int>(m_data.size()))
         return false;
 
-    switch (role) {
-    case StarredRole:
-        m_data[index.row()].is_starred = value.toBool();
-        break;
-    default:
-        return false;
+    switch (role)
+    {
+        case StarredRole:
+            m_data[index.row()].is_starred = value.toBool();
+            break;
+        case ThemeRole:
+            m_data[index.row()].theme = value.toString();
+            break;
+        case SendToRole:
+            m_data[index.row()].send_to = value.toString();
+            break;
+        case ContentRole:
+            m_data[index.row()].content = value.toString();
+            break;
+        default:
+            return false;
     }
 
     emit dataChanged(index, index, {role});

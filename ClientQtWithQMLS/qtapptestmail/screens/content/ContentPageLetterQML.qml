@@ -652,7 +652,6 @@ Rectangle
                     onClicked:
                     {
                         // MinimizeWindow
-                        console.log("INDEX: " + letterIndex)
                         deleteClicked()
                     }
                 }

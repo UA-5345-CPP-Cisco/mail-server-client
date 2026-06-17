@@ -46,6 +46,21 @@ Rectangle
             onOpenRequested: function(theme, name, sendTo, content, time) {
                 emailsListQML.emailOpenRequested(parent.pIndex, theme, name, sendTo, content, time, false)
             }
+            onClicked:{
+                newMessageLoader.selectedItem = {
+                    "index": parent.pIndex,
+                    "subject": theme,
+                    "sendTo": sendTo,
+                    "content": content,
+                    "isDraft": true
+                }
+
+                newMessageLoader.source = ""
+                newMessageLoader.active = false
+
+                newMessageLoader.active = true
+                newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml"
+            }
         }
     }
 
