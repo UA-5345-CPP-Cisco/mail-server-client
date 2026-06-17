@@ -63,8 +63,10 @@ QHash<int, QByteArray> EmailListModel::roleNames() const
 
 void EmailListModel::RemoveData(int row)
 {
+    qDebug() << "Row: " << row;
     if (row < 0 || row >= static_cast<int>(m_data.size())) return;
     beginRemoveRows(QModelIndex(), row, row);
+    qDebug() << "Delete";
     m_data.erase(m_data.begin() + row);
     endRemoveRows();
 }

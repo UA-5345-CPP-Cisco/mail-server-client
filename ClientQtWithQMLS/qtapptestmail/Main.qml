@@ -161,8 +161,9 @@ ApplicationWindow {
                 SplitView.preferredWidth: 350
                 SplitView.minimumWidth: 250
                 SplitView.fillHeight: true
-                onEmailOpenRequested: function(theme, name, sendTo, content, time, starred) {
+                onEmailOpenRequested: function(index, theme, name, sendTo, content, time, starred) {
                     window.selectedEmail = {
+                        "index": index,
                         "theme": theme,
                         "name": name,
                         "sendTo": sendTo,
@@ -190,12 +191,18 @@ ApplicationWindow {
                     anchors.fill: parent
                     visible: window.selectedEmail !== null
 
+                    letterIndex: window.selectedEmail ? window.selectedEmail.index : ""
                     letterTheme: window.selectedEmail ? window.selectedEmail.theme : ""
                     letterName: window.selectedEmail ? window.selectedEmail.name : ""
                     letterSendTo: window.selectedEmail ? window.selectedEmail.sendTo : ""
                     letterContent: window.selectedEmail ? window.selectedEmail.content : ""
                     letterTime: window.selectedEmail ? window.selectedEmail.time : ""
                     letterStarred: window.selectedEmail ? window.selectedEmail.starred : false
+
+                    onDeleteClicked:{
+                        emailList.sourceModel.removeEmailData(parseInt(letterIndex))
+                        window.selectedEmail = null
+                    }
                 }
             }
         }

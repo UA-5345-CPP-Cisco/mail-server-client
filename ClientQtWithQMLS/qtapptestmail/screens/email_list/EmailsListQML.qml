@@ -10,7 +10,7 @@ Rectangle
 
     property bool isDraftMode: false
     property var sourceModel: inboxModel
-    signal emailOpenRequested(string theme, string name, string sendTo, string content, string time, bool starred)
+    signal emailOpenRequested(int index, string theme, string name, string sendTo, string content, string time, bool starred)
 
     function activeSearchModel() {
         if (sourceModel === inboxModel)
@@ -44,7 +44,7 @@ Rectangle
             time: parent.pTime
             searchModel: parent.pSearchModel
             onOpenRequested: function(theme, name, sendTo, content, time) {
-                emailsListQML.emailOpenRequested(theme, name, sendTo, content, time, false)
+                emailsListQML.emailOpenRequested(parent.pIndex, theme, name, sendTo, content, time, false)
             }
         }
     }
@@ -65,7 +65,7 @@ Rectangle
             searchModel: parent.pSearchModel
 
             onOpenRequested: function(theme, name, sendTo, content, time, starred) {
-                emailsListQML.emailOpenRequested(theme, name, sendTo, content, time, starred)
+                emailsListQML.emailOpenRequested(parent.pIndex, theme, name, sendTo, content, time, starred)
             }
 
             onStarredClicked: {
@@ -477,7 +477,7 @@ Rectangle
             property string pTime: emailsTime
             property bool pStarred: emailsStarred
             property var pSearchModel: emailsListQML.activeSearchModel()
-            property var pIndex: index
+            property int pIndex: index
 
             sourceComponent: isDraftMode
                              ? draftDelegate

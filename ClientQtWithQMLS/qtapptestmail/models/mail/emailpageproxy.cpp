@@ -136,16 +136,22 @@ bool EmailPageProxy::setEmailData(int proxyRow, const QVariant& value, int role)
 
 void EmailPageProxy::removeEmailData(int proxyRow)
 {
-    QModelIndex proxyIndex = index(proxyRow, 0);
-    QModelIndex sourceIndex = mapToSource(proxyIndex);
+    QModelIndex idx = index(proxyRow, 0);
 
-    auto* filterProxy = qobject_cast<QAbstractProxyModel*>(sourceModel());
-    if (filterProxy) {
-        QModelIndex modelIndex = filterProxy->mapToSource(sourceIndex);
-        auto* model = qobject_cast<EmailListModel*>(
-            const_cast<QAbstractItemModel*>(modelIndex.model()));
-        model->RemoveData(modelIndex.row());
+    while (auto* proxy =
+           qobject_cast<QAbstractProxyModel*>(
+               const_cast<QAbstractItemModel*>(idx.model())))
+    {
+        idx = proxy->mapToSource(idx);
     }
+
+    auto* model = qobject_cast<EmailListModel*>(
+        const_cast<QAbstractItemModel*>(idx.model()));
+
+    if (!model || !idx.isValid())
+        return;
+
+    model->RemoveData(idx.row());
 }
 
 }
