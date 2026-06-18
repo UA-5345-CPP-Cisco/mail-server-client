@@ -27,6 +27,59 @@ ApplicationWindow {
         settingsLoader.source = ""
     }
 
+    function format_email_time(input_time)
+    {
+        if (!input_time)
+        {
+            return "";
+        }
+
+        // Automatically parse if input arrives as a string, or preserve if it is already a JS Date
+        let message_date = (input_time instanceof Date) ? input_time : new Date(input_time);
+
+        // Fallback security check: if parsing failed, return raw string
+        if (isNaN(message_date.getTime()))
+        {
+            return String(input_time);
+        }
+
+        let current_date = new Date();
+
+        let is_same_day = (message_date.getDate() === current_date.getDate() &&
+                           message_date.getMonth() === current_date.getMonth() &&
+                           message_date.getFullYear() === current_date.getFullYear());
+
+        if (is_same_day)
+        {
+            // Today: displays time format like "10:30 AM"
+            return Qt.formatDateTime(message_date, "hh:mm AP");
+        }
+        else
+        {
+            // Different day: displays "06 august" (lowercased)
+            return Qt.formatDateTime(message_date, "dd mmmm").toLowerCase();
+        }
+    }
+    function format_email_time_full(input_time)
+    {
+        if (!input_time)
+        {
+            return "";
+        }
+
+        let message_date = (input_time instanceof Date) ? input_time : new Date(input_time);
+
+        if (isNaN(message_date.getTime()))
+        {
+            return String(input_time);
+        }
+
+        let time_formatted = Qt.formatDateTime(message_date, "hh:mm AP");
+
+        let date_formatted = Qt.formatDateTime(message_date, "dd mmmm").toLowerCase();
+
+        return time_formatted + ", " + date_formatted;
+    }
 
     //blocks
     id: window

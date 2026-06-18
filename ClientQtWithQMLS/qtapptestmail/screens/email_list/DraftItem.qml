@@ -62,13 +62,17 @@ Rectangle {
 
                 Text {
                     id: ceo_company_com
-                    height: 20; width: parent.width
+                    height: 20;
+                    width: parent.width
                     color: "#101828"
-                    font.family: "Segoe UI"; font.pixelSize: 14; font.weight: Font.Normal
+                    font.family: "Segoe UI";
+                    font.pixelSize: 14; font.weight: Font.Normal
                     horizontalAlignment: Text.AlignLeft
-                    lineHeight: 20; lineHeightMode: Text.FixedHeight
+                    lineHeight: 20;
+                    lineHeightMode: Text.FixedHeight
                     text: searchModel ? searchModel.highlightAllFoundWords(name, searchModel.searchedText) : name
-                    textFormat: Text.RichText; verticalAlignment: Text.AlignVCenter
+                    textFormat: Text.RichText;
+                    verticalAlignment: Text.AlignVCenter
                 }
             }
 
@@ -83,10 +87,14 @@ Rectangle {
                     id: jun_4
                     x: 8; height: 16; width: 29
                     color: "#6a7282"
-                    font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
+                    font.family: "Segoe UI";
+                    font.pixelSize: 12;
+                    font.weight: Font.Normal
                     horizontalAlignment: Text.AlignLeft
-                    lineHeight: 16; lineHeightMode: Text.FixedHeight
-                    text: time; textFormat: Text.PlainText
+                    lineHeight: 16;
+                    lineHeightMode: Text.FixedHeight
+                    text: format_email_time(time);
+                    textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                 }
             }
@@ -145,14 +153,18 @@ Rectangle {
             anchors.topMargin: 2
             height: 16; width: 28
             color: "#fe9a00"
-            font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
+            font.family: "Segoe UI";
+            font.pixelSize: 12; font.weight: Font.Normal
             horizontalAlignment: Text.AlignLeft
-            lineHeight: 16; lineHeightMode: Text.FixedHeight
-            text: "Draft"; textFormat: Text.PlainText
+            lineHeight: 16;
+            lineHeightMode: Text.FixedHeight
+            text: "Draft";
+            textFormat: Text.PlainText
             verticalAlignment: Text.AlignVCenter
         }
     }
-    MouseArea {
+    MouseArea
+    {
         anchors.fill: parent
         hoverEnabled: true
 

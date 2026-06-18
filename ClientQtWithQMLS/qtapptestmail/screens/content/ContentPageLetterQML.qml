@@ -231,15 +231,18 @@ Rectangle
                     id: timeHolder
 
                     anchors.left: parent.left
+                    anchors.leftMargin: -8
                     anchors.verticalCenter: parent.verticalCenter
                     height: 16
                     width: 55
+                    anchors.rightMargin:5
+                    anchors.verticalCenterOffset: 1
                     color: "transparent"
 
                     Text
                     {
                         id: aM
-                        x: 18
+                        x: 14
                         y: 0
 
                         height: 16
@@ -252,7 +255,7 @@ Rectangle
                         horizontalAlignment: Text.AlignLeft
                         lineHeight: 16
                         lineHeightMode: Text.FixedHeight
-                        text: contentPageLetterQML.letterTime
+                        text: format_email_time_full(contentPageLetterQML.letterTime)
                         textFormat: Text.PlainText
                         verticalAlignment: Text.AlignVCenter
                     }

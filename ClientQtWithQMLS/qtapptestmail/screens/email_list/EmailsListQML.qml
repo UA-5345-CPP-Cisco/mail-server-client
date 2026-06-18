@@ -65,10 +65,12 @@ Rectangle
         }
     }
 
-    Component {
+    Component
+    {
         id: emailsDelegate
 
-        ListItem {
+        ListItem
+        {
             width: parent.width
 
             theme: parent.pTheme
@@ -76,7 +78,7 @@ Rectangle
             preview: parent.pPreview
             content: parent.pContent
             sendTo: parent.pSendTo
-            time: parent.pTime
+            time: format_email_time(parent.pTime)
             starred: parent.pStarred
             searchModel: parent.pSearchModel
             onOpenRequested: function(theme, name, sendTo, content, time, starred) {

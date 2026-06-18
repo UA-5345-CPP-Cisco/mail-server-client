@@ -50,8 +50,10 @@ Rectangle {
                     Image
                     {
                         source: "qrc:/pngs/assets/ic_select_email.svg"
-                        width: 18
-                        height: 18
+                        width: 48
+                        height: 48
+                        sourceSize.width: width * Screen.devicePixelRatio
+                        sourceSize.height: height * Screen.devicePixelRatio
                         fillMode: Image.PreserveAspectFit
                         anchors.centerIn: parent
                     }
