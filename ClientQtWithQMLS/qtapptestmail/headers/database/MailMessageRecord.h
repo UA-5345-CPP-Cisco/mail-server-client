@@ -24,6 +24,7 @@ struct MailMessageRecord
 	std::string body;
 	std::optional<std::int64_t> reply_to_message_id;
 	std::string created_at;
+	bool is_starred{false};
 	MailMessageStatus status{MailMessageStatus::Queued};
 };
 

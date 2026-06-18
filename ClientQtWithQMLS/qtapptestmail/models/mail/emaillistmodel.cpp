@@ -83,9 +83,26 @@ QHash<int, QByteArray> EmailListModel::roleNames() const
 void EmailListModel::RemoveData(int row)
 {
     if (row < 0 || row >= static_cast<int>(m_data.size())) return;
+    if (m_data[row].id >= 0 && !m_message_repository.DeleteMessage(m_data[row].id))
+        return;
     beginRemoveRows(QModelIndex(), row, row);
     m_data.erase(m_data.begin() + row);
     endRemoveRows();
+}
+
+bool EmailListModel::DeleteEmail(int row)
+{
+    if (row < 0 || row >= static_cast<int>(m_data.size()))
+        return false;
+
+    const std::int64_t message_id = m_data[row].id;
+    if (message_id >= 0 && !m_message_repository.DeleteMessage(message_id))
+        return false;
+
+    beginRemoveRows(QModelIndex(), row, row);
+    m_data.erase(m_data.begin() + row);
+    endRemoveRows();
+    return true;
 }
 
 void EmailListModel::AddData(
@@ -101,7 +118,7 @@ void EmailListModel::AddData(
 {
 	const QString t = time.isEmpty() ? QTime::currentTime().toString("hh:mm") : time;
 	const QString preview = makePreview(content, 30);
-	AddData({is_starred, is_sent, is_draft, theme, name, send_to, preview, content, t});
+	AddData({-1, is_starred, is_sent, is_draft, theme, name, send_to, preview, content, t});
 }
 
 QString EmailListModel::makePreview(const QString& text, int maxLen)
@@ -129,6 +146,21 @@ void EmailListModel::AddData(const EmailData& item)
 	emit dataAdded();
 }
 
+bool EmailListModel::SetStarred(int row, bool starred)
+{
+    if (row < 0 || row >= static_cast<int>(m_data.size()))
+        return false;
+
+    const std::int64_t message_id = m_data[row].id;
+    if (message_id >= 0 && !m_message_repository.UpdateStarred(message_id, starred))
+        return false;
+
+    m_data[row].is_starred = starred;
+    const QModelIndex idx = index(row, 0);
+    emit dataChanged(idx, idx, {StarredRole});
+    return true;
+}
+
 void EmailListModel::LoadFromDatabase()
 {
 	const auto messages = m_message_repository.FindAll();
@@ -152,7 +184,6 @@ void EmailListModel::LoadFromDatabase()
 
 		const bool is_draft = message.status == Storage::MailMessageStatus::Draft;
 		const bool is_sent = message.status == Storage::MailMessageStatus::Sent;
-		const bool is_starred = false;
 		const QString theme = message.subject.has_value()
 			? QString::fromStdString(*message.subject)
 			: QStringLiteral("empty");
@@ -161,8 +192,9 @@ void EmailListModel::LoadFromDatabase()
 		const QString preview = makePreview(content, 30);
 		const QString time = QString::fromStdString(message.created_at);
 
-		m_data.push_back({
-			is_starred,
+    m_data.push_back({
+			message.id,
+			message.is_starred,
 			is_sent,
 			is_draft,
 			theme,
@@ -185,6 +217,9 @@ bool EmailListModel::setData(const QModelIndex& index, const QVariant& value, in
     switch (role)
     {
     case StarredRole:
+        if (m_data[index.row()].id >= 0 &&
+            !m_message_repository.UpdateStarred(m_data[index.row()].id, value.toBool()))
+            return false;
         m_data[index.row()].is_starred = value.toBool();
         break;
     case ThemeRole:

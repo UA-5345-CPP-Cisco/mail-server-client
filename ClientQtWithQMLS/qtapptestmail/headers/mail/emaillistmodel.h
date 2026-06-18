@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <cstdint>
 #include <QObject>
 #include <QAbstractListModel>
 #include <QtMath>
@@ -16,6 +17,7 @@ namespace ISXMail
 
 struct EmailData
 {
+    std::int64_t id{-1};
     bool is_starred;
     bool is_sent;
     bool is_draft;
@@ -53,9 +55,11 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     void RemoveData(int row);
+    Q_INVOKABLE bool DeleteEmail(int row);
     Q_INVOKABLE void AddData(bool is_starred, bool is_sent, bool is_draft,
                              const QString& theme, const QString& name,
                              const QString& send_to, const QString& content, const QString& time);
+    Q_INVOKABLE bool SetStarred(int row, bool starred);
     void AddData(const EmailData& item);
 
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;

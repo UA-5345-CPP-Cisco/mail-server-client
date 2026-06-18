@@ -35,6 +35,8 @@ public:
 		MailMessageStatus status,
 		int limit
 	) const;
+	bool UpdateStarred(std::int64_t message_id, bool starred);
+	bool DeleteMessage(std::int64_t message_id);
 
 	bool UpdateStatus(
 		std::int64_t message_id,

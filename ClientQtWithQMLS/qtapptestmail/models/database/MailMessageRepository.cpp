@@ -34,9 +34,10 @@ std::int64_t MailMessageRepository::CreateMessage(
 				subject,
 				body,
 				reply_to_message_id,
+				is_starred,
 				status
 			)
-			VALUES (?, ?, ?, ?, ?, ?);
+			VALUES (?, ?, ?, ?, ?, ?, ?);
 		)SQL"
 	);
 
@@ -71,7 +72,8 @@ std::int64_t MailMessageRepository::CreateMessage(
 		statement.BindNull(5);
 	}
 
-	statement.BindText(6, StatusToString(status));
+	statement.BindInt(6, 0);
+	statement.BindText(7, StatusToString(status));
 	statement.Step();
 
 	return statement.LastInsertRowId();
@@ -92,6 +94,7 @@ std::optional<MailMessageRecord> MailMessageRepository::FindById(
 				body,
 				reply_to_message_id,
 				created_at,
+				is_starred,
 				status
 			FROM mail_messages
 			WHERE id = ?
@@ -122,6 +125,7 @@ std::vector<MailMessageRecord> MailMessageRepository::FindAll() const
 				body,
 				reply_to_message_id,
 				created_at,
+				is_starred,
 				status
 			FROM mail_messages
 			ORDER BY created_at DESC, id DESC;
@@ -159,6 +163,7 @@ std::vector<MailMessageRecord> MailMessageRepository::FindByStatus(
 				body,
 				reply_to_message_id,
 				created_at,
+				is_starred,
 				status
 			FROM mail_messages
 			WHERE status = ?
@@ -199,6 +204,40 @@ bool MailMessageRepository::UpdateStatus(
 	statement.BindText(1, StatusToString(new_status));
 	statement.BindInt64(2, message_id);
 	statement.BindText(3, StatusToString(expected_status));
+	statement.Step();
+
+	return statement.ChangedRowCount() > 0;
+}
+
+bool MailMessageRepository::UpdateStarred(std::int64_t message_id, bool starred)
+{
+	Statement statement(
+		m_database,
+		R"SQL(
+			UPDATE mail_messages
+			SET is_starred = ?
+			WHERE id = ?;
+		)SQL"
+	);
+
+	statement.BindInt(1, starred ? 1 : 0);
+	statement.BindInt64(2, message_id);
+	statement.Step();
+
+	return statement.ChangedRowCount() > 0;
+}
+
+bool MailMessageRepository::DeleteMessage(std::int64_t message_id)
+{
+	Statement statement(
+		m_database,
+		R"SQL(
+			DELETE FROM mail_messages
+			WHERE id = ?;
+		)SQL"
+	);
+
+	statement.BindInt64(1, message_id);
 	statement.Step();
 
 	return statement.ChangedRowCount() > 0;
@@ -274,7 +313,8 @@ MailMessageRecord MailMessageRepository::ReadMessage(
 	}
 
 	message.created_at = statement.ColumnText(6);
-	message.status = StatusFromString(statement.ColumnText(7));
+	message.is_starred = statement.ColumnInt64(7) != 0;
+	message.status = StatusFromString(statement.ColumnText(8));
 
 	return message;
 }

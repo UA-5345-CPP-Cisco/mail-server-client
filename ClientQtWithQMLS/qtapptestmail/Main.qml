@@ -88,9 +88,17 @@ ApplicationWindow {
                        item.newText = selectedItem.content
                        item.newIndex = selectedItem.index
                        item.isDraft = selectedItem.isDraft === true
-                       if(item.isDraft) item.newTitle = "Draft"
-                       else item.newTitle = "New Message"
+                       item.newTitle = item.isDraft ? "Draft" : "New Message"
                    }
+                   else
+                    {
+                        item.newRecipient = ""
+                        item.newSubject = ""
+                        item.newText = ""
+                        item.newIndex = ""
+                        item.isDraft = false
+                        item.newTitle = "New Message"
+                    }
                }
 
                Connections {
@@ -244,9 +252,28 @@ ApplicationWindow {
                     letterTime: window.selectedEmail ? window.selectedEmail.time : ""
                     letterStarred: window.selectedEmail ? window.selectedEmail.starred : false
 
+                    onStarClicked:
+                    {
+                        if (emailList.sourceModel)
+                            emailList.sourceModel.setStarred(parseInt(letterIndex), starred)
+                        if (window.selectedEmail)
+                        {
+                            window.selectedEmail = {
+                                "index": window.selectedEmail.index,
+                                "theme": window.selectedEmail.theme,
+                                "name": window.selectedEmail.name,
+                                "sendTo": window.selectedEmail.sendTo,
+                                "content": window.selectedEmail.content,
+                                "time": window.selectedEmail.time,
+                                "starred": starred
+                            }
+                        }
+                    }
+
                     onDeleteClicked:
                     {
-                        emailList.sourceModel.removeEmailData(parseInt(letterIndex))
+                        if (emailList.sourceModel)
+                            emailList.sourceModel.removeEmailData(parseInt(letterIndex))
                         window.selectedEmail = null
                     }
                 }

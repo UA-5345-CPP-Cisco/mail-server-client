@@ -30,7 +30,7 @@ qt_add_qml_module(appqtapptestmail
 		screens/navigation/NavigationQML.qml
 		screens/navigation/new_message/NewMessageQML.qml
 		screens/email_list/EmailsListQML.qml
-		screens/email_list/DraftsListQML.qml
+
 		screens/content/ContentBlankPageQML.qml
 		screens/content/ContentPageLetterQML.qml
 		screens/navigation/settings/SettingsQML.qml

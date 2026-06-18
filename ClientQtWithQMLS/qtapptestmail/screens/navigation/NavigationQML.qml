@@ -195,7 +195,7 @@ Rectangle
             anchors.top: horizontal_border.bottom
             anchors.topMargin: 4
             anchors.right: dropdown_wrapper.right
-            anchors.leftMargin: -15
+            anchors.rightMargin:0
 
             width: item ? item.implicitWidth : 0
             height: item ? item.implicitHeight : 0
@@ -244,13 +244,24 @@ Rectangle
                 {
                     onTapped:
                     {
-                        newMessageLoader.active = true
-                        if (String(newMessageLoader.source) === "")
+                        if (newMessageLoader.selectedItem !== null)
                         {
+                            newMessageLoader.selectedItem = null
+
+                            newMessageLoader.active = false
+                            newMessageLoader.active = true
                             newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml"
-                        } else
+                        }
+                        else if (String(newMessageLoader.source) === "")
+                        {
+                            newMessageLoader.selectedItem = null
+                            newMessageLoader.active = true
+                            newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml"
+                        }
+                        else
                         {
                             newMessageLoader.source = ""
+                            newMessageLoader.active = false
                         }
                     }
                 }

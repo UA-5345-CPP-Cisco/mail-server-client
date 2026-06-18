@@ -15,6 +15,7 @@ Rectangle
     property bool letterStarred: false
 
     signal deleteClicked()
+    signal starClicked(bool starred)
     // Header
     Rectangle
     {
@@ -289,7 +290,8 @@ Rectangle
 
                             onClicked:
                             {
-                                // ContextMenu
+                                contentPageLetterQML.letterStarred = !contentPageLetterQML.letterStarred
+                                starClicked(contentPageLetterQML.letterStarred)
                             }
                         }
                         scale: clickAreaFavourite.containsMouse ? 1.3 : 1.0
@@ -305,7 +307,7 @@ Rectangle
 
                         Image
                         {
-                            source: "qrc:/pngs/assets/ic_star.svg"
+                            source: contentPageLetterQML.letterStarred ? "qrc:/pngs/assets/ic_star_active.svg" : "qrc:/pngs/assets/ic_star.svg"
                             width: 18
                             height: 18
                             sourceSize.width: width * Screen.devicePixelRatio

@@ -6,8 +6,17 @@ import QtQuick.Shapes
 Rectangle
 {
     id: switchAccountQML
+    MouseArea
+    {
+        anchors.fill: parent
+        onClicked:
+        {
+            switchAccountQML.forceActiveFocus()
+        }
+    }
 
-    implicitWidth: 287
+
+    implicitWidth: 250
     implicitHeight: header.height + accountList.contentHeight + addButton.height + 16
 
     clip: false
