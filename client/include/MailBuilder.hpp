@@ -13,13 +13,13 @@ namespace ISXSmtpClient {
 
     class MailBuilder {
     public:
-        MailBuilder &AddRecipient(const std::vector<std::string> &recipients);
+        MailBuilder& AddRecipient(const std::vector<std::string> &recipients);
 
-        MailBuilder &SetSender(const std::string &sender);
+        MailBuilder& SetSender(const std::string &sender);
 
-        MailBuilder &SetSubject(const std::string &subject);
+        MailBuilder& SetSubject(const std::string &subject);
 
-        MailBuilder &SetBody(const std::string &body);
+        MailBuilder& SetBody(const std::string &body);
 
         Mail Build();
 
