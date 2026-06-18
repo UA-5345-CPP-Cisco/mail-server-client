@@ -59,11 +59,19 @@ Rectangle {
                 anchors.right: parent.right
                 height: 38
 
-                border.color: "#d1d5dc"
-                border.width: 1
+                border.color: search_input.activeFocus ? "#1a66ff" : "#d1d5dc"
+                border.width: search_input.activeFocus ? 2 : 1
                 clip: true
                 color: "#ffffff"
                 radius: 10
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.IBeamCursor
+                    onClicked: {
+                        search_input.forceActiveFocus()
+                    }
+                }
 
                 // TEMP SEARCH ICON
                 Item {
@@ -230,7 +238,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: "Inbox"
+                    text: selectedFolder
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                 }
@@ -249,7 +257,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: "Amount"
+                    text: amountText
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                 }

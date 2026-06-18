@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Effects
 import QtQuick.Shapes
-
+import QtQuick.Controls
 Rectangle {
     id: navigationQML
 
@@ -18,7 +18,6 @@ Rectangle {
         height: 60
         color: "#ffffff"
 
-        // Set z-index for the entire header so it stays above the email list
         z: 10
 
         // Bottom border
@@ -31,8 +30,8 @@ Rectangle {
         }
 
         // Icon
-        Rectangle {
-            id: background
+        Image {
+            id: avatar
 
             x: 12
             y: 14
@@ -40,34 +39,17 @@ Rectangle {
             height: 32
             width: 32
 
-            color: "#2b7fff"
-            radius: 16
+            source: currentUser.avatarPath
 
-            Text {
-                id: a
-                anchors.centerIn: parent
-
-                height: 20
-                width: 12
-
-                color: "#ffffff"
-                font.family: "Segoe UI"
-                font.pixelSize: 14
-                font.weight: Font.Black
-                horizontalAlignment: Text.AlignHCenter
-                lineHeight: 20
-                lineHeightMode: Text.FixedHeight
-                text: "A"
-                textFormat: Text.PlainText
-                verticalAlignment: Text.AlignVCenter
-            }
+            cache: false
+            fillMode: Image.PreserveAspectFit
         }
 
         // Content
         Rectangle {
             id: container
 
-            anchors.left: background.right
+            anchors.left: avatar.right
             anchors.leftMargin: 8
             anchors.right: dropdownWrapper.left // Anchor to the dropdown wrapper
             anchors.rightMargin: 4
@@ -75,6 +57,9 @@ Rectangle {
 
             height: 36
             color: "transparent"
+            Component.onCompleted: {
+                console.log("username =", currentUser.username)
+            }
 
             Rectangle {
                 id: nameHolder
@@ -98,7 +83,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 20
                     lineHeightMode: Text.FixedHeight
-                    text: "NameHolder"
+                    text: currentUser.username
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     wrapMode: Text.Wrap
@@ -128,7 +113,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: "EmailHolder"
+                    text: currentUser.email
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     wrapMode: Text.Wrap
@@ -354,9 +339,11 @@ Rectangle {
             anchors.right: parent.right
             anchors.leftMargin: 8
             anchors.rightMargin: 8
-            color: hoverHandlerInboxButton.hovered ? "#dbdbdb" : "#f3f4f6"
             height: 40
             radius: 10
+            property bool isInboxSelected: selectedFolder === "inbox"
+
+            color: isInboxSelected ? "#dbdbdb" : (hoverHandlerInboxButton.hovered ? "#f3f4f6" : "#ffffff")
 
             HoverHandler {
                 id: hoverHandlerInboxButton
@@ -365,7 +352,7 @@ Rectangle {
 
             TapHandler {
                 onTapped: {
-                    //
+                    window.selectedFolder = "inbox"
                 }
             }
 
@@ -431,10 +418,122 @@ Rectangle {
                     id: element
                     height: 16; width: parent.width
                     color: "#6a7282"
-                    font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
+                    font.family: "Segoe UI";
+                    font.pixelSize: 12;
+                    font.weight: Font.Normal
                     horizontalAlignment: Text.AlignHCenter
-                    lineHeight: 16; lineHeightMode: Text.FixedHeight
-                    text: "2"; textFormat: Text.PlainText
+                    lineHeight: 16;
+                    lineHeightMode: Text.FixedHeight
+                    text: inboxCount;
+                    textFormat: Text.PlainText
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+        }
+
+        // Sent button
+        Rectangle {
+            id: buttonToOpenSent
+
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 8
+            anchors.rightMargin: 8
+            anchors.top: buttonToOpenInbox.bottom
+            anchors.topMargin: 4
+            property bool isSentSelected: selectedFolder === "sent"
+
+            color: isSentSelected ? "#dbdbdb" : (hoverHandlerSentButton.hovered ? "#f3f4f6" : "#ffffff")
+            height: 40
+            radius: 10
+
+            HoverHandler {
+                id: hoverHandlerSentButton
+                cursorShape: Qt.PointingHandCursor
+            }
+
+            TapHandler {
+                onTapped: {
+                    window.selectedFolder = "sent"
+                }
+            }
+
+            // TEMP ICON
+            Rectangle {
+                id: sVG_4
+                x: 12; y: 11
+                height: 18; width: 18
+                clip: true; color: "transparent"
+
+                Shape {
+                    id: _vector_6
+                    x: 1.50; y: 1.50
+                    height: 15; width: 15
+                    ShapePath {
+                        fillColor: "#00000000"
+                        fillRule: ShapePath.WindingFill
+                        strokeColor: "#4a5565"
+                        strokeWidth: 1.50
+                        PathSvg {
+                            path: "M 9.401853977814605 14.766372688144887 C 9.430347521927061 14.837384828933395 9.47988206190733 14.897980605755722 9.543808633718157 14.940028192573893 C 9.607735205528984 14.982075779392064 9.682994383876357 15.003562323341457 9.759484696122433 15.00160312652979 C 9.835975008368509 14.999643929718124 9.910035211384658 14.974332706010829 9.971725385329629 14.929067614003824 C 10.0334155592746 14.883802521996818 10.079782642408281 14.820750277653895 10.104603446215288 14.74837256283202 L 14.979603291261048 0.49837314988562886 C 15.003606300741279 0.4319183614653377 15.008187348749008 0.3600020648104543 14.992809772774867 0.2910389360664543 C 14.977432196800727 0.2220758073224543 14.942731719476587 0.15891819128414295 14.89276981700083 0.10895628880838547 C 14.842807914525071 0.058994386332627984 14.77965172899819 0.02429462077174245 14.710688600254189 0.008917044797601699 C 14.641725471510188 -0.0064605311765390545 14.569807923157805 -0.0018798414951582687 14.503353134737514 0.022123167985071822 L 0.2533539229567919 4.8971234195531235 C 0.18097620813491716 4.921944223360129 0.11792306972235041 4.968311306493811 0.07265797771534546 5.0300014804387825 C 0.027392885708340517 5.091691654383754 0.0020821971549869964 5.165751857399902 0.00012300034332049208 5.242242169645978 C -0.0018361964683460122 5.318732481892054 0.0196499911410338 5.3939916602394264 0.06169757795920439 5.457918232050253 C 0.10374516477737498 5.52184480386108 0.16434165685541638 5.571379343841349 0.2353537976439248 5.599872887953804 L 6.18285421746118 7.984873041027251 C 6.370869039153704 8.060148675843994 6.541693125605491 8.172718213004975 6.685028102103587 8.315795395697322 C 6.828363078601683 8.458872578389668 6.941239851619684 8.629493744560058 7.016853824741159 8.817372757073779 L 9.401853977814605 14.766372688144887 Z"
+                        }
+                    }
+                }
+                Shape {
+                    id: _vector_7
+                    x: 8.19; y: 1.61
+                    height: 8.20; width: 8.20
+                    ShapePath {
+                        fillColor: "#00000000"
+                        strokeColor: "#4a5565"
+                        strokeWidth: 1.50
+                        PathSvg { path: "M 8.204999923706055 0 L 0 8.20425033569336" }
+                    }
+                }
+            }
+
+            Rectangle {
+                id: container_4
+                x: 42; y: 8
+                height: 24
+                color: "transparent"
+
+                Text {
+                    id: sent
+                    height: 24; width: parent.width
+                    color: "#4a5565"
+                    font.family: "Segoe UI";
+                    font.pixelSize: 16;
+                    font.weight: Font.Normal
+                    horizontalAlignment: Text.AlignLeft
+                    lineHeight: 24;
+                    lineHeightMode: Text.FixedHeight
+                    text: "Sent";
+                    textFormat: Text.PlainText
+                    verticalAlignment: Text.AlignVCenter; wrapMode: Text.Wrap
+                }
+            }
+
+            Rectangle {
+                id: amountOfSentHolder
+                anchors.right: parent.right
+                anchors.rightMargin: 12
+                anchors.verticalCenter: parent.verticalCenter
+                height: 16; width: 20
+                color: "transparent"
+
+                Text {
+                    id: element_2
+                    height: 16; width: parent.width
+                    color: "#6a7282"
+                    font.family: "Segoe UI";
+                    font.pixelSize: 12;
+                    font.weight: Font.Normal
+                    horizontalAlignment: Text.AlignHCenter
+                    lineHeight: 16;
+                    lineHeightMode: Text.FixedHeight
+                    text: sentCount;
+                    textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                 }
             }
@@ -448,10 +547,12 @@ Rectangle {
             anchors.right: parent.right
             anchors.leftMargin: 8
             anchors.rightMargin: 8
-            anchors.top: buttonToOpenInbox.bottom
+            anchors.top: buttonToOpenSent.bottom
             anchors.topMargin: 4
+            property bool isStarredSelected: selectedFolder === "starred"
 
-            color: hoverHandlerStarredButton.hovered ? "#f3f4f6" : "#ffffff"
+
+            color: isStarredSelected ? "#dbdbdb" : (hoverHandlerStarredButton.hovered ? "#f3f4f6" : "#ffffff")
             height: 40
             radius: 10
 
@@ -462,7 +563,7 @@ Rectangle {
 
             TapHandler {
                 onTapped: {
-                    //
+                    window.selectedFolder = "starred"
                 }
             }
 
@@ -519,109 +620,14 @@ Rectangle {
                     id: element_1
                     height: 16; width: parent.width
                     color: "#6a7282"
-                    font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
+                    font.family: "Segoe UI";
+                    font.pixelSize: 12;
+                    font.weight: Font.Normal
                     horizontalAlignment: Text.AlignHCenter
-                    lineHeight: 16; lineHeightMode: Text.FixedHeight
-                    text: "2"; textFormat: Text.PlainText
-                    verticalAlignment: Text.AlignVCenter
-                }
-            }
-        }
-
-        // Sent button
-        Rectangle {
-            id: buttonToOpenSent
-
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 8
-            anchors.rightMargin: 8
-            anchors.top: buttonToOpenStarred.bottom
-            anchors.topMargin: 4
-
-            color: hoverHandlerSentButton.hovered ? "#f3f4f6" : "#ffffff"
-            height: 40
-            radius: 10
-
-            HoverHandler {
-                id: hoverHandlerSentButton
-                cursorShape: Qt.PointingHandCursor
-            }
-
-            TapHandler {
-                onTapped: {
-                    //
-                }
-            }
-
-            // TEMP ICON
-            Rectangle {
-                id: sVG_4
-                x: 12; y: 11
-                height: 18; width: 18
-                clip: true; color: "transparent"
-
-                Shape {
-                    id: _vector_6
-                    x: 1.50; y: 1.50
-                    height: 15; width: 15
-                    ShapePath {
-                        fillColor: "#00000000"
-                        fillRule: ShapePath.WindingFill
-                        strokeColor: "#4a5565"
-                        strokeWidth: 1.50
-                        PathSvg {
-                            path: "M 9.401853977814605 14.766372688144887 C 9.430347521927061 14.837384828933395 9.47988206190733 14.897980605755722 9.543808633718157 14.940028192573893 C 9.607735205528984 14.982075779392064 9.682994383876357 15.003562323341457 9.759484696122433 15.00160312652979 C 9.835975008368509 14.999643929718124 9.910035211384658 14.974332706010829 9.971725385329629 14.929067614003824 C 10.0334155592746 14.883802521996818 10.079782642408281 14.820750277653895 10.104603446215288 14.74837256283202 L 14.979603291261048 0.49837314988562886 C 15.003606300741279 0.4319183614653377 15.008187348749008 0.3600020648104543 14.992809772774867 0.2910389360664543 C 14.977432196800727 0.2220758073224543 14.942731719476587 0.15891819128414295 14.89276981700083 0.10895628880838547 C 14.842807914525071 0.058994386332627984 14.77965172899819 0.02429462077174245 14.710688600254189 0.008917044797601699 C 14.641725471510188 -0.0064605311765390545 14.569807923157805 -0.0018798414951582687 14.503353134737514 0.022123167985071822 L 0.2533539229567919 4.8971234195531235 C 0.18097620813491716 4.921944223360129 0.11792306972235041 4.968311306493811 0.07265797771534546 5.0300014804387825 C 0.027392885708340517 5.091691654383754 0.0020821971549869964 5.165751857399902 0.00012300034332049208 5.242242169645978 C -0.0018361964683460122 5.318732481892054 0.0196499911410338 5.3939916602394264 0.06169757795920439 5.457918232050253 C 0.10374516477737498 5.52184480386108 0.16434165685541638 5.571379343841349 0.2353537976439248 5.599872887953804 L 6.18285421746118 7.984873041027251 C 6.370869039153704 8.060148675843994 6.541693125605491 8.172718213004975 6.685028102103587 8.315795395697322 C 6.828363078601683 8.458872578389668 6.941239851619684 8.629493744560058 7.016853824741159 8.817372757073779 L 9.401853977814605 14.766372688144887 Z"
-                        }
-                    }
-                }
-                Shape {
-                    id: _vector_7
-                    x: 8.19; y: 1.61
-                    height: 8.20; width: 8.20
-                    ShapePath {
-                        fillColor: "#00000000"
-                        strokeColor: "#4a5565"
-                        strokeWidth: 1.50
-                        PathSvg { path: "M 8.204999923706055 0 L 0 8.20425033569336" }
-                    }
-                }
-            }
-
-            Rectangle {
-                id: container_4
-                x: 42; y: 8
-                height: 24
-                color: "transparent"
-
-                Text {
-                    id: sent
-                    height: 24; width: parent.width
-                    color: "#4a5565"
-                    font.family: "Segoe UI"; font.pixelSize: 16; font.weight: Font.Normal
-                    horizontalAlignment: Text.AlignLeft
-                    lineHeight: 24; lineHeightMode: Text.FixedHeight
-                    text: "Sent"; textFormat: Text.PlainText
-                    verticalAlignment: Text.AlignVCenter; wrapMode: Text.Wrap
-                }
-            }
-
-            Rectangle {
-                id: amountOfSentHolder
-                anchors.right: parent.right
-                anchors.rightMargin: 12
-                anchors.verticalCenter: parent.verticalCenter
-                height: 16; width: 20
-                color: "transparent"
-
-                Text {
-                    id: element_2
-                    height: 16; width: parent.width
-                    color: "#6a7282"
-                    font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
-                    horizontalAlignment: Text.AlignHCenter
-                    lineHeight: 16; lineHeightMode: Text.FixedHeight
-                    text: "2"; textFormat: Text.PlainText
+                    lineHeight: 16;
+                    lineHeightMode: Text.FixedHeight
+                    text: starredCount;
+                    textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                 }
             }
@@ -635,10 +641,11 @@ Rectangle {
             anchors.right: parent.right
             anchors.leftMargin: 8
             anchors.rightMargin: 8
-            anchors.top: buttonToOpenSent.bottom
+            anchors.top: buttonToOpenStarred.bottom
             anchors.topMargin: 4
+            property bool isDraftsSelected: selectedFolder === "drafts"
 
-            color: hoverHandlerDraftsButton.hovered ? "#f3f4f6" : "#ffffff"
+            color: isDraftsSelected ? "#dbdbdb" : (hoverHandlerDraftsButton.hovered ? "#f3f4f6" : "#ffffff")
             height: 40
             radius: 10
 
@@ -649,7 +656,7 @@ Rectangle {
 
             TapHandler {
                 onTapped: {
-                    //
+                    window.selectedFolder = "drafts"
                 }
             }
 
@@ -752,8 +759,10 @@ Rectangle {
                     color: "#6a7282"
                     font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
                     horizontalAlignment: Text.AlignHCenter
-                    lineHeight: 16; lineHeightMode: Text.FixedHeight
-                    text: "2"; textFormat: Text.PlainText
+                    lineHeight: 16;
+                    lineHeightMode: Text.FixedHeight
+                    text: draftsCount;
+                    textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                 }
             }
@@ -769,8 +778,7 @@ Rectangle {
         anchors.bottom: parent.bottom
 
         height: 60
-        color: "#ffffff"
-
+        color: clickAreaSettings.hovered ? "#dbdbdb" : "#ffffff"
         // Top border
         Rectangle {
             anchors.left: parent.left
@@ -788,16 +796,35 @@ Rectangle {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: 12
+            color: clickAreaSettings.hovered ? "#dbdbdb" : "#ffffff"
             anchors.rightMargin: 12
 
             height: 36
-            color: "transparent"
+
             radius: 10
+
+            HoverHandler {
+                    id: clickAreaSettings
+                    cursorShape: Qt.PointingHandCursor
+                }
+
+                TapHandler
+                {
+                    onTapped:
+                    {
+                        settingsLoader.active = true
+                        if (String( settingsLoader.source) === "")
+                        {
+                             settingsLoader.source = "SettingsQML.qml"
+                        } else
+                        {
+                             settingsLoader.source = ""
+                        }
+                    }
+            }
 
             Text {
                 id: settings
-
-
                 height: 20
                 color: "#4a5565"
                 font.family: "Segoe UI"
@@ -821,27 +848,42 @@ Rectangle {
                     clip: true; color: "transparent"
                     anchors.right: parent.left
                     anchors.rightMargin: 5
+                    rotation: clickAreaSettings.hovered ? 180 : 0
+                    Behavior on rotation
+                    {
+                        RotationAnimation
+                        {
+                            duration: 500
+                            direction: RotationAnimation.Clockwise
+                            easing.type: Easing.InOutQuad
+                        }
+                    }
 
-                    Shape {
+                    Shape
+                    {
                         id: _vector_13
                         x: 1.99
                         y: 1.33
                         height: 13.33; width: 12.02
-                        ShapePath {
+                        ShapePath
+                        {
                             fillColor: "#00000000"
                             fillRule: ShapePath.WindingFill
                             strokeColor: "#4a5565"
                             strokeWidth: 1.33
-                            PathSvg {
+                            PathSvg
+                            {
                                 path: "M 6.158387029075117 0 L 5.865053331947832 0 C 5.511431323175602 2.9605948735059085e-16 5.1722930249163666 0.1404757367996723 4.922244519992625 0.39052424703554606 C 4.6721960150688835 0.6405727572714198 4.531719963362088 0.9797113806269009 4.531719963362088 1.333333396911621 L 4.531719963362088 1.4533332881927434 C 4.531480135355746 1.6871503203940503 4.469758271139045 1.9167933980684269 4.352745807018807 2.119224967283799 C 4.235733342898569 2.321656536499171 4.067544945335786 2.489758232740948 3.8650532790692154 2.606666689236954 L 3.5783870371556485 2.7733333638509063 C 3.3756947615176744 2.890357810991176 3.145768924279639 2.9519664264662877 2.9117200349713293 2.9519664264662877 C 2.6776711456630196 2.9519664264662877 2.447745626316431 2.890357810991176 2.245053350678457 2.7733333638509063 L 2.1450532844562367 2.7200000788370744 C 1.8390966544021827 2.543508611210592 1.4756114078292484 2.4956293302677093 1.1343879999631366 2.586872224181752 C 0.7931645920970248 2.6781151180957945 0.5020876460898929 2.9010239037366117 0.32505338256676125 3.206666781425474 L 0.17838669294884252 3.460000203132631 C 0.0018952290718166898 3.7659568396865524 -0.045984209799622464 4.12944241187297 0.04525868217601903 4.47066582698817 C 0.13650157415166053 4.81188924210337 0.35941051400263635 5.102966035348532 0.6650533851982972 5.280000302632652 L 0.7650534514205174 5.346667226791396 C 0.9665706611921066 5.4630075913909595 1.1341328622744298 5.6300594113696 1.2510872217985831 5.831220904885321 C 1.3680415813227365 6.032382398401043 1.4303156420947523 6.2606485093743744 1.4317201357133897 6.493333490371697 L 1.4317201357133897 6.833333659172058 C 1.4326528923166009 7.068280338523229 1.371486928563996 7.299302051828783 1.2544158631422866 7.503005703433609 C 1.1373447977205773 7.706709355038435 0.968525912142799 7.8758611460937225 0.7650534514205174 7.99333356189727 L 0.6650533851982972 8.053333666483558 C 0.35941051400263635 8.230367933767678 0.13650157415166053 8.52144472701284 0.04525868217601903 8.86266814212804 C -0.045984209799622464 9.20389155724324 0.0018952290718166898 9.567376811538205 0.17838669294884252 9.873333448092126 L 0.32505338256676125 10.12666750558219 C 0.5020876460898929 10.432310383271053 0.7931645920970248 10.655218851020415 1.1343879999631366 10.746461744934457 C 1.4756114078292484 10.8377046388485 1.8390966544021827 10.789825357905618 2.1450532844562367 10.613333890279137 L 2.245053350678457 10.560000605265303 C 2.447745626316431 10.442976158125033 2.6776711456630196 10.381367224758469 2.9117200349713293 10.381367224758469 C 3.145768924279639 10.381367224758469 3.3756947615176744 10.442976158125033 3.5783870371556485 10.560000605265303 L 3.8650532790692154 10.726667279879257 C 4.067544945335786 10.843575736375263 4.235733342898569 11.011677750508493 4.352745807018807 11.214109319723866 C 4.469758271139045 11.416540888939238 4.531480135355746 11.646183330830706 4.531719963362088 11.880000363032012 L 4.531719963362088 12.00000057220459 C 4.531719963362088 12.35362258848931 4.6721960150688835 12.692760893953336 4.922244519992625 12.94280940418921 C 5.1722930249163666 13.192857914425085 5.511431323175602 13.333333969116211 5.865053331947832 13.333333969116211 L 6.158387029075117 13.333333969116211 C 6.512009037847347 13.333333969116211 6.851147336106583 13.192857914425085 7.101195841030324 12.94280940418921 C 7.351244345954066 12.692760893953336 7.4917203976608615 12.35362258848931 7.4917203976608615 12.00000057220459 L 7.4917203976608615 11.880000363032012 C 7.491960225667203 11.646183330830706 7.553682089883904 11.416540888939238 7.670694554004142 11.214109319723866 C 7.78770701812438 11.011677750508493 7.955895415687163 10.843575736375263 8.158387081953734 10.726667279879257 L 8.4450533238673 10.560000605265303 C 8.647745599505274 10.442976158125033 8.877671118851863 10.381367224758469 9.111720008160173 10.381367224758469 C 9.345768897468483 10.381367224758469 9.575694416815072 10.442976158125033 9.778386692453045 10.560000605265303 L 9.878386440783817 10.613333890279137 C 10.18434307083787 10.789825357905618 10.5478289531937 10.8377046388485 10.889052361059813 10.746461744934457 C 11.230275768925924 10.655218851020415 11.521353191770228 10.432310383271053 11.698387455293359 10.12666750558219 L 11.845053668074106 9.866666628519669 C 12.021545131951132 9.560709991965748 12.069424411876847 9.197224737670785 11.978181519901206 8.856001322555585 C 11.886938627925565 8.514777907440385 11.66403016491176 8.22370111419522 11.358387293716099 8.046666846911101 L 11.258387545385327 7.99333356189727 C 11.054915084663046 7.8758611460937225 10.886095245410925 7.706709355038435 10.769024179989215 7.503005703433609 C 10.651953114567505 7.299302051828783 10.590788104489244 7.068280338523229 10.591720861092455 6.833333659172058 L 10.591720861092455 6.500000309944152 C 10.590788104489244 6.265053630592981 10.651953114567505 6.034031917287427 10.769024179989215 5.830328265682601 C 10.886095245410925 5.626624614077775 11.054915084663046 5.457472823022488 11.258387545385327 5.34000040721894 L 11.358387293716099 5.280000302632652 C 11.66403016491176 5.102966035348532 11.886938627925565 4.81188924210337 11.978181519901206 4.47066582698817 C 12.069424411876847 4.12944241187297 12.021545131951132 3.7659568396865524 11.845053668074106 3.460000203132631 L 11.698387455293359 3.206666781425474 C 11.521353191770228 2.9010239037366117 11.230275768925924 2.6781151180957945 10.889052361059813 2.586872224181752 C 10.5478289531937 2.4956293302677093 10.18434307083787 2.543508611210592 9.878386440783817 2.7200000788370744 L 9.778386692453045 2.7733333638509063 C 9.575694416815072 2.890357810991176 9.345768897468483 2.9519664264662877 9.111720008160173 2.9519664264662877 C 8.877671118851863 2.9519664264662877 8.647745599505274 2.890357810991176 8.4450533238673 2.7733333638509063 L 8.158387081953734 2.606666689236954 C 7.955895415687163 2.489758232740948 7.78770701812438 2.321656536499171 7.670694554004142 2.119224967283799 C 7.553682089883904 1.9167933980684269 7.491960225667203 1.6871503203940503 7.4917203976608615 1.4533332881927434 L 7.4917203976608615 1.333333396911621 C 7.4917203976608615 0.9797113806269009 7.351244345954066 0.6405727572714198 7.101195841030324 0.39052424703554606 C 6.851147336106583 0.1404757367996723 6.512009037847347 2.9605948735059085e-16 6.158387029075117 0 Z"
                             }
                         }
                     }
-                    Shape {
+                    Shape
+                    {
                         id: _vector_14
                         x: 6; y: 6
                         height: 4; width: 4
-                        ShapePath {
+                        ShapePath
+                        {
                             fillColor: "#00000000"
                             strokeColor: "#4a5565"
                             strokeWidth: 1.33

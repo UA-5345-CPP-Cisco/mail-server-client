@@ -4,118 +4,154 @@ import QtQuick.Shapes
 Rectangle {
     id: settingsQML
 
-    height: 313
-    width: 382
+    implicitHeight: 313
+    implicitWidth: 382
 
     clip: true
     color: "#ffffff"
     radius: 14
 
-    Image {
-        id: horizontalBorder
+    Loader
+    {
+        id: generalSettingsLoader
 
-        source: Qt.resolvedUrl("assets/horizontalBorder_6.png")
+        anchors.fill: parent
 
-        Rectangle {
-            id: container
+        z: 99
 
-            x: 16
-            y: 16
+        focus: true
+
+        opacity: status === Loader.Ready ? 1.0 : 0.0
+        Behavior on opacity {
+            NumberAnimation { duration: 250 }
+        }
+    }
+
+    Rectangle
+    {
+        id: container
+
+        x: 16
+        y: 16
+
+        height: 24
+        width: 65
+
+        color: "transparent"
+
+        Text {
+            id: settings
 
             height: 24
-            width: 65
+            width: 66
 
-            color: "transparent"
-
-            Text {
-                id: settings
-
-                height: 24
-                width: 66
-
-                color: "#101828"
-                font.family: "Segoe UI"
-                font.pixelSize: 16
-                font.weight: Font.Black
-                horizontalAlignment: Text.AlignLeft
-                lineHeight: 24
-                lineHeightMode: Text.FixedHeight
-                text: "Settings"
-                textFormat: Text.PlainText
-                verticalAlignment: Text.AlignVCenter
-            }
+            color: "#101828"
+            font.family: "Segoe UI"
+            font.pixelSize: 16
+            font.weight: Font.Black
+            horizontalAlignment: Text.AlignLeft
+            lineHeight: 24
+            lineHeightMode: Text.FixedHeight
+            text: "Settings"
+            textFormat: Text.PlainText
+            verticalAlignment: Text.AlignVCenter
         }
-        Rectangle {
-            id: buttonToCloseWindow
+    }
+    Rectangle
+    {
+        id: buttonToCloseWindow
 
-            x: 348.40
-            y: 19
+        x: 348.40
+        y: 19
+
+        height: 18
+        width: 18
+
+        color: "transparent"
+
+        Rectangle {
+            id: sVG
 
             height: 18
             width: 18
 
+            clip: true
             color: "transparent"
 
-            Rectangle {
-                id: sVG
+            MouseArea
+            {
+                id: clickAreaCloseSettingsWindow
+                anchors.fill: parent
 
-                height: 18
-                width: 18
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
 
-                clip: true
-                color: "transparent"
+                onClicked:
+                {
+                    closeSettingsWindow()
+                }
+            }
+            scale: clickAreaCloseSettingsWindow.containsMouse ? 1.5 : 1.0
 
-                Shape {
-                    id: _vector
+            Behavior on scale {
+                NumberAnimation {
+                    duration: 150
+                    easing.type: Easing.InOutQuad
+                }
+            }
 
-                    x: 4.50
-                    y: 4.50
+            Shape {
+                id: _vector
 
-                    height: 9
-                    width: 9
+                x: 4.50
+                y: 4.50
 
-                    ShapePath {
-                        id: _vector_ShapePath0
+                height: 9
+                width: 9
 
-                        fillColor: "#00000000"
-                        strokeColor: "#6a7282"
-                        strokeWidth: 1.50
+                ShapePath {
+                    id: _vector_ShapePath0
 
-                        PathSvg {
-                            id: _vector_ShapePath0_PathSvg0
+                    fillColor: "#00000000"
+                    strokeColor: "#6a7282"
+                    strokeWidth: 1.50
 
-                            path: "M 9 0 L 0 9"
-                        }
+                    PathSvg {
+                        id: _vector_ShapePath0_PathSvg0
+
+                        path: "M 9 0 L 0 9"
                     }
                 }
-                Shape {
-                    id: _vector_1
+            }
+            Shape {
+                id: _vector_1
 
-                    x: 4.50
-                    y: 4.50
+                x: 4.50
+                y: 4.50
 
-                    height: 9
-                    width: 9
+                height: 9
+                width: 9
 
-                    ShapePath {
-                        id: _vector_1_ShapePath0
+                ShapePath {
+                    id: _vector_1_ShapePath0
 
-                        fillColor: "#00000000"
-                        strokeColor: "#6a7282"
-                        strokeWidth: 1.50
+                    fillColor: "#00000000"
+                    strokeColor: "#6a7282"
+                    strokeWidth: 1.50
 
-                        PathSvg {
-                            id: _vector_1_ShapePath0_PathSvg0
+                    PathSvg {
+                        id: _vector_1_ShapePath0_PathSvg0
 
-                            path: "M 0 0 L 9 9"
-                        }
+                        path: "M 0 0 L 9 9"
                     }
                 }
             }
         }
     }
-    Rectangle {
-        id: container_1
+
+    Rectangle
+    {
+        id: container_2
 
         x: 11
         y: 284
@@ -145,15 +181,16 @@ Rectangle {
             verticalAlignment: Text.AlignVCenter
         }
     }
-    Rectangle {
-        id: container_2
+
+    Rectangle
+    {
+        id: preferences
 
         y: 64
 
         height: 220
         width: 382.40
 
-        color: "transparent"
 
         Rectangle {
             id: container_3
@@ -486,15 +523,6 @@ Rectangle {
 
                     color: "#ffffff"
                     radius: 26843500
-
-                    Image {
-                        id: overlay_Shadow
-
-                        x: -3
-                        y: -2
-
-                        source: Qt.resolvedUrl("assets/overlay_Shadow.png")
-                    }
                 }
             }
         }
@@ -507,8 +535,26 @@ Rectangle {
             height: 60
             width: 350.40
 
-            color: "transparent"
             radius: 10
+            color: clickAreaAccountSettings.hovered ? "#fff0f0" : "transparent"
+
+            HoverHandler
+            {
+                id: clickAreaAccountSettings
+                cursorShape: Qt.PointingHandCursor
+            }
+
+            TapHandler
+            {
+                onTapped: {
+                    if (String(generalSettingsLoader.source) === "") {
+                        generalSettingsLoader.active = true
+                        generalSettingsLoader.source = "SettingsGeneralQML.qml"
+                    } else {
+                        generalSettingsLoader.source = ""
+                    }
+                }
+            }
 
             Rectangle {
                 id: sVG_2
@@ -636,6 +682,7 @@ Rectangle {
                 }
             }
         }
+
         Rectangle {
             id: buttonToGeneralSettings
 
@@ -644,9 +691,26 @@ Rectangle {
 
             height: 60
             width: 350.40
-
-            color: "transparent"
             radius: 10
+            color: clickAreaGeneralSettings.hovered ? "#fff0f0" : "transparent"
+
+            HoverHandler
+            {
+                id: clickAreaGeneralSettings
+                cursorShape: Qt.PointingHandCursor
+            }
+
+            TapHandler
+            {
+                onTapped: {
+                    if (String(generalSettingsLoader.source) === "") {
+                        generalSettingsLoader.active = true
+                        generalSettingsLoader.source = "SettingsGeneralQML.qml"
+                    } else {
+                        generalSettingsLoader.source = ""
+                    }
+                }
+            }
 
             Rectangle {
                 id: sVG_3

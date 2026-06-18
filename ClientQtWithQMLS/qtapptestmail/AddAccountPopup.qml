@@ -49,158 +49,205 @@ Popup {
             cursorShape: Qt.PointingHandCursor
             onClicked: {
                 root.close()
+                contentLoader.sourceComponent = choiceScreen //?????????
             }
         }
     }
 
-    Column {
-        anchors.centerIn: parent
-        spacing: 30
+    Loader {
+        id: contentLoader
+        anchors.fill: parent
+        sourceComponent: choiceScreen
+    }
 
-        Text {
-            text: "Add an Account"
-            font.family: "Segoe UI"
-            font.pixelSize: 32
-            font.weight: Font.Bold
-            color: "#6a748b"
-            anchors.horizontalCenter: parent.horizontalCenter
+
+    Connections {
+        target: contentLoader.item
+        ignoreUnknownSignals: true
+
+        // When "Back" is clicked
+        function onBackRequested() {
+            contentLoader.sourceComponent = choiceScreen
         }
 
+        // When "Sign In" is clicked
+        function onLoginSubmitted(email, password) {
+            // authorization logic
+            root.close()
+        }
 
-        Row{
-            spacing: 24
-            anchors.horizontalCenter: parent.horizontalCenter
+        function onRegisterSubmitted(name, email, password) {
+            // Register logic
+            // root.close()
+        }
+    }
 
-            // First block
-            Rectangle {
-                width: 260
-                height: 300
-                radius: 12
-                border.color: "#e5e7eb"
-                border.width: 1
-                color: "transparent"
-                Column {
-                    anchors.centerIn: parent
-                    spacing: 16
-                    width: parent.width - 32
-                    Image {
-                        source: "qrc:/pngs/assets/ic_login.svg"
-                        sourceSize.width: 80
-                        sourceSize.height: 80
-                        fillMode: Image.PreserveAspectFit
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                    Text {
-                        text: "Existing User?"
-                        font.family: "Segoe UI"
-                        font.pixelSize: 22
-                        font.weight: Font.Bold
-                        color: "#6a748b"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
+    Component {
+        id: choiceScreen
 
-                    // Log In button
+        Item {
+            anchors.fill: parent
+
+            Column {
+                anchors.centerIn: parent
+                spacing: 30
+
+                Text {
+                    text: "Add an Account"
+                    font.family: "Segoe UI"
+                    font.pixelSize: 32
+                    font.weight: Font.Bold
+                    //color: "#6a748b"
+                    color: "#000000"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
+
+
+                Row{
+                    spacing: 24
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    // First block
                     Rectangle {
-                        width: 160
-                        height: 44
-                        radius: 8
-                        color: loginMouseArea.containsMouse ? "#0052cc" : "#1a66ff"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        Text {
+                        width: 260
+                        height: 300
+                        radius: 12
+                        border.color: "#e5e7eb"
+                        border.width: 1
+                        color: "transparent"
+                        Column {
                             anchors.centerIn: parent
-                            text: "Log In"
-                            color: "#ffffff"
-                            font.family: "Segoe UI"
-                            font.pixelSize: 16
-                            font.weight: Font.Bold
-                        }
-                        MouseArea {
-                            id: loginMouseArea
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                // Open login form
+                            spacing: 16
+                            width: parent.width - 32
+                            Image {
+                                source: "qrc:/pngs/assets/ic_login.svg"
+                                sourceSize.width: 80
+                                sourceSize.height: 80
+                                fillMode: Image.PreserveAspectFit
+                                anchors.horizontalCenter: parent.horizontalCenter
+                            }
+                            Text {
+                                text: "Existing User?"
+                                font.family: "Segoe UI"
+                                font.pixelSize: 22
+                                font.weight: Font.Bold
+                                color: "#6a748b"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                            }
+
+                            // Log In button
+                            Rectangle {
+                                width: 160
+                                height: 44
+                                radius: 8
+                                color: loginMouseArea.containsMouse ? "#0052cc" : "#1a66ff"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "Log In"
+                                    color: "#ffffff"
+                                    font.family: "Segoe UI"
+                                    font.pixelSize: 16
+                                    font.weight: Font.Bold
+                                }
+                                MouseArea {
+                                    id: loginMouseArea
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        contentLoader.source = "LoginForm.qml"
+                                    }
+                                }
+                            }
+
+                            Text {
+                                text: "Access your personal \n or work profile"
+                                font.family: "Segoe UI"
+                                font.pixelSize: 14
+                                color: "#6a748b"
+                                horizontalAlignment: Text.AlignHCenter
+                                anchors.horizontalCenter: parent.horizontalCenter
                             }
                         }
                     }
 
-                    Text {
-                        text: "Access your personal \n or work profile"
-                        font.family: "Segoe UI"
-                        font.pixelSize: 14
-                        color: "#6a748b"
-                        horizontalAlignment: Text.AlignHCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                }
-            }
-
-            // Second block
-            Rectangle {
-                width: 260
-                height: 300
-                radius: 12
-                border.color: "#e5e7eb"
-                border.width: 1
-                color: "transparent"
-                Column {
-                    anchors.centerIn: parent
-                    anchors.verticalCenterOffset: -2
-                    spacing: 16
-                    width: parent.width - 32
-                    Image {
-                        source: "qrc:/pngs/assets/ic_add_account.svg"
-                        sourceSize.width: 64
-                        sourceSize.height: 64
-                        fillMode: Image.PreserveAspectFit
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                    Text {
-                        text: "New User?"
-                        font.family: "Segoe UI"
-                        font.pixelSize: 22
-                        font.weight: Font.Bold
-                        color: "#6a748b"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-
-                    // Register button
+                    // Second block
                     Rectangle {
-                        width: 160
-                        height: 44
-                        radius: 8
-                        color: registerMouseArea.containsMouse ? "#0052cc" : "#1a66ff"
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        Text {
+                        width: 260
+                        height: 300
+                        radius: 12
+                        border.color: "#e5e7eb"
+                        border.width: 1
+                        color: "transparent"
+                        Column {
                             anchors.centerIn: parent
-                            text: "Register"
-                            color: "#ffffff"
-                            font.family: "Segoe UI"
-                            font.pixelSize: 16
-                            font.weight: Font.Bold
-                        }
-                        MouseArea {
-                            id: registerMouseArea
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                // open register form
+                            anchors.verticalCenterOffset: -2
+                            spacing: 16
+                            width: parent.width - 32
+                            Image {
+                                source: "qrc:/pngs/assets/ic_add_account.svg"
+                                sourceSize.width: 64
+                                sourceSize.height: 64
+                                fillMode: Image.PreserveAspectFit
+                                anchors.horizontalCenter: parent.horizontalCenter
+                            }
+                            Text {
+                                text: "New User?"
+                                font.family: "Segoe UI"
+                                font.pixelSize: 22
+                                font.weight: Font.Bold
+                                color: "#6a748b"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                            }
+
+                            // Register button
+                            Rectangle {
+                                width: 160
+                                height: 44
+                                radius: 8
+                                color: registerMouseArea.containsMouse ? "#0052cc" : "#1a66ff"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "Register"
+                                    color: "#ffffff"
+                                    font.family: "Segoe UI"
+                                    font.pixelSize: 16
+                                    font.weight: Font.Bold
+                                }
+                                MouseArea {
+                                    id: registerMouseArea
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        contentLoader.source = "RegisterForm.qml"
+                                    }
+                                }
+                            }
+
+                            Text {
+                                text: "Create a new account"
+                                font.family: "Segoe UI"
+                                font.pixelSize: 14
+                                color: "#6a748b"
+                                horizontalAlignment: Text.AlignHCenter
+                                anchors.horizontalCenter: parent.horizontalCenter
                             }
                         }
-                    }
-
-                    Text {
-                        text: "Create a new account"
-                        font.family: "Segoe UI"
-                        font.pixelSize: 14
-                        color: "#6a748b"
-                        horizontalAlignment: Text.AlignHCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
                     }
                 }
             }
         }
+
     }
 }
+
+
+
+
+
+
+
+

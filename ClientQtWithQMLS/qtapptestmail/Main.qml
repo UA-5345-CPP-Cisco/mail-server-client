@@ -1,8 +1,25 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Effects
 
 ApplicationWindow {
+    //properties
+    property string selectedFolder: "inbox"
+    property int inboxCount: emailsModel.totalEmailsCount
+    property int starredCount: 0
+    property int sentCount: 0
+    property int draftsCount: 0
+    property string amountText: emailsModel.pageAmountText
+
+
+    //blocks
+    ToolTip {
+        id: popup_test
+        text: currentUser.email + " " + currentUser.username
+        visible: true
+        timeout: 5000
+    }
     id: window
     visible: true
     width: 1024
@@ -11,24 +28,117 @@ ApplicationWindow {
     minimumWidth: 750
     title: "Mail Client Interface"
 
-    MouseArea
-    {
+    MouseArea {
         anchors.fill: parent
-        onClicked:
-        {
+        onClicked: {
             window.contentItem.forceActiveFocus()
         }
     }
 
-    function closeMessageWindow()
-    {
+    function closeMessageWindow() {
         newMessageLoader.active = false
         newMessageLoader.source = ""
     }
 
-    //new message loader
-    Loader
-    {
+    function closeSettingsWindow() {
+        settingsLoader.active = false
+        settingsLoader.source = ""
+    }
+
+    Item {
+        id: mainContent
+        anchors.fill: parent
+
+        SplitView {
+            id: splitView
+            anchors.fill: parent
+            orientation: Qt.Horizontal
+
+            handle: Rectangle {
+                id: handleDelegate
+                color: "transparent"
+                containmentMask: Item
+                {
+                    x: (handleDelegate.width - width) / 2
+                    width: 5
+                    height: splitView.height
+                    MouseArea
+                    {
+                        anchors.fill: parent
+
+                        hoverEnabled: true
+
+                        cursorShape: Qt.SizeHorCursor
+
+                        acceptedButtons: Qt.NoButton
+                    }
+                }
+            }
+
+            NavigationQML {
+                id: navMenu
+                SplitView.preferredWidth: 250
+                SplitView.minimumWidth: 180
+                SplitView.maximumWidth: 350
+                SplitView.fillHeight: true
+            }
+
+            EmailsListQML {
+                SplitView.preferredWidth: 350
+                SplitView.minimumWidth: 250
+                SplitView.fillHeight: true
+            }
+
+            ContentBlankPageQML {
+                SplitView.fillWidth: true
+                SplitView.fillHeight: true
+                SplitView.minimumWidth: 250
+            }
+        }
+    }
+
+    MultiEffect {
+        id: blurEffect
+        anchors.fill: mainContent
+        source: mainContent
+
+        blur: settingsLoader.opacity * 0.5
+        blurEnabled: settingsLoader.active
+        autoPaddingEnabled: false
+
+        Behavior on blur {
+            NumberAnimation { duration: 200 }
+        }
+    }
+
+    Rectangle {
+        anchors.fill: parent
+        color: "#000000"
+        opacity: settingsLoader.opacity * 0.4
+        visible: settingsLoader.active
+        z:998
+        MouseArea
+        {
+
+            hoverEnabled: true
+            preventStealing: true
+            enabled: parent.visible
+
+            anchors.fill: parent
+            onPressed: (mouse) => mouse.accepted = true
+            onReleased: (mouse) => mouse.accepted = true
+            onClicked: (mouse) => mouse.accepted = true
+            onDoubleClicked: (mouse) => mouse.accepted = true
+            onPositionChanged: (mouse) => mouse.accepted = true
+
+
+            onWheel: (wheel) => {
+                wheel.accepted = true
+            }
+        }
+    }
+
+    Loader {
         id: newMessageLoader
         active: false
         z: 999
@@ -39,64 +149,35 @@ ApplicationWindow {
 
         width: item ? item.implicitWidth : 0
         height: item ? item.implicitHeight : 0
-
         source: ""
-        Behavior on opacity
-        {
+
+        Behavior on opacity {
             NumberAnimation { duration: 200 }
         }
-
         opacity: status === Loader.Ready ? 1 : 0
     }
 
+    Loader {
+        id: settingsLoader
+        active: false
+        z: 1000
 
-    RowLayout
-    {
-        anchors.fill: parent
-        spacing: 0
+        anchors.centerIn: parent
 
-        NavigationQML
-        {
-            id: navMenu
+        width: item ? item.implicitWidth : 0
+        height: item ? item.implicitHeight : 0
 
-            Layout.preferredWidth: 250
-            Layout.fillHeight: true
-        }
-
-        SplitView
-        {
-            id: splitView
-
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
-            orientation: Qt.Horizontal
-
-            handle:Rectangle
-            {
-                id: handleDelegate
-                color: "transparent"
-                containmentMask: Item
-                {
-                    x: (handleDelegate.width - width) / 2
-                    width: 5
-                    height: splitView.height
-                }
-            }
-
-            EmailsListQML
-            {
-                SplitView.preferredWidth: 350
-                SplitView.minimumWidth: 250
-                SplitView.fillHeight: true
-            }
-
-            ContentBlankPageQML
-            {
-                SplitView.fillWidth: true
-                SplitView.fillHeight: true
-                SplitView.minimumWidth: 250
+        Shortcut {
+            sequence: "Escape"
+            enabled: settingsLoader.active
+            onActivated: {
+                closeSettingsWindow()
             }
         }
+
+        Behavior on opacity {
+            NumberAnimation { duration: 200 }
+        }
+        opacity: status === Loader.Ready ? 1 : 0
     }
 }

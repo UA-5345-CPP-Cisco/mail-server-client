@@ -137,8 +137,10 @@ Rectangle
                 color: "transparent"
                 scale: clickAreaMinimizeWindow.containsMouse ? 1.5 : 1.0
 
-                Behavior on scale {
-                    NumberAnimation {
+                Behavior on scale
+                {
+                    NumberAnimation
+                    {
                         duration: 150
                         easing.type: Easing.InOutQuad
                     }
@@ -604,7 +606,7 @@ Rectangle
                 placeholderText: "Write your message..."
                 placeholderTextColor: "#99a1af"
                 wrapMode: Text.Wrap
-
+                font.pixelSize: 14
                 background: Item {}
                 leftPadding: 0
                 topPadding: 0

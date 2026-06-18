@@ -57,6 +57,7 @@ void EmailListModel::NextPage()
     endResetModel();
 
     emit currentPageChanged();
+    emit pageAmountTextChanged();
 }
 
 void EmailListModel::PrevPage()
@@ -68,6 +69,7 @@ void EmailListModel::PrevPage()
     endResetModel();
 
     emit currentPageChanged();
+    emit pageAmountTextChanged();
 }
 
 void EmailListModel::SetPage(int page)
@@ -85,6 +87,7 @@ void EmailListModel::AddData(bool is_starred, QString theme, QString name, QStri
 {
     QString time = QTime::currentTime().toString("hh:mm");
     AddData({is_starred, theme, name, preview, time});
+    emit pageAmountTextChanged();
 }
 
 void EmailListModel::AddData(const EmailData &item)
@@ -99,6 +102,8 @@ void EmailListModel::AddData(const EmailData &item)
     }
 
     emit pageCountChanged();
+
+    emit totalEmailsCountChanged();
 }
 
 int EmailListModel::CountPage() const
@@ -109,4 +114,24 @@ int EmailListModel::CountPage() const
 int EmailListModel::CurrentPage() const
 {
     return m_current_page;
+}
+int EmailListModel::TotalEmailsCount() const
+{
+    return static_cast<int>(m_data.size());
+}
+QString EmailListModel::PageAmountText() const
+{
+    if (m_data.empty())
+    {
+        return QString("0-0 з 0");
+    }
+
+    int start_idx = m_current_page * m_data_per_page + 1;
+
+    int end_idx = qMin(static_cast<int>(m_data.size()), (m_current_page + 1) * m_data_per_page);
+
+    return QString("%1-%2 of %3")
+        .arg(start_idx)
+        .arg(end_idx)
+        .arg(m_data.size());
 }

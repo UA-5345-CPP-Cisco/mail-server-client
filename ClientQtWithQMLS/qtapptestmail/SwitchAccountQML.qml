@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Effects
 import QtQuick.Shapes
-import QtQuick.Controls
 
 // SwitchAccountQML.qml
 Rectangle {
@@ -222,7 +221,14 @@ Rectangle {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    // onClicked: AccountController.setActive(model.accountId)
+                    onClicked: {
+                        currentUser.authorize
+                        (
+                            accountName,
+                            accountEmail,
+                            avatarUrl
+                        )
+                    }
                 }
             }
         }
@@ -260,14 +266,13 @@ Rectangle {
             // Іконка аватарки з плюсом
             Rectangle {
                 x: 12
-                y: 8
+                y: 10
                 width: 36
                 height: 36
                 radius: 18
                 color: "transparent"
                 border.color: "#e5e7eb"
                 border.width: 1
-
 
                 Image {
                     source: "qrc:/pngs/assets/ic_plus.svg"
@@ -295,13 +300,15 @@ Rectangle {
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                //onClicked: AccountController.startOAuth()
+                // onClicked: AccountController.startOAuth()
                 onClicked: loginPopup.open()
             }
         }
     }
-
     AddAccountPopup {
         id: loginPopup
     }
+
 }
+
+
