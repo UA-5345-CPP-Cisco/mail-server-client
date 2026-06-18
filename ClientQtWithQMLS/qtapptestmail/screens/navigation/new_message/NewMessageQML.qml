@@ -243,20 +243,18 @@ Rectangle
                         }
                         else
                         {
-                            let subject_text = (subject_input.text.trim() === "") ? "empty" : subject_input.text;
-                            let recipient_text = (recipient_input.text.trim() === "") ? "empty" : recipient_input.text;
-                            let message_text = (message_input.text.trim() === "") ? "empty" : message_input.text;
+                            let subject_text = subject_input.text.trim();
+                            let recipient_text = recipient_input.text.trim();
+                            let message_text = message_input.text.trim();
 
-                            emailsModel.AddData(
-                                false,
-                                false,
-                                true,
-                                subject_text,
+                            messageComposer.SaveDraft(
                                 currentUser.username,
-                                recipient_input.text,
-                                message_text,
-                                ""
+                                currentUser.email,
+                                recipient_text,
+                                subject_text,
+                                message_text
                             );
+                            emailsModel.AddData(false, false, true, subject_text, currentUser.username, recipient_text, message_text, "");
                             closeMessageWindow()
                         }
                     }
@@ -587,16 +585,15 @@ Rectangle
                         let subject_text = (subject_input.text.trim() === "") ? "empty" : subject_input.text;
                         let message_text = (message_input.text.trim() === "") ? "empty" : message_input.text;
 
-                        emailsModel.AddData(
-                            false,
-                            true,
-                            false,
-                            subject_text,
-                            currentUser.username,
-                            recipient_input.text,
-                            message_text,
-                            ""
-                        );
+                        if (messageComposer.SendMessage(
+                                currentUser.username,
+                                currentUser.email,
+                                recipient_input.text.trim(),
+                                subject_text,
+                                message_text))
+                        {
+                            emailsModel.AddData(false, true, false, subject_text, currentUser.username, recipient_input.text, message_text, "");
+                        }
                         message_input.clear()
                         recipient_input.clear()
                         subject_input.clear()

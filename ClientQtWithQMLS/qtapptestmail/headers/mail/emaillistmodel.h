@@ -1,10 +1,15 @@
 #pragma once
 
+#include <memory>
 #include <QObject>
 #include <QAbstractListModel>
-#include <vector>
 #include <QtMath>
 #include <QString>
+#include <vector>
+
+#include "headers/database/Database.h"
+#include "headers/database/MailMessageRepository.h"
+#include "headers/database/MessageRecipientRepository.h"
 
 namespace ISXMail
 {
@@ -56,7 +61,13 @@ signals:
     void dataAdded();
 
 private:
+    void LoadFromDatabase();
     QString makePreview(const QString& text, int maxLen = 50);
+    QString DefaultDatabasePath() const;
+
+    Storage::Database m_database;
+    Storage::MailMessageRepository m_message_repository;
+    Storage::MessageRecipientRepository m_recipient_repository;
     std::vector<EmailData> m_data;
 };
 

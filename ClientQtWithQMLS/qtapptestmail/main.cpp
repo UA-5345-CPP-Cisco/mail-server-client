@@ -3,20 +3,24 @@
 #include <QQuickWindow>
 #include <QIcon>
 #include <QQmlContext>
-#include "headers\mail\emaillistmodel.h"
-#include "headers\mail\emailfilterproxy.h"
-#include "headers\mail\emailpageproxy.h"
-#include "headers\users\currentuser.h"
-#include "headers\search\messagesearchmodel.h"
+#include "headers/mail/emaillistmodel.h"
+#include "headers/mail/emailfilterproxy.h"
+#include "headers/mail/emailpageproxy.h"
+#include "headers/mail/messagecomposer.h"
+#include "headers/database/databasemanager.h"
+#include "headers/users/currentuser.h"
+#include "headers/search/messagesearchmodel.h"
 
 int main(int argc, char *argv[])
 {
     qputenv("QT_QUICK_BACKEND", "software");
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon("qrc:/pngs/assets/Icon.png"));
+    ISXDatabaseManager::DatabaseManager::EnsureInitialized();
     QQmlApplicationEngine engine;
 
     auto* model = new ISXMail::EmailListModel(&app);
+    auto* message_composer = new ISXMail::MessageComposer(&app);
 
     auto* inboxFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Inbox, &app);
     auto* sentFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Sent, &app);
@@ -57,6 +61,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("sentSearchModel", sentSearch);
     engine.rootContext()->setContextProperty("starredSearchModel", starredSearch);
     engine.rootContext()->setContextProperty("draftSearchModel", draftSearch);
+    engine.rootContext()->setContextProperty("messageComposer", message_composer);
     //current user in system
     engine.rootContext()->setContextProperty(
         "currentUser",
