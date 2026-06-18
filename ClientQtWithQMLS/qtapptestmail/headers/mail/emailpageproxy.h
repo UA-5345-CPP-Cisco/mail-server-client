@@ -1,5 +1,6 @@
 #pragma once
 #include <QSortFilterProxyModel>
+#include "emaillistmodel.h"
 namespace ISXMail{
 
 class EmailPageProxy : public QSortFilterProxyModel
@@ -14,6 +15,9 @@ public:
 
     Q_INVOKABLE void nextPage();
     Q_INVOKABLE void prevPage();
+    Q_INVOKABLE bool setEmailData(int proxyRow, const QVariant& value, int role);
+    Q_INVOKABLE bool setStarred(int proxyRow, bool starred);
+    Q_INVOKABLE void removeEmailData(int proxyRow);
 
     int currentPage() const;
     int pageCount() const;

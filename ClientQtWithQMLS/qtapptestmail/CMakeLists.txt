@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick Sql)
+find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
 
 qt_standard_project_setup(REQUIRES 6.10)
 
@@ -91,6 +92,7 @@ target_link_libraries(appqtapptestmail
 	PRIVATE
 		Qt6::Quick
 		Qt6::Sql
+		Qt6::QuickControls2
 )
 
 install(TARGETS appqtapptestmail

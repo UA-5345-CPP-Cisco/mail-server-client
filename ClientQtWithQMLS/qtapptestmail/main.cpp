@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQuickWindow>
+#include <QQuickStyle>
 #include <QIcon>
 #include <QQmlContext>
 #include "headers/mail/emaillistmodel.h"
@@ -14,6 +15,7 @@
 int main(int argc, char *argv[])
 {
     qputenv("QT_QUICK_BACKEND", "software");
+    QQuickStyle::setStyle(QStringLiteral("Fusion"));
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon("qrc:/pngs/assets/Icon.png"));
     ISXDatabaseManager::DatabaseManager::EnsureInitialized();

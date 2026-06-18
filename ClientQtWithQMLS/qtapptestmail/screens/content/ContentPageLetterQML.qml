@@ -6,6 +6,7 @@ Rectangle
     id: contentPageLetterQML
 
     color: "#ffffff"
+    property string letterIndex: ""
     property string letterTheme: "ThemeHolder"
     property string letterName: "NameHolder"
     property string letterSendTo: "me"
@@ -13,6 +14,7 @@ Rectangle
     property string letterTime: "10:30"
     property bool letterStarred: false
 
+    signal deleteClicked()
     // Header
     Rectangle
     {
@@ -649,7 +651,8 @@ Rectangle
 
                     onClicked:
                     {
-                        // MinimizeWindow
+                        console.log("INDEX: " + letterIndex)
+                        deleteClicked()
                     }
                 }
                 scale: clickAreaDelete.containsMouse ? 1.3 : 1.0

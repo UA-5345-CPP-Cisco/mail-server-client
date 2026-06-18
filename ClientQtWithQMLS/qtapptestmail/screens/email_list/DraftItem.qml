@@ -17,6 +17,7 @@ Rectangle {
     property var searchModel: null
 
     signal openRequested(string theme, string name, string sendTo, string content, string time)
+    signal clicked()
 
     Behavior on color {
         ColorAnimation { duration: 150; easing.type: Easing.OutCubic }
@@ -160,7 +161,7 @@ Rectangle {
         onPressed:  root.color = "#f3f4f6"
         onReleased: {
             root.color = containsMouse ? "#f9fafb" : "#ffffff"
-            root.openRequested(root.theme, root.name, root.sendTo, root.content, root.time)
+            root.clicked()
         }
         onCanceled: root.color = "#ffffff"
     }

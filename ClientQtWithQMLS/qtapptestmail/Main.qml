@@ -73,10 +73,55 @@ ApplicationWindow {
         height: item ? item.implicitHeight : 0
 
         source: ""
+        property var selectedItem: null
         Behavior on opacity
         {
             NumberAnimation { duration: 200 }
         }
+
+        onLoaded: {
+                   connections.target = item
+                   if (item && selectedItem)
+                   {
+                       item.newRecipient = selectedItem.sendTo
+                       item.newSubject = selectedItem.subject
+                       item.newText = selectedItem.content
+                       item.newIndex = selectedItem.index
+                       item.isDraft = selectedItem.isDraft === true
+                       if(item.isDraft) item.newTitle = "Draft"
+                       else item.newTitle = "New Message"
+                   }
+               }
+
+               Connections {
+                   id: connections
+                   target: null
+
+                   function onDraftChanged(index, subject, recipient, text) {
+                       if(newMessageLoader.selectedItem != null)
+                       {
+                           draftModel.setEmailData(parseInt(index), recipient, parseInt(EmailRole.SendToRole))
+                           draftModel.setEmailData(parseInt(index), subject, parseInt(EmailRole.ThemeRole))
+                           draftModel.setEmailData(parseInt(index), text, parseInt(EmailRole.ContentRole))
+                       }
+
+                       newMessageLoader.selectedItem = null
+                   }
+
+                   function onDraftFinished(index, subject, recipient, text) {
+                       if(newMessageLoader.selectedItem != null)
+                       {
+                           draftModel.removeEmailData(parseInt(index))
+                           emailsModel.AddData(
+                               false, true, false,
+                               subject, currentUser.username,
+                               recipient, text, ""
+                           )
+                       }
+
+                       newMessageLoader.selectedItem = null
+                   }
+               }
 
         opacity: status === Loader.Ready ? 1 : 0
     }
@@ -161,8 +206,9 @@ ApplicationWindow {
                 SplitView.preferredWidth: 350
                 SplitView.minimumWidth: 250
                 SplitView.fillHeight: true
-                onEmailOpenRequested: function(theme, name, sendTo, content, time, starred) {
+                onEmailOpenRequested: function(index, theme, name, sendTo, content, time, starred) {
                     window.selectedEmail = {
+                        "index": index,
                         "theme": theme,
                         "name": name,
                         "sendTo": sendTo,
@@ -190,12 +236,19 @@ ApplicationWindow {
                     anchors.fill: parent
                     visible: window.selectedEmail !== null
 
+                    letterIndex: window.selectedEmail ? window.selectedEmail.index : ""
                     letterTheme: window.selectedEmail ? window.selectedEmail.theme : ""
                     letterName: window.selectedEmail ? window.selectedEmail.name : ""
                     letterSendTo: window.selectedEmail ? window.selectedEmail.sendTo : ""
                     letterContent: window.selectedEmail ? window.selectedEmail.content : ""
                     letterTime: window.selectedEmail ? window.selectedEmail.time : ""
                     letterStarred: window.selectedEmail ? window.selectedEmail.starred : false
+
+                    onDeleteClicked:
+                    {
+                        emailList.sourceModel.removeEmailData(parseInt(letterIndex))
+                        window.selectedEmail = null
+                    }
                 }
             }
         }
@@ -204,8 +257,8 @@ ApplicationWindow {
     MultiEffect
     {
         id: blurEffect
-        anchors.fill: mainContent
-        source: mainContent
+        anchors.fill: splitView
+        source: splitView
 
         blur: settingsLoader.opacity * 0.5
         blurEnabled: settingsLoader.active
@@ -243,7 +296,8 @@ ApplicationWindow {
         }
     }
 
-    Loader {
+    Loader
+    {
         id: settingsLoader
         active: false
         z: 1000
@@ -253,15 +307,18 @@ ApplicationWindow {
         width: item ? item.implicitWidth : 0
         height: item ? item.implicitHeight : 0
 
-        Shortcut {
+        Shortcut
+        {
             sequence: "Escape"
             enabled: settingsLoader.active
-            onActivated: {
+            onActivated:
+            {
                 closeSettingsWindow()
             }
         }
 
-        Behavior on opacity {
+        Behavior on opacity
+        {
             NumberAnimation { duration: 200 }
         }
         opacity: status === Loader.Ready ? 1 : 0

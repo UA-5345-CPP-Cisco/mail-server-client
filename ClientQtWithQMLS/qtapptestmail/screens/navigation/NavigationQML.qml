@@ -16,17 +16,13 @@ Rectangle
     // Header
     Rectangle
     {
-        id: horizontalBorder
-
+        id: horizontal_border
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-
         height: 60
         color: "#ffffff"
-
         z: 10
-
 
         // Bottom border
         Rectangle
@@ -42,15 +38,11 @@ Rectangle
         Image
         {
             id: avatar
-
             x: 12
             y: 14
-
             height: 32
             width: 32
-
             source: currentUser.avatarPath
-
             cache: false
             fillMode: Image.PreserveAspectFit
         }
@@ -58,11 +50,10 @@ Rectangle
         // Content
         Rectangle
         {
-            id: container
-
+            id: text_container
             anchors.left: avatar.right
             anchors.leftMargin: 8
-            anchors.right: dropdownWrapper.left
+            anchors.right: dropdown_wrapper.left
             anchors.rightMargin: 4
             anchors.verticalCenter: parent.verticalCenter
             height: 36
@@ -70,8 +61,7 @@ Rectangle
 
             Rectangle
             {
-                id: nameHolder
-
+                id: name_holder
                 anchors.left: parent.left
                 anchors.right: parent.right
                 height: 20
@@ -80,11 +70,9 @@ Rectangle
 
                 Text
                 {
-                    id: nameHolder_1
-
+                    id: label_username
                     height: 20
                     width: parent.width
-
                     color: "#101828"
                     font.family: "Segoe UI"
                     font.pixelSize: 14
@@ -101,22 +89,19 @@ Rectangle
 
             Rectangle
             {
-                id: emailHolder
-
+                id: email_holder
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.top: nameHolder.bottom
+                anchors.top: name_holder.bottom
                 height: 16
                 clip: true
                 color: "transparent"
 
                 Text
                 {
-                    id: emailHolder_1
-
+                    id: label_email
                     height: 16
                     width: parent.width
-
                     color: "#6a7282"
                     font.family: "Segoe UI"
                     font.pixelSize: 12
@@ -135,8 +120,7 @@ Rectangle
         // Wrapper for the Button and Loader
         Item
         {
-            id: dropdownWrapper
-
+            id: dropdown_wrapper
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.bottom: parent.bottom
@@ -144,25 +128,22 @@ Rectangle
 
             Rectangle
             {
-                id: buttonBurgerToPullEmails
-
+                id: button_burger_pull_emails
                 anchors.centerIn: parent
                 height: 24
                 width: 24
-
-                color: clickAreaPullEmails.pressed ? "#ffdede" : "transparent"
+                color: click_area_pull_emails.pressed ? "#ffdede" : "transparent"
                 radius: 4
 
                 Rectangle
                 {
-                    id: sVG
+                    id: svg_icon_container
                     anchors.centerIn: parent
                     height: 16
                     width: 16
                     clip: true
                     color: "transparent"
-
-                    scale: clickAreaPullEmails.hovered ? 1.5 : 1.0
+                    scale: click_area_pull_emails.hovered ? 1.5 : 1.0
 
                     Behavior on scale
                     {
@@ -185,7 +166,7 @@ Rectangle
 
                 HoverHandler
                 {
-                    id: clickAreaPullEmails
+                    id: click_area_pull_emails
                     cursorShape: Qt.PointingHandCursor
                 }
 
@@ -193,41 +174,40 @@ Rectangle
                 {
                     onTapped:
                     {
-                        if (String(accountChangeLoader.source) === "")
+                        if (String(account_change_loader.source) === "")
                         {
-                            accountChangeLoader.source = "account/SwitchAccountQML.qml"
-                        } else
+                            account_change_loader.source = "account/SwitchAccountQML.qml"
+                        }
+                        else
                         {
-                            accountChangeLoader.source = ""
+                            account_change_loader.source = ""
                         }
                     }
                 }
             }
         }
 
-        //Loader for Account change popup
+        // Loader for Account change popup
         Loader
         {
-            id: accountChangeLoader
+            id: account_change_loader
             z: 999
-            anchors.top: parent.bottom
+            anchors.top: horizontal_border.bottom
             anchors.topMargin: 4
-            anchors.left: background.left
-            anchors.leftMargin: -12
+            anchors.right: dropdown_wrapper.right
+            anchors.leftMargin: -15
 
             width: item ? item.implicitWidth : 0
             height: item ? item.implicitHeight : 0
-
             source: ""
+            opacity: status === Loader.Ready ? 1 : 0
+
             Behavior on opacity
             {
                 NumberAnimation { duration: 200 }
             }
-
-            opacity: status === Loader.Ready ? 1 : 0
         }
     }
-
     // Compose button
     Rectangle
     {
@@ -235,7 +215,7 @@ Rectangle
 
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.top: horizontalBorder.bottom
+        anchors.top: horizontal_border.bottom
 
         height: 76
         color: "transparent"

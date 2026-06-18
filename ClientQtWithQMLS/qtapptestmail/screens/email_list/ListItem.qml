@@ -15,15 +15,40 @@ Rectangle {
     property var searchModel: null
 
     signal openRequested(string theme, string name, string sendTo, string content, string time, bool starred)
+    signal starredClicked()
 
     color: "#ffffff"
 
-    Behavior on color {
+    Behavior on color
+    {
         ColorAnimation { duration: 150; easing.type: Easing.OutCubic }
+    }
+    MouseArea
+    {
+        anchors.fill: parent
+        hoverEnabled: true
+        propagateComposedEvents: true
+
+        onEntered:  root.color = "#f9fafb"
+        onExited:   root.color = "#ffffff"
+        onPressed:  root.color = "#f3f4f6"
+        onClicked:(mouse) =>
+        {
+            root.color = containsMouse ? "#f9fafb" : "#ffffff"
+            var starPos = button_margin_2.mapToItem(root, 0, 0)
+            var inStarZone = (mouse.x >= starPos.x - 8 && mouse.x <= starPos.x + button_margin_2.width + 8 &&
+                            mouse.y >= starPos.y - 8 && mouse.y <= starPos.y + button_margin_2.height + 8)
+            if (!inStarZone)
+            {
+                root.openRequested(root.theme, root.name, root.sendTo, root.content, root.time, root.starred)
+            }
+        }
+        onCanceled: root.color = "#ffffff"
     }
 
     // Bottom border
-    Rectangle {
+    Rectangle
+    {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
@@ -31,7 +56,8 @@ Rectangle {
         color: "#e5e7eb"
     }
 
-    Rectangle {
+    Rectangle
+    {
         id: container_1
         anchors {
             left: parent.left
@@ -41,38 +67,42 @@ Rectangle {
         }
         height: 60
         color: "transparent"
-        MouseArea
-        {
-            id: clickAreaFavourite
-            anchors.fill: parent
 
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-
-            onClicked:
-            {
-                // MinimizeWindow
-            }
-        }
-        scale: clickAreaFavourite.containsMouse ? 1.1 : 1.0
-
-        Behavior on scale
-        {
-            NumberAnimation
-            {
-                duration: 150
-                easing.type: Easing.InOutQuad
-            }
-        }
         // Star icon
-        Rectangle {
+        Rectangle
+        {
             id: button_margin_2
             height: 17
             width: 15
             anchors.verticalCenter: parent.verticalCenter
             color: "transparent"
+            MouseArea
+            {
+                id: clickAreaFavourite
+                anchors.fill: parent
+                anchors.margins: -8
+                cursorShape: Qt.PointingHandCursor
 
-            Rectangle {
+                z: 10
+                onClicked:
+                {
+                    root.starred = !root.starred
+                    root.starredClicked()
+                }
+            }
+            scale: clickAreaFavourite.containsMouse ? 1.1 : 1.0
+
+            Behavior on scale
+            {
+                NumberAnimation
+                {
+                    duration: 150
+                    easing.type: Easing.InOutQuad
+                }
+            }
+
+            Rectangle
+            {
                 id: buttonToFavouriteHolder_1
                 y: 2
                 height: 18
@@ -82,7 +112,7 @@ Rectangle {
 
                 Image
                 {
-                   source: "qrc:/pngs/assets/ic_star.svg"
+                   source: starred ? "qrc:/pngs/assets/ic_star_active.svg" : "qrc:/pngs/assets/ic_star.svg"
                    width: 18
                    height: 18
                    sourceSize.width: width * Screen.devicePixelRatio
@@ -94,7 +124,8 @@ Rectangle {
         }
 
         // Content
-        Rectangle {
+        Rectangle
+        {
             id: container_2
             anchors.left: button_margin_2.right
             anchors.leftMargin: 8
@@ -102,14 +133,16 @@ Rectangle {
             height: 60
             color: "transparent"
 
-            Rectangle {
+            Rectangle
+            {
                 id: container_3
                 anchors.left: parent.left
                 anchors.right: parent.right
                 height: 20
                 color: "transparent"
 
-                Rectangle {
+                Rectangle
+                {
                     id: nameHolder
                     anchors.left: parent.left
                     anchors.right: timeHolder.left
@@ -117,7 +150,8 @@ Rectangle {
                     clip: true
                     color: "transparent"
 
-                    Text {
+                    Text
+                    {
                         height: 20; width: parent.width
                         color: "#101828"
                         font.family: "Segoe UI"
@@ -132,7 +166,8 @@ Rectangle {
                     }
                 }
 
-                Rectangle {
+                Rectangle
+                {
                     id: timeHolder
                     anchors.right: parent.right
                     y: 2; height: 16; width: 59
@@ -140,7 +175,8 @@ Rectangle {
                     anchors.rightMargin: -8
                     color: "transparent"
 
-                    Text {
+                    Text
+                    {
                         x: 12
                         height: 16
                         width: 52
@@ -157,14 +193,16 @@ Rectangle {
                 }
             }
 
-            Rectangle {
+            Rectangle
+            {
                 id: themeHolder
                 anchors.left: parent.left
                 anchors.right: parent.right
                 y: 22; height: 20; clip: true
                 color: "transparent"
 
-                Text {
+                Text
+                {
                     height: 20; width: parent.width
                     color: "#101828"
                     font.family: "Segoe UI"
@@ -179,14 +217,16 @@ Rectangle {
                 }
             }
 
-            Rectangle {
+            Rectangle
+            {
                 id: textHolder
                 anchors.left: parent.left
                 anchors.right: parent.right
                 y: 44; height: 16; clip: true
                 color: "transparent"
 
-                Text {
+                Text
+                {
                     height: 16; width: parent.width
                     color: "#6a7282"
                     font.family: "Segoe UI"
@@ -201,19 +241,5 @@ Rectangle {
                 }
             }
         }
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        hoverEnabled: true
-
-        onEntered:  root.color = "#f9fafb"
-        onExited:   root.color = "#ffffff"
-        onPressed:  root.color = "#f3f4f6"
-        onReleased: {
-            root.color = containsMouse ? "#f9fafb" : "#ffffff"
-            root.openRequested(root.theme, root.name, root.sendTo, root.content, root.time, root.starred)
-        }
-        onCanceled: root.color = "#ffffff"
     }
 }

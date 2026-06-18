@@ -52,11 +52,14 @@ public:
     QVariant data(const QModelIndex& index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
 
+    void RemoveData(int row);
     Q_INVOKABLE void AddData(bool is_starred, bool is_sent, bool is_draft,
                              const QString& theme, const QString& name,
                              const QString& send_to, const QString& content, const QString& time);
     void AddData(const EmailData& item);
 
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
 signals:
     void dataAdded();
 

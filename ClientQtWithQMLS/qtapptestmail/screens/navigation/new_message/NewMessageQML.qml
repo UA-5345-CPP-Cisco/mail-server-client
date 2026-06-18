@@ -7,6 +7,16 @@ Rectangle
     implicitHeight: 398
     implicitWidth: 420
     border.color: "#e5e7eb"
+    property bool isDraft: false
+    property string newIndex: ""
+    property string newTitle: "New Message"
+    property string newSubject: ""
+    property string newRecipient: ""
+    property string newText: ""
+
+    signal draftFinished(string index, string subject, string recipient, string text)
+    signal draftChanged(string index, string subject, string recipient, string text)
+
 
     clip: true
     color: "#fcf3e6"
@@ -69,7 +79,7 @@ Rectangle
                 horizontalAlignment: Text.AlignLeft
                 lineHeight: 20
                 lineHeightMode: Text.FixedHeight
-                text: "New Message"
+                text: newTitle
                 textFormat: Text.PlainText
                 verticalAlignment: Text.AlignVCenter
                 wrapMode: Text.Wrap
@@ -237,7 +247,7 @@ Rectangle
 
                     onClicked:
                     {
-                        if(subject_input.text.trim() === "" && recipient_input.text.trim() === "" && message_input.text.trim() === "")
+                        if (subject_input.text.trim() === "" && recipient_input.text.trim() === "" && message_input.text.trim() === "")
                         {
                             closeMessageWindow()
                         }
@@ -254,7 +264,18 @@ Rectangle
                                 subject_text,
                                 message_text
                             );
-                            emailsModel.AddData(false, false, true, subject_text, currentUser.username, recipient_text, message_text, "");
+                            if (isDraft)
+                            {
+                                draftChanged(newIndex, subject_text, recipient_text, message_text)
+                            }
+                            else
+                            {
+                                emailsModel.AddData(
+                                    false, false, true,
+                                    subject_text, currentUser.username,
+                                    recipient_text, message_text, ""
+                                )
+                            }
                             closeMessageWindow()
                         }
                     }
@@ -341,6 +362,7 @@ Rectangle
                 bottomPadding: 0
 
                 cursorDelegate: Item {}
+                text: newRecipient
 
                 Rectangle
                 {
@@ -414,6 +436,7 @@ Rectangle
                 placeholderText: "Subject"
                 placeholderTextColor: "#99a1af"
                 background: Item {}
+                text: newSubject
 
                 leftPadding: 0
                 topPadding: 0
@@ -486,6 +509,7 @@ Rectangle
                 leftPadding: 0
                 topPadding: 0
                 bottomPadding: 0
+                text: newText
 
                 cursorDelegate: Item {}
 
@@ -575,24 +599,21 @@ Rectangle
                 hoverEnabled: true
                 onPressed:
                 {
-                    if(recipient_input.text === "")
-                    {
-                        recipient_input.text = "Enter Recipient!"
-                    }
-                    else
-                    {
+                    let recipient_text = recipient_input.text.trim() === "" ? "empty" : recipient_input.text
+                        let subject_text   = subject_input.text.trim()   === "" ? "empty" : subject_input.text
+                        let message_text   = message_input.text.trim()   === "" ? "empty" : message_input.text
 
-                        let subject_text = (subject_input.text.trim() === "") ? "empty" : subject_input.text;
-                        let message_text = (message_input.text.trim() === "") ? "empty" : message_input.text;
-
-                        if (messageComposer.SendMessage(
-                                currentUser.username,
-                                currentUser.email,
-                                recipient_input.text.trim(),
-                                subject_text,
-                                message_text))
+                        if (!isDraft)
                         {
-                            emailsModel.AddData(false, true, false, subject_text, currentUser.username, recipient_input.text, message_text, "");
+                            emailsModel.AddData(
+                                false, true, false,
+                                subject_text, currentUser.username,
+                                recipient_text, message_text, ""
+                            )
+                        }
+                        else
+                        {
+                            draftFinished(newIndex, subject_text, recipient_text, message_text)
                         }
                         message_input.clear()
                         recipient_input.clear()
@@ -601,86 +622,85 @@ Rectangle
                 }
             }
 
-            Text
+        Text
+        {
+            id: send
+
+            x: 16
+            y: 6
+
+            height: 20
+            width: 32
+
+            color: "#ffffff"
+            font.family: "Segoe UI"
+            font.pixelSize: 14
+            font.weight: Font.Normal
+            horizontalAlignment: Text.AlignHCenter
+            lineHeight: 20
+            lineHeightMode: Text.FixedHeight
+            scale: mouseAreaToSend.containsMouse ? 1.1 : 1.0
+            text: "Send"
+            textFormat: Text.PlainText
+            verticalAlignment: Text.AlignVCenter
+        }
+    }
+    Rectangle
+    {
+        id: buttonToDelete
+
+        x: 83
+        y: 10.80
+
+        height: 28
+        width: 28
+
+        color: "transparent"
+        radius: 4
+        scale: mouseAreaToDelete.containsMouse ? 1.3 : 1.0
+        Behavior on scale
+        {
+            NumberAnimation
             {
-                id: send
-
-                x: 16
-                y: 6
-
-                height: 20
-                width: 32
-
-                color: "#ffffff"
-                font.family: "Segoe UI"
-                font.pixelSize: 14
-                font.weight: Font.Normal
-                horizontalAlignment: Text.AlignHCenter
-                lineHeight: 20
-                lineHeightMode: Text.FixedHeight
-                scale: mouseAreaToSend.containsMouse ? 1.1 : 1.0
-                text: "Send"
-                textFormat: Text.PlainText
-                verticalAlignment: Text.AlignVCenter
+                duration: 150
+                easing.type: Easing.InOutQuad
             }
         }
+        MouseArea
+        {
+            id:mouseAreaToDelete
+            anchors.fill:parent
+            hoverEnabled: true
+            onPressed:
+            {
+                message_input.clear()
+                recipient_input.clear()
+                subject_input.clear()
+            }
+        }
+
         Rectangle
         {
-            id: buttonToDelete
+            id: sVG_3
 
-            x: 83
-            y: 10.80
+            x: 6
+            y: 6
 
-            height: 28
-            width: 28
+            height: 16
+            width: 16
 
+            clip: true
             color: "transparent"
-            radius: 4
-            scale: mouseAreaToDelete.containsMouse ? 1.3 : 1.0
-            Behavior on scale
+
+            Image
             {
-                NumberAnimation
-                {
-                    duration: 150
-                    easing.type: Easing.InOutQuad
-                }
-            }
-            MouseArea
-            {
-                id:mouseAreaToDelete
-                anchors.fill:parent
-                hoverEnabled: true
-                onPressed:
-                {
-                    message_input.clear()
-                    recipient_input.clear()
-                    subject_input.clear()
-                }
-            }
-
-            Rectangle
-            {
-                id: sVG_3
-
-                x: 6
-                y: 6
-
-                height: 16
-                width: 16
-
-                clip: true
-                color: "transparent"
-
-                Image
-                {
-                   source: "qrc:/pngs/assets/ic_bin.svg"
-                   width: 16
-                   height: 16
-                   sourceSize.width: 120
-                   sourceSize.height: 120
-                   fillMode: Image.PreserveAspectFit
-                   anchors.centerIn: parent
-                }
+               source: "qrc:/pngs/assets/ic_bin.svg"
+               width: 16
+               height: 16
+               sourceSize.width: 120
+               sourceSize.height: 120
+               fillMode: Image.PreserveAspectFit
+               anchors.centerIn: parent
             }
         }
     }

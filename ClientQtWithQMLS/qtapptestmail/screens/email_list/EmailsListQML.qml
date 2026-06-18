@@ -9,7 +9,7 @@ Rectangle
 
     property bool isDraftMode: false
     property var sourceModel: inboxModel
-    signal emailOpenRequested(string theme, string name, string sendTo, string content, string time, bool starred)
+    signal emailOpenRequested(int index, string theme, string name, string sendTo, string content, string time, bool starred)
 
     function activeSearchModel() {
         if (sourceModel === inboxModel)
@@ -43,7 +43,24 @@ Rectangle
             time: parent.pTime
             searchModel: parent.pSearchModel
             onOpenRequested: function(theme, name, sendTo, content, time) {
-                emailsListQML.emailOpenRequested(theme, name, sendTo, content, time, false)
+                emailsListQML.emailOpenRequested(parent.pIndex, theme, name, sendTo, content, time, false)
+            }
+            onClicked:
+            {
+                newMessageLoader.selectedItem =
+                {
+                    "index": parent.pIndex,
+                    "subject": theme,
+                    "sendTo": sendTo,
+                    "content": content,
+                    "isDraft": true
+                }
+
+                newMessageLoader.source = ""
+                newMessageLoader.active = false
+
+                newMessageLoader.active = true
+                newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml"
             }
         }
     }
@@ -63,7 +80,11 @@ Rectangle
             starred: parent.pStarred
             searchModel: parent.pSearchModel
             onOpenRequested: function(theme, name, sendTo, content, time, starred) {
-                emailsListQML.emailOpenRequested(theme, name, sendTo, content, time, starred)
+                emailsListQML.emailOpenRequested(parent.pIndex, theme, name, sendTo, content, time, starred)
+            }
+            onStarredClicked:
+            {
+                sourceModel.setStarred(parent.pIndex, starred)
             }
         }
     }
@@ -183,7 +204,7 @@ Rectangle
                                 searchProxy.searchedText = text
                         }
 
-                        background: Item {}
+                        background: Rectangle { color: "transparent" }
 
                         leftPadding: 0
                         topPadding: 0
@@ -466,6 +487,7 @@ Rectangle
             property string pTime: emailsTime
             property bool pStarred: emailsStarred
             property var pSearchModel: emailsListQML.activeSearchModel()
+            property int pIndex: index
 
             sourceComponent: isDraftMode
                              ? draftDelegate
