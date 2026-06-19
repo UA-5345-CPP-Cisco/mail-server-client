@@ -402,6 +402,8 @@ Rectangle
                             source: "qrc:/pngs/assets/ic_button_back.svg"
                             width: 15
                             height: 15
+                            sourceSize.width: width * Screen.devicePixelRatio
+                            sourceSize.height: height * Screen.devicePixelRatio
                             fillMode: Image.PreserveAspectFit
                             anchors.centerIn: parent
                         }
@@ -453,8 +455,8 @@ Rectangle
                             source: "qrc:/pngs/assets/ic_button_forward.svg"
                             width: 15
                             height: 15
-                            sourceSize.width: 120
-                            sourceSize.height: 120
+                            sourceSize.width: width * Screen.devicePixelRatio
+                            sourceSize.height: height * Screen.devicePixelRatio
                             fillMode: Image.PreserveAspectFit
                             anchors.centerIn: parent
                         }

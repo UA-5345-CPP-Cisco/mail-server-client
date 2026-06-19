@@ -39,6 +39,8 @@ qt_add_qml_module(appqtapptestmail
 		screens/email_list/DraftItem.qml
 		screens/navigation/settings/SettingsGeneralQML.qml
 		screens/navigation/account/AddAccountQML.qml
+		screens/navigation/account/RegisterQML.qml
+		screens/navigation/account/LoginQML.qml
 	RESOURCES
 		resources.qrc
 	SOURCES

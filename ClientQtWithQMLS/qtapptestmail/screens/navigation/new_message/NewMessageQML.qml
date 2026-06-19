@@ -82,207 +82,250 @@ Rectangle
         }
 
         // Wrapper
-        Item
+    Rectangle
+    {
+        id: windowControlsWrapper
+        x: 320
+        y: 8
+        width: 140
+        height: 45
+        color: "transparent"
+
+        MouseArea
         {
-            id: window_controls_wrapper
-            anchors.right: parent.right
-            anchors.rightMargin: 12
-            anchors.verticalCenter: parent.verticalCenter
-            width: 82
-            height: 35
-            MouseArea
+            anchors.fill: parent
+            anchors.leftMargin: -8
+            anchors.rightMargin: 8
+            anchors.topMargin: -8
+            anchors.bottomMargin: 8
+            hoverEnabled: true
+            cursorShape: Qt.ArrowCursor
+
+        }
+
+        Row
+        {
+            id:new_message_controls
+            x: 340
+            y: 8
+            anchors.fill: parent
+            anchors.leftMargin: 8
+            anchors.rightMargin: -8
+            anchors.topMargin: 0
+            anchors.bottomMargin: 0
+            spacing: 8
+            //button to minimize window
+            Rectangle
             {
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.ArrowCursor
+                id: buttonToMinimizeWindow
+                height: 22
+                width: 22
+
+                color: clickAreaMinimizeWindow.pressed ? "#ffdede" : "transparent"
+                radius: 4
+
+                MouseArea
+                {
+                    id: clickAreaMinimizeWindow
+                    anchors.fill: parent
+
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+
+                    onClicked:
+                    {
+                        // MinimizeWindow
+                    }
+                }
+                Rectangle
+                {
+                    id: sVG
+
+                    x: 4
+                    y: 4
+
+                    height: 14
+                    width: 14
+
+                    clip: true
+                    color: "transparent"
+                    scale: clickAreaMinimizeWindow.containsMouse ? 1.5 : 1.0
+
+                    Behavior on scale
+                    {
+                        NumberAnimation
+                        {
+                            duration: 150
+                            easing.type: Easing.InOutQuad
+                        }
+                    }
+
+                    Image
+                    {
+                       source: "qrc:/pngs/assets/ic_minimize_window.svg"
+                       width: 14
+                       height: 14
+                       sourceSize.width: 120
+                       sourceSize.height: 120
+                       fillMode: Image.PreserveAspectFit
+                       anchors.centerIn: parent
+                    }
+                }
             }
 
-            Row
+            //button to maximize window
+            Rectangle
             {
-                id: row_window_controls
-                anchors.fill: parent
-                spacing: 8
+                id: buttonToMaximizeWindow
 
-                // minimize
-                Rectangle
+                height: 22
+                width: 22
+                radius: 4
+
+                color: clickAreaMaximizeWindow.pressed ? "#ffdede" : "transparent"
+
+                MouseArea
                 {
-                    id: button_minimize
-                    height: 22
-                    width: 22
-                    color: click_area_minimize.pressed ? "#ffdede" : "transparent"
-                    radius: 4
+                    id: clickAreaMaximizeWindow
+                    anchors.fill: parent
 
-                    MouseArea
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+
+                    onClicked:
                     {
-                        id: click_area_minimize
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked:
-                        {
-                            // MinimizeWindow logic
-                        }
-                    }
-
-                    Rectangle
-                    {
-                        id: svg_minimize
-                        anchors.centerIn: parent
-                        height: 14
-                        width: 14
-                        clip: true
-                        color: "transparent"
-                        scale: click_area_minimize.containsMouse ? 1.5 : 1.0
-
-                        Behavior on scale
-                        {
-                            NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
-                        }
-
-                        Image
-                        {
-                            source: "qrc:/pngs/assets/ic_minimize_window.svg"
-                            width: 14
-                            height: 14
-                            sourceSize.width: 120
-                            sourceSize.height: 120
-                            fillMode: Image.PreserveAspectFit
-                            anchors.centerIn: parent
-                        }
+                        //MaximizeWindow
                     }
                 }
 
-                // maximize
                 Rectangle
                 {
-                    id: button_maximize
-                    height: 22
-                    width: 22
-                    color: click_area_maximize.pressed ? "#ffdede" : "transparent"
-                    radius: 4
+                    id: sVG_1
+                    x: 4
+                    y: 4
+                    height: 14
+                    width: 14
+                    clip: true
+                    color: "transparent"
+                    scale: clickAreaMaximizeWindow.containsMouse ? 1.5 : 1.0
 
-                    MouseArea
+                    Behavior on scale
                     {
-                        id: click_area_maximize
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked:
+                        NumberAnimation
                         {
-                            // MaximizeWindow logic
+                            duration: 150
+                            easing.type: Easing.InOutQuad
                         }
                     }
 
-                    Rectangle
+                    Image
                     {
-                        id: svg_maximize
-                        anchors.centerIn: parent
-                        height: 14
-                        width: 14
-                        clip: true
-                        color: "transparent"
-                        scale: click_area_maximize.containsMouse ? 1.5 : 1.0
-
-                        Behavior on scale
-                        {
-                            NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
-                        }
-
-                        Image
-                        {
-                            source: "qrc:/pngs/assets/ic_extend_window.svg"
-                            width: 14
-                            height: 14
-                            sourceSize.width: 120
-                            sourceSize.height: 120
-                            fillMode: Image.PreserveAspectFit
-                            anchors.centerIn: parent
-                        }
+                       source: "qrc:/pngs/assets/ic_extend_window.svg"
+                       width: 14
+                       height: 14
+                       sourceSize.width: 120
+                       sourceSize.height: 120
+                       fillMode: Image.PreserveAspectFit
+                       anchors.centerIn: parent
                     }
                 }
+            }
 
-                // close window
-                Rectangle
+            //button to close window
+            Rectangle
+            {
+                id: buttonToCloseWindow
+                height: 22
+                width: 22
+                radius: 4
+
+                color: clickAreaCloseMessageBox.pressed ? "#ffdede" : "transparent"
+
+                MouseArea
                 {
-                    id: button_close
-                    height: 22
-                    width: 22
-                    color: click_area_close.pressed ? "#ffdede" : "transparent"
-                    radius: 4
+                    id: clickAreaCloseMessageBox
+                    anchors.fill: parent
 
-                    MouseArea
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+
+                    onClicked:
                     {
-                        id: click_area_close
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked:
+                        if (subject_input.text.trim() === "" && recipient_input.text.trim() === "" && message_input.text.trim() === "")
                         {
-                            if (subject_input.text.trim() === "" && recipient_input.text.trim() === "" && message_input.text.trim() === "")
+                            closeMessageWindow()
+                        }
+                        else
+                        {
+                            let subject_text = subject_input.text.trim()
+                            let recipient_text = recipient_input.text.trim()
+                            let message_text = message_input.text.trim()
+
+                            messageComposer.SaveDraft(
+                                currentUser.username,
+                                currentUser.email,
+                                recipient_text,
+                                subject_text,
+                                message_text
+                            )
+
+                            if (isDraft)
                             {
-                                closeMessageWindow()
+                                draftChanged(newIndex, subject_text, recipient_text, message_text)
                             }
                             else
                             {
-                                let subject_text = subject_input.text.trim()
-                                let recipient_text = recipient_input.text.trim()
-                                let message_text = message_input.text.trim()
-
-                                messageComposer.SaveDraft(
-                                    currentUser.username,
-                                    currentUser.email,
-                                    recipient_text,
-                                    subject_text,
-                                    message_text
+                                emailsModel.AddData(
+                                    false, false, true,
+                                    subject_text, currentUser.username,
+                                    recipient_text, message_text, ""
                                 )
-
-                                if (isDraft)
-                                {
-                                    draftChanged(newIndex, subject_text, recipient_text, message_text)
-                                }
-                                else
-                                {
-                                    emailsModel.AddData(
-                                        false, false, true,
-                                        subject_text, currentUser.username,
-                                        recipient_text, message_text, ""
-                                    )
-                                }
-                                closeMessageWindow()
                             }
+                            closeMessageWindow()
+                        }
+                    }
+                }
+
+                Rectangle
+                {
+                    id: sVG_2
+
+                    anchors.centerIn: parent
+
+                    height: 14
+                    width: 14
+
+                    clip: true
+                    color: "transparent"
+
+                    scale: clickAreaCloseMessageBox.containsMouse ? 1.5 : 1.0
+
+                    Behavior on scale
+                    {
+                        NumberAnimation
+                        {
+                            duration: 150
+                            easing.type: Easing.InOutQuad
                         }
                     }
 
-                    Rectangle
+                    Image
                     {
-                        id: svg_close
-                        anchors.centerIn: parent
-                        height: 14
-                        width: 14
-                        clip: true
-                        color: "transparent"
-                        scale: click_area_close.containsMouse ? 1.5 : 1.0
-
-                        Behavior on scale
-                        {
-                            NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
-                        }
-
-                        Image
-                        {
-                            source: "qrc:/pngs/assets/ic_close_window.svg"
-                            width: 14
-                            height: 14
-                            sourceSize.width: 120
-                            sourceSize.height: 120
-                            fillMode: Image.PreserveAspectFit
-                            anchors.centerIn: parent
-                        }
+                       source: "qrc:/pngs/assets/ic_close_window.svg"
+                       width: 14
+                       height: 14
+                       sourceSize.width: 120
+                       sourceSize.height: 120
+                       fillMode: Image.PreserveAspectFit
+                       anchors.centerIn: parent
                     }
                 }
             }
         }
     }
+
+
+
 
     //recipient
     Rectangle
@@ -488,7 +531,7 @@ Rectangle
         height: 58
         color: "transparent"
 
-        // Кнопка відправки листа
+        // Send
         Rectangle
         {
             id: button_send
@@ -616,4 +659,5 @@ Rectangle
             }
         }
     }
+}
 }

@@ -159,6 +159,8 @@ Rectangle
                         source: "qrc:/pngs/assets/ic_arrow_down.svg"
                         width: 18
                         height: 18
+                        sourceSize.width: width * Screen.devicePixelRatio
+                        sourceSize.height: height * Screen.devicePixelRatio
                         fillMode: Image.PreserveAspectFit
                         anchors.centerIn: parent
                     }

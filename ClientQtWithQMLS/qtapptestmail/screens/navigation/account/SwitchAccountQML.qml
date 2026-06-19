@@ -31,7 +31,7 @@ Rectangle
         anchors.left: parent.left
         anchors.right: parent.right
         height: 52
-        color: "transparent"
+        color: "#00000000"
 
         Text
         {
@@ -54,27 +54,27 @@ Rectangle
             height: 16
             color: "transparent"
 
-            Shape
+            Image
             {
-                ShapePath
-                {
-                    fillColor: "transparent"
-                    strokeColor: "#6a7282"
-                    strokeWidth: 1.33
-                    PathSvg { path: "M 8 0 L 0 8" }
-                }
+                anchors.centerIn: parent
+                source: "qrc:/pngs/assets/ic_close_window_black.svg"
+                width: 15
+                height: 15
+                sourceSize.width: width * Screen.devicePixelRatio
+                sourceSize.height: height * Screen.devicePixelRatio
+                fillMode: Image.PreserveAspectFit
             }
-            Shape {
-                ShapePath {
-                    fillColor: "transparent"
-                    strokeColor: "#6a7282"
-                    strokeWidth: 1.33
-                    PathSvg { path: "M 0 0 L 8 8" }
-                }
+
+            scale: closeMouse.containsMouse ? 1.3 : 1.0
+
+            Behavior on scale
+            {
+                NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
             }
 
             MouseArea
             {
+                id:closeMouse
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onClicked: switchAccountQML.parent.source = ""
@@ -315,6 +315,7 @@ Rectangle
                 border.color: "#e5e7eb"
                 border.width: 1
 
+
                 Image
                 {
                     source: "qrc:/pngs/assets/ic_plus.svg"
@@ -322,6 +323,12 @@ Rectangle
                     height: 12
                     fillMode: Image.PreserveAspectFit
                     anchors.centerIn: parent
+                    scale: addMouseArea.containsMouse ? 1.3 : 1.0
+
+                    Behavior on scale
+                    {
+                        NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+                    }
                 }
             }
 
