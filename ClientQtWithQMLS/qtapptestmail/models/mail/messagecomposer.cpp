@@ -35,7 +35,8 @@ bool MessageComposer::SendMessage(
 	const QString& sender_email,
 	const QString& recipient_email,
 	const QString& subject,
-	const QString& body
+	const QString& body,
+	bool is_inbox
 )
 {
 	Q_UNUSED(sender_name)
@@ -55,6 +56,7 @@ bool MessageComposer::SendMessage(
 			ToOptionalString(subject),
 			body.toStdString(),
 			std::nullopt,
+			is_inbox,
 			Storage::MailMessageStatus::Sent
 		);
 
@@ -107,6 +109,7 @@ bool MessageComposer::SaveDraft(
 			ToOptionalString(subject),
 			body.toStdString(),
 			std::nullopt,
+            false,
 			Storage::MailMessageStatus::Draft
 		);
 

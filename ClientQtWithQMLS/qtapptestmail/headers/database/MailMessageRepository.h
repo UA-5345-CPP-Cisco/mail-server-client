@@ -24,6 +24,7 @@ public:
 		const std::optional<std::string>& subject,
 		const std::string& body,
 		const std::optional<std::int64_t>& reply_to_message_id,
+		bool is_inbox,
 		MailMessageStatus status = MailMessageStatus::Queued
 	);
 

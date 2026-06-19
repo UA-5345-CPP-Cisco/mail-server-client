@@ -18,6 +18,7 @@ namespace ISXMail
 struct EmailData
 {
     std::int64_t id{-1};
+    bool is_inbox;
     bool is_starred;
     bool is_sent;
     bool is_draft;
@@ -34,6 +35,7 @@ enum EmailRole
     StarredRole = Qt::UserRole + 1,
     SentRole,
     DraftRole,
+    InboxRole,
     ThemeRole,
     NameRole,
     SendToRole,
@@ -58,7 +60,8 @@ public:
     Q_INVOKABLE bool DeleteEmail(int row);
     Q_INVOKABLE void AddData(bool is_starred, bool is_sent, bool is_draft,
                              const QString& theme, const QString& name,
-                             const QString& send_to, const QString& content, const QString& time);
+                             const QString& send_to, const QString& content, const QString& time,
+                             bool is_inbox = false);
     Q_INVOKABLE bool SetStarred(int row, bool starred);
     void AddData(const EmailData& item);
 

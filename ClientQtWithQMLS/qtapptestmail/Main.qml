@@ -76,7 +76,7 @@ ApplicationWindow {
 
         let time_formatted = Qt.formatDateTime(message_date, "hh:mm AP");
 
-        let date_formatted = Qt.formatDateTime(message_date, "dd mmmm").toLowerCase();
+        let date_formatted = Qt.formatDateTime(message_date, "MMMM dd").toLowerCase();
 
         return time_formatted + ", " + date_formatted;
     }
@@ -90,17 +90,6 @@ ApplicationWindow {
     minimumWidth: 750
     title: "Mail Client Interface"
 
-    Component.onCompleted:
-    {
-        emailsModel.AddData(false, false, false, "no", "no", "no", "no", "no")
-
-        emailsModel.AddData(true, false, false, "no", "no", "no", "no", "no")
-        emailsModel.AddData(true, false, false, "no", "no", "no", "no", "no")
-        emailsModel.AddData(true, false, false, "no", "no", "no", "no", "no")
-
-        emailsModel.AddData(false, false, true, "no", "no", "no", "no", "no")
-        emailsModel.AddData(false, false, true, "no", "no", "no", "no", "no")
-    }
 
     MouseArea
     {

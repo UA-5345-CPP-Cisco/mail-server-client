@@ -62,6 +62,11 @@ Rectangle
                 newMessageLoader.active = true
                 newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml"
             }
+            onDeleteClicked:
+            {
+                if (sourceModel)
+                    sourceModel.removeEmailData(parent.pIndex)
+            }
         }
     }
 
@@ -87,6 +92,11 @@ Rectangle
             onStarredClicked:
             {
                 sourceModel.setStarred(parent.pIndex, starred)
+            }
+            onDeleteClicked:
+            {
+                if (sourceModel)
+                    sourceModel.removeEmailData(parent.pIndex)
             }
         }
     }

@@ -556,7 +556,7 @@ Rectangle
             {
                 onTapped:
                 {
-                     window.selectedFolder = "starred"
+                    window.selectedFolder = "starred"
                     starredClicked()
                 }
             }

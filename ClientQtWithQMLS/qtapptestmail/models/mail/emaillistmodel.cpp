@@ -42,6 +42,8 @@ QVariant EmailListModel::data(const QModelIndex& index, int role) const
 
 	switch (role)
 	{
+	case InboxRole:
+		return item.is_inbox;
 	case StarredRole:
 		return item.is_starred;
 	case SentRole:
@@ -68,6 +70,7 @@ QVariant EmailListModel::data(const QModelIndex& index, int role) const
 QHash<int, QByteArray> EmailListModel::roleNames() const
 {
 	return {
+		{InboxRole, "emailsInbox"},
 		{StarredRole, "emailsStarred"},
 		{SentRole, "emailsSent"},
 		{DraftRole, "emailsDraft"},
@@ -113,12 +116,13 @@ void EmailListModel::AddData(
 	const QString& name,
 	const QString& send_to,
 	const QString& content,
-	const QString& time
+	const QString& time,
+	bool is_inbox
 )
 {
 	const QString t = time.isEmpty() ? QTime::currentTime().toString("hh:mm") : time;
 	const QString preview = makePreview(content, 30);
-	AddData({-1, is_starred, is_sent, is_draft, theme, name, send_to, preview, content, t});
+	AddData({-1, is_inbox, is_starred, is_sent, is_draft, theme, name, send_to, preview, content, t});
 }
 
 QString EmailListModel::makePreview(const QString& text, int maxLen)
@@ -182,8 +186,6 @@ void EmailListModel::LoadFromDatabase()
 			recipient_email = QString::fromStdString(recipients.front().recipient_email);
 		}
 
-		const bool is_draft = message.status == Storage::MailMessageStatus::Draft;
-		const bool is_sent = message.status == Storage::MailMessageStatus::Sent;
 		const QString theme = message.subject.has_value()
 			? QString::fromStdString(*message.subject)
 			: QStringLiteral("empty");
@@ -191,9 +193,13 @@ void EmailListModel::LoadFromDatabase()
 		const QString content = QString::fromStdString(message.body);
 		const QString preview = makePreview(content, 30);
 		const QString time = QString::fromStdString(message.created_at);
+		const bool is_inbox = message.is_inbox;
+		const bool is_draft = message.is_draft || message.status == Storage::MailMessageStatus::Draft;
+		const bool is_sent = !is_inbox && message.status == Storage::MailMessageStatus::Sent;
 
     m_data.push_back({
 			message.id,
+			is_inbox,
 			message.is_starred,
 			is_sent,
 			is_draft,

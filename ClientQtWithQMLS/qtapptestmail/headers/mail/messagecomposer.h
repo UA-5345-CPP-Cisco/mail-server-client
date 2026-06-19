@@ -22,7 +22,8 @@ public:
 		const QString& sender_email,
 		const QString& recipient_email,
 		const QString& subject,
-		const QString& body
+		const QString& body,
+		bool is_inbox = false
 	);
 	Q_INVOKABLE bool SaveDraft(
 		const QString& sender_name,

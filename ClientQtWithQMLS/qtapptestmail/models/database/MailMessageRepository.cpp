@@ -22,6 +22,7 @@ std::int64_t MailMessageRepository::CreateMessage(
 	const std::optional<std::string>& subject,
 	const std::string& body,
 	const std::optional<std::int64_t>& reply_to_message_id,
+	bool is_inbox,
 	MailMessageStatus status
 )
 {
@@ -34,10 +35,12 @@ std::int64_t MailMessageRepository::CreateMessage(
 				subject,
 				body,
 				reply_to_message_id,
+				is_inbox,
 				is_starred,
+				is_draft,
 				status
 			)
-			VALUES (?, ?, ?, ?, ?, ?, ?);
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
 		)SQL"
 	);
 
@@ -72,8 +75,10 @@ std::int64_t MailMessageRepository::CreateMessage(
 		statement.BindNull(5);
 	}
 
-	statement.BindInt(6, 0);
-	statement.BindText(7, StatusToString(status));
+	statement.BindInt(6, is_inbox ? 1 : 0);
+	statement.BindInt(7, 0);
+	statement.BindInt(8, status == MailMessageStatus::Draft ? 1 : 0);
+	statement.BindText(9, StatusToString(status));
 	statement.Step();
 
 	return statement.LastInsertRowId();
@@ -94,7 +99,9 @@ std::optional<MailMessageRecord> MailMessageRepository::FindById(
 				body,
 				reply_to_message_id,
 				created_at,
+				is_inbox,
 				is_starred,
+				is_draft,
 				status
 			FROM mail_messages
 			WHERE id = ?
@@ -125,7 +132,9 @@ std::vector<MailMessageRecord> MailMessageRepository::FindAll() const
 				body,
 				reply_to_message_id,
 				created_at,
+				is_inbox,
 				is_starred,
+				is_draft,
 				status
 			FROM mail_messages
 			ORDER BY created_at DESC, id DESC;
@@ -163,7 +172,9 @@ std::vector<MailMessageRecord> MailMessageRepository::FindByStatus(
 				body,
 				reply_to_message_id,
 				created_at,
+				is_inbox,
 				is_starred,
+				is_draft,
 				status
 			FROM mail_messages
 			WHERE status = ?
@@ -313,8 +324,10 @@ MailMessageRecord MailMessageRepository::ReadMessage(
 	}
 
 	message.created_at = statement.ColumnText(6);
-	message.is_starred = statement.ColumnInt64(7) != 0;
-	message.status = StatusFromString(statement.ColumnText(8));
+	message.is_inbox = statement.ColumnInt64(7) != 0;
+	message.is_starred = statement.ColumnInt64(8) != 0;
+	message.is_draft = statement.ColumnInt64(9) != 0;
+	message.status = StatusFromString(statement.ColumnText(10));
 
 	return message;
 }

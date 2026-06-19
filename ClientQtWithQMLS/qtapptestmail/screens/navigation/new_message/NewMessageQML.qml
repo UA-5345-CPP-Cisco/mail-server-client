@@ -574,7 +574,30 @@ Rectangle
                         let subject_text   = subject_input.text.trim()   === "" ? "empty" : subject_input.text
                         let message_text   = message_input.text.trim()   === "" ? "empty" : message_input.text
 
-                        if (!isDraft)
+                        if(recipient_text === "inboxtest")
+                        {
+                            if (!isDraft && messageComposer.SendMessage(
+                                        currentUser.username,
+                                        currentUser.email,
+                                        recipient_input.text.trim(),
+                                        subject_text,
+                                        message_text,
+                                        true))
+                            {
+                                emailsModel.AddData(
+                                    true, false, false,
+                                    subject_text, currentUser.username,
+                                    recipient_text, message_text, ""
+                                )
+                            }
+                        }
+                        else if (!isDraft && messageComposer.SendMessage(
+                                    currentUser.username,
+                                    currentUser.email,
+                                    recipient_input.text.trim(),
+                                    subject_text,
+                                    message_text,
+                                    false))
                         {
                             emailsModel.AddData(
                                 false, true, false,
