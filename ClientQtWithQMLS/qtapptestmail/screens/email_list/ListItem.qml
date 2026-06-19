@@ -1,5 +1,7 @@
 import QtQuick
+import QtQuick.Effects
 import QtQuick.Shapes
+import QtQuick.Controls
 
 Rectangle {
     id: root
@@ -16,6 +18,7 @@ Rectangle {
 
     signal openRequested(string theme, string name, string sendTo, string content, string time, bool starred)
     signal starredClicked()
+    signal deleteClicked()
 
     color: "#ffffff"
 
@@ -28,22 +31,89 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         propagateComposedEvents: true
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
 
         onEntered:  root.color = "#f9fafb"
         onExited:   root.color = "#ffffff"
         onPressed:  root.color = "#f3f4f6"
         onClicked:(mouse) =>
         {
-            root.color = containsMouse ? "#f9fafb" : "#ffffff"
-            var starPos = button_margin_2.mapToItem(root, 0, 0)
-            var inStarZone = (mouse.x >= starPos.x - 8 && mouse.x <= starPos.x + button_margin_2.width + 8 &&
-                            mouse.y >= starPos.y - 8 && mouse.y <= starPos.y + button_margin_2.height + 8)
-            if (!inStarZone)
+            if(mouse.button === Qt.LeftButton)
             {
-                root.openRequested(root.theme, root.name, root.sendTo, root.content, root.time, root.starred)
+                root.color = containsMouse ? "#f9fafb" : "#ffffff"
+                var starPos = button_margin_2.mapToItem(root, 0, 0)
+                var inStarZone = (mouse.x >= starPos.x - 8 && mouse.x <= starPos.x + button_margin_2.width + 8 &&
+                                mouse.y >= starPos.y - 8 && mouse.y <= starPos.y + button_margin_2.height + 8)
+                if (!inStarZone)
+                {
+                    root.openRequested(root.theme, root.name, root.sendTo, root.content, root.time, root.starred)
+                }
+            }
+            else if (mouse.button === Qt.RightButton)
+            {
+                contextMenu.popup()
             }
         }
         onCanceled: root.color = "#ffffff"
+    }
+    Menu {
+        id: contextMenu
+
+        palette {
+            base: "#ffffff"
+            text: "#1f2937"
+            highlight: "#f3f4f6"
+            highlightedText: "#1f2937"
+        }
+
+        background: Rectangle {
+            implicitWidth: 200
+            implicitHeight: 40
+            color: "#ffffff"
+            radius: 8
+            border.color: "#e5e7eb"
+            border.width: 1
+        }
+
+        delegate: MenuItem {
+            id: menuItem
+            implicitWidth: 200
+            implicitHeight: 36
+            padding: 0
+
+            contentItem: Text {
+                text: menuItem.text
+                color: menuItem.hovered ? "#1f2937" : "#6b7280"
+                font.pixelSize: 13
+                leftPadding: 12
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            background: Rectangle {
+                color: menuItem.hovered ? "#f3f4f6" : "transparent"
+                radius: 4
+                anchors.margins: 4
+            }
+        }
+
+        MenuItem {
+            text: "Copy"
+            onTriggered: { }
+        }
+
+        MenuSeparator {
+            padding: 4
+            contentItem: Rectangle {
+                implicitWidth: 200
+                implicitHeight: 1
+                color: "#e5e7eb"
+            }
+        }
+
+        MenuItem {
+            text: "Delete"
+            onClicked: root.deleteClicked()
+        }
     }
 
     // Bottom border

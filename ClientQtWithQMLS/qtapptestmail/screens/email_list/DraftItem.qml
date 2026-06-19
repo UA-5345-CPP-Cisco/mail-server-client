@@ -1,4 +1,6 @@
 import QtQuick
+import QtQuick.Controls
+import QtQuick.Effects
 
 Rectangle {
     id:root
@@ -18,6 +20,7 @@ Rectangle {
 
     signal openRequested(string theme, string name, string sendTo, string content, string time)
     signal clicked()
+    signal deleteClicked()
 
     Behavior on color {
         ColorAnimation { duration: 150; easing.type: Easing.OutCubic }
@@ -163,18 +166,100 @@ Rectangle {
             verticalAlignment: Text.AlignVCenter
         }
     }
-    MouseArea
-    {
+    MouseArea {
         anchors.fill: parent
         hoverEnabled: true
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-        onEntered:  root.color = "#f9fafb"
-        onExited:   root.color = "#ffffff"
-        onPressed:  root.color = "#f3f4f6"
+        onEntered: root.color = "#f9fafb"
+        onExited: root.color = "#ffffff"
+
+        onPressed: (mouse) => {
+            if (mouse.button === Qt.LeftButton) {
+                root.color = "#f3f4f6"
+            }
+        }
+
+        onClicked: (mouse) => {
+            if (mouse.button === Qt.LeftButton) {
+                root.clicked()
+            }
+            else if (mouse.button === Qt.RightButton) {
+                contextMenu.x = mouse.x
+                contextMenu.y = mouse.y
+                contextMenu.popup()
+            }
+        }
+
         onReleased: {
             root.color = containsMouse ? "#f9fafb" : "#ffffff"
-            root.clicked()
         }
+
         onCanceled: root.color = "#ffffff"
+    }
+    Menu
+    {
+        id: contextMenu
+
+        palette
+        {
+            base: "#ffffff"
+            text: "#1f2937"
+            highlight: "#f3f4f6"
+            highlightedText: "#1f2937"
+        }
+
+        background: Rectangle
+        {
+            implicitWidth: 200
+            implicitHeight: 40
+            color: "#ffffff"
+            radius: 8
+            border.color: "#e5e7eb"
+            border.width: 1
+        }
+
+        delegate: MenuItem
+        {
+            id: menuItem
+            implicitWidth: 200
+            implicitHeight: 36
+            padding: 0
+
+            contentItem: Text
+            {
+                text: menuItem.text
+                color: menuItem.hovered ? "#1f2937" : "#6b7280"
+                font.pixelSize: 13
+                leftPadding: 12
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            background: Rectangle
+            {
+                color: menuItem.hovered ? "#f3f4f6" : "transparent"
+                radius: 4
+                anchors.margins: 4
+            }
+        }
+
+        MenuItem {
+            text: "Copy"
+            onTriggered: { }
+        }
+
+        MenuSeparator {
+            padding: 4
+            contentItem: Rectangle {
+                implicitWidth: 200
+                implicitHeight: 1
+                color: "#e5e7eb"
+            }
+        }
+
+        MenuItem {
+            text: "Delete"
+            onClicked: root.deleteClicked()
+        }
     }
 }

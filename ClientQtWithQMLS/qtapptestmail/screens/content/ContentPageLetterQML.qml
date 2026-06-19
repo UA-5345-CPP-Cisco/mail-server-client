@@ -16,6 +16,7 @@ Rectangle
 
     signal deleteClicked()
     signal starClicked(bool starred)
+
     // Header
     Rectangle
     {

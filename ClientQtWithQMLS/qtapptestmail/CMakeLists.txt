@@ -5,7 +5,6 @@ project(qtapptestmail VERSION 0.1 LANGUAGES CXX C)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Sql)
 find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
 
 qt_standard_project_setup(REQUIRES 6.10)
@@ -26,11 +25,10 @@ endforeach()
 qt_add_qml_module(appqtapptestmail
 	URI qtapptestmail
 	QML_FILES
-		Main.qml
+	        Main.qml
 		screens/navigation/NavigationQML.qml
 		screens/navigation/new_message/NewMessageQML.qml
 		screens/email_list/EmailsListQML.qml
-
 		screens/content/ContentBlankPageQML.qml
 		screens/content/ContentPageLetterQML.qml
 		screens/navigation/settings/SettingsQML.qml
@@ -39,12 +37,12 @@ qt_add_qml_module(appqtapptestmail
 		screens/email_list/DraftItem.qml
 		screens/navigation/settings/SettingsGeneralQML.qml
 		screens/navigation/account/AddAccountQML.qml
-		screens/navigation/account/RegisterQML.qml
+		screens/navigation/account/RegistrationQML.qml
 		screens/navigation/account/LoginQML.qml
 	RESOURCES
-		resources.qrc
+	        resources.qrc
 	SOURCES
-		headers/database/Database.h
+	        headers/database/Database.h
 		headers/database/MailMessageRecord.h
 		headers/database/MailMessageRepository.h
 		headers/database/MessageRecipientRecord.h
@@ -92,7 +90,7 @@ set_target_properties(appqtapptestmail PROPERTIES
 
 target_link_libraries(appqtapptestmail
 	PRIVATE
-		Qt6::Quick
+	        Qt6::Quick
 		Qt6::Sql
 		Qt6::QuickControls2
 )

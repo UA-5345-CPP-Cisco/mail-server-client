@@ -57,7 +57,7 @@ ApplicationWindow {
         else
         {
             // Different day: displays "06 august" (lowercased)
-            return Qt.formatDateTime(message_date, "dd mmmm").toLowerCase();
+            return Qt.formatDateTime(message_date, "MMMM dd").toLowerCase();
         }
     }
     function format_email_time_full(input_time)

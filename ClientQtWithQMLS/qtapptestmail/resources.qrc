@@ -27,8 +27,4 @@
         <file>assets/ic_archive.svg</file>
         <file>assets/ic_close_window_black.svg</file>
     </qresource>
-    <qresource prefix="/">
-        <file>screens/navigation/account/RegisterQML.qml</file>
-        <file>screens/navigation/account/LoginQML.qml</file>
-    </qresource>
 </RCC>
