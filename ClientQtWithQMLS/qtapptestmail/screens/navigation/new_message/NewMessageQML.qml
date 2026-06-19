@@ -89,7 +89,13 @@ Rectangle
             anchors.rightMargin: 12
             anchors.verticalCenter: parent.verticalCenter
             width: 82
-            height: 22
+            height: 35
+            MouseArea
+            {
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.ArrowCursor
+            }
 
             Row
             {
