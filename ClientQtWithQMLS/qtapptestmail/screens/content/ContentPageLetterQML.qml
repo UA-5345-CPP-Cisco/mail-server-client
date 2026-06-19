@@ -243,7 +243,7 @@ Rectangle
                     Text
                     {
                         id: aM
-                        x: 14
+                        x: -5
                         y: 0
 
                         height: 16

@@ -87,7 +87,7 @@ Rectangle
             starred: parent.pStarred
             searchModel: parent.pSearchModel
             onOpenRequested: function(theme, name, sendTo, content, time, starred) {
-                emailsListQML.emailOpenRequested(parent.pIndex, theme, name, sendTo, content, time, starred)
+                emailsListQML.emailOpenRequested(parent.pIndex, theme, name, sendTo, content, parent.pTime, starred)
             }
             onStarredClicked:
             {

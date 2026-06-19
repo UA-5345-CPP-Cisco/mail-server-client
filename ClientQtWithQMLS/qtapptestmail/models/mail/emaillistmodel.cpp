@@ -144,8 +144,8 @@ QString EmailListModel::makePreview(const QString& text, int maxLen)
 
 void EmailListModel::AddData(const EmailData& item)
 {
-	beginInsertRows(QModelIndex(), m_data.size(), m_data.size());
-	m_data.push_back(item);
+	beginInsertRows(QModelIndex(), 0, 0);
+	m_data.insert(m_data.begin(), item);
 	endInsertRows();
 	emit dataAdded();
 }

@@ -27,21 +27,52 @@ ApplicationWindow {
         settingsLoader.source = ""
     }
 
-    function format_email_time(input_time)
+    function parse_database_timestamp(input_time)
     {
         if (!input_time)
         {
-            return "";
+            return null
         }
 
-        // Automatically parse if input arrives as a string, or preserve if it is already a JS Date
-        let message_date = (input_time instanceof Date) ? input_time : new Date(input_time);
-
-        // Fallback security check: if parsing failed, return raw string
-        if (isNaN(message_date.getTime()))
+        if (input_time instanceof Date)
         {
-            return String(input_time);
+            return input_time
         }
+
+        let raw = String(input_time).trim()
+        if (raw === "")
+        {
+            return null
+        }
+
+        // SQLite CURRENT_TIMESTAMP is stored as UTC text: "YYYY-MM-DD HH:MM:SS".
+        let utcMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})(?:\.\d+)?$/)
+        if (utcMatch)
+        {
+            return new Date(Date.UTC(
+                parseInt(utcMatch[1]),
+                parseInt(utcMatch[2]) - 1,
+                parseInt(utcMatch[3]),
+                parseInt(utcMatch[4]),
+                parseInt(utcMatch[5]),
+                parseInt(utcMatch[6])
+            ))
+        }
+
+        let parsed = new Date(raw)
+        if (!isNaN(parsed.getTime()))
+        {
+            return parsed
+        }
+
+        return null
+    }
+
+    function format_email_time(input_time)
+    {
+        let message_date = parse_database_timestamp(input_time)
+        if (!message_date)
+            return String(input_time)
 
         let current_date = new Date();
 
@@ -51,30 +82,20 @@ ApplicationWindow {
 
         if (is_same_day)
         {
-            // Today: displays time format like "10:30 AM"
-            return Qt.formatDateTime(message_date, "hh:mm AP");
+            return Qt.formatDateTime(message_date, "hh:mm");
         }
         else
         {
-            // Different day: displays "06 august" (lowercased)
             return Qt.formatDateTime(message_date, "MMMM dd").toLowerCase();
         }
     }
     function format_email_time_full(input_time)
     {
-        if (!input_time)
-        {
-            return "";
-        }
+        let message_date = parse_database_timestamp(input_time)
+        if (!message_date)
+            return String(input_time)
 
-        let message_date = (input_time instanceof Date) ? input_time : new Date(input_time);
-
-        if (isNaN(message_date.getTime()))
-        {
-            return String(input_time);
-        }
-
-        let time_formatted = Qt.formatDateTime(message_date, "hh:mm AP");
+        let time_formatted = Qt.formatDateTime(message_date, "hh:mm");
 
         let date_formatted = Qt.formatDateTime(message_date, "MMMM dd").toLowerCase();
 

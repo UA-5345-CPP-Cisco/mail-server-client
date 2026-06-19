@@ -13,7 +13,7 @@ Rectangle {
     property string preview: "TextHolderTextHolderTextHolderTextHolde...."
     property string content: preview
     property string sendTo: ""
-    property string time: "10:30 AM"
+    property string time: "10:30"
     property var searchModel: null
 
     signal openRequested(string theme, string name, string sendTo, string content, string time, bool starred)
@@ -247,7 +247,7 @@ Rectangle {
 
                     Text
                     {
-                        x: 12
+                        x: 15
                         height: 16
                         width: 52
                         color: "#6a7282"

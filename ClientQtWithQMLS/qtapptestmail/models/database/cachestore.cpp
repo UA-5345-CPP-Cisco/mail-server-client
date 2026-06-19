@@ -191,42 +191,51 @@ CacheStore::Entry CacheStore::ReadEntry(const Statement& statement) const
 }
 
 std::string CacheStore::TimePointToString(
-	const std::chrono::system_clock::time_point& time_point
-) const
+    const std::chrono::system_clock::time_point& time_point
+    ) const
 {
-	const auto time_t_value = std::chrono::system_clock::to_time_t(time_point);
-	std::tm tm{};
+    const auto time_t_value = std::chrono::system_clock::to_time_t(time_point);
+    std::tm tm{};
 #ifdef _WIN32
-	gmtime_s(&tm, &time_t_value);
+    gmtime_s(&tm, &time_t_value); // Uses UTC/GMT instead of local time
 #else
-	gmtime_r(&time_t_value, &tm);
+    gmtime_r(&time_t_value, &tm); // Uses UTC/GMT instead of local time
 #endif
-
-	std::ostringstream stream;
-	stream << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
-	return stream.str();
+    std::ostringstream stream;
+    stream << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
+    return stream.str();
 }
 
 std::chrono::system_clock::time_point CacheStore::StringToTimePoint(
-	const std::string& text
-) const
+    const std::string& text
+    ) const
 {
-	std::tm tm{};
-	std::istringstream stream(text);
-	stream >> std::get_time(&tm, "%Y-%m-%d %H:%M:%S");
+    std::tm tm{};
+    std::istringstream stream(text);
+    stream >> std::get_time(&tm, "%Y-%m-%d %H:%M:%S");
 
-	if (stream.fail())
-	{
-		throw std::runtime_error("Failed to parse cache timestamp: " + text);
-	}
+    if (stream.fail())
+    {
+        throw std::runtime_error("Failed to parse cache timestamp: " + text);
+    }
+
+    // Force tm_isdst to -1 so the parser attempts to compute DST automatically
+    tm.tm_isdst = -1;
 
 #ifdef _WIN32
-	const time_t time_value = _mkgmtime(&tm);
+    // _mkgmtime is the Windows specific function to parse tm as UTC
+    const time_t time_value = _mkgmtime(&tm);
 #else
-	const time_t time_value = timegm(&tm);
+    // timegm is the POSIX/Linux standard equivalent to parse tm as UTC
+    const time_t time_value = timegm(&tm);
 #endif
 
-	return std::chrono::system_clock::from_time_t(time_value);
+    if (time_value == -1)
+    {
+        throw std::runtime_error("Failed to convert broken-down time to UTC time_t");
+    }
+
+    return std::chrono::system_clock::from_time_t(time_value);
 }
 
 std::string CacheStore::EscapeLike(const std::string& value) const
