@@ -11,6 +11,7 @@
 #include "headers/database/databasemanager.h"
 #include "headers/users/currentuser.h"
 #include "headers/search/messagesearchmodel.h"
+#include "headers/users/accountlistmodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -23,6 +24,7 @@ int main(int argc, char *argv[])
 
     auto* model = new ISXMail::EmailListModel(&app);
     auto* message_composer = new ISXMail::MessageComposer(&app);
+    auto* account_model = new ISXMail::AccountListModel(&app);
 
     auto* inboxFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Inbox, &app);
     auto* sentFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Sent, &app);
@@ -55,6 +57,7 @@ int main(int argc, char *argv[])
     draft->setSourceModel(draftSearch);
 
     engine.rootContext()->setContextProperty("emailsModel", model);
+    engine.rootContext()->setContextProperty("accountModel", account_model);
     engine.rootContext()->setContextProperty("inboxModel", inbox);
     engine.rootContext()->setContextProperty("sentModel", sent);
     engine.rootContext()->setContextProperty("starredModel", starred);

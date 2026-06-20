@@ -79,6 +79,9 @@ qt_add_qml_module(appqtapptestmail
 		models/search/messagesearchmodel.cpp
 		models/users/currentuser.cpp
 		models/users/usercache.cpp
+		SOURCES headers/users/accountlistmodel.h
+		QML_FILES screens/navigation/account/AccountItem.qml
+		SOURCES models/users/accountlistmodel.cpp
 )
 
 set_target_properties(appqtapptestmail PROPERTIES
