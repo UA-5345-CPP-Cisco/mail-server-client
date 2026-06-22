@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Shapes
+import QtQuick.Controls
 
 Rectangle
 {
@@ -92,7 +93,9 @@ Rectangle
                         text: contentPageLetterQML.letterTheme
                         textFormat: Text.PlainText
                         verticalAlignment: Text.AlignVCenter
-                        wrapMode: Text.Wrap
+                        wrapMode: Text.NoWrap
+                        elide: Text.ElideRight
+                        maximumLineCount: 1
                     }
                 }
 
@@ -400,7 +403,7 @@ Rectangle
         clip: true
         color: "transparent"
 
-        Rectangle
+        Flickable
         {
             id: contentHolder
 
@@ -408,16 +411,20 @@ Rectangle
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            anchors.margins: 24
-            color: "transparent"
+            anchors.leftMargin: 24
+            anchors.topMargin: 24
+            anchors.rightMargin: 12
+            anchors.bottomMargin: 24
+            clip: true
+            contentWidth: width
+            contentHeight: Math.max(height, letterBody.implicitHeight)
+            boundsBehavior: Flickable.StopAtBounds
 
             Text
             {
                 id: letterBody
 
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
+                width: contentHolder.width - 14
                 color: "#4a5565"
                 font.family: "Segoe UI"
                 font.pixelSize: 14
@@ -429,6 +436,28 @@ Rectangle
                 textFormat: Text.PlainText
                 verticalAlignment: Text.AlignTop
                 wrapMode: Text.Wrap
+            }
+
+            ScrollBar.vertical: ScrollBar
+            {
+                id: letterScrollBar
+
+                policy: contentHolder.contentHeight > contentHolder.height ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff
+                active: hovered || pressed || contentHolder.moving
+                width: 6
+
+                background: Rectangle
+                {
+                    color: "transparent"
+                }
+
+                contentItem: Rectangle
+                {
+                    implicitWidth: 2
+                    radius: 2
+                    color: letterScrollBar.pressed ? "#4a5565" : "#9ca3af"
+                    opacity: letterScrollBar.policy === ScrollBar.AlwaysOff ? 0 : 0.8
+                }
             }
         }
     }
