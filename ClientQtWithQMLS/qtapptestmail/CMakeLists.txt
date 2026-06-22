@@ -2,8 +2,12 @@ cmake_minimum_required(VERSION 3.16)
 
 project(qtapptestmail VERSION 0.1 LANGUAGES CXX C)
 
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
+
+# Встановлюємо стандарт C++17
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
 
@@ -43,6 +47,7 @@ qt_add_qml_module(appqtapptestmail
 	        resources.qrc
 	SOURCES
 	        headers/database/Database.h
+		headers/database/RegistrationHandler.h
 		headers/database/MailMessageRecord.h
 		headers/database/MailMessageRepository.h
 		headers/database/MessageRecipientRecord.h
@@ -68,6 +73,7 @@ qt_add_qml_module(appqtapptestmail
 		models/database/MessageRecipientRepository.cpp
 		models/database/MigrationRunner.cpp
 		models/database/Statement.cpp
+		models/database/RegistrationHandler.cpp
 		models/database/UserRepository.cpp
 		models/database/cachestore.cpp
 		models/database/databasemanager.cpp
@@ -79,6 +85,8 @@ qt_add_qml_module(appqtapptestmail
 		models/search/messagesearchmodel.cpp
 		models/users/currentuser.cpp
 		models/users/usercache.cpp
+		SOURCES headers/database/RegistrationHandler.h
+		SOURCES models/database/RegistrationHandler.cpp
 )
 
 set_target_properties(appqtapptestmail PROPERTIES

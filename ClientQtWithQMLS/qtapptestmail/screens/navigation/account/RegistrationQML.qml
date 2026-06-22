@@ -8,7 +8,7 @@ Item {
     implicitHeight: 350
 
     signal backRequested()
-    signal loginSubmitted(string email, string password)
+    signal registerSubmitted(string name, string email, string password)
 
     // Back button
     Rectangle {
@@ -63,7 +63,7 @@ Item {
             text: "Register"
             font.family: "Segoe UI"
             font.pixelSize: 28
-            font.weight: Font.Black
+            font.weight: Font.Bold
             color: "#101828"
             anchors.horizontalCenter: parent.horizontalCenter
         }
@@ -91,6 +91,7 @@ Item {
             rightPadding: 16
             topPadding: 12
             bottomPadding: 12
+            cursorDelegate: Item {}
 
             background: Rectangle
             {
@@ -98,6 +99,30 @@ Item {
                 border.color: fullName.activeFocus ? "#1a66ff" : "#e5e7eb"
                 border.width: fullName.activeFocus ? 2 : 1
                 color: "#ffffff"
+            }
+
+            // Custom cursor
+            Rectangle {
+                id: custom_cursor_name
+                width: 1.5
+                color: "#1f2937"
+                height: parent.font.pixelSize + 4
+                anchors.verticalCenter: parent.verticalCenter
+
+                x: parent.length > 0 ? parent.cursorRectangle.x : 14
+                visible: parent.activeFocus
+
+                Behavior on x
+                {
+                    NumberAnimation { duration: 80; easing.type: Easing.OutCubic }
+                }
+                SequentialAnimation on opacity
+                {
+                    running: parent.activeFocus
+                    loops: Animation.Infinite
+                    NumberAnimation { to: 0; duration: 400; easing.type: Easing.InOutSine }
+                    NumberAnimation { to: 1; duration: 400; easing.type: Easing.InOutSine }
+                }
             }
         }
 
@@ -114,6 +139,7 @@ Item {
             rightPadding: 16
             topPadding: 12
             bottomPadding: 12
+            cursorDelegate: Item {}
 
             background: Rectangle
             {
@@ -121,6 +147,30 @@ Item {
                 border.color: emailField.activeFocus ? "#1a66ff" : "#e5e7eb"
                 border.width: emailField.activeFocus ? 2 : 1
                 color: "#ffffff"
+            }
+
+            // Custom cursor
+            Rectangle {
+                id: custom_cursor_email
+                width: 1.5
+                color: "#1f2937"
+                height: parent.font.pixelSize + 4
+                anchors.verticalCenter: parent.verticalCenter
+
+                x: parent.length > 0 ? parent.cursorRectangle.x : 14
+                visible: parent.activeFocus
+
+                Behavior on x
+                {
+                    NumberAnimation { duration: 80; easing.type: Easing.OutCubic }
+                }
+                SequentialAnimation on opacity
+                {
+                    running: parent.activeFocus
+                    loops: Animation.Infinite
+                    NumberAnimation { to: 0; duration: 400; easing.type: Easing.InOutSine }
+                    NumberAnimation { to: 1; duration: 400; easing.type: Easing.InOutSine }
+                }
             }
         }
 
@@ -138,6 +188,7 @@ Item {
             rightPadding: 16
             topPadding: 12
             bottomPadding: 12
+            cursorDelegate: Item {}
 
             background: Rectangle
             {
@@ -145,6 +196,30 @@ Item {
                 border.color: passwordField.activeFocus ? "#1a66ff" : "#e5e7eb"
                 border.width: passwordField.activeFocus ? 2 : 1
                 color: "#ffffff"
+            }
+
+            // Custom cursor
+            Rectangle {
+                id: custom_cursor_password
+                width: 1.5
+                color: "#1f2937"
+                height: parent.font.pixelSize + 4
+                anchors.verticalCenter: parent.verticalCenter
+
+                x: parent.length > 0 ? parent.cursorRectangle.x : 14
+                visible: parent.activeFocus
+
+                Behavior on x
+                {
+                    NumberAnimation { duration: 80; easing.type: Easing.OutCubic }
+                }
+                SequentialAnimation on opacity
+                {
+                    running: parent.activeFocus
+                    loops: Animation.Infinite
+                    NumberAnimation { to: 0; duration: 400; easing.type: Easing.InOutSine }
+                    NumberAnimation { to: 1; duration: 400; easing.type: Easing.InOutSine }
+                }
             }
         }
 
@@ -154,7 +229,17 @@ Item {
             width: parent.width
             height: 44
             radius: 8
-            color: loginMouseArea.containsMouse ? "#0052cc" : "#1a66ff"
+            color: registerMouseArea.containsMouse ? "#0052cc" : "#1a66ff"
+
+            scale: registerMouseArea.containsMouse ? 1.03 : 1.0
+
+            Behavior on scale {
+                NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+            }
+            Behavior on color
+            {
+                ColorAnimation { duration: 150 }
+            }
 
             Text
             {
@@ -168,13 +253,68 @@ Item {
 
             MouseArea
             {
-                id: loginMouseArea
+                id: registerMouseArea
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 onClicked:
                 {
-                    root.loginSubmitted(emailField.text, passwordField.text)
+                    root.registerSubmitted(fullName.text, emailField.text, passwordField.text)
+                }
+            }
+        }
+
+        // Google Register button
+        Rectangle
+        {
+            width: parent.width
+            height: 44
+            radius: 8
+            color: googleMouseArea.containsMouse ? "#f5f5f5" : "#ffffff"
+            border.color: "#e5e7eb"
+            border.width: 1
+
+            scale: googleMouseArea.containsMouse ? 1.03 : 1.0
+
+            Behavior on scale {
+                NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+            }
+            Behavior on color {
+                ColorAnimation { duration: 150 }
+            }
+
+            Row {
+                anchors.centerIn: parent
+                spacing: 10
+
+                Image {
+                    width: 20
+                    height: 20
+                    source: "qrc:/pngs/assets/ic_google_logo.svg"
+                    sourceSize.width: width * Screen.devicePixelRatio
+                    sourceSize.height: height * Screen.devicePixelRatio
+                    fillMode: Image.PreserveAspectFit
+                }
+
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Register with Google"
+                    color: "#374151"
+                    font.family: "Segoe UI"
+                    font.pixelSize: 16
+                    font.weight: Font.Medium
+                }
+            }
+
+            MouseArea
+            {
+                id: googleMouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked:
+                {
+                    // method
                 }
             }
         }

@@ -13,6 +13,8 @@ ApplicationWindow {
     property string amountText: emailList.sourceModel ? emailList.sourceModel.pageAmountText : "0-0 of 0"
     property var selectedEmail: null
 
+    property alias authLoader: authLoader
+
     //FunctionSorter
     function closeMessageWindow()
     {
@@ -367,7 +369,6 @@ ApplicationWindow {
         z:998
         MouseArea
         {
-
             hoverEnabled: true
             preventStealing: true
             enabled: parent.visible
@@ -413,4 +414,15 @@ ApplicationWindow {
         }
         opacity: status === Loader.Ready ? 1 : 0
     }
+
+    // Loader для вікна реєстрації/вибору акаунту
+        Loader {
+            id: authLoader
+            anchors.fill: parent
+            z: 2000 // Щоб він був поверх всього (навіть поверх settingsLoader)
+
+            // Використовуємо властивість, яку ми передали з C++
+            active: initialSetupRequired
+            source: active ? "screens/navigation/account/AddAccountQML.qml" : ""
+        }
 }

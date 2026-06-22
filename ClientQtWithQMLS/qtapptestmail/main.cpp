@@ -11,6 +11,9 @@
 #include "headers/database/databasemanager.h"
 #include "headers/users/currentuser.h"
 #include "headers/search/messagesearchmodel.h"
+#include "headers/database/RegistrationHandler.h"
+#include "headers/database/UserRepository.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -19,7 +22,17 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon("qrc:/pngs/assets/Icon.png"));
     ISXDatabaseManager::DatabaseManager::EnsureInitialized();
+    auto dbPath = ISXDatabaseManager::DatabaseManager::DatabasePath();
+    Storage::Database database(dbPath);
     QQmlApplicationEngine engine;
+
+    RegistrationHandler regHandler(database);
+    engine.rootContext()->setContextProperty("regHandler", &regHandler);
+
+    Storage::UserRepository repo(database);
+    bool hasUsers = repo.HasUsers();
+    engine.rootContext()->setContextProperty("initialSetupRequired", !hasUsers);
+
 
     auto* model = new ISXMail::EmailListModel(&app);
     auto* message_composer = new ISXMail::MessageComposer(&app);
@@ -64,11 +77,12 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("starredSearchModel", starredSearch);
     engine.rootContext()->setContextProperty("draftSearchModel", draftSearch);
     engine.rootContext()->setContextProperty("messageComposer", message_composer);
+
     //current user in system
     engine.rootContext()->setContextProperty(
         "currentUser",
         &ISXCurrentUser::CurrentUser::get_instance()
-        );
+    );
 
     QObject::connect(
         &engine,

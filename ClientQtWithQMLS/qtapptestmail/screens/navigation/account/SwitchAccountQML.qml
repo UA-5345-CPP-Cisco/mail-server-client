@@ -15,6 +15,8 @@ Rectangle
         }
     }
 
+    signal requestAuthWindow()
+
 
     implicitWidth: 250
     implicitHeight: header.height + accountList.contentHeight + addButton.height + 16
@@ -351,12 +353,11 @@ Rectangle
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                // onClicked: AccountController.startOAuth()
-                onClicked: loginPopup.open()
-            }
-            AddAccountQML
-            {
-                id: loginPopup
+                onClicked: {
+                    window.authLoader.active = false
+                    window.authLoader.source = "qrc:/qt/qml/qtapptestmail/screens/navigation/account/AddAccountQML.qml"
+                    window.authLoader.active = true
+                }
             }
         }
     }
