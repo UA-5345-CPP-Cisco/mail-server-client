@@ -478,21 +478,19 @@ Rectangle
     //Emails model conector
     ListView
     {
-        id:listView
+        id: listView
+        clip: true
         anchors
         {
-            top:separator.bottom;
+            top: separator.bottom;
             right: parent.right;
             left: parent.left;
             bottom: parent.bottom;
         }
-
         model: sourceModel
-
         delegate: Loader
         {
             width: listView.width
-
             property string pTheme: emailsTheme
             property string pName: emailsName
             property string pSendTo: emailsSendTo
@@ -502,7 +500,6 @@ Rectangle
             property bool pStarred: emailsStarred
             property var pSearchModel: emailsListQML.activeSearchModel()
             property int pIndex: index
-
             sourceComponent: isDraftMode
                              ? draftDelegate
                              : emailsDelegate
