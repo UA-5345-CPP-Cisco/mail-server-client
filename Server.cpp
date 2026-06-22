@@ -260,24 +260,122 @@ void Server::StartServer()
 
 void Server::HandleLogin(int client_fd, const std::string &email, const std::string &password)
 {
-    std::string msg = "Email: " + email;
-    this->logger_thread.Enqueue([msg]()
-                                { Logger::GetInstance().LogTrace("Server::HandleLogin", msg, "Status: OK"); });
-    std::cout << "[Thread " << std::this_thread::get_id() << "] Login attempt from: " << email << "\n";
-    SendResponse(client_fd, R"({"status": "OK", "message": "Logged in successfully"})" + std::string("\n"));
+    try
+    {
+        auto user = db_manager->Users().FindByEmail(email);
+
+        if (!user.has_value())
+        {
+            SendResponse(client_fd, R"({"status":"ERROR","message":"User not found"})" + std::string("\n"));
+            return;
+        }
+
+        if (user->password_hash != password)
+        {
+            SendResponse(client_fd, R"({"status":"ERROR","message":"Invalid password"})" + std::string("\n"));
+            return;
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(client_mutex);
+            clinets[client_fd].state = ClientState::Authenticated;
+            clinets[client_fd].user_id = user->id;
+            clinets[client_fd].user_email = user->email;
+        }
+
+        json response;
+        response["status"] = "OK";
+        response["message"] = "Logged in successfully";
+        SendResponse(client_fd, response.dump() + "\n");
+    }
+    catch (const std::exception &e)
+    {
+        SendResponse(client_fd, R"({"status":"ERROR","message":"Internal server error"})" + std::string("\n"));
+    }
 }
 
 void Server::HandleListEmails(int client_fd)
 {
-    SendResponse(client_fd, R"({"status": "OK", "emails": [{"id": 1, "subject": "Welcome!"}]})" + std::string("\n"));
+    std::string user_email;
+    {
+        std::lock_guard<std::mutex> lock(client_mutex);
+        if (clinets[client_fd].state != ClientState::Authenticated)
+        {
+            SendResponse(client_fd, R"({"status":"ERROR","message":"Not authenticated"})" + std::string("\n"));
+            return;
+        }
+        user_email = clinets[client_fd].user_email;
+    }
+
+    try
+    {
+        auto messages = db_manager->Messages().FindByRecipientEmail(user_email);
+
+        json email_list = json::array();
+        for (const auto &msg : messages)
+        {
+            json item;
+            item["id"] = msg.id;
+            item["from"] = msg.sender_email;
+            item["subject"] = msg.subject.value_or("(no subject)");
+            item["date"] = msg.created_at;
+            email_list.push_back(item);
+        }
+
+        json response;
+        response["status"] = "OK";
+        response["emails"] = email_list;
+        SendResponse(client_fd, response.dump() + "\n");
+    }
+    catch (const std::exception &e)
+    {
+        SendResponse(client_fd, R"({"status":"ERROR","message":"Internal server error"})" + std::string("\n"));
+    }
 }
 
 void Server::HandleReadEmail(int client_fd, int email_id)
 {
-    SendResponse(client_fd, R"({"status": "OK", "body": "This is a test email body."})" + std::string("\n"));
+    {
+        std::lock_guard<std::mutex> lock(client_mutex);
+        if (clinets[client_fd].state != ClientState::Authenticated)
+        {
+            SendResponse(client_fd, R"({"status":"ERROR","message":"Not authenticated"})" + std::string("\n"));
+            return;
+        }
+    }
+
+    try
+    {
+        auto msg = db_manager->Messages().FindById(static_cast<std::int64_t>(email_id));
+
+        if (!msg.has_value())
+        {
+            SendResponse(client_fd, R"({"status":"ERROR","message":"Email not found"})" + std::string("\n"));
+            return;
+        }
+
+        json response;
+        response["status"] = "OK";
+        response["id"] = msg->id;
+        response["from"] = msg->sender_email;
+        response["subject"] = msg->subject.value_or("(no subject)");
+        response["body"] = msg->body;
+        response["date"] = msg->created_at;
+        SendResponse(client_fd, response.dump() + "\n");
+    }
+    catch (const std::exception &e)
+    {
+        SendResponse(client_fd, R"({"status":"ERROR","message":"Internal server error"})" + std::string("\n"));
+    }
 }
 
 void Server::HandleQuit(int client_fd)
 {
-    SendResponse(client_fd, R"({"status": "OK", "message": "Goodbye"})" + std::string("\n"));
+    {
+        std::lock_guard<std::mutex> lock(client_mutex);
+        clinets[client_fd].state = ClientState::NotAuthenticated;
+        clinets[client_fd].user_id = 0;
+        clinets[client_fd].user_email = "";
+    }
+    SendResponse(client_fd, R"({"status":"OK","message":"Goodbye"})" + std::string("\n"));
 }
