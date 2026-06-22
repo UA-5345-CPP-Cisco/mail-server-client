@@ -475,6 +475,11 @@ Rectangle
             }
         }
     }
+
+    HoverHandler {
+        id: listViewHover
+    }
+
     //Emails model conector
     ListView
     {
@@ -503,6 +508,19 @@ Rectangle
             sourceComponent: isDraftMode
                              ? draftDelegate
                              : emailsDelegate
+        }
+
+        ScrollBar.vertical: ScrollBar {
+            id: vBar
+            active: true
+            visible: (listView.contentHeight > listView.height) && listViewHover.hovered
+            policy: ScrollBar.AsNeeded
+            contentItem: Rectangle {
+                implicitWidth: 6
+                implicitHeight: 100
+                radius: 3
+                color: "#e5e7eb"
+            }
         }
     }
 }
