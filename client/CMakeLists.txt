@@ -82,6 +82,7 @@ qt_add_qml_module(appqtapptestmail
 		models/users/usercache.cpp
 		headers/users/accountlistmodel.h
 		models/users/accountlistmodel.cpp
+		QML_FILES screens/email_list/EmailToolTip.qml
 )
 
 set_target_properties(appqtapptestmail PROPERTIES
