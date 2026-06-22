@@ -15,6 +15,8 @@
 namespace ISXMail
 {
 
+Q_NAMESPACE
+
 struct EmailData
 {
     std::int64_t id{-1};
@@ -44,10 +46,11 @@ enum EmailRole
     TimeRole
 };
 
+Q_ENUM_NS(EmailRole)
+
 class EmailListModel : public QAbstractListModel
 {
     Q_OBJECT
-    Q_ENUM(EmailRole)
 
 public:
     explicit EmailListModel(QObject* parent = nullptr);

@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Effects
+import ISXMail 1.0
 
 ApplicationWindow {
     //properties
