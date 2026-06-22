@@ -12,7 +12,7 @@ CurrentUser::CurrentUser(QObject* parent) :
 	m_is_authorized(true),
 	m_username("John Doe"),
 	m_email("johndoe@gmail.com"),
-	m_avatar_path("qrc:/pngs/assets/Icon.png")
+    m_avatar_path("")
 {
 }
 
@@ -63,7 +63,7 @@ void CurrentUser::authorize(
 	}
 	else
 	{
-		m_avatar_path = "qrc:/pngs/assets/Icon.png";
+        m_avatar_path = "";
 		emit profileChanged();
 	}
 
@@ -79,7 +79,7 @@ void CurrentUser::logout()
 
 	m_username.clear();
 	m_email.clear();
-	m_avatar_path = "qrc:/pngs/assets/Icon.png";
+    m_avatar_path.clear();
 	m_is_authorized = false;
 
 	emit profileChanged();

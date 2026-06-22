@@ -1,8 +1,8 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Effects
 
-Rectangle {
+Rectangle
+{
     id:root
     anchors.left: parent.left
     anchors.right: parent.right
@@ -22,11 +22,13 @@ Rectangle {
     signal clicked()
     signal deleteClicked()
 
-    Behavior on color {
+    Behavior on color
+    {
         ColorAnimation { duration: 150; easing.type: Easing.OutCubic }
     }
 
-    Rectangle {
+    Rectangle
+    {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
@@ -34,10 +36,12 @@ Rectangle {
         color: "#e5e7eb"
     }
 
-    Rectangle {
+    Rectangle
+    {
         id: container_3
 
-        anchors {
+        anchors
+        {
             left: parent.left
             right: parent.right
             top: parent.top
@@ -47,7 +51,8 @@ Rectangle {
         color: "transparent"
 
         // Content
-        Rectangle {
+        Rectangle
+        {
             id: container_4
             anchors.left: parent.left
             anchors.right: parent.right
@@ -55,7 +60,8 @@ Rectangle {
             color: "transparent"
 
             // Name
-            Rectangle {
+            Rectangle
+            {
                 id: container_5
                 anchors.left: parent.left
                 anchors.right: dateHolder.left
@@ -63,7 +69,8 @@ Rectangle {
                 clip: true
                 color: "transparent"
 
-                Text {
+                Text
+                {
                     id: ceo_company_com
                     height: 20;
                     width: parent.width
@@ -80,13 +87,15 @@ Rectangle {
             }
 
             // Time
-            Rectangle {
+            Rectangle
+            {
                 id: dateHolder
                 anchors.right: parent.right
                 y: 2; height: 16; width: 44
                 color: "transparent"
 
-                Text {
+                Text
+                {
                     id: jun_4
                     x: 8; height: 16; width: 29
                     color: "#6a7282"
@@ -104,7 +113,8 @@ Rectangle {
         }
 
         // Theme
-        Rectangle {
+        Rectangle
+        {
             id: container_6
             anchors.left: parent.left
             anchors.right: parent.right
@@ -113,7 +123,8 @@ Rectangle {
             height: 20
             clip: true; color: "transparent"
 
-            Text {
+            Text
+            {
                 id: quarterly_Report_Summary
                 height: 20; width: parent.width
                 color: "#101828"
@@ -127,7 +138,8 @@ Rectangle {
         }
 
         // Text preview
-        Rectangle {
+        Rectangle
+        {
             id: container_7
             anchors.left: parent.left
             anchors.right: parent.right
@@ -136,7 +148,8 @@ Rectangle {
             height: 20
             clip: true; color: "transparent"
 
-            Text {
+            Text
+            {
                 id: draft_preview
                 height: 16; width: parent.width
                 color: "#6a7282"
@@ -150,7 +163,8 @@ Rectangle {
         }
 
         // Draft mark
-        Text {
+        Text
+        {
             id: draftBadge
             anchors.top: container_7.bottom
             anchors.topMargin: 2
@@ -166,7 +180,9 @@ Rectangle {
             verticalAlignment: Text.AlignVCenter
         }
     }
-    MouseArea {
+    MouseArea
+
+    {
         anchors.fill: parent
         hoverEnabled: true
         acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -200,6 +216,9 @@ Rectangle {
     Menu
     {
         id: contextMenu
+
+        // The maximum allowed distance (in pixels) the cursor can wander away from the menu boundaries
+        property real maxDistance: 40
 
         palette
         {
@@ -260,6 +279,28 @@ Rectangle {
         MenuItem {
             text: "Delete"
             onClicked: root.deleteClicked()
+        }
+
+
+        MouseArea {
+            id: tracker
+            parent: Overlay.overlay
+            anchors.fill: parent
+            hoverEnabled: true
+            enabled: false
+
+            onPositionChanged: (mouse) => {
+
+                var p = contextMenu.mapToItem(parent, 0, 0)
+
+                if (mouse.x < p.x - 40 ||
+                    mouse.x > p.x + contextMenu.width + 40 ||
+                    mouse.y < p.y - 40 ||
+                    mouse.y > p.y + contextMenu.height + 40)
+                {
+                    contextMenu.close()
+                }
+            }
         }
     }
 }

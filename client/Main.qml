@@ -111,7 +111,6 @@ ApplicationWindow {
     minimumWidth: 750
     title: "Mail Client Interface"
 
-
     MouseArea
     {
         anchors.fill: parent

@@ -13,6 +13,12 @@ Rectangle
     signal sentClicked
     signal draftClicked
 
+    function avatarInitial(name)
+       {
+           var trimmedName = String(name).trim()
+           return trimmedName.length > 0 ? trimmedName.charAt(0).toUpperCase() : "?"
+       }
+
     // Header
     Rectangle
     {
@@ -34,17 +40,35 @@ Rectangle
             color: "#e5e7eb"
         }
 
-        // Icon
-        Image
+        // Avatar
+        Rectangle
         {
             id: avatar
             x: 12
             y: 14
             height: 32
-            width: 32
-            source: currentUser.avatarPath
-            cache: false
-            fillMode: Image.PreserveAspectFit
+            color: currentUser.avatarPath !== "" ? "transparent" : "#2b7fff"
+            radius: 16
+            clip: true
+
+            Image
+            {
+                anchors.fill: parent
+                source: currentUser.avatarPath
+                visible: currentUser.avatarPath !== ""
+                cache: false
+                fillMode: Image.PreserveAspectCrop
+            }
+            Text
+            {
+                anchors.centerIn: parent
+                visible: currentUser.avatarPath === ""
+                color: "#ffffff"
+                font.family: "Segoe UI"
+                font.pixelSize: 14
+                font.weight: Font.Black
+                text: avatarInitial(currentUser.username)
+            }
         }
 
         // Content

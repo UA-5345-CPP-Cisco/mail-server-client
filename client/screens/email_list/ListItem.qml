@@ -56,66 +56,6 @@ Rectangle {
         }
         onCanceled: root.color = "#ffffff"
     }
-    Menu {
-        id: contextMenu
-
-        palette {
-            base: "#ffffff"
-            text: "#1f2937"
-            highlight: "#f3f4f6"
-            highlightedText: "#1f2937"
-        }
-
-        background: Rectangle {
-            implicitWidth: 200
-            implicitHeight: 40
-            color: "#ffffff"
-            radius: 8
-            border.color: "#e5e7eb"
-            border.width: 1
-        }
-
-        delegate: MenuItem {
-            id: menuItem
-            implicitWidth: 200
-            implicitHeight: 36
-            padding: 0
-
-            contentItem: Text {
-                text: menuItem.text
-                color: menuItem.hovered ? "#1f2937" : "#6b7280"
-                font.pixelSize: 13
-                leftPadding: 12
-                verticalAlignment: Text.AlignVCenter
-            }
-
-            background: Rectangle {
-                color: menuItem.hovered ? "#f3f4f6" : "transparent"
-                radius: 4
-                anchors.margins: 4
-            }
-        }
-
-        MenuItem {
-            text: "Copy"
-            onTriggered: { }
-        }
-
-        MenuSeparator {
-            padding: 4
-            contentItem: Rectangle {
-                implicitWidth: 200
-                implicitHeight: 1
-                color: "#e5e7eb"
-            }
-        }
-
-        MenuItem {
-            text: "Delete"
-            onClicked: root.deleteClicked()
-        }
-    }
-
     // Bottom border
     Rectangle
     {
@@ -308,6 +248,93 @@ Rectangle {
                     textFormat: Text.RichText
                     verticalAlignment: Text.AlignVCenter
                     wrapMode: Text.Wrap
+                }
+            }
+        }
+    }
+    Menu
+    {
+        id: contextMenu
+
+        // The maximum allowed distance (in pixels) the cursor can wander away from the menu boundaries
+        property real maxDistance: 40
+
+        palette
+        {
+            base: "#ffffff"
+            text: "#1f2937"
+            highlight: "#f3f4f6"
+            highlightedText: "#1f2937"
+        }
+
+        background: Rectangle
+        {
+            implicitWidth: 200
+            implicitHeight: 40
+            color: "#ffffff"
+            radius: 8
+            border.color: "#e5e7eb"
+            border.width: 1
+        }
+
+        delegate: MenuItem
+        {
+            id: menuItem
+            implicitWidth: 200
+            implicitHeight: 36
+            padding: 0
+
+            contentItem: Text
+            {
+                text: menuItem.text
+                color: menuItem.hovered ? "#1f2937" : "#6b7280"
+                font.pixelSize: 13
+                leftPadding: 12
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            background: Rectangle
+            {
+                color: menuItem.hovered ? "#f3f4f6" : "transparent"
+                radius: 4
+                anchors.margins: 4
+            }
+        }
+
+        MenuItem {
+            text: "Copy"
+            onTriggered: { }
+        }
+
+        MenuSeparator {
+            padding: 4
+            contentItem: Rectangle {
+                implicitWidth: 200
+                implicitHeight: 1
+                color: "#e5e7eb"
+            }
+        }
+
+        MenuItem {
+            text: "Delete"
+            onClicked: root.deleteClicked()
+        }
+        MouseArea {
+            id: tracker
+            parent: Overlay.overlay
+            anchors.fill: parent
+            hoverEnabled: true
+            enabled: false
+
+            onPositionChanged: (mouse) => {
+                var p = contextMenu.mapToItem(parent, 0, 0)
+
+                if (mouse.x < p.x - 40 ||
+                    mouse.x > p.x + contextMenu.width + 40 ||
+                    mouse.y < p.y - 40 ||
+                    mouse.y > p.y + contextMenu.height + 40)
+                {
+                    contextMenu.close()
                 }
             }
         }
