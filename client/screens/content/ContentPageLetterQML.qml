@@ -231,34 +231,38 @@ Rectangle
                 {
                     id: timeHolder
 
-                    anchors.left: parent.left
-                    anchors.leftMargin: -8
+                    // Прибиваємо до правого краю батьківського елемента (картки листа)
+                    anchors.right: parent.right
+                    anchors.rightMargin: 67
                     anchors.verticalCenter: parent.verticalCenter
-                    height: 16
-                    width: 55
-                    anchors.rightMargin:5
                     anchors.verticalCenterOffset: 1
+
+                    // Контейнер автоматично розширюється вліво під розмір тексту
+                    width: timeText.implicitWidth
+                    height: 16
                     color: "transparent"
 
                     Text
                     {
-                        id: aM
-                        x: -5
-                        y: 0
+                        id: timeText
 
-                        height: 16
-                        width: 52
+                        // Замість anchors.fill розтягуємо тільки по ширині, щоб не ламати висоту
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
 
                         color: "#6a7282"
                         font.family: "Segoe UI"
                         font.pixelSize: 12
                         font.weight: Font.Normal
-                        horizontalAlignment: Text.AlignLeft
+
+                        // Рівняємо контент по правому краю контейнера
+                        horizontalAlignment: Text.AlignRight
+                        verticalAlignment: Text.AlignVCenter
                         lineHeight: 16
                         lineHeightMode: Text.FixedHeight
+
                         text: format_email_time_full(contentPageLetterQML.letterTime)
                         textFormat: Text.PlainText
-                        verticalAlignment: Text.AlignVCenter
                     }
                 }
 

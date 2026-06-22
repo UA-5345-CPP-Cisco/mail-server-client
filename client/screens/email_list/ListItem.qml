@@ -56,9 +56,68 @@ Rectangle {
                    }
         onCanceled: root.color = "#ffffff"
     }
+    Menu {
+        id: contextMenu
+
+        palette {
+            base: "#ffffff"
+            text: "#1f2937"
+            highlight: "#f3f4f6"
+            highlightedText: "#1f2937"
+        }
+
+        background: Rectangle {
+            implicitWidth: 200
+            implicitHeight: 40
+            color: "#ffffff"
+            radius: 8
+            border.color: "#e5e7eb"
+            border.width: 1
+        }
+
+        delegate: MenuItem {
+            id: menuItem
+            implicitWidth: 200
+            implicitHeight: 36
+            padding: 0
+
+            contentItem: Text {
+                text: menuItem.text
+                color: menuItem.hovered ? "#1f2937" : "#6b7280"
+                font.pixelSize: 13
+                leftPadding: 12
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            background: Rectangle {
+                color: menuItem.hovered ? "#f3f4f6" : "transparent"
+                radius: 4
+                anchors.margins: 4
+            }
+        }
+
+        MenuItem {
+            text: "Copy"
             onTriggered: {
 
             }
+        }
+
+        MenuSeparator {
+            padding: 4
+            contentItem: Rectangle {
+                implicitWidth: 200
+                implicitHeight: 1
+                color: "#e5e7eb"
+            }
+        }
+
+        MenuItem {
+            text: "Delete"
+            onClicked: root.deleteClicked()
+        }
+    }
+
     // Bottom border
     Rectangle {
         anchors.left: parent.left
@@ -188,32 +247,23 @@ Rectangle {
                 Rectangle {
                     id: timeHolder
                     anchors.right: parent.right
-                    y: 2
+                    anchors.rightMargin: 0
+                    anchors.verticalCenter: parent.verticalCenter
                     height: 16
-                    width: 59
-                    x: 30
-                    anchors.rightMargin: -8
+                    width: timeText.implicitWidth
                     color: "transparent"
-                    clip: true
 
                     Text {
                         id: timeText
-                        x: 15
-                        height: 16
-                        width: 52
+                        anchors.fill: parent
                         color: "#6a7282"
                         font.family: "Segoe UI"
                         font.pixelSize: 12
                         font.weight: Font.Normal
-                        horizontalAlignment: Text.AlignLeft
-                        lineHeight: 16
-                        lineHeightMode: Text.FixedHeight
+                        horizontalAlignment: Text.AlignRight
+                        verticalAlignment: Text.AlignVCenter
                         text: time
                         textFormat: Text.PlainText
-                        verticalAlignment: Text.AlignVCenter
-                        wrapMode: Text.NoWrap
-                        elide: Text.ElideRight
-                        maximumLineCount: 1
                     }
                 }
             }
@@ -295,85 +345,13 @@ Rectangle {
                     id: previewHover
                 }
 
-                EmailToolTip {
+                EmailToolTip
+                {
                     visible: previewHover.hovered
                              && (previewText.contentWidth > previewText.width)
                     text: preview
                     x: 0
                     y: previewHolder.height + 4
-            text: "#1f2937"
-            highlight: "#f3f4f6"
-            highlightedText: "#1f2937"
-        }
-
-        background: Rectangle
-        {
-            implicitWidth: 200
-            implicitHeight: 40
-            color: "#ffffff"
-            radius: 8
-            border.color: "#e5e7eb"
-            border.width: 1
-        }
-
-        delegate: MenuItem
-        {
-            id: menuItem
-            implicitWidth: 200
-            implicitHeight: 36
-            padding: 0
-
-            contentItem: Text
-            {
-                text: menuItem.text
-                color: menuItem.hovered ? "#1f2937" : "#6b7280"
-                font.pixelSize: 13
-                leftPadding: 12
-                verticalAlignment: Text.AlignVCenter
-            }
-
-            background: Rectangle
-            {
-                color: menuItem.hovered ? "#f3f4f6" : "transparent"
-                radius: 4
-                anchors.margins: 4
-            }
-        }
-
-        MenuItem {
-            text: "Copy"
-            onTriggered: { }
-        }
-
-        MenuSeparator {
-            padding: 4
-            contentItem: Rectangle {
-                implicitWidth: 200
-                implicitHeight: 1
-                color: "#e5e7eb"
-            }
-        }
-
-        MenuItem {
-            text: "Delete"
-            onClicked: root.deleteClicked()
-        }
-        MouseArea {
-            id: tracker
-            parent: Overlay.overlay
-            anchors.fill: parent
-            hoverEnabled: true
-            enabled: false
-
-            onPositionChanged: (mouse) => {
-                var p = contextMenu.mapToItem(parent, 0, 0)
-
-                if (mouse.x < p.x - 40 ||
-                    mouse.x > p.x + contextMenu.width + 40 ||
-                    mouse.y < p.y - 40 ||
-                    mouse.y > p.y + contextMenu.height + 40)
-                {
-                    contextMenu.close()
                 }
             }
         }
