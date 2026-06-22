@@ -99,176 +99,19 @@ Rectangle
     {
         id: accountList
 
+        property int maxHeight: 214
         anchors.top: header.bottom
         anchors.topMargin: 1
         anchors.left: parent.left
         anchors.right: parent.right
 
-        height: contentHeight
-        interactive: false
-        clip: false
+        height: Math.min(maxHeight, contentHeight)
+        interactive: contentHeight > maxHeight
+        clip: true
 
-        // Тимчасова модель — замінити на AccountController.accountModel
-        model: ListModel
-        {
-            ListElement
-            {
-                accountName: "Personal"
-                accountEmail: "alexm@gmail.com"
-                avatarUrl: ""        // шлях до зображення або ""
-                avatarColor: "#2b7fff"
-                avatarInitial: "P"
-                isActive: true
-            }
-            ListElement
-            {
-                accountName: "Work"
-                accountEmail: "alex@company.com"
-                avatarUrl: ""
-                avatarColor: "#7c3aed"
-                avatarInitial: "W"
-                isActive: false
-            }
-        }
+        model: accountModel
 
-        delegate: Rectangle
-        {
-            id: delegateRoot
-            width: accountList.width
-            height: 72
-            color: "transparent"
-
-            Rectangle
-            {
-                id: buttonToSelectAccount
-                x: 8
-                y: 8
-                width: parent.width - 16
-                height: 56
-                radius: 10
-                color: delegateMouseArea.containsMouse ? "#f9fafb" : "transparent"
-
-                // Аватарка
-                Rectangle
-                {
-                    id: avatarContainer
-                    x: 12
-                    y: 10
-                    width: 36
-                    height: 36
-                    radius: 18
-                    color: model.avatarUrl !== "" ? "transparent" : model.avatarColor
-
-                    // Зображення якщо є
-                    Image
-                    {
-                        anchors.fill: parent
-                        source: model.avatarUrl !== "" ? model.avatarUrl : ""
-                        visible: model.avatarUrl !== ""
-                        fillMode: Image.PreserveAspectCrop
-                        layer.enabled: true
-                        layer.effect: Component
-                        {
-                            MultiEffect
-                            {
-                                maskEnabled: true
-                                maskSource: ShaderEffectSource
-                                {
-                                    sourceItem: Rectangle
-                                    {
-                                        width: avatarContainer.width
-                                        height: avatarContainer.height
-                                        radius: avatarContainer.radius
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // Фоллбек — ініціал
-                    Text
-                    {
-                        anchors.centerIn: parent
-                        visible: model.avatarUrl === ""
-                        text: model.avatarInitial
-                        color: "#ffffff"
-                        font.family: "Segoe UI"
-                        font.pixelSize: 14
-                        font.weight: Font.Black
-                    }
-                }
-
-                // Ім'я + email
-                Column
-                {
-                    x: 60
-                    y: 10
-                    width: parent.width - 88
-                    spacing: 0
-
-                    Text
-                    {
-                        width: parent.width
-                        height: 20
-                        text: model.accountName
-                        color: "#101828"
-                        font.family: "Segoe UI"
-                        font.pixelSize: 14
-                        font.weight: Font.Normal
-                        verticalAlignment: Text.AlignVCenter
-                        elide: Text.ElideRight
-                    }
-
-                    Text
-                    {
-                        width: parent.width
-                        height: 16
-                        text: model.accountEmail
-                        color: "#6a7282"
-                        font.family: "Segoe UI"
-                        font.pixelSize: 12
-                        font.weight: Font.Normal
-                        verticalAlignment: Text.AlignVCenter
-                        elide: Text.ElideRight
-                    }
-                }
-
-                // Галочка активного акаунту
-                Shape
-                {
-                    x: parent.width - 28
-                    y: 20
-                    width: 16
-                    height: 16
-                    visible: model.isActive
-
-                    ShapePath
-                    {
-                        fillColor: "transparent"
-                        strokeColor: "#2b7fff"
-                        strokeWidth: 1.33
-                        PathSvg { path: "M 10.67 0 L 3.33 7.33 L 0 4" }
-                    }
-                }
-
-                MouseArea
-                {
-                    id: delegateMouseArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked:
-                    {
-                        currentUser.authorize
-                        (
-                            accountName,
-                            accountEmail,
-                            avatarUrl
-                        )
-                    }
-                }
-            }
-        }
+        delegate: AccountItem {}
     }
 
     // Розділювач перед кнопкою

@@ -267,7 +267,7 @@ Popup {
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked:
                                     {
-                                        contentLoader.source = "RegisterQML.qml"
+                                        contentLoader.source = "RegistrationQML.qml"
                                     }
                                 }
                             }
