@@ -1,0 +1,50 @@
+# Build directories
+build/
+cmake-build-*/
+out/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CTestTestfile.cmake
+cmake_install.cmake
+compile_commands.json
+Makefile
+
+# Binaries
+*.exe
+*.out
+*.app
+*.elf
+
+# Libraries
+*.a
+*.so
+*.so.*
+*.dll
+*.dylib
+
+# Object files
+*.o
+*.obj
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# VS Code
+.vscode/
+
+# CLion
+.idea/
+
+# macOS
+.DS_Store
+
+# Linux swap files
+*.swp
+*.swo
+*~
