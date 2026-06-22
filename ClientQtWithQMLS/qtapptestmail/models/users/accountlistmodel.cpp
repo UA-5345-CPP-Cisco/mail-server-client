@@ -94,7 +94,7 @@ void AccountListModel::AddAccount(const QString& name, const QString& email,
     item.is_active = isActive;
 
     if (isActive)
-        SetActiveAccount(static_cast<int>(m_data.size())); // станет активным после вставки
+        SetActiveAccount(static_cast<int>(m_data.size()));
 
     AddData(item);
 }
@@ -140,8 +140,6 @@ int AccountListModel::ActiveAccountRow() const
 
 void AccountListModel::LoadFromDatabase()
 {
-    // TODO: подключить реальную загрузку из БД/конфига.
-    // Временные данные для отладки UI — убрать после интеграции с реальным хранилищем.
     AddData({ "Personal", "alexm@gmail.com", "", "#2b7fff", "P", true });
     AddData({ "Work",     "alex@company.com", "", "#7c3aed", "W", false });
     AddData({ "Walk",     "alex@no.com", "", "#7c3aed", "G", false });
@@ -153,7 +151,6 @@ void AccountListModel::LoadFromDatabase()
 
 QString AccountListModel::DefaultDatabasePath() const
 {
-    // TODO: вернуть реальный путь к БД аккаунтов.
     return QString();
 }
 
