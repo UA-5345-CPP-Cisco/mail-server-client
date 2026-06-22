@@ -1,70 +1,53 @@
 #pragma once
 
+#include <vector>
+#include <queue>
+#include <thread>
+#include <mutex>
 #include <condition_variable>
-#include <cstddef>
 #include <functional>
 #include <future>
 #include <memory>
-#include <mutex>
-#include <queue>
-#include <thread>
-#include <type_traits>
-#include <utility>
-#include <vector>
-
-namespace Concurrency {
-
-class IThreadPool {
-public:
-	virtual ~IThreadPool() = default;
-
-	virtual std::future<void> Enqueue(std::function<void()> task) = 0;
-};
-
-class ThreadPool final : public IThreadPool {
-public:
-	explicit ThreadPool(
-		std::size_t workerCount = std::thread::hardware_concurrency());
-	~ThreadPool() override;
-
-	ThreadPool(const ThreadPool&) = delete;
-	ThreadPool& operator=(const ThreadPool&) = delete;
-
-	std::future<void> Enqueue(std::function<void()> task) override;
-
-	template<class Function, class... Arguments>
-	auto Submit(Function&& function, Arguments&&... arguments)
-		-> std::future<std::invoke_result_t<Function, Arguments...>>;
-
-private:
-	void AddTask(std::function<void()> task);
-	void Stop();
-	void WorkerLoop();
-
-	std::vector<std::thread> workers_;
-	std::queue<std::function<void()>> tasks_;
-	std::mutex mutex_;
-	std::condition_variable condition_;
-	bool stopping_{false};
-};
-
-template<class Function, class... Arguments>
-auto ThreadPool::Submit(Function&& function, Arguments&&... arguments)
-	-> std::future<std::invoke_result_t<Function, Arguments...>>
+#include<type_traits>
+#include<utility>
+#include <stdexcept>
+ 
+class ThreadPool 
 {
-	using Result = std::invoke_result_t<Function, Arguments...>;
+private:
+	std::vector<std::thread> workers;
+	std::queue<std::function<void()>> queue;
+	std::mutex queue_mutex;
+	std::condition_variable cv;
+	bool stop_pool;
 
-	auto task = std::make_shared<std::packaged_task<Result()>>(
-		std::bind(
-			std::forward<Function>(function),
-			std::forward<Arguments>(arguments)...));
-	std::future<Result> result = task->get_future();
+	void WorkerLoop();
+public:
+	ThreadPool()=default;
 
-	AddTask([task] {
-		(*task)();
-	});
+	~ThreadPool();
 
-	return result;
-}
+	ThreadPool(const ThreadPool& other) = delete;
+	ThreadPool operator=(const ThreadPool& other) = delete;
 
+	void ShutDown();
+
+	void Initialize(size_t threads_num);
+
+	template<class F,class... Args> 
+	auto Enqueue(F&& f, Args&&... args) -> std::future<typename std::invoke_result<F, Args...>::type>;
+};
+
+template<class F, class... Args>
+auto ThreadPool::Enqueue(F&& f, Args&&... args)->std::future<typename std::invoke_result<F, Args...>::type>
+{
+	using return_type = typename std::invoke_result<F,Args...>::type;
+	auto task_ptr = std::make_shared<std::packaged_task<return_type()>>(std::bind(std::forward<F>(f),std::forward<Args>(args)...));
+	std::future<return_type> future_res = task_ptr->get_future();
+	{
+		std::lock_guard<std::mutex> lock_g(this->queue_mutex);
+		this->queue.emplace([task_ptr] {(*task_ptr)();});
+	}
+	this->cv.notify_all();
+	return future_res;
 }
