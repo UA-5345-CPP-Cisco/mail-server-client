@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     qputenv("QT_QUICK_BACKEND", "software");
     QQuickStyle::setStyle(QStringLiteral("Fusion"));
     QGuiApplication app(argc, argv);
-    app.setWindowIcon(QIcon("qrc:/pngs/assets/Icon.png"));
+    app.setWindowIcon(QIcon(":/pngs/assets/Icon.png"));
     ISXDatabaseManager::DatabaseManager::EnsureInitialized();
     QQmlApplicationEngine engine;
 
