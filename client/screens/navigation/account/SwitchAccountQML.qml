@@ -48,8 +48,9 @@ Rectangle
 
         Rectangle
         {
-            x: 254
-            y: 18
+            anchors.right: parent.right
+            anchors.rightMargin: 16
+            anchors.verticalCenter: parent.verticalCenter
             width: 16
             height: 16
             color: "transparent"

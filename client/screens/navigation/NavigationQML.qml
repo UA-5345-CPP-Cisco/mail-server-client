@@ -221,10 +221,11 @@ Rectangle
             z: 999
             anchors.top: horizontal_border.bottom
             anchors.topMargin: 4
-            anchors.right: dropdown_wrapper.right
-            anchors.rightMargin:0
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 0
+            anchors.rightMargin: 0
 
-            width: item ? item.implicitWidth : 0
             height: item ? item.implicitHeight : 0
             source: ""
             opacity: status === Loader.Ready ? 1 : 0
