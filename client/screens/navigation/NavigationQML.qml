@@ -47,6 +47,7 @@ Rectangle
             x: 12
             y: 14
             height: 32
+            width: 32
             color: currentUser.avatarPath !== "" ? "transparent" : "#2b7fff"
             radius: 16
             clip: true
