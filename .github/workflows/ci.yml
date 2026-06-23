@@ -16,7 +16,10 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libsqlite3-dev libssl-dev
+          sudo apt-get install -y clang-format libsqlite3-dev libssl-dev
+
+      - name: Check formatting
+        run: scripts/clang-check-format.sh
 
       - name: Configure CMake
         run: cmake -B build -DMAIL_BUILD_TESTS=ON
