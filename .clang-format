@@ -22,9 +22,7 @@ CompactNamespaces: false
 # Includes
 IncludeBlocks: Regroup
 IncludeIsMainRegex: '$'
-SortIncludes:
-  Enabled: true
-  IgnoreCase: false
+SortIncludes: true
 IncludeCategories:
   # clang-format gives the matching .h for a .cpp file category 0 automatically.
 
