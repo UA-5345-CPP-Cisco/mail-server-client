@@ -186,7 +186,8 @@ ApplicationWindow
                        newMessageLoader.selectedItem = null
                    }
 
-                   function onDraftFinished(index, subject, recipient, text) {
+                   function onDraftFinished(index, subject, recipient, text)
+                   {
                        if(newMessageLoader.selectedItem != null)
                        {
                            draftModel.removeEmailData(parseInt(index))
@@ -368,7 +369,8 @@ ApplicationWindow
         }
     }
 
-    Rectangle {
+    Rectangle
+    {
         anchors.fill: parent
         color: "#000000"
         opacity: settingsLoader.opacity * 0.4
@@ -423,7 +425,8 @@ ApplicationWindow
     }
 
     // Loader for account change
-        Loader {
+        Loader
+        {
             id: authLoader
             anchors.fill: parent
             z: 2000

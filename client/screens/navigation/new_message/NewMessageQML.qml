@@ -214,7 +214,8 @@ Rectangle
                 }
 
                 //button to close window
-                Rectangle {
+                Rectangle
+                {
                     id: buttonToCloseWindow
                     height: 22
                     width: 22
@@ -222,17 +223,22 @@ Rectangle
 
                     color: closeMessageBoxClickArea.pressed ? "#ffdede" : "transparent"
 
-                    MouseArea {
+                    MouseArea
+                    {
                         id: closeMessageBoxClickArea
                         anchors.fill: parent
 
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
 
-                        onClicked: {
-                            if (subjectTextField.text.trim() === "" && recipientTextField.text.trim() === "" && messageBodyTextField.text.trim() === "") {
+                        onClicked:
+                        {
+                            if (subjectTextField.text.trim() === "" && recipientTextField.text.trim() === "" && messageBodyTextField.text.trim() === "")
+                            {
                                 closeMessageWindow()
-                            } else {
+                            }
+                            else
+                            {
                                 let subject_text = subjectTextField.text.trim()
                                 let recipient_text = recipientTextField.text.trim()
                                 let message_text = messageBodyTextField.text.trim()
@@ -245,9 +251,11 @@ Rectangle
                                     message_text
                                 )
 
-                                if (isDraft) {
+                                if (isDraft)
+                                {
                                     draftChanged(newIndex, subject_text, recipient_text, message_text)
-                                } else {
+                                } else
+                                {
                                     emailsModel.AddData(
                                         false, false, true,
                                         subject_text, CurrentUser.username,
@@ -259,7 +267,8 @@ Rectangle
                         }
                     }
 
-                    Rectangle {
+                    Rectangle
+                    {
                         id: closeMessageBoxIcon
 
                         anchors.centerIn: parent
@@ -272,14 +281,17 @@ Rectangle
 
                         scale: closeMessageBoxClickArea.containsMouse ? 1.5 : 1.0
 
-                        Behavior on scale {
-                            NumberAnimation {
+                        Behavior on scale
+                        {
+                            NumberAnimation
+                            {
                                 duration: 150
                                 easing.type: Easing.InOutQuad
                             }
                         }
 
-                        Image {
+                        Image
+                        {
                             source: "qrc:/pngs/assets/ic_close_window.svg"
                             width: 14
                             height: 14
