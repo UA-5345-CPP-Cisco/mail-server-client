@@ -1,0 +1,30 @@
+<RCC>
+    <qresource prefix="/pngs">
+        <file>assets/Icon.png</file>
+        <file>assets/ArrowDownToPullEmails.png</file>
+        <file>assets/ic_add_account.svg</file>
+        <file>assets/ic_login.svg</file>
+        <file>assets/ic_star.svg</file>
+        <file>assets/ic_star_active.svg</file>
+        <file>assets/ic_compose.svg</file>
+        <file>assets/ic_drafts.svg</file>
+        <file>assets/ic_inbox.svg</file>
+        <file>assets/ic_sent.svg</file>
+        <file>assets/ic_select_email.svg</file>
+        <file>assets/ic_dark_mode.svg</file>
+        <file>assets/ic_account_settings.svg</file>
+        <file>assets/ic_settings.svg</file>
+        <file>assets/ic_arrow_down.svg</file>
+        <file>assets/ic_plus.svg</file>
+        <file>assets/ic_search.svg</file>
+        <file>assets/ic_button_back.svg</file>
+        <file>assets/ic_button_forward.svg</file>
+        <file>assets/ic_bin.svg</file>
+        <file>assets/ic_close_window.svg</file>
+        <file>assets/ic_extend_window.svg</file>
+        <file>assets/ic_minimize_window.svg</file>
+        <file>assets/ic_three_dots.svg</file>
+        <file>assets/ic_archive.svg</file>
+        <file>assets/ic_close_window_black.svg</file>
+    </qresource>
+</RCC>

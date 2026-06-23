@@ -44,6 +44,7 @@ add_subdirectory(libs/storage)
 add_subdirectory(libs/logger)
 add_subdirectory(libs/thread_pool)
 add_subdirectory(apps/smtp_server)
+add_subdirectory(apps/simple-client)
 
 if(MAIL_BUILD_TESTS)
 	enable_testing()
