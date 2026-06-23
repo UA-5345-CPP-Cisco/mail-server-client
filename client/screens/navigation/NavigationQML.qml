@@ -1,7 +1,6 @@
 import QtQuick
-import QtQuick.Effects
-import QtQuick.Shapes
-import QtQuick.Controls
+
+//declaration of QML
 Rectangle
 {
     id: navigationQML
@@ -12,17 +11,16 @@ Rectangle
     signal starredClicked
     signal sentClicked
     signal draftClicked
-
     function avatarInitial(name)
-       {
-           var trimmedName = String(name).trim()
-           return trimmedName.length > 0 ? trimmedName.charAt(0).toUpperCase() : "?"
-       }
+    {
+        var trimmedName = String(name).trim()
+        return trimmedName.length > 0 ? trimmedName.charAt(0).toUpperCase() : "?"
+    }
 
-    // Header
+    // headerNavigation
     Rectangle
     {
-        id: horizontal_border
+        id: headerNavigation
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
@@ -75,10 +73,10 @@ Rectangle
         // Content
         Rectangle
         {
-            id: text_container
+            id: userInfoWrapper
             anchors.left: avatar.right
             anchors.leftMargin: 8
-            anchors.right: dropdown_wrapper.left
+            anchors.right: accountChangeWrapper.left
             anchors.rightMargin: 4
             anchors.verticalCenter: parent.verticalCenter
             height: 36
@@ -86,7 +84,7 @@ Rectangle
 
             Rectangle
             {
-                id: name_holder
+                id: userName
                 anchors.left: parent.left
                 anchors.right: parent.right
                 height: 20
@@ -95,7 +93,7 @@ Rectangle
 
                 Text
                 {
-                    id: label_username
+                    id: userNameText
                     height: 20
                     width: parent.width
                     color: "#101828"
@@ -114,17 +112,17 @@ Rectangle
 
             Rectangle
             {
-                id: email_holder
+                id: userInfo
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.top: name_holder.bottom
+                anchors.top: userName.bottom
                 height: 16
                 clip: true
                 color: "transparent"
 
                 Text
                 {
-                    id: label_email
+                    id: userEmailText
                     height: 16
                     width: parent.width
                     color: "#6a7282"
@@ -145,7 +143,7 @@ Rectangle
         // Wrapper for the Button and Loader
         Item
         {
-            id: dropdown_wrapper
+            id: accountChangeWrapper
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.bottom: parent.bottom
@@ -153,22 +151,22 @@ Rectangle
 
             Rectangle
             {
-                id: button_burger_pull_emails
+                id: buttonAccountChange
                 anchors.centerIn: parent
                 height: 24
                 width: 24
-                color: click_area_pull_emails.pressed ? "#ffdede" : "transparent"
+                color: clickAreaAccountChange.pressed ? "#ffdede" : "transparent"
                 radius: 4
 
                 Rectangle
                 {
-                    id: svg_icon_container
+                    id: accounChangeIcon
                     anchors.centerIn: parent
                     height: 16
                     width: 16
                     clip: true
                     color: "transparent"
-                    scale: click_area_pull_emails.hovered ? 1.5 : 1.0
+                    scale: clickAreaAccountChange.hovered ? 1.5 : 1.0
 
                     Behavior on scale
                     {
@@ -193,7 +191,7 @@ Rectangle
 
                 HoverHandler
                 {
-                    id: click_area_pull_emails
+                    id: clickAreaAccountChange
                     cursorShape: Qt.PointingHandCursor
                 }
 
@@ -201,13 +199,13 @@ Rectangle
                 {
                     onTapped:
                     {
-                        if (String(account_change_loader.source) === "")
+                        if (String(accountChangeLoader.source) === "")
                         {
-                            account_change_loader.source = "account/SwitchAccountQML.qml"
+                            accountChangeLoader.source = "account/SwitchAccountQML.qml"
                         }
                         else
                         {
-                            account_change_loader.source = ""
+                            accountChangeLoader.source = ""
                         }
                     }
                 }
@@ -217,9 +215,9 @@ Rectangle
         // Loader for Account change popup
         Loader
         {
-            id: account_change_loader
+            id: accountChangeLoader
             z: 999
-            anchors.top: horizontal_border.bottom
+            anchors.top: headerNavigation.bottom
             anchors.topMargin: 4
             anchors.left: parent.left
             anchors.right: parent.right
@@ -236,14 +234,15 @@ Rectangle
             }
         }
     }
+    
     // Compose button
     Rectangle
     {
-        id: container_1
+        id: composeEmailWrapper
 
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.top: horizontal_border.bottom
+        anchors.top: headerNavigation.bottom
 
         height: 76
         color: "transparent"
@@ -268,35 +267,34 @@ Rectangle
                 cursorShape: Qt.PointingHandCursor
             }
 
-                TapHandler
+            TapHandler
+            {
+                onTapped:
                 {
-                    onTapped:
+                    if (newMessageLoader.selectedItem !== null)
                     {
-                        if (newMessageLoader.selectedItem !== null)
-                        {
-                            newMessageLoader.selectedItem = null
-
-                            newMessageLoader.active = false
-                            newMessageLoader.active = true
-                            newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml"
-                        }
-                        else if (String(newMessageLoader.source) === "")
-                        {
-                            newMessageLoader.selectedItem = null
-                            newMessageLoader.active = true
-                            newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml"
-                        }
-                        else
-                        {
-                            newMessageLoader.source = ""
-                            newMessageLoader.active = false
-                        }
+                        newMessageLoader.selectedItem = null
+                        newMessageLoader.active = false
+                        newMessageLoader.active = true
+                        newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml"
+                    }
+                    else if (String(newMessageLoader.source) === "")
+                    {
+                        newMessageLoader.selectedItem = null
+                        newMessageLoader.active = true
+                        newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml"
+                    }
+                    else
+                    {
+                        newMessageLoader.source = ""
+                        newMessageLoader.active = false
                     }
                 }
+            }
 
             Rectangle
             {
-                id: sVG_1
+                id: composeEmailIcon
 
                 x: 16
                 y: 13
@@ -319,7 +317,7 @@ Rectangle
 
             Text
             {
-                id: compose
+                id: composeEmailText
 
                 x: 42
                 y: 10
@@ -338,17 +336,16 @@ Rectangle
                 verticalAlignment: Text.AlignVCenter
             }
         }
-
     }
 
     // Navigation
     Rectangle
     {
-        id: nav
+        id: navigationWrapper
 
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.top: container_1.bottom
+        anchors.top: composeEmailWrapper.bottom
         anchors.bottom: footer.top
 
         color: "transparent"
@@ -383,10 +380,9 @@ Rectangle
                 }
             }
 
-            // TEMP ICON
             Rectangle
             {
-                id: sVG_2
+                id: inboxButtonIcon
                 x: 12; y: 11
                 height: 18; width: 18
                 clip: true; color: "transparent"
@@ -405,7 +401,7 @@ Rectangle
 
             Rectangle
             {
-                id: container_2
+                id: inboxButtonTextWrapper
                 x: 42; y: 8
                 height: 24
 
@@ -413,7 +409,7 @@ Rectangle
 
                 Text
                 {
-                    id: inbox
+                    id: inboxButtonText
                     height: 24; width: parent.width
                     color: "#101828"
                     font.family: "Segoe UI"; font.pixelSize: 16; font.weight: Font.Normal
@@ -435,7 +431,7 @@ Rectangle
 
                 Text
                 {
-                    id: element
+                    id: amountOfInboxText
                     height: 16; width: parent.width
                     color: "#6a7282"
                     font.family: "Segoe UI";
@@ -486,7 +482,7 @@ Rectangle
             // TEMP ICON
             Rectangle
             {
-                id: sVG_4
+                id: sentButtonIcon
                 x: 12; y: 11
                 height: 18; width: 18
                 clip: true; color: "transparent"
@@ -505,14 +501,14 @@ Rectangle
 
             Rectangle
             {
-                id: container_4
+                id: sentButtonTextWrapper
                 x: 42; y: 8
                 height: 24
                 color: "transparent"
 
                 Text
                 {
-                    id: sent
+                    id: sentButtonText
                     height: 24; width: parent.width
                     color: "#4a5565"
                     font.family: "Segoe UI";
@@ -538,7 +534,7 @@ Rectangle
 
                 Text
                 {
-                    id: element_2
+                    id: amountOfSentText
                     height: 16; width: parent.width
                     color: "#6a7282"
                     font.family: "Segoe UI";
@@ -587,10 +583,10 @@ Rectangle
                 }
             }
 
-            // TEMP ICON
+
             Rectangle
             {
-                id: sVG_3
+                id: starredButtonIcon
                 x: 12; y: 11
                 height: 18; width: 18
                 clip: true; color: "transparent"
@@ -609,14 +605,14 @@ Rectangle
 
             Rectangle
             {
-                id: container_3
+                id: starredButtonTextWrapper
                 x: 42; y: 8
                 height: 24
                 color: "transparent"
 
                 Text
                 {
-                    id: starred
+                    id: starredButtonText
                     height: 24; width: parent.width
                     color: "#4a5565"
                     font.family: "Segoe UI"; font.pixelSize: 16; font.weight: Font.Normal
@@ -638,7 +634,7 @@ Rectangle
 
                 Text
                 {
-                    id: element_1
+                    id: amountOfStarredText
                     height: 16; width: parent.width
                     color: "#6a7282"
                     font.family: "Segoe UI";
@@ -686,9 +682,9 @@ Rectangle
                 }
             }
 
-            // TEMP ICON
+
             Rectangle {
-                id: sVG_5
+                id: draftsButtonIcon
                 x: 12; y: 11
                 height: 18; width: 18
                 clip: true; color: "transparent"
@@ -706,14 +702,14 @@ Rectangle
 
             Rectangle
             {
-                id: container_5
+                id: draftsButtonTextWrapper
                 x: 42; y: 8
                 height: 24
                 color: "transparent"
 
                 Text
                 {
-                    id: drafts
+                    id: draftsButtonText
                     height: 24; width: parent.width
                     color: "#4a5565"
                     font.family: "Segoe UI"; font.pixelSize: 16; font.weight: Font.Normal
@@ -735,7 +731,7 @@ Rectangle
 
                 Text
                 {
-                    id: element_3
+                    id: amountOfDraftsText
                     height: 16; width: parent.width
                     color: "#6a7282"
                     font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
@@ -753,7 +749,7 @@ Rectangle
     // Footer: Settings button
     Rectangle
     {
-        id: footer
+        id: footerNavigation
 
         anchors.left: parent.left
         anchors.right: parent.right
@@ -761,6 +757,7 @@ Rectangle
 
         height: 60
         color: clickAreaSettings.hovered ? "#dbdbdb" : "#ffffff"
+
         // Top border
         Rectangle
         {
@@ -810,7 +807,7 @@ Rectangle
 
             Text
             {
-                id: settings
+                id: settingsButtonText
                 height: 20
                 color: "#4a5565"
                 font.family: "Segoe UI"
@@ -826,10 +823,9 @@ Rectangle
                 textFormat: Text.PlainText
                 verticalAlignment: Text.AlignVCenter
 
-                // TEMP ICON
                 Rectangle
                 {
-                    id: sVG_6
+                    id: settingsButtonIcon
                     y: 2
                     height: 16; width: 16
                     clip: true; color: "transparent"

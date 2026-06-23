@@ -21,7 +21,7 @@ Rectangle
     // Header
     Rectangle
     {
-        id: horizontalBorder
+        id: header
 
         anchors.left: parent.left
         anchors.right: parent.right
@@ -397,8 +397,8 @@ Rectangle
 
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.top: horizontalBorder.bottom
-        anchors.bottom: horizontalBorder_1.top
+        anchors.top: header.bottom
+        anchors.bottom: header_1.top
 
         clip: true
         color: "transparent"
@@ -465,7 +465,7 @@ Rectangle
     // Footer
     Rectangle
     {
-        id: horizontalBorder_1
+        id: header_1
 
         anchors.left: parent.left
         anchors.right: parent.right

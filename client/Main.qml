@@ -4,7 +4,8 @@ import QtQuick.Layouts
 import QtQuick.Effects
 import ISXMail 1.0
 
-ApplicationWindow {
+ApplicationWindow
+{
     //properties
     property string selectedFolder: "inbox"
     property int inboxCount: inboxModel.totalEmailsCount
@@ -92,6 +93,7 @@ ApplicationWindow {
             return Qt.formatDateTime(message_date, "MMMM dd").toLowerCase();
         }
     }
+
     function format_email_time_full(input_time)
     {
         let message_date = parse_database_timestamp(input_time)
@@ -144,7 +146,8 @@ ApplicationWindow {
             NumberAnimation { duration: 200 }
         }
 
-        onLoaded: {
+        onLoaded:
+        {
                    connections.target = item
                    if (item && selectedItem)
                    {
@@ -166,11 +169,13 @@ ApplicationWindow {
                     }
                }
 
-               Connections {
+               Connections
+               {
                    id: connections
                    target: null
 
-                   function onDraftChanged(index, subject, recipient, text) {
+                   function onDraftChanged(index, subject, recipient, text)
+                   {
                        if(newMessageLoader.selectedItem != null)
                        {
                            draftModel.setEmailData(parseInt(index), recipient, parseInt(EmailRole.SendToRole))
@@ -279,8 +284,10 @@ ApplicationWindow {
                 SplitView.preferredWidth: 350
                 SplitView.minimumWidth: 250
                 SplitView.fillHeight: true
-                onEmailOpenRequested: function(index, theme, name, sendTo, content, time, starred) {
-                    window.selectedEmail = {
+                onEmailOpenRequested: function(index, theme, name, sendTo, content, time, starred)
+                {
+                    window.selectedEmail =
+                    {
                         "index": index,
                         "theme": theme,
                         "name": name,
@@ -415,13 +422,12 @@ ApplicationWindow {
         opacity: status === Loader.Ready ? 1 : 0
     }
 
-    // Loader для вікна реєстрації/вибору акаунту
+    // Loader for account change
         Loader {
             id: authLoader
             anchors.fill: parent
-            z: 2000 // Щоб він був поверх всього (навіть поверх settingsLoader)
+            z: 2000
 
-            // Використовуємо властивість, яку ми передали з C++
             active: initialSetupRequired
             source: active ? "screens/navigation/account/AddAccountQML.qml" : ""
         }
