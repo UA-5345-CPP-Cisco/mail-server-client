@@ -9,7 +9,7 @@
 #include "storage/Database.h"
 #include "storage/MigrationRunner.h"
 
-namespace {
+namespace { 
 
 class MigrationRunnerTest : public testing::Test
 {

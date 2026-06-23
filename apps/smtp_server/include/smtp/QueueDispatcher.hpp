@@ -4,7 +4,7 @@
 #include "smtp/ServerConfig.hpp"
 #include "storage/MailMessageRepository.h"
 #include "storage/MessageRecipientRepository.h"
-#include "storage/UserRepository.h"
+#include "storage/UserRepository.h" 
 #include "thread_pool/ThreadPool.h"
 
 #include <chrono>
@@ -12,38 +12,37 @@
 #include <cstdint>
 #include <mutex>
 
-namespace smtp {
+namespace smtp
+{
 
-class QueueDispatcher {
-public:
-	QueueDispatcher(
-		DeliveryConfig config,
-		Concurrency::IThreadPool& threadPool,
-		Storage::UserRepository& users,
-		Storage::MailMessageRepository& mailMessages,
-		Storage::MessageRecipientRepository& messageRecipients,
-		std::mutex& storageMutex,
-		Logging::ILogger& logger);
+	class QueueDispatcher
+	{
+	public:
+		QueueDispatcher(
+			DeliveryConfig config,
+			ThreadPool& threadPool,
+			Storage::UserRepository &users,
+			Storage::MailMessageRepository &mailMessages,
+			Storage::MessageRecipientRepository &messageRecipients,
+			std::mutex &storageMutex);
 
-	void Poll();
+		void Poll();
 
-private:
-	static void Deliver(
-		Storage::MessageRecipientRecord recipient,
-		Storage::UserRepository& users,
-		Storage::MailMessageRepository& mailMessages,
-		Storage::MessageRecipientRepository& messageRecipients,
-		std::mutex& storageMutex,
-		Logging::ILogger& logger) noexcept;
+	private:
+		static void Deliver(
+			Storage::MessageRecipientRecord recipient,
+			Storage::UserRepository &users,
+			Storage::MailMessageRepository &mailMessages,
+			Storage::MessageRecipientRepository &messageRecipients,
+			std::mutex &storageMutex) noexcept;
 
-	DeliveryConfig config_;
-	Concurrency::IThreadPool& threadPool_;
-	Storage::UserRepository& users_;
-	Storage::MailMessageRepository& mailMessages_;
-	Storage::MessageRecipientRepository& messageRecipients_;
-	std::mutex& storageMutex_;
-	Logging::ILogger& logger_;
-	std::chrono::steady_clock::time_point nextPoll_{};
-};
+		DeliveryConfig config_;
+		ThreadPool& threadPool_;
+		Storage::UserRepository &users_;
+		Storage::MailMessageRepository &mailMessages_;
+		Storage::MessageRecipientRepository &messageRecipients_;
+		std::mutex &storageMutex_;
+		std::chrono::steady_clock::time_point nextPoll_{};
+	};
 
 }

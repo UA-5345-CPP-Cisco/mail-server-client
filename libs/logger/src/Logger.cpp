@@ -1,11 +1,12 @@
-#include "Logger.hpp"
+#include "logger/Logger.h"
+//#include "Logger.h"
 
 /*int main()
 {
     auto& logger = Logger::GetInstance();
     logger.Initialize("app.log",LogLevels::Trace,true);
     logger.LogProd("main","Application started" );
-    return 0;
+    return 0; 
 }*/
 
 std::string Logger::GetCurrentTime()

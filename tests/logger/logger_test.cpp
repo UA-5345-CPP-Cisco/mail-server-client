@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "../src/Logger.hpp"
+#include "logger/Logger.h"
 
 static std::string ReadFile(const std::string& path)
 {

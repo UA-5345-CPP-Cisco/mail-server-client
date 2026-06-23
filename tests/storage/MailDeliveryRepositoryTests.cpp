@@ -23,7 +23,7 @@ class MailDeliveryRepositoryTest : public testing::Test
 {
 protected:
 	void SetUp() override
-	{
+	{ 
 		const auto timestamp =
 			std::chrono::steady_clock::now().time_since_epoch().count();
 

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "../src/Thread_pool.hpp"
+#include "thread_pool/ThreadPool.h"
 
 class ThreadPoolTest : public ::testing::Test {
 protected:

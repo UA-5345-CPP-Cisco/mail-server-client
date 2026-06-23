@@ -12,13 +12,13 @@
 #include <time.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <errno.h>
+#include <errno.h> 
 #include <sys/socket.h>
 #include <sys/epoll.h>
 #include <netinet/in.h>
 #include "json.hpp"
-#include "Thread_pool.hpp"
-#include "Logger.hpp"
+#include "logger/Logger.h" 
+#include "thread_pool/ThreadPool.h"
 
 enum class ClientState
 {

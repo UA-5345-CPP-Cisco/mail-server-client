@@ -6,6 +6,7 @@
 
 #include <sqlite3.h>
 
+
 namespace Storage {
 
 class Statement;

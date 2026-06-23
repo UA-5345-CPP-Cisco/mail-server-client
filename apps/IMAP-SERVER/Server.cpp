@@ -6,7 +6,7 @@ void Server::SetNonBlock(int fd)
 {
     int current_flags = fcntl(fd, F_GETFL, 0);
     fcntl(fd, F_SETFL, current_flags | O_NONBLOCK);
-}
+} 
 
 void Server::CheakTimeOut()
 {

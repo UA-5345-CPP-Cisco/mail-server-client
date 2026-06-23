@@ -18,49 +18,51 @@
 #include <mutex>
 #include <unordered_map>
 
-namespace smtp {
+namespace smtp
+{
 
-// References to infrastructure and service components used by the server.
-// SmtpServer coordinates these objects but does not own them.
-struct SmtpServerDependencies {
-    ISocketsManager& socketsManager;
-    Concurrency::IThreadPool& threadPool;
-    SmtpSessionHandler& sessionHandler;
-    IAuthService& authService;
-    Storage::Database& database;
-    Storage::MailMessageRepository& mailMessages;
-    Storage::MessageRecipientRepository& messageRecipients;
-    std::mutex& storageMutex;
-    QueueDispatcher& queueDispatcher;
-    Logging::ILogger& logger;
-};
+    // References to infrastructure and service components used by the server.
+    // SmtpServer coordinates these objects but does not own them.
+    struct SmtpServerDependencies
+    {
+        ISocketsManager &socketsManager;
+        ThreadPool &threadPool;
+        SmtpSessionHandler &sessionHandler;
+        IAuthService &authService;
+        Storage::Database &database;
+        Storage::MailMessageRepository &mailMessages;
+        Storage::MessageRecipientRepository &messageRecipients;
+        std::mutex &storageMutex;
+        QueueDispatcher &queueDispatcher;
+    };
 
-class SmtpServer {
-public:
-    SmtpServer(ServerConfig config, SmtpServerDependencies dependencies);
+    class SmtpServer
+    {
+    public:
+        SmtpServer(ServerConfig config, SmtpServerDependencies dependencies);
 
-    // Keep running server iterations until Stop() is requested.
-    void Start();
+        // Keep running server iterations until Stop() is requested.
+        void Start();
 
-    // Execute one server iteration: poll events, route them, schedule tasks,
-    // and clean finished sessions.
-    void RunOnce();
+        // Execute one server iteration: poll events, route them, schedule tasks,
+        // and clean finished sessions.
+        void RunOnce();
 
-    // Stop accepting work, stop sockets, and release session state.
-    void Stop();
+        // Stop accepting work, stop sockets, and release session state.
+        void Stop();
 
-    bool IsRunning() const;
+        bool IsRunning() const;
 
-private:
-    void RouteEvent(SmtpEvent event);
-    void ScheduleReadySessions();
-    void RemoveClosedSessions();
-    std::shared_ptr<SmtpSession> GetOrCreateSession(ConnectionId connectionId);
+    private:
+        void RouteEvent(SmtpEvent event);
+        void ScheduleReadySessions();
+        void RemoveClosedSessions();
+        std::shared_ptr<SmtpSession> GetOrCreateSession(ConnectionId connectionId);
 
-    ServerConfig config_;
-    SmtpServerDependencies dependencies_;
-    std::atomic_bool isRunning_{false};
-    std::unordered_map<ConnectionId, std::shared_ptr<SmtpSession>> sessions_;
-};
+        ServerConfig config_;
+        SmtpServerDependencies dependencies_;
+        std::atomic_bool isRunning_{false};
+        std::unordered_map<ConnectionId, std::shared_ptr<SmtpSession>> sessions_;
+    };
 
 }

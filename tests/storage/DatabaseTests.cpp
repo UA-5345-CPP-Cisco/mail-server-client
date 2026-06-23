@@ -7,7 +7,7 @@
 
 #include "storage/Database.h"
 
-namespace {
+namespace { 
 
 class DatabaseTest : public testing::Test
 {

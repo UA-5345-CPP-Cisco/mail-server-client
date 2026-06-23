@@ -18,7 +18,7 @@ namespace {
 class UserRepositoryTest : public testing::Test
 {
 protected:
-	void SetUp() override
+	void SetUp() override 
 	{
 		const auto timestamp =
 			std::chrono::steady_clock::now().time_since_epoch().count();
