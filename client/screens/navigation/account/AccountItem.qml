@@ -139,7 +139,7 @@ Rectangle
             cursorShape: Qt.PointingHandCursor
             onClicked:
             {
-                currentUser.authorize
+                CurrentUser.Authorize
                 (
                     accountName,
                     accountEmail,

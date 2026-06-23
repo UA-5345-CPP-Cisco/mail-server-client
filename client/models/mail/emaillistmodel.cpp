@@ -1,8 +1,8 @@
-#include "headers/mail/emaillistmodel.h"
+#include "headers/mail/EmailListModel.h"
 
 #include <QTime>
 
-#include "headers/database/databasemanager.h"
+#include "headers/database/DatabaseManager.h"
 
 namespace ISXMail
 {

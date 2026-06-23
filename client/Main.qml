@@ -187,7 +187,7 @@ ApplicationWindow {
                            draftModel.removeEmailData(parseInt(index))
                            emailsModel.AddData(
                                false, true, false,
-                               subject, currentUser.username,
+                               subject, CurrentUser.username,
                                recipient, text, ""
                            )
                        }

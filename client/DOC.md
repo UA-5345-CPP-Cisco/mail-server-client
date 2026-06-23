@@ -98,7 +98,7 @@ import QtQuick
 import QtQuick.Controls
 
 ListView {
-    model: emailListModel  // Direct binding to EmailListModel
+    model: EmailListModel  // Direct binding to EmailListModel
     delegate: Column {
         Text { text: model.emailsTheme }
         Text { text: model.emailsName }
@@ -346,7 +346,7 @@ EmailPageProxy* pageProxy = new EmailPageProxy(this);
 pageProxy->setSourceModel(inboxFilter);
 
 // Expose to QML
-engine.rootContext()->setContextProperty("emailPageProxy", pageProxy);
+engine.rootContext()->setContextProperty("EmailPageProxy", pageProxy);
 ```
 
 ### Adding Emails
@@ -422,26 +422,26 @@ All properties use Qt's signal/slot mechanism for automatic UI updates.
 
 ### Changing Page Size
 
-Edit in `emailpageproxy.h`:
+Edit in `EmailPageProxy.h`:
 ```cpp
 static constexpr int m_per_page = 8;  // Change to desired size
 ```
 
 ### Adding New Folder Types
 
-1. Add to enum in `emailfilterproxy.h`:
+1. Add to enum in `EmailFilterProxy.h`:
    ```cpp
    enum FolderType { Inbox, Sent, Starred, Draft, Archive };  // Add Archive
    ```
 
-2. Add filter logic in `emailfilterproxy.cpp`:
+2. Add filter logic in `EmailFilterProxy.cpp`:
    ```cpp
    case Archive: return is_archived;  // New role needed in EmailData
    ```
 
 ### Adding New Email Properties
 
-1. Extend `EmailData` struct in `emaillistmodel.h`
+1. Extend `EmailData` struct in `EmailListModel.h`
 2. Add new role to `EmailRole` enum
 3. Handle in `data()` method's switch statement
 4. Add to `roleNames()` mapping

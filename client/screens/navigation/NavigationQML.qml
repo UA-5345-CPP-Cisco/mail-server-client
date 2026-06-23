@@ -48,27 +48,27 @@ Rectangle
             y: 14
             height: 32
             width: 32
-            color: currentUser.avatarPath !== "" ? "transparent" : "#2b7fff"
+            color: CurrentUser.avatarPath !== "" ? "transparent" : "#2b7fff"
             radius: 16
             clip: true
 
             Image
             {
                 anchors.fill: parent
-                source: currentUser.avatarPath
-                visible: currentUser.avatarPath !== ""
+                source: CurrentUser.avatarPath
+                visible: CurrentUser.avatarPath !== ""
                 cache: false
                 fillMode: Image.PreserveAspectCrop
             }
             Text
             {
                 anchors.centerIn: parent
-                visible: currentUser.avatarPath === ""
+                visible: CurrentUser.avatarPath === ""
                 color: "#ffffff"
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Black
-                text: avatarInitial(currentUser.username)
+                text: avatarInitial(CurrentUser.username)
             }
         }
 
@@ -105,7 +105,7 @@ Rectangle
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 20
                     lineHeightMode: Text.FixedHeight
-                    text: currentUser.username
+                    text: CurrentUser.username
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     wrapMode: Text.Wrap
@@ -134,7 +134,7 @@ Rectangle
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: currentUser.email
+                    text: CurrentUser.email
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     wrapMode: Text.Wrap

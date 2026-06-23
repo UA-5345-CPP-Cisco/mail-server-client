@@ -1,4 +1,4 @@
-#include "headers/database/databasemanager.h"
+#include "headers/database/DatabaseManager.h"
 
 #include <cstdlib>
 #include <QCoreApplication>

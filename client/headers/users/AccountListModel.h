@@ -1,5 +1,5 @@
-#ifndef ACCOUNTLISTMODEL_H
-#define ACCOUNTLISTMODEL_H
+#ifndef AccountListModel_H
+#define AccountListModel_H
 #pragma once
 #include <QObject>
 #include <QAbstractListModel>
@@ -64,4 +64,4 @@ private:
 };
 
 } // namespace ISXMail
-#endif // ACCOUNTLISTMODEL_H
+#endif // AccountListModel_H

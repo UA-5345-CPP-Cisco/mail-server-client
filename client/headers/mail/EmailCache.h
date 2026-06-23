@@ -5,7 +5,7 @@
 #include <optional>
 #include <QString>
 
-#include "headers/database/cachestore.h"
+#include "headers/database/CacheStore.h"
 
 namespace ISXMail {
 

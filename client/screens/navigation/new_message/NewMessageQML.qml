@@ -261,9 +261,9 @@ Rectangle
                             let recipient_text = recipient_input.text.trim()
                             let message_text = message_input.text.trim()
 
-                            messageComposer.SaveDraft(
-                                currentUser.username,
-                                currentUser.email,
+                            MessageComposer.SaveDraft(
+                                CurrentUser.username,
+                                CurrentUser.email,
                                 recipient_text,
                                 subject_text,
                                 message_text
@@ -277,7 +277,7 @@ Rectangle
                             {
                                 emailsModel.AddData(
                                     false, false, true,
-                                    subject_text, currentUser.username,
+                                    subject_text, CurrentUser.username,
                                     recipient_text, message_text, ""
                                 )
                             }
@@ -576,9 +576,9 @@ Rectangle
 
                         if(recipient_text === "inboxtest")
                         {
-                            if (!isDraft && messageComposer.SendMessage(
-                                        currentUser.username,
-                                        currentUser.email,
+                            if (!isDraft && MessageComposer.SendMessage(
+                                        CurrentUser.username,
+                                        CurrentUser.email,
                                         recipient_input.text.trim(),
                                         subject_text,
                                         message_text,
@@ -586,14 +586,14 @@ Rectangle
                             {
                                 emailsModel.AddData(
                                     true, false, false,
-                                    subject_text, currentUser.username,
+                                    subject_text, CurrentUser.username,
                                     recipient_text, message_text, ""
                                 )
                             }
                         }
-                        else if (!isDraft && messageComposer.SendMessage(
-                                    currentUser.username,
-                                    currentUser.email,
+                        else if (!isDraft && MessageComposer.SendMessage(
+                                    CurrentUser.username,
+                                    CurrentUser.email,
                                     recipient_input.text.trim(),
                                     subject_text,
                                     message_text,
@@ -601,7 +601,7 @@ Rectangle
                         {
                             emailsModel.AddData(
                                 false, true, false,
-                                subject_text, currentUser.username,
+                                subject_text, CurrentUser.username,
                                 recipient_text, message_text, ""
                             )
                         }

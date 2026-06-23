@@ -29,7 +29,7 @@ endforeach()
 qt_add_qml_module(appqtapptestmail
 	URI qtapptestmail
 	QML_FILES
-	        Main.qml
+		Main.qml
 		screens/navigation/NavigationQML.qml
 		screens/navigation/new_message/NewMessageQML.qml
 		screens/email_list/EmailsListQML.qml
@@ -58,18 +58,16 @@ qt_add_qml_module(appqtapptestmail
 		headers/database/Statement.h
 		headers/database/UserRecord.h
 		headers/database/UserRepository.h
-		headers/database/cachestore.h
-		headers/database/databasemanager.h
-		headers/hotkeys/hotkeysmanager.h
-		headers/mail/emailcache.h
-		headers/mail/emailfilterproxy.h
-		headers/mail/emaillistmodel.h
-		headers/mail/emailpageproxy.h
-		headers/mail/messagecomposer.h
-		headers/search/messagesearchmodel.h
-		headers/users/avatarimagegeneration.h
-		headers/users/currentuser.h
-		headers/users/usercache.h
+		headers/database/CacheStore.h
+		headers/database/DatabaseManager.h
+		headers/mail/EmailCache.h
+		headers/mail/EmailFilterProxy.h
+		headers/mail/EmailListModel.h
+		headers/mail/EmailPageProxy.h
+		headers/mail/MessageComposer.h
+		headers/search/MessageSearchModel.h
+		headers/users/CurrentUser.h
+		headers/users/UserCache.h
 		models/database/Database.cpp
 		models/database/MailMessageRepository.cpp
 		models/database/MessageRecipientRepository.cpp
@@ -77,20 +75,20 @@ qt_add_qml_module(appqtapptestmail
 		models/database/Statement.cpp
 		models/database/RegistrationHandler.cpp
 		models/database/UserRepository.cpp
-		models/database/cachestore.cpp
-		models/database/databasemanager.cpp
-		models/mail/emailcache.cpp
-		models/mail/emailfilterproxy.cpp
-		models/mail/emaillistmodel.cpp
-		models/mail/emailpageproxy.cpp
-		models/mail/messagecomposer.cpp
-		models/search/messagesearchmodel.cpp
-		models/users/currentuser.cpp
-		models/users/usercache.cpp
-		headers/users/accountlistmodel.h
-		models/users/accountlistmodel.cpp
-		SOURCES headers/database/RegistrationHandler.h
-		SOURCES models/database/RegistrationHandler.cpp
+		models/database/CacheStore.cpp
+		models/database/DatabaseManager.cpp
+		models/mail/EmailCache.cpp
+		models/mail/EmailFilterProxy.cpp
+		models/mail/EmailListModel.cpp
+		models/mail/EmailPageProxy.cpp
+		models/mail/MessageComposer.cpp
+		models/search/MessageSearchModel.cpp
+		models/users/CurrentUser.cpp
+		models/users/UserCache.cpp
+		headers/users/AccountListModel.h
+		models/users/AccountListModel.cpp
+		headers/database/RegistrationHandler.h
+		models/database/RegistrationHandler.cpp
 
 )
 
