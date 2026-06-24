@@ -1,46 +1,48 @@
 #pragma once
+#define _CRT_SECURE_NO_WARNINGS
 
+#include <string>
+#include<string_view>
 #include <fstream>
 #include <mutex>
-#include <string>
-#include <string_view>
+#include <thread>
+#include<chrono>
+#include<iomanip>
+#include <sstream>
 
-namespace Logging {
-
-enum class LogLevel
+enum class LogLevels
 {
-  Trace,
-  Debug,
-  Info,
-  Warning,
-  Error
+    NoLogs=0,
+    ProdLogs=1,
+    Debug=2,
+    Trace=3
 };
 
-class ILogger
+class Logger
 {
-  public:
-  virtual ~ILogger() = default;
+private:
+    std::mutex logger_mutex;
+    std::ofstream logger_fp;
+    bool flush;
+    LogLevels level;
 
-  virtual void Log(LogLevel level, std::string_view message) = 0;
+    Logger() = default;
+    ~Logger() = default;
+    Logger(const Logger& other) = delete;
+    Logger& operator=(const Logger& other) = delete;
+    std::string GetCurrentTime();
+public:
+    static Logger& GetInstance()
+    {
+        static Logger logger_obj;
+        return logger_obj;
+    }
+
+    bool Initialize(const std::string& file_path, LogLevels level, bool flush);
+
+    void LogProd(const std::string_view& func, const std::string_view& msg);
+
+    void LogDebug(const std::string_view& func, const std::string_view& msg);
+
+    void LogTrace(const std::string_view& func, const std::string_view& input, const std::string_view& ret_val);
 };
-
-class Logger final : public ILogger
-{
-  public:
-  explicit Logger(LogLevel minimumLevel = LogLevel::Info, bool flushAfterWrite = false);
-
-  Logger(const std::string& filePath,
-         LogLevel minimumLevel = LogLevel::Info,
-         bool flushAfterWrite = false);
-
-  bool Open(const std::string& filePath);
-  void Log(LogLevel level, std::string_view message) override;
-
-  private:
-  std::mutex mutex_;
-  std::ofstream file_;
-  LogLevel minimumLevel_;
-  bool flushAfterWrite_;
-};
-
-} // namespace Logging
