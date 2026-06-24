@@ -13,7 +13,7 @@ Rectangle
     property string theme: "Quarterly Report Summary"
     property string name: "ceo@company.com"
     property string preview: "Draft of the quarterly summary for leadership review..."
-    property string content: preview
+    property string content: "Draft of the quarterly summary for leadership review..."
     property string sendTo: ""
     property string time: "Jun 4"
     property var searchModel: null
@@ -38,7 +38,7 @@ Rectangle
 
     Rectangle
     {
-        id: container_3
+        id: itemContainer
 
         anchors
         {
@@ -53,7 +53,7 @@ Rectangle
         // Content
         Rectangle
         {
-            id: container_4
+            id: headerContainer
             anchors.left: parent.left
             anchors.right: parent.right
             height: 20
@@ -62,16 +62,16 @@ Rectangle
             // Name
             Rectangle
             {
-                id: container_5
+                id: nameContainer
                 anchors.left: parent.left
-                anchors.right: dateHolder.left
+                anchors.right: timeContainer.left
                 height: 20
                 clip: true
                 color: "transparent"
 
                 Text
                 {
-                    id: ceo_company_com
+                    id: nameText
                     height: 20;
                     width: parent.width
                     color: "#101828"
@@ -89,14 +89,14 @@ Rectangle
             // Time
             Rectangle
             {
-                id: dateHolder
+                id: timeContainer
                 anchors.right: parent.right
                 y: 2; height: 16; width: 44
                 color: "transparent"
 
                 Text
                 {
-                    id: jun_4
+                    id: timeText
                     x: 8; height: 16; width: 29
                     color: "#6a7282"
                     font.family: "Segoe UI";
@@ -115,49 +115,51 @@ Rectangle
         // Theme
         Rectangle
         {
-            id: container_6
+            id: themeContainer
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.top: container_4.bottom
+            anchors.top: headerContainer.bottom
             anchors.topMargin: 2
             height: 20
             clip: true; color: "transparent"
 
             Text
             {
-                id: quarterly_Report_Summary
+                id: themeText
                 height: 20; width: parent.width
                 color: "#101828"
                 font.family: "Segoe UI"; font.pixelSize: 14; font.weight: Font.Normal
                 horizontalAlignment: Text.AlignLeft
                 lineHeight: 20; lineHeightMode: Text.FixedHeight
-                    text: searchModel ? searchModel.highlightAllFoundWords(theme, searchModel.searchedText) : theme
-                    textFormat: Text.RichText; verticalAlignment: Text.AlignVCenter
-                wrapMode: Text.Wrap
+                text: searchModel ? searchModel.highlightAllFoundWords(theme, searchModel.searchedText) : theme
+                textFormat: Text.RichText; verticalAlignment: Text.AlignVCenter
+                wrapMode: Text.NoWrap
+                elide: Text.ElideRight
+                maximumLineCount: 1
             }
         }
 
         // Text preview
         Rectangle
         {
-            id: container_7
+            id: previewContainer
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.top: container_6.bottom
+            anchors.top: themeContainer.bottom
             anchors.topMargin: 2
             height: 20
             clip: true; color: "transparent"
 
             Text
             {
-                id: draft_preview
+                id: previewText
                 height: 16; width: parent.width
                 color: "#6a7282"
                 font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
                 horizontalAlignment: Text.AlignLeft
                 lineHeight: 16; lineHeightMode: Text.FixedHeight
-                    text: searchModel ? searchModel.highlightAllFoundWords(preview, searchModel.searchedText) : preview
-                    textFormat: Text.RichText; verticalAlignment: Text.AlignVCenter
+                text: searchModel ? searchModel.highlightAllFoundWords(preview, searchModel.searchedText) : preview
+                textFormat: Text.RichText; verticalAlignment: Text.AlignVCenter
                 wrapMode: Text.Wrap
             }
         }
@@ -165,8 +167,8 @@ Rectangle
         // Draft mark
         Text
         {
-            id: draftBadge
-            anchors.top: container_7.bottom
+            id: draftBadgeText
+            anchors.top: previewContainer.bottom
             anchors.topMargin: 2
             height: 16; width: 28
             color: "#fe9a00"
@@ -180,8 +182,8 @@ Rectangle
             verticalAlignment: Text.AlignVCenter
         }
     }
-    MouseArea
 
+    MouseArea
     {
         anchors.fill: parent
         hoverEnabled: true

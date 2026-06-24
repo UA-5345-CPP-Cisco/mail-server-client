@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.16)
-set(CMAKE_PREFIX_PATH "D:/QT/6.11.1/mingw_64")
 
 project(qtapptestmail VERSION 0.1 LANGUAGES CXX C)
 

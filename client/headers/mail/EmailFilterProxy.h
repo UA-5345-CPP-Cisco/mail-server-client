@@ -1,6 +1,8 @@
 #pragma once
 #include <QSortFilterProxyModel>
+
 #include "EmailListModel.h"
+
 namespace ISXMail{
 
 class EmailFilterProxy : public QSortFilterProxyModel
@@ -13,7 +15,7 @@ public:
     explicit EmailFilterProxy(FolderType type, QObject *parent = nullptr);
 
 protected:
-    bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override;
+    bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override;
 
 private:
     FolderType m_type;

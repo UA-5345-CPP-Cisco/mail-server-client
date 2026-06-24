@@ -40,11 +40,11 @@ Rectangle {
         onClicked: mouse => {
                        if (mouse.button === Qt.LeftButton) {
                            root.color = containsMouse ? "#f9fafb" : "#ffffff"
-                           var starPos = button_margin_2.mapToItem(root, 0, 0)
+                           var starPos = favouriteButtonContainer.mapToItem(root, 0, 0)
                            var inStarZone = (mouse.x >= starPos.x - 8
-                                             && mouse.x <= starPos.x + button_margin_2.width + 8
+                                             && mouse.x <= starPos.x + favouriteButtonContainer.width + 8
                                              && mouse.y >= starPos.y - 8 && mouse.y
-                                             <= starPos.y + button_margin_2.height + 8)
+                                             <= starPos.y + favouriteButtonContainer.height + 8)
                            if (!inStarZone) {
                                root.openRequested(root.theme, root.name,
                                                   root.sendTo, root.content,
@@ -128,7 +128,7 @@ Rectangle {
     }
 
     Rectangle {
-        id: container_1
+        id: itemContainer
         anchors {
             left: parent.left
             right: parent.right
@@ -140,13 +140,13 @@ Rectangle {
 
         // Star icon
         Rectangle {
-            id: button_margin_2
+            id: favouriteButtonContainer
             height: 17
             width: 15
             anchors.verticalCenter: parent.verticalCenter
             color: "transparent"
             MouseArea {
-                id: clickAreaFavourite
+                id: favouriteButtonClickArea
                 anchors.fill: parent
                 anchors.margins: -8
                 cursorShape: Qt.PointingHandCursor
@@ -157,7 +157,7 @@ Rectangle {
                     root.starredClicked()
                 }
             }
-            scale: clickAreaFavourite.containsMouse ? 1.1 : 1.0
+            scale: favouriteButtonClickArea.containsMouse ? 1.1 : 1.0
 
             Behavior on scale {
                 NumberAnimation {
@@ -167,7 +167,7 @@ Rectangle {
             }
 
             Rectangle {
-                id: buttonToFavouriteHolder_1
+                id: favouriteButton
                 y: 2
                 height: 18
                 width: 18
@@ -188,15 +188,15 @@ Rectangle {
 
         // Content
         Rectangle {
-            id: container_2
-            anchors.left: button_margin_2.right
+            id: contentContainer
+            anchors.left: favouriteButtonContainer.right
             anchors.leftMargin: 8
             anchors.right: parent.right
             height: 60
             color: "transparent"
 
             Rectangle {
-                id: container_3
+                id: headerContainer
                 anchors.left: parent.left
                 anchors.right: parent.right
                 height: 20
@@ -204,9 +204,9 @@ Rectangle {
                 color: "transparent"
 
                 Rectangle {
-                    id: nameHolder
+                    id: nameContainer
                     anchors.left: parent.left
-                    anchors.right: timeHolder.left
+                    anchors.right: timeContainer.left
                     height: 20
                     clip: true
                     color: "transparent"
@@ -240,12 +240,12 @@ Rectangle {
                         visible: nameHover.hovered && (nameText.contentWidth > nameText.width)
                         text: name
                         x: 0
-                        y: nameHolder.height + 4
+                        y: nameContainer.height + 4
                     }
                 }
 
                 Rectangle {
-                    id: timeHolder
+                    id: timeContainer
                     anchors.right: parent.right
                     anchors.rightMargin: 0
                     anchors.verticalCenter: parent.verticalCenter
@@ -269,7 +269,7 @@ Rectangle {
             }
 
             Rectangle {
-                id: themeHolder
+                id: themeContainer
                 anchors.left: parent.left
                 anchors.right: parent.right
                 y: 22
@@ -307,12 +307,12 @@ Rectangle {
                              && (themeText.contentWidth > themeText.width)
                     text: theme
                     x: 0
-                    y: themeHolder.height + 4
+                    y: themeContainer.height + 4
                 }
             }
 
             Rectangle {
-                id: previewHolder
+                id: previewContainer
                 anchors.left: parent.left
                 anchors.right: parent.right
                 y: 44
@@ -348,10 +348,9 @@ Rectangle {
                 EmailToolTip
                 {
                     visible: previewHover.hovered
-                             && (previewText.contentWidth > previewText.width)
-                    text: preview
+                    text: content
                     x: 0
-                    y: previewHolder.height + 4
+                    y: previewContainer.height + 4
                 }
             }
         }

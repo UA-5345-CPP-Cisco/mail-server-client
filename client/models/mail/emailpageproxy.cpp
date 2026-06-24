@@ -1,12 +1,15 @@
 #include "headers/mail/EmailPageProxy.h"
 namespace ISXMail{
 
-EmailPageProxy::EmailPageProxy(QObject* parent)
-    : QSortFilterProxyModel(parent) {}
-
-void EmailPageProxy::nextPage()
+EmailPageProxy::EmailPageProxy(QObject* parent) :
+    QSortFilterProxyModel(parent)
 {
-    if (m_current_page < m_page_count - 1) {
+}
+
+void EmailPageProxy::NextPage()
+{
+    if (m_current_page < m_page_count - 1)
+    {
         beginFilterChange();
         ++m_current_page;
         endFilterChange();
@@ -15,9 +18,10 @@ void EmailPageProxy::nextPage()
     }
 }
 
-void EmailPageProxy::prevPage()
+void EmailPageProxy::PrevPage()
 {
-    if (m_current_page > 0) {
+    if (m_current_page > 0)
+    {
         beginFilterChange();
         --m_current_page;
         endFilterChange();
@@ -25,72 +29,79 @@ void EmailPageProxy::prevPage()
         emit pageAmountTextChanged();
     }
 }
-int EmailPageProxy::currentPage() const
+int EmailPageProxy::CurrentPage() const
 {
     return m_current_page;
 }
 
-int EmailPageProxy::pageCount() const
+int EmailPageProxy::PageCount() const
 {
     if (!sourceModel())
+    {
         return 0;
+    }
+
     int total = sourceModel()->rowCount();
-    return (total + m_per_page - 1) / m_per_page;
+    return (total + s_per_page - 1) / s_per_page;
 }
 
-void EmailPageProxy::setSourceModel(QAbstractItemModel *sourceModel)
+void EmailPageProxy::setSourceModel(QAbstractItemModel *source_model)
 {
-    QSortFilterProxyModel::setSourceModel(sourceModel);
-    if (sourceModel)
+    QSortFilterProxyModel::setSourceModel(source_model);
+
+    if (source_model)
     {
-        connect(sourceModel,
+        connect(source_model,
                 &QAbstractItemModel::rowsInserted,
                 this,
-                &EmailPageProxy::recalcValues);
-        connect(sourceModel,
+                &EmailPageProxy::RecalcValues);
+        connect(source_model,
                 &QAbstractItemModel::rowsRemoved,
                 this,
-                &EmailPageProxy::recalcValues);
-        connect(sourceModel,
+                &EmailPageProxy::RecalcValues);
+        connect(source_model,
                 &QAbstractItemModel::modelReset,
                 this,
-                &EmailPageProxy::recalcValues);
-        connect(sourceModel,
+                &EmailPageProxy::RecalcValues);
+        connect(source_model,
                 &QAbstractItemModel::layoutChanged,
                 this,
-                &EmailPageProxy::recalcValues);
+                &EmailPageProxy::RecalcValues);
     }
-    recalcValues();
+
+    RecalcValues();
 }
 
-bool EmailPageProxy::filterAcceptsRow(int sourceRow, const QModelIndex&) const
+bool EmailPageProxy::filterAcceptsRow(int source_row, const QModelIndex&) const
 {
-    int start = m_current_page * m_per_page;
-    int end   = start + m_per_page - 1;
-    return sourceRow >= start && sourceRow <= end;
+    int start = m_current_page * s_per_page;
+    int end   = start + s_per_page - 1;
+    return source_row >= start && source_row <= end;
 }
 
-void EmailPageProxy::recalcValues()
+void EmailPageProxy::RecalcValues()
 {
     if (!sourceModel())
+    {
         return;
+    }
 
     beginFilterChange();
 
-    bool amountTextDirty = false;
+    bool amount_text_dirty = false;
 
-    int newEmailCount = sourceModel()->rowCount();
-    if (newEmailCount != m_emails_count)
+    int new_email_count = sourceModel()->rowCount();
+    if (new_email_count != m_emails_count)
     {
-        m_emails_count = newEmailCount;
+        m_emails_count = new_email_count;
         emit totalEmailsCountChanged();
-        amountTextDirty = true;
+        amount_text_dirty = true;
     }
 
-    int newCount = pageCount();
-    if (newCount != m_page_count)
+    int new_count = PageCount();
+    if (new_count != m_page_count)
     {
-        m_page_count = newCount;
+        m_page_count = new_count;
         emit pageCountChanged();
     }
 
@@ -99,30 +110,35 @@ void EmailPageProxy::recalcValues()
     {
         m_current_page = clamped;
         emit currentPageChanged();
-        amountTextDirty = true;
+        amount_text_dirty = true;
     }
 
-    if (amountTextDirty)
+    if (amount_text_dirty)
+    {
         emit pageAmountTextChanged();
+    }
 
     endFilterChange();
 }
-int EmailPageProxy::totalEmailsCount() const
+int EmailPageProxy::TotalEmailsCount() const
 {
     return m_emails_count;
 }
 
-QString EmailPageProxy::pageAmountText() const
+QString EmailPageProxy::PageAmountText() const
 {
     if (m_emails_count == 0)
+    {
         return QStringLiteral("0-0 of 0");
+    }
 
-    int start_idx = m_current_page * m_per_page + 1;
-    int end_idx   = qMin(m_emails_count, (m_current_page + 1) * m_per_page);
+    int start_idx = m_current_page * s_per_page + 1;
+    int end_idx   = qMin(m_emails_count, (m_current_page + 1) * s_per_page);
     return QStringLiteral("%1-%2 of %3").arg(start_idx).arg(end_idx).arg(m_emails_count);
 }
-bool EmailPageProxy::setEmailData(int proxyRow, const QVariant& value, int role) {
-    QModelIndex proxyIndex = index(proxyRow, 0);
+bool EmailPageProxy::SetEmailData(int proxy_row, const QVariant& value, int role)
+{
+    QModelIndex proxyIndex = index(proxy_row, 0);
     QModelIndex sourceIndex = mapToSource(proxyIndex);
 
     auto* filterProxy = qobject_cast<QAbstractProxyModel*>(sourceModel());
@@ -130,30 +146,30 @@ bool EmailPageProxy::setEmailData(int proxyRow, const QVariant& value, int role)
         QModelIndex modelIndex = filterProxy->mapToSource(sourceIndex);
         return filterProxy->sourceModel()->setData(modelIndex, value, role);
     }
+
     return false;
 }
 
-bool EmailPageProxy::setStarred(int proxyRow, bool starred)
+bool EmailPageProxy::SetStarred(int proxy_row, bool starred)
 {
-    return setEmailData(proxyRow, starred, StarredRole);
+    return SetEmailData(proxy_row, starred, StarredRole);
 }
 
-void EmailPageProxy::removeEmailData(int proxyRow)
+void EmailPageProxy::RemoveEmailData(int proxy_row)
 {
-    QModelIndex idx = index(proxyRow, 0);
+    QModelIndex idx = index(proxy_row, 0);
 
-    while (auto* proxy =
-           qobject_cast<QAbstractProxyModel*>(
-               const_cast<QAbstractItemModel*>(idx.model())))
+    while (auto* proxy = qobject_cast<QAbstractProxyModel*>(const_cast<QAbstractItemModel*>(idx.model())))
     {
         idx = proxy->mapToSource(idx);
     }
 
-    auto* model = qobject_cast<EmailListModel*>(
-        const_cast<QAbstractItemModel*>(idx.model()));
+    auto* model = qobject_cast<EmailListModel*>(const_cast<QAbstractItemModel*>(idx.model()));
 
     if (!model || !idx.isValid())
+    {
         return;
+    }
 
     model->RemoveData(idx.row());
 }
