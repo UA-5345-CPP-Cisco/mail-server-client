@@ -1,4 +1,4 @@
-#include "headers/mail/emailfilterproxy.h"
+#include "headers/mail/EmailFilterProxy.h"
 namespace ISXMail{
 
 EmailFilterProxy::EmailFilterProxy(FolderType type, QObject *parent)

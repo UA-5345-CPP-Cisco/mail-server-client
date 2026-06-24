@@ -4,7 +4,8 @@ import QtQuick.Layouts
 import QtQuick.Effects
 import ISXMail 1.0
 
-ApplicationWindow {
+ApplicationWindow
+{
     //properties
     property string selectedFolder: "inbox"
     property int inboxCount: inboxModel.totalEmailsCount
@@ -13,6 +14,8 @@ ApplicationWindow {
     property int draftsCount: draftModel.totalEmailsCount
     property string amountText: emailList.sourceModel ? emailList.sourceModel.pageAmountText : "0-0 of 0"
     property var selectedEmail: null
+
+    property alias authLoader: authLoader
 
     //FunctionSorter
     function closeMessageWindow()
@@ -90,6 +93,7 @@ ApplicationWindow {
             return Qt.formatDateTime(message_date, "MMMM dd").toLowerCase();
         }
     }
+
     function format_email_time_full(input_time)
     {
         let message_date = parse_database_timestamp(input_time)
@@ -142,7 +146,8 @@ ApplicationWindow {
             NumberAnimation { duration: 200 }
         }
 
-        onLoaded: {
+        onLoaded:
+        {
                    connections.target = item
                    if (item && selectedItem)
                    {
@@ -164,11 +169,13 @@ ApplicationWindow {
                     }
                }
 
-               Connections {
+               Connections
+               {
                    id: connections
                    target: null
 
-                   function onDraftChanged(index, subject, recipient, text) {
+                   function onDraftChanged(index, subject, recipient, text)
+                   {
                        if(newMessageLoader.selectedItem != null)
                        {
                            draftModel.setEmailData(parseInt(index), recipient, parseInt(EmailRole.SendToRole))
@@ -179,13 +186,14 @@ ApplicationWindow {
                        newMessageLoader.selectedItem = null
                    }
 
-                   function onDraftFinished(index, subject, recipient, text) {
+                   function onDraftFinished(index, subject, recipient, text)
+                   {
                        if(newMessageLoader.selectedItem != null)
                        {
                            draftModel.removeEmailData(parseInt(index))
                            emailsModel.AddData(
                                false, true, false,
-                               subject, currentUser.username,
+                               subject, CurrentUser.username,
                                recipient, text, ""
                            )
                        }
@@ -277,8 +285,10 @@ ApplicationWindow {
                 SplitView.preferredWidth: 350
                 SplitView.minimumWidth: 250
                 SplitView.fillHeight: true
-                onEmailOpenRequested: function(index, theme, name, sendTo, content, time, starred) {
-                    window.selectedEmail = {
+                onEmailOpenRequested: function(index, theme, name, sendTo, content, time, starred)
+                {
+                    window.selectedEmail =
+                    {
                         "index": index,
                         "theme": theme,
                         "name": name,
@@ -359,7 +369,8 @@ ApplicationWindow {
         }
     }
 
-    Rectangle {
+    Rectangle
+    {
         anchors.fill: parent
         color: "#000000"
         opacity: settingsLoader.opacity * 0.4
@@ -367,7 +378,6 @@ ApplicationWindow {
         z:998
         MouseArea
         {
-
             hoverEnabled: true
             preventStealing: true
             enabled: parent.visible
@@ -413,4 +423,15 @@ ApplicationWindow {
         }
         opacity: status === Loader.Ready ? 1 : 0
     }
+
+    // Loader for account change
+        Loader
+        {
+            id: authLoader
+            anchors.fill: parent
+            z: 2000
+
+            active: initialSetupRequired
+            source: active ? "screens/navigation/account/AddAccountQML.qml" : ""
+        }
 }

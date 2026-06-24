@@ -16,6 +16,8 @@ class UserRepository
 public:
 	explicit UserRepository(Database& database);
 
+    bool HasUsers();
+
 	std::int64_t CreateUser(
 		const std::string& username,
 		const std::string& email,

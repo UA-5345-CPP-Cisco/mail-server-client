@@ -9,7 +9,16 @@ Popup {
     height: 460
     modal: true
     focus: true
+    visible: true
     anchors.centerIn: Overlay.overlay
+
+    Connections {
+            target: regHandler
+            function onRegistrationSuccess() {
+                root.close()
+                authLoader.active = false
+            }
+    }
 
     // Backround window
     background: Rectangle
@@ -89,7 +98,14 @@ Popup {
 
         function onRegisterSubmitted(name, email, password) {
             // Register logic
-            // root.close()
+            console.log("Сигнал отримано! Дані: " + name + ", " + email)
+            var success = regHandler.registerUser(name, email, password);
+            if (success) {
+                console.log("Реєстрація успішна!");
+                root.close()
+            }else {
+                console.log("Помилка: regHandler повернув false");
+            }
         }
     }
 
@@ -170,7 +186,7 @@ Popup {
                                     font.pixelSize: 16
                                     font.weight: Font.Bold
                                 }
-                                scale: loginMouseArea.containsMouse ? 1.15 : 1.0
+                                scale: loginMouseArea.containsMouse ? 1.05 : 1.0
 
                                 Behavior on scale
                                 {
@@ -251,7 +267,7 @@ Popup {
                                     font.pixelSize: 16
                                     font.weight: Font.Bold
                                 }
-                                scale: registerMouseArea.containsMouse ? 1.15 : 1.0
+                                scale: registerMouseArea.containsMouse ? 1.05 : 1.0
 
                                 Behavior on scale
                                 {

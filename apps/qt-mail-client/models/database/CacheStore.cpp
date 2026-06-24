@@ -1,4 +1,4 @@
-#include "headers/database/cachestore.h"
+#include "headers/database/CacheStore.h"
 
 #include <chrono>
 #include <iomanip>
@@ -191,7 +191,7 @@ CacheStore::Entry CacheStore::ReadEntry(const Statement& statement) const
 }
 
 std::string CacheStore::TimePointToString(
-    const std::chrono::system_clock::time_point& time_point
+	const std::chrono::system_clock::time_point& time_point
     ) const
 {
     const auto time_t_value = std::chrono::system_clock::to_time_t(time_point);
@@ -207,7 +207,7 @@ std::string CacheStore::TimePointToString(
 }
 
 std::chrono::system_clock::time_point CacheStore::StringToTimePoint(
-    const std::string& text
+	const std::string& text
     ) const
 {
     std::tm tm{};

@@ -188,7 +188,7 @@ Current schema expectation:
 - `message_recipients.last_error`
 - `message_recipients.delivered_at`
 
-### `models/database/cachestore.cpp`
+### `models/database/CacheStore.cpp`
 
 Generic cache table helper.
 
@@ -223,10 +223,10 @@ Behavior:
 
 This file is used by:
 
-- `models/users/usercache.cpp`
-- `models/mail/emailcache.cpp`
+- `models/users/UserCache.cpp`
+- `models/mail/EmailCache.cpp`
 
-### `models/database/databasemanager.cpp`
+### `models/database/DatabaseManager.cpp`
 
 Startup helper for database initialization.
 
@@ -345,7 +345,7 @@ Fields:
 
 ### Compose Flow
 
-`NewMessageQML.qml` calls `messageComposer.SendMessage(...)` or `messageComposer.SaveDraft(...)`.
+`NewMessageQML.qml` calls `MessageComposer.SendMessage(...)` or `MessageComposer.SaveDraft(...)`.
 
 That object:
 
@@ -395,6 +395,6 @@ Database-related files currently in `models/database`:
 - `models/database/UserRepository.cpp`
 - `models/database/MailMessageRepository.cpp`
 - `models/database/MessageRecipientRepository.cpp`
-- `models/database/cachestore.cpp`
-- `models/database/databasemanager.cpp`
+- `models/database/CacheStore.cpp`
+- `models/database/DatabaseManager.cpp`
 

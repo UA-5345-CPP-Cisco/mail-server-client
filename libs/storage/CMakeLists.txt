@@ -16,15 +16,7 @@ add_library(mail_storage
 	include/storage/UserRepository.h
 )
 
-target_include_directories(mail_storage
-	PUBLIC
-		${CMAKE_CURRENT_SOURCE_DIR}/include
-)
-
-target_link_libraries(mail_storage
-	PUBLIC
-		SQLite::SQLite3
-)
+target_link_libraries(mail_storage PUBLIC sqlite3)
 
 target_compile_features(mail_storage
 	PUBLIC

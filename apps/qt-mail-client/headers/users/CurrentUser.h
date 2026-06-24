@@ -21,18 +21,18 @@ public:
     CurrentUser& operator=(const CurrentUser&) = delete;
 
     // METHODS
-    static CurrentUser& get_instance();
+    static CurrentUser& GetInstance();
 
     bool is_authorized() const;
     QString username() const;
     QString email() const;
     QString avatar_path() const;
-    void save_avatar_to_sqlite(const QString& local_path);
-    void load_avatar_from_sqlite();
+    void SaveAvatarToSqlite(const QString& local_path);
+    void SaveAvatarFromSqlite(const QString& local_path);
 
-    Q_INVOKABLE void authorize(const QString& username, const QString& email, const QString& avatar_path = "");
-    Q_INVOKABLE void logout();
-    Q_INVOKABLE void update_avatar_path(const QString& new_path);
+    Q_INVOKABLE void Authorize(const QString& username, const QString& email, const QString& avatar_path = "");
+    Q_INVOKABLE void Logout();
+    Q_INVOKABLE void UpdateAvatarPath(const QString& new_path);
 
 signals:
     // SIGNALS

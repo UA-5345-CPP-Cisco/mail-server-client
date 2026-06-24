@@ -4,14 +4,17 @@
 #include <QQuickStyle>
 #include <QIcon>
 #include <QQmlContext>
-#include "headers/mail/emaillistmodel.h"
-#include "headers/mail/emailfilterproxy.h"
-#include "headers/mail/emailpageproxy.h"
-#include "headers/mail/messagecomposer.h"
-#include "headers/database/databasemanager.h"
-#include "headers/users/currentuser.h"
-#include "headers/search/messagesearchmodel.h"
-#include "headers/users/accountlistmodel.h"
+#include "headers/mail/EmailListModel.h"
+#include "headers/mail/EmailFilterProxy.h"
+#include "headers/mail/EmailPageProxy.h"
+#include "headers/mail/MessageComposer.h"
+#include "headers/database/DatabaseManager.h"
+#include "headers/users/CurrentUser.h"
+#include "headers/search/MessageSearchModel.h"
+#include "headers/database/RegistrationHandler.h"
+#include "headers/users/AccountListModel.h"
+#include "headers/database/UserRepository.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -20,7 +23,17 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/pngs/assets/Icon.png"));
     ISXDatabaseManager::DatabaseManager::EnsureInitialized();
+    auto dbPath = ISXDatabaseManager::DatabaseManager::DatabasePath();
+    Storage::Database database(dbPath);
     QQmlApplicationEngine engine;
+
+    RegistrationHandler regHandler(database);
+    engine.rootContext()->setContextProperty("regHandler", &regHandler);
+
+    Storage::UserRepository repo(database);
+    bool hasUsers = repo.HasUsers();
+    engine.rootContext()->setContextProperty("initialSetupRequired", !hasUsers);
+
 
     auto* model = new ISXMail::EmailListModel(&app);
     auto* message_composer = new ISXMail::MessageComposer(&app);
@@ -66,11 +79,12 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("sentSearchModel", sentSearch);
     engine.rootContext()->setContextProperty("starredSearchModel", starredSearch);
     engine.rootContext()->setContextProperty("draftSearchModel", draftSearch);
-    engine.rootContext()->setContextProperty("messageComposer", message_composer);
+    engine.rootContext()->setContextProperty("MessageComposer", message_composer);
+
     //current user in system
     engine.rootContext()->setContextProperty(
-        "currentUser",
-        &ISXCurrentUser::CurrentUser::get_instance()
+        "CurrentUser",
+        &ISXCurrentUser::CurrentUser::GetInstance()
         );
 
     qmlRegisterUncreatableMetaObject(
@@ -79,7 +93,7 @@ int main(int argc, char *argv[])
         1, 0,
         "EmailRole",
         "Not creatable"
-        );
+    );
 
     QObject::connect(
         &engine,
@@ -87,7 +101,13 @@ int main(int argc, char *argv[])
         &app,
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
-    engine.loadFromModule("qtapptestmail", "Main");
+    engine.load(QUrl("qrc:/qt/qml/qtapptestmail/Main.qml"));
+    // ADD THIS CHECK RIGHT HERE:
+    if (engine.rootObjects().isEmpty()) {
+        qWarning() << "--- QML MODULE LOADING FAILED! ---";
+        qWarning() << "Check if Main.qml exists inside module 'qtapptestmail'";
+        return -1;
+    }
 
     return QGuiApplication::exec();
 }
