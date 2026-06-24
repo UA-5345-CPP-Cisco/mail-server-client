@@ -39,7 +39,6 @@ find_package(OpenSSL REQUIRED)
 find_package(Threads REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
 
-# Global sqlite3 library
 add_library(sqlite3 STATIC
 		libs/storage/sqlite3/sqlite3.c
 )

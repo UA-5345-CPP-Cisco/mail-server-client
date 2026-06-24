@@ -7,9 +7,7 @@ set(CMAKE_AUTORCC ON)
 
 qt_standard_project_setup(REQUIRES 6.10)
 
-qt_add_executable(appqtapptestmail
-		main.cpp
-)
+qt_add_executable(appqtapptestmail main.cpp)
 
 file(GLOB ASSET_FILES "assets/*")
 foreach(asset_file ${ASSET_FILES})
@@ -91,6 +89,7 @@ target_link_libraries(appqtapptestmail
 		Qt6::Quick
 		Qt6::Sql
 		Qt6::QuickControls2
+		sqlite3
 		mail_storage
 		mail_logger
 )

@@ -101,14 +101,12 @@ int main(int argc, char *argv[])
         &app,
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
-    engine.load(QUrl("qrc:/qt/qml/qtapptestmail/Main.qml"));
-    // ADD THIS CHECK RIGHT HERE:
-    if (engine.rootObjects().isEmpty()) {
-        qWarning() << "--- QML MODULE LOADING FAILED! ---";
-        qWarning() << "Check if Main.qml exists inside module 'qtapptestmail'";
-        return -1;
-    }
-
+    engine.loadFromModule("qtapptestmail", "Main");
+    QObject::connect(&engine, &QQmlApplicationEngine::warnings,
+        [](const QList<QQmlError> &warnings) {
+            for (const auto &w : warnings)
+                qWarning() << w.toString();
+        });
     return QGuiApplication::exec();
 }
 
