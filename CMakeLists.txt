@@ -35,7 +35,24 @@ FetchContent_Declare(
 set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(cryptopp_cmake)
 
-	find_package(OpenSSL REQUIRED)
+# Declare the community CMake wrapper for OpenSSL
+FetchContent_Declare(
+		openssl
+		GIT_REPOSITORY https://github.com/janbar/openssl-cmake.git
+		GIT_TAG        "1.1.1k-20210430"
+		PATCH_COMMAND  ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/patch_openssl.cmake
+)
+FetchContent_MakeAvailable(openssl)
+
+# Create standard aliases matching the official FindOpenSSL module
+if(NOT TARGET OpenSSL::SSL)
+	add_library(OpenSSL::SSL ALIAS ssl)
+endif()
+
+if(NOT TARGET OpenSSL::Crypto)
+	add_library(OpenSSL::Crypto ALIAS crypto)
+endif()
+
 find_package(Threads REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
 

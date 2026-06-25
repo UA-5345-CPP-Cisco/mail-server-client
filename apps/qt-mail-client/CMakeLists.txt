@@ -73,6 +73,7 @@ target_link_libraries(appqtapptestmail
 		Qt6::Sql
 		Qt6::QuickControls2
 		mail_storage
+		smtp_client
 )
 
 target_include_directories(appqtapptestmail
