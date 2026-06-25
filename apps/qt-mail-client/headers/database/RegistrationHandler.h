@@ -1,7 +1,7 @@
 #pragma once
 #include <QObject>
 #include <QString>
-#include "Database.h"
+#include "../../../../libs/storage/include/storage/Database.h"
 
 class RegistrationHandler : public QObject {
     Q_OBJECT
