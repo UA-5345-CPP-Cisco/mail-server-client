@@ -6,37 +6,38 @@
 
 #include <sqlite3.h>
 
-namespace Storage {
+namespace Storage
+{
 
 class Statement;
 
 class Database
 {
-  public:
-  explicit Database(const std::filesystem::path& path);
-  ~Database() = default;
+public:
+	explicit Database(const std::filesystem::path& path);
+	~Database() = default;
 
-  Database(const Database&) = delete;
-  Database& operator=(const Database&) = delete;
+	Database(const Database&) = delete;
+	Database& operator=(const Database&) = delete;
 
-  Database(Database&&) noexcept = default;
-  Database& operator=(Database&&) noexcept = default;
+	Database(Database&&) noexcept = default;
+	Database& operator=(Database&&) noexcept = default;
 
-  void Execute(const std::string& sql);
+	void Execute(const std::string& sql);
 
-  private:
-  struct ConnectionDeleter
-  {
-    void operator()(sqlite3* connection) const noexcept;
-  };
+private:
+	struct ConnectionDeleter
+	{
+		void operator()(sqlite3* connection) const noexcept;
+	};
 
-  using ConnectionPtr = std::unique_ptr<sqlite3, ConnectionDeleter>;
+	using ConnectionPtr = std::unique_ptr<sqlite3, ConnectionDeleter>;
 
-  ConnectionPtr m_connection;
+	ConnectionPtr m_connection;
 
-  friend class Statement;
+	friend class Statement;
 
-  void Configure();
+	void Configure();
 };
 
-} // namespace Storage
+}

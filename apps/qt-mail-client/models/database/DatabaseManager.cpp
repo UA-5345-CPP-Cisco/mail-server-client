@@ -5,8 +5,8 @@
 #include <QDir>
 #include <QStandardPaths>
 
-#include "headers/database/Database.h"
-#include "headers/database/MigrationRunner.h"
+#include "../../../../libs/storage/include/storage/Database.h"
+#include "../../../../libs/storage/include/storage/MigrationRunner.h"
 
 namespace ISXDatabaseManager
 {
@@ -25,7 +25,7 @@ std::filesystem::path DatabaseManager::DatabasePath()
 
 std::filesystem::path DatabaseManager::MigrationsPath()
 {
-	const std::filesystem::path relative_path = std::filesystem::path("include") / "migrations";
+	const std::filesystem::path relative_path = std::filesystem::path("libs") / "storage" / "migrations";
 	const std::filesystem::path current_path = std::filesystem::current_path() / relative_path;
 
 	if (std::filesystem::exists(current_path))

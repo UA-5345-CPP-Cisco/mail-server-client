@@ -1,5 +1,5 @@
 #include "headers/database/RegistrationHandler.h"
-#include "headers/database/UserRepository.h"
+#include "../../../../libs/storage/include/storage/UserRepository.h"
 
 RegistrationHandler::RegistrationHandler(Storage::Database& db, QObject* parent) : QObject(parent), m_db(db) {}
 

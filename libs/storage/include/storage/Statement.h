@@ -6,47 +6,48 @@
 
 #include <sqlite3.h>
 
-#include "storage/Database.h"
+#include "Database.h"
 
-namespace Storage {
+namespace Storage
+{
 
 class Statement
 {
-  public:
-  Statement(Database& database, const std::string& sql);
-  ~Statement() = default;
+public:
+	Statement(Database& database, const std::string& sql);
+	~Statement() = default;
 
-  Statement(const Statement&) = delete;
-  Statement& operator=(const Statement&) = delete;
+	Statement(const Statement&) = delete;
+	Statement& operator=(const Statement&) = delete;
 
-  Statement(Statement&&) noexcept = default;
-  Statement& operator=(Statement&&) noexcept = default;
+	Statement(Statement&&) noexcept = default;
+	Statement& operator=(Statement&&) noexcept = default;
 
-  void BindInt(int index, int value);
-  void BindInt64(int index, std::int64_t value);
-  void BindText(int index, const std::string& value);
-  void BindNull(int index);
+	void BindInt(int index, int value);
+	void BindInt64(int index, std::int64_t value);
+	void BindText(int index, const std::string& value);
+	void BindNull(int index);
 
-  bool Step();
+	bool Step();
 
-  std::int64_t ColumnInt64(int index) const;
-  std::string ColumnText(int index) const;
-  bool ColumnIsNull(int index) const;
+	std::int64_t ColumnInt64(int index) const;
+	std::string ColumnText(int index) const;
+	bool ColumnIsNull(int index) const;
 
-  std::int64_t LastInsertRowId() const;
-  int ChangedRowCount() const;
+	std::int64_t LastInsertRowId() const;
+	int ChangedRowCount() const;
 
-  private:
-  struct StatementDeleter
-  {
-    void operator()(sqlite3_stmt* statement) const noexcept;
-  };
+private:
+	struct StatementDeleter
+	{
+		void operator()(sqlite3_stmt* statement) const noexcept;
+	};
 
-  using StatementPtr = std::unique_ptr<sqlite3_stmt, StatementDeleter>;
+	using StatementPtr = std::unique_ptr<sqlite3_stmt, StatementDeleter>;
 
-  StatementPtr m_statement;
+	StatementPtr m_statement;
 
-  void ThrowError(const std::string& message) const;
+	void ThrowError(const std::string& message) const;
 };
 
-} // namespace Storage
+}

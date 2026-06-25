@@ -4,8 +4,8 @@
 #include <optional>
 #include <string>
 
-#include "storage/Database.h"
-#include "storage/UserRecord.h"
+#include "Database.h"
+#include "UserRecord.h"
 
 namespace Storage {
 
@@ -13,25 +13,31 @@ class Statement;
 
 class UserRepository
 {
-  public:
-  explicit UserRepository(Database& database);
+public:
+	explicit UserRepository(Database& database);
 
-  std::int64_t CreateUser(const std::string& username,
-                          const std::string& email,
-                          const std::string& password_hash);
+    bool HasUsers();
 
-  std::optional<UserRecord> FindById(std::int64_t user_id) const;
-  std::optional<UserRecord> FindByEmail(const std::string& email) const;
-  std::optional<UserRecord> FindByUsername(const std::string& username) const;
+	std::int64_t CreateUser(
+		const std::string& username,
+		const std::string& email,
+		const std::string& password_hash
+	);
 
-  bool UpdateStatus(std::int64_t user_id, UserStatus status);
+	std::optional<UserRecord> FindById(std::int64_t user_id) const;
+	std::optional<UserRecord> FindByEmail(const std::string& email) const;
+	std::optional<UserRecord> FindByUsername(
+		const std::string& username
+	) const;
 
-  private:
-  Database& m_database;
+	bool UpdateStatus(std::int64_t user_id, UserStatus status);
 
-  UserRecord ReadUser(const Statement& statement) const;
-  std::string StatusToString(UserStatus status) const;
-  UserStatus StatusFromString(const std::string& status) const;
+private:
+	Database& m_database;
+
+	UserRecord ReadUser(const Statement& statement) const;
+	std::string StatusToString(UserStatus status) const;
+	UserStatus StatusFromString(const std::string& status) const;
 };
 
-} // namespace Storage
+}

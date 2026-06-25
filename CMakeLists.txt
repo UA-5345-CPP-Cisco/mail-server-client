@@ -35,7 +35,7 @@ FetchContent_Declare(
 set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(cryptopp_cmake)
 
-find_package(OpenSSL REQUIRED)
+	find_package(OpenSSL REQUIRED)
 find_package(Threads REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
 

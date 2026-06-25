@@ -1,13 +1,10 @@
-cmake_minimum_required(VERSION 3.16)
-
-project(qtapptestmail VERSION 0.1 LANGUAGES CXX C)
-
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
 
 qt_standard_project_setup(REQUIRES 6.10)
 
-qt_add_executable(appqtapptestmail main.cpp)
+qt_add_executable(appqtapptestmail
+		main.cpp
+)
 
 file(GLOB ASSET_FILES "assets/*")
 foreach(asset_file ${ASSET_FILES})
@@ -36,15 +33,6 @@ qt_add_qml_module(appqtapptestmail
 		RESOURCES
 		resources.qrc
 		SOURCES
-		headers/database/Database.h
-		headers/database/MailMessageRecord.h
-		headers/database/MailMessageRepository.h
-		headers/database/MessageRecipientRecord.h
-		headers/database/MessageRecipientRepository.h
-		headers/database/MigrationRunner.h
-		headers/database/Statement.h
-		headers/database/UserRecord.h
-		headers/database/UserRepository.h
 		headers/database/CacheStore.h
 		headers/database/DatabaseManager.h
 		headers/mail/EmailCache.h
@@ -55,12 +43,7 @@ qt_add_qml_module(appqtapptestmail
 		headers/search/MessageSearchModel.h
 		headers/users/CurrentUser.h
 		headers/users/UserCache.h
-		models/database/Database.cpp
-		models/database/MailMessageRepository.cpp
-		models/database/MessageRecipientRepository.cpp
-		models/database/MigrationRunner.cpp
-		models/database/Statement.cpp
-		models/database/UserRepository.cpp
+		models/database/RegistrationHandler.cpp
 		models/database/CacheStore.cpp
 		models/database/DatabaseManager.cpp
 		models/mail/EmailCache.cpp
@@ -71,9 +54,9 @@ qt_add_qml_module(appqtapptestmail
 		models/search/MessageSearchModel.cpp
 		models/users/CurrentUser.cpp
 		models/users/UserCache.cpp
+		headers/database/RegistrationHandler.h
 		headers/users/AccountListModel.h
 		models/users/AccountListModel.cpp
-		headers/database/RegistrationHandler.h
 		models/database/RegistrationHandler.cpp
 )
 
@@ -89,9 +72,12 @@ target_link_libraries(appqtapptestmail
 		Qt6::Quick
 		Qt6::Sql
 		Qt6::QuickControls2
-		sqlite3
 		mail_storage
-		mail_logger
+)
+
+target_include_directories(appqtapptestmail
+		PRIVATE
+		${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 install(TARGETS appqtapptestmail

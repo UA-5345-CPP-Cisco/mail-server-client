@@ -5,20 +5,11 @@ add_library(mail_storage
 		src/MessageRecipientRepository.cpp
 		src/Statement.cpp
 		src/UserRepository.cpp
-		include/storage/Database.h
-		include/storage/MailMessageRecord.h
-		include/storage/MailMessageRepository.h
-		include/storage/MigrationRunner.h
-		include/storage/MessageRecipientRecord.h
-		include/storage/MessageRecipientRepository.h
-		include/storage/Statement.h
-		include/storage/UserRecord.h
-		include/storage/UserRepository.h
 )
 
 target_include_directories(mail_storage
 		PUBLIC
-		include
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
 
 target_link_libraries(mail_storage PUBLIC sqlite3)

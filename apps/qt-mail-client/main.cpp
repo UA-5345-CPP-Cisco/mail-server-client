@@ -1,3 +1,4 @@
+#include <QDir>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQuickWindow>
@@ -13,7 +14,7 @@
 #include "headers/search/MessageSearchModel.h"
 #include "headers/database/RegistrationHandler.h"
 #include "headers/users/AccountListModel.h"
-#include "headers/database/UserRepository.h"
+#include "../../libs/storage/include/storage/UserRepository.h"
 
 
 int main(int argc, char *argv[])
@@ -21,7 +22,12 @@ int main(int argc, char *argv[])
     qputenv("QT_QUICK_BACKEND", "software");
     QQuickStyle::setStyle(QStringLiteral("Fusion"));
     QGuiApplication app(argc, argv);
+    qInstallMessageHandler([](QtMsgType type, const QMessageLogContext&, const QString& msg) {
+    fprintf(stderr, "%s\n", msg.toLocal8Bit().constData());
+    fflush(stderr);
+});
     app.setWindowIcon(QIcon(":/pngs/assets/Icon.png"));
+    qDebug() << "Current directory:" << QDir::currentPath();
     ISXDatabaseManager::DatabaseManager::EnsureInitialized();
     auto dbPath = ISXDatabaseManager::DatabaseManager::DatabasePath();
     Storage::Database database(dbPath);
@@ -99,9 +105,14 @@ int main(int argc, char *argv[])
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,
         &app,
-        []() { QCoreApplication::exit(-1); },
+        []() { qCritical() << "QML object creation failed"; },
         Qt::QueuedConnection);
+    qDebug() << "Current directory:" << QDir::currentPath();
     engine.loadFromModule("qtapptestmail", "Main");
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, &app,
+    [](QObject* obj, const QUrl& url) {
+        qDebug() << "Created:" << obj << url;
+    });
     QObject::connect(&engine, &QQmlApplicationEngine::warnings,
         [](const QList<QQmlError> &warnings) {
             for (const auto &w : warnings)

@@ -1,4 +1,4 @@
-#include "storage/MessageRecipientRepository.h"
+#include "../include/storage/MessageRecipientRepository.h"
 
 #include <cstdint>
 #include <optional>
@@ -6,21 +6,26 @@
 #include <string>
 #include <vector>
 
-#include "storage/Statement.h"
+#include "../include/storage/Statement.h"
 
-namespace Storage {
+namespace Storage
+{
 
-MessageRecipientRepository::MessageRecipientRepository(Database& database) : m_database(database)
+MessageRecipientRepository::MessageRecipientRepository(Database& database) :
+	m_database(database)
 {
 }
 
-std::int64_t MessageRecipientRepository::CreateRecipient(std::int64_t message_id,
-                                                         const std::string& recipient_email,
-                                                         RecipientType recipient_type,
-                                                         DeliveryStatus delivery_status)
+std::int64_t MessageRecipientRepository::CreateRecipient(
+	std::int64_t message_id,
+	const std::string& recipient_email,
+	RecipientType recipient_type,
+	DeliveryStatus delivery_status
+)
 {
-  Statement statement(m_database,
-                      R"SQL(
+	Statement statement(
+		m_database,
+		R"SQL(
 			INSERT INTO message_recipients (
 				message_id,
 				recipient_email,
@@ -28,22 +33,25 @@ std::int64_t MessageRecipientRepository::CreateRecipient(std::int64_t message_id
 				delivery_status
 			)
 			VALUES (?, ?, ?, ?);
-		)SQL");
+		)SQL"
+	);
 
-  statement.BindInt64(1, message_id);
-  statement.BindText(2, recipient_email);
-  statement.BindText(3, RecipientTypeToString(recipient_type));
-  statement.BindText(4, DeliveryStatusToString(delivery_status));
-  statement.Step();
+	statement.BindInt64(1, message_id);
+	statement.BindText(2, recipient_email);
+	statement.BindText(3, RecipientTypeToString(recipient_type));
+	statement.BindText(4, DeliveryStatusToString(delivery_status));
+	statement.Step();
 
-  return statement.LastInsertRowId();
+	return statement.LastInsertRowId();
 }
 
-std::optional<MessageRecipientRecord>
-MessageRecipientRepository::FindById(std::int64_t recipient_id) const
+std::optional<MessageRecipientRecord> MessageRecipientRepository::FindById(
+	std::int64_t recipient_id
+) const
 {
-  Statement statement(m_database,
-                      R"SQL(
+	Statement statement(
+		m_database,
+		R"SQL(
 			SELECT
 				id,
 				message_id,
@@ -57,23 +65,27 @@ MessageRecipientRepository::FindById(std::int64_t recipient_id) const
 			FROM message_recipients
 			WHERE id = ?
 			LIMIT 1;
-		)SQL");
+		)SQL"
+	);
 
-  statement.BindInt64(1, recipient_id);
+	statement.BindInt64(1, recipient_id);
 
-  if (!statement.Step())
-  {
-    return std::nullopt;
-  }
+	if (!statement.Step())
+	{
+		return std::nullopt;
+	}
 
-  return ReadRecipient(statement);
+	return ReadRecipient(statement);
 }
 
 std::vector<MessageRecipientRecord>
-MessageRecipientRepository::FindByMessageId(std::int64_t message_id) const
+MessageRecipientRepository::FindByMessageId(
+	std::int64_t message_id
+) const
 {
-  Statement statement(m_database,
-                      R"SQL(
+	Statement statement(
+		m_database,
+		R"SQL(
 			SELECT
 				id,
 				message_id,
@@ -87,24 +99,26 @@ MessageRecipientRepository::FindByMessageId(std::int64_t message_id) const
 			FROM message_recipients
 			WHERE message_id = ?
 			ORDER BY id ASC;
-		)SQL");
+		)SQL"
+	);
 
-  statement.BindInt64(1, message_id);
+	statement.BindInt64(1, message_id);
 
-  std::vector<MessageRecipientRecord> recipients;
+	std::vector<MessageRecipientRecord> recipients;
 
-  while (statement.Step())
-  {
-    recipients.push_back(ReadRecipient(statement));
-  }
+	while (statement.Step())
+	{
+		recipients.push_back(ReadRecipient(statement));
+	}
 
-  return recipients;
+	return recipients;
 }
 
 bool MessageRecipientRepository::QueueRecipient(std::int64_t recipient_id)
 {
-  Statement statement(m_database,
-                      R"SQL(
+	Statement statement(
+		m_database,
+		R"SQL(
 			UPDATE message_recipients
 			SET
 				delivery_status = 'queued',
@@ -112,23 +126,26 @@ bool MessageRecipientRepository::QueueRecipient(std::int64_t recipient_id)
 				last_error = NULL
 			WHERE id = ?
 				AND delivery_status IN ('pending', 'temporary_failed');
-		)SQL");
+		)SQL"
+	);
 
-  statement.BindInt64(1, recipient_id);
-  statement.Step();
+	statement.BindInt64(1, recipient_id);
+	statement.Step();
 
-  return statement.ChangedRowCount() > 0;
+	return statement.ChangedRowCount() > 0;
 }
 
-std::vector<MessageRecipientRecord> MessageRecipientRepository::ClaimReadyRecipients(int limit)
+std::vector<MessageRecipientRecord>
+MessageRecipientRepository::ClaimReadyRecipients(int limit)
 {
-  if (limit <= 0)
-  {
-    return {};
-  }
+	if (limit <= 0)
+	{
+		return {};
+	}
 
-  Statement statement(m_database,
-                      R"SQL(
+	Statement statement(
+		m_database,
+		R"SQL(
 			WITH ready_recipients AS (
 				SELECT id
 				FROM message_recipients
@@ -175,24 +192,26 @@ std::vector<MessageRecipientRecord> MessageRecipientRepository::ClaimReadyRecipi
 				next_attempt_at,
 				last_error,
 				delivered_at;
-		)SQL");
+		)SQL"
+	);
 
-  statement.BindInt(1, limit);
+	statement.BindInt(1, limit);
 
-  std::vector<MessageRecipientRecord> recipients;
+	std::vector<MessageRecipientRecord> recipients;
 
-  while (statement.Step())
-  {
-    recipients.push_back(ReadRecipient(statement));
-  }
+	while (statement.Step())
+	{
+		recipients.push_back(ReadRecipient(statement));
+	}
 
-  return recipients;
+	return recipients;
 }
 
 bool MessageRecipientRepository::MarkDelivered(std::int64_t recipient_id)
 {
-  Statement statement(m_database,
-                      R"SQL(
+	Statement statement(
+		m_database,
+		R"SQL(
 			UPDATE message_recipients
 			SET
 				delivery_status = 'delivered',
@@ -201,20 +220,24 @@ bool MessageRecipientRepository::MarkDelivered(std::int64_t recipient_id)
 				delivered_at = CURRENT_TIMESTAMP
 			WHERE id = ?
 				AND delivery_status = 'delivering';
-		)SQL");
+		)SQL"
+	);
 
-  statement.BindInt64(1, recipient_id);
-  statement.Step();
+	statement.BindInt64(1, recipient_id);
+	statement.Step();
 
-  return statement.ChangedRowCount() > 0;
+	return statement.ChangedRowCount() > 0;
 }
 
-bool MessageRecipientRepository::MarkTemporaryFailed(std::int64_t recipient_id,
-                                                     const std::string& next_attempt_at,
-                                                     const std::string& last_error)
+bool MessageRecipientRepository::MarkTemporaryFailed(
+	std::int64_t recipient_id,
+	const std::string& next_attempt_at,
+	const std::string& last_error
+)
 {
-  Statement statement(m_database,
-                      R"SQL(
+	Statement statement(
+		m_database,
+		R"SQL(
 			UPDATE message_recipients
 			SET
 				delivery_status = 'temporary_failed',
@@ -223,62 +246,83 @@ bool MessageRecipientRepository::MarkTemporaryFailed(std::int64_t recipient_id,
 				delivered_at = NULL
 			WHERE id = ?
 				AND delivery_status = 'delivering';
-		)SQL");
+		)SQL"
+	);
 
-  statement.BindText(1, next_attempt_at);
-  statement.BindText(2, last_error);
-  statement.BindInt64(3, recipient_id);
-  statement.Step();
+	statement.BindText(1, next_attempt_at);
+	statement.BindText(2, last_error);
+	statement.BindInt64(3, recipient_id);
+	statement.Step();
 
-  return statement.ChangedRowCount() > 0;
+	return statement.ChangedRowCount() > 0;
 }
 
-bool MessageRecipientRepository::MarkBounced(std::int64_t recipient_id,
-                                             const std::string& last_error)
+bool MessageRecipientRepository::MarkBounced(
+	std::int64_t recipient_id,
+	const std::string& last_error
+)
 {
-  return MarkTerminal(recipient_id, DeliveryStatus::Bounced, last_error);
+	return MarkTerminal(
+		recipient_id,
+		DeliveryStatus::Bounced,
+		last_error
+	);
 }
 
-bool MessageRecipientRepository::MarkFailed(std::int64_t recipient_id,
-                                            const std::string& last_error)
+bool MessageRecipientRepository::MarkFailed(
+	std::int64_t recipient_id,
+	const std::string& last_error
+)
 {
-  return MarkTerminal(recipient_id, DeliveryStatus::Failed, last_error);
+	return MarkTerminal(
+		recipient_id,
+		DeliveryStatus::Failed,
+		last_error
+	);
 }
 
-MessageRecipientRecord MessageRecipientRepository::ReadRecipient(const Statement& statement) const
+MessageRecipientRecord MessageRecipientRepository::ReadRecipient(
+	const Statement& statement
+) const
 {
-  MessageRecipientRecord recipient;
-  recipient.id = statement.ColumnInt64(0);
-  recipient.message_id = statement.ColumnInt64(1);
-  recipient.recipient_email = statement.ColumnText(2);
-  recipient.recipient_type = RecipientTypeFromString(statement.ColumnText(3));
-  recipient.delivery_status = DeliveryStatusFromString(statement.ColumnText(4));
-  recipient.attempt_count = static_cast<int>(statement.ColumnInt64(5));
+	MessageRecipientRecord recipient;
+	recipient.id = statement.ColumnInt64(0);
+	recipient.message_id = statement.ColumnInt64(1);
+	recipient.recipient_email = statement.ColumnText(2);
+	recipient.recipient_type =
+		RecipientTypeFromString(statement.ColumnText(3));
+	recipient.delivery_status =
+		DeliveryStatusFromString(statement.ColumnText(4));
+	recipient.attempt_count =
+		static_cast<int>(statement.ColumnInt64(5));
 
-  if (!statement.ColumnIsNull(6))
-  {
-    recipient.next_attempt_at = statement.ColumnText(6);
-  }
+	if (!statement.ColumnIsNull(6))
+	{
+		recipient.next_attempt_at = statement.ColumnText(6);
+	}
 
-  if (!statement.ColumnIsNull(7))
-  {
-    recipient.last_error = statement.ColumnText(7);
-  }
+	if (!statement.ColumnIsNull(7))
+	{
+		recipient.last_error = statement.ColumnText(7);
+	}
 
-  if (!statement.ColumnIsNull(8))
-  {
-    recipient.delivered_at = statement.ColumnText(8);
-  }
+	if (!statement.ColumnIsNull(8))
+	{
+		recipient.delivered_at = statement.ColumnText(8);
+	}
 
-  return recipient;
+	return recipient;
 }
 
-bool MessageRecipientRepository::MarkTerminal(std::int64_t recipient_id,
-                                              DeliveryStatus status,
-                                              const std::string& last_error)
+bool MessageRecipientRepository::MarkTerminal(
+	std::int64_t recipient_id,
+	DeliveryStatus status,
+	const std::string& last_error
+)
 {
-  Statement statement(m_database,
-                      R"SQL(
+	Statement statement(
+		m_database,
+		R"SQL(
 			UPDATE message_recipients
 			SET
 				delivery_status = ?,
@@ -287,113 +331,121 @@ bool MessageRecipientRepository::MarkTerminal(std::int64_t recipient_id,
 				delivered_at = NULL
 			WHERE id = ?
 				AND delivery_status = 'delivering';
-		)SQL");
+		)SQL"
+	);
 
-  statement.BindText(1, DeliveryStatusToString(status));
-  statement.BindText(2, last_error);
-  statement.BindInt64(3, recipient_id);
-  statement.Step();
+	statement.BindText(1, DeliveryStatusToString(status));
+	statement.BindText(2, last_error);
+	statement.BindInt64(3, recipient_id);
+	statement.Step();
 
-  return statement.ChangedRowCount() > 0;
+	return statement.ChangedRowCount() > 0;
 }
 
-std::string MessageRecipientRepository::RecipientTypeToString(RecipientType recipient_type) const
+std::string MessageRecipientRepository::RecipientTypeToString(
+	RecipientType recipient_type
+) const
 {
-  switch (recipient_type)
-  {
-  case RecipientType::To:
-    return "TO";
-  case RecipientType::Cc:
-    return "CC";
-  case RecipientType::Bcc:
-    return "BCC";
-  }
+	switch (recipient_type)
+	{
+	case RecipientType::To:
+		return "TO";
+	case RecipientType::Cc:
+		return "CC";
+	case RecipientType::Bcc:
+		return "BCC";
+	}
 
-  throw std::runtime_error("Unsupported recipient type");
+	throw std::runtime_error("Unsupported recipient type");
 }
 
-RecipientType
-MessageRecipientRepository::RecipientTypeFromString(const std::string& recipient_type) const
+RecipientType MessageRecipientRepository::RecipientTypeFromString(
+	const std::string& recipient_type
+) const
 {
-  if (recipient_type == "TO")
-  {
-    return RecipientType::To;
-  }
+	if (recipient_type == "TO")
+	{
+		return RecipientType::To;
+	}
 
-  if (recipient_type == "CC")
-  {
-    return RecipientType::Cc;
-  }
+	if (recipient_type == "CC")
+	{
+		return RecipientType::Cc;
+	}
 
-  if (recipient_type == "BCC")
-  {
-    return RecipientType::Bcc;
-  }
+	if (recipient_type == "BCC")
+	{
+		return RecipientType::Bcc;
+	}
 
-  throw std::runtime_error("Unsupported recipient type: " + recipient_type);
+	throw std::runtime_error("Unsupported recipient type: " + recipient_type);
 }
 
-std::string MessageRecipientRepository::DeliveryStatusToString(DeliveryStatus status) const
+std::string MessageRecipientRepository::DeliveryStatusToString(
+	DeliveryStatus status
+) const
 {
-  switch (status)
-  {
-  case DeliveryStatus::Pending:
-    return "pending";
-  case DeliveryStatus::Queued:
-    return "queued";
-  case DeliveryStatus::Delivering:
-    return "delivering";
-  case DeliveryStatus::Delivered:
-    return "delivered";
-  case DeliveryStatus::TemporaryFailed:
-    return "temporary_failed";
-  case DeliveryStatus::Bounced:
-    return "bounced";
-  case DeliveryStatus::Failed:
-    return "failed";
-  }
+	switch (status)
+	{
+	case DeliveryStatus::Pending:
+		return "pending";
+	case DeliveryStatus::Queued:
+		return "queued";
+	case DeliveryStatus::Delivering:
+		return "delivering";
+	case DeliveryStatus::Delivered:
+		return "delivered";
+	case DeliveryStatus::TemporaryFailed:
+		return "temporary_failed";
+	case DeliveryStatus::Bounced:
+		return "bounced";
+	case DeliveryStatus::Failed:
+		return "failed";
+	}
 
-  throw std::runtime_error("Unsupported delivery status");
+	throw std::runtime_error("Unsupported delivery status");
 }
 
-DeliveryStatus MessageRecipientRepository::DeliveryStatusFromString(const std::string& status) const
+DeliveryStatus MessageRecipientRepository::DeliveryStatusFromString(
+	const std::string& status
+) const
 {
-  if (status == "pending")
-  {
-    return DeliveryStatus::Pending;
-  }
+	if (status == "pending")
+	{
+		return DeliveryStatus::Pending;
+	}
 
-  if (status == "queued")
-  {
-    return DeliveryStatus::Queued;
-  }
+	if (status == "queued")
+	{
+		return DeliveryStatus::Queued;
+	}
 
-  if (status == "delivering")
-  {
-    return DeliveryStatus::Delivering;
-  }
+	if (status == "delivering")
+	{
+		return DeliveryStatus::Delivering;
+	}
 
-  if (status == "delivered")
-  {
-    return DeliveryStatus::Delivered;
-  }
+	if (status == "delivered")
+	{
+		return DeliveryStatus::Delivered;
+	}
 
-  if (status == "temporary_failed")
-  {
-    return DeliveryStatus::TemporaryFailed;
-  }
+	if (status == "temporary_failed")
+	{
+		return DeliveryStatus::TemporaryFailed;
+	}
 
-  if (status == "bounced")
-  {
-    return DeliveryStatus::Bounced;
-  }
+	if (status == "bounced")
+	{
+		return DeliveryStatus::Bounced;
+	}
 
-  if (status == "failed")
-  {
-    return DeliveryStatus::Failed;
-  }
+	if (status == "failed")
+	{
+		return DeliveryStatus::Failed;
+	}
 
-  throw std::runtime_error("Unsupported delivery status: " + status);
+	throw std::runtime_error("Unsupported delivery status: " + status);
 }
 
-} // namespace Storage
+}
