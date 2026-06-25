@@ -1,28 +1,69 @@
-cmake_minimum_required(VERSION 3.14) 
-project(Mail_Server)
+cmake_minimum_required(VERSION 3.14)
+
+project(MAILClientServer
+    VERSION 0.1.0
+    DESCRIPTION "Mail server and client implementation"
+	LANGUAGES CXX
+)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+option(MAIL_BUILD_TESTS "Build tests" OFF)
+option(MAIL_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
+
+include(FetchContent)
+
+set(BOOST_INCLUDE_LIBRARIES asio property_tree system)
+set(BOOST_INCLUDE_LIBRARIES asio property_tree system json)
+set(BOOST_ENABLE_MPI OFF)
+set(BOOST_ENABLE_PYTHON OFF)
+set(BUILD_TESTING OFF)
+
+FetchContent_Declare(
+    Boost 
+    URL https://github.com/boostorg/boost/releases/download/boost-1.88.0/boost-1.88.0-cmake.tar.xz
+	DOWNLOAD_EXTRACT_TIMESTAMP ON
+)
+FetchContent_MakeAvailable(Boost)
+
+FetchContent_Declare(
+    Cryptopp_cmake
+    GIT_REPOSITORY https://github.com/abdes/cryptopp-cmake/
+	GIT_TAG CRYPTOPP_8_9_0
+)
+set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(Cryptopp_cmake)
+
+FetchContent_Declare(
+    SqlLite3
+    GIT_REPOSITORY https://github.com/sqlite/sqlite
+    GIT_TAG        version-3.49.1
+)
+FetchContent_MakeAvailable(SqlLite3)
+
+find_package(OpenSSL REQUIRED)
+find_package(Threads REQUIRED)
 
 add_subdirectory(libs/logger)
-add_subdirectory(libs/thread_pool)
-add_subdirectory(libs/storage)
 add_subdirectory(libs/smtp_client)
-
-add_library(json_lib INTERFACE)
-target_include_directories(json_lib INTERFACE libs/json)
-
-add_library(mail_backend_lib 
-    apps/IMAP-SERVER/Server.cpp
-    apps/IMAP-SERVER/Client.cpp
-)
-target_link_libraries(mail_backend_lib PRIVATE mail_logger mail_thread_pool json_lib)
-add_executable(mail_backend apps/IMAP-SERVER/main.cpp)
-target_link_libraries(mail_backend PRIVATE mail_backend_lib)
-
+add_subdirectory(libs/storage)
+add_subdirectory(libs/thread_pool)
 
 add_subdirectory(apps/smtp_server)
+add_subdirectory(apps/IMAP-SERVER)
 
+if(MAIL_BUILD_TESTS)
+    enable_testing()
+    FetchContent_Declare(
+		googletest
+		URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+		DOWNLOAD_EXTRACT_TIMESTAMP ON
+	)
 
-enable_testing()
-add_subdirectory(tests)
+	set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+	FetchContent_MakeAvailable(googletest)
+
+	add_subdirectory(tests)
+endif()

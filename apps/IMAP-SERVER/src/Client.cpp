@@ -27,7 +27,7 @@ bool Client::ConnectToServer()
     {
         throw std::system_error(errno, std::generic_category(), "Failed to set addr");
     }
-    if ((connect(this->client_socket,(struct sockaddr*)&server_addr, sizeof(server_addr))) < 0)
+    if ((connect(this->client_socket, (struct sockaddr *)&server_addr, sizeof(server_addr))) < 0)
     {
         throw std::system_error(errno, std::generic_category(), "Failed to connect");
     }
@@ -78,10 +78,12 @@ void Client::Disconnect()
 
 void Example()
 {
-    try {
-        Client myClient("127.0.0.1", 8080); 
+    try
+    {
+        Client myClient("127.0.0.1", 8080);
         std::cout << "Attempting to connect...\n";
-        if (myClient.ConnectToServer()) {
+        if (myClient.ConnectToServer())
+        {
             std::cout << "[Success] Connected to the server!\n";
             std::cout << "Sending command...\n";
             myClient.SendCommand("LOGIN roman mypassword123");
@@ -89,7 +91,9 @@ void Example()
             std::cout << "[Server response]: " << response << "\n";
             myClient.Disconnect();
         }
-    } catch (const std::system_error& e) {
+    }
+    catch (const std::system_error &e)
+    {
         std::cerr << "[Exception] " << e.what() << " (Error code: " << e.code() << ")\n";
     }
 }

@@ -9,5 +9,4 @@ int main(void)
     std::cout<<"Server started\n";
     server.StartServer();
     return 0;
-    //./mail_server
 } 

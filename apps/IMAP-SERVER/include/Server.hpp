@@ -2,22 +2,23 @@
 #define MAX_EVENTS 10000
 #define TIMEOUT 30
 #define BUF_SIZE 4096
-#define PORT 2500
+#define PORT 8080
 
 #include <iostream>
 #include <string>
 #include <unordered_map>
 #include <vector>
 #include <mutex>
+#include <shared_mutex>
 #include <time.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <errno.h> 
+#include <errno.h>
 #include <sys/socket.h>
 #include <sys/epoll.h>
 #include <netinet/in.h>
-#include "json.hpp"
-#include "logger/Logger.h" 
+#include <boost/json.hpp>
+#include "logger/Logger.h"
 #include "thread_pool/ThreadPool.h"
 
 enum class ClientState
@@ -28,6 +29,9 @@ enum class ClientState
 
 class Client
 {
+public:
+    std::mutex client_lock;
+
 private:
     friend class Server;
     int socket_fd;
@@ -56,7 +60,7 @@ private:
     std::vector<struct epoll_event> events;
     ThreadPool thread_pool;
     ThreadPool logger_thread;
-    std::mutex client_mutex;
+    std::shared_mutex map_mutex;
 
     void SetNonBlock(int fd);
     void CheakTimeOut();
@@ -73,6 +77,7 @@ private:
     void HandleListEmails(int client_fd);
     void HandleReadEmail(int client_fd, int email_id);
     void HandleQuit(int client_fd);
+
 public:
     Server(const unsigned int max_threads)
     {

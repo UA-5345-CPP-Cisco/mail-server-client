@@ -1,23 +1,21 @@
-add_library(smtp_client
+add_library(mail_smtp_client
 	src/MailBuilder.cpp
 	src/SmtpClient.cpp
-	include/smtp_client/MailBuilder.h
-	include/smtp_client/SmtpClient.h
 )
 
-target_include_directories(smtp_client
+target_include_directories(mail_smtp_client
 	PUBLIC
-		${CMAKE_CURRENT_SOURCE_DIR}/include
+	${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_link_libraries(smtp_client
-	PUBLIC
-		Boost::asio
-		Boost::system
-		Threads::Threads
+target_link_libraries(mail_smtp_client
+    PUBLIC
+	Boost::asio
+	Boost::system
+	Threads::Threads
 )
 
-target_compile_features(smtp_client
+target_compile_features(mail_smtp_client
 	PUBLIC
-		cxx_std_17
+	cxx_std_17
 )

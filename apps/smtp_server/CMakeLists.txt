@@ -1,86 +1,67 @@
-
-find_package(Threads REQUIRED)
-find_package(Boost REQUIRED COMPONENTS system)
-find_package(OpenSSL REQUIRED)
-find_package(cryptopp CONFIG) 
-
-add_library(smtp_server_core
+add_library(mail_smtp_server
     src/smtp/AuthService.cpp
     src/smtp/BoostSocketsManager.cpp
     src/smtp/Configuration.cpp
     src/smtp/QueueDispatcher.cpp
     src/smtp/Server.cpp
-    src/smtp/Session.cpp
     src/smtp/SmtpSessionHandler.cpp
-    include/SMTP_Server.hpp
-    include/smtp/AuthService.hpp
-    include/smtp/Configuration.hpp
-    include/smtp/Event.hpp
-    include/smtp/QueueDispatcher.hpp
-    include/smtp/Server.hpp
-    include/smtp/ServerConfig.hpp
-    include/smtp/Session.hpp
-    include/smtp/SocketsManager.hpp
+    src/smtp/Session.cpp
 )
 
-target_include_directories(smtp_server_core
+target_include_directories(mail_smtp_server
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_link_libraries(smtp_server_core
+target_link_libraries(mail_smtp_server
     PUBLIC
-        Boost::system
-        OpenSSL::SSL
-        OpenSSL::Crypto
-        Threads::Threads
-        mail_logger
-        mail_storage
-        mail_thread_pool
-    PRIVATE
-        cryptopp
+	Boost::asio
+	Boost::system
+	OpenSSL::SSL
+	OpenSSL::Crypto
+	Threads::Threads
+	mail_logger
+	mail_storage
+	mail_thread_pool
+	PRIVATE
+	Boost::property_tree
+	cryptopp::cryptopp
 )
 
-target_compile_features(smtp_server_core
+target_compile_features(mail_smtp_server
     PUBLIC
-        cxx_std_17
+    cxx_std_17
 )
 
-target_compile_definitions(smtp_server_core
-    PUBLIC
-        BOOST_ERROR_CODE_HEADER_ONLY
+target_compile_definitions(mail_smtp_server
+	PUBLIC
+		BOOST_ERROR_CODE_HEADER_ONLY
 )
-
-if(WIN32)
-    target_compile_definitions(smtp_server_core PUBLIC _WIN32_WINNT=0x0A00)
-    target_link_libraries(smtp_server_core PUBLIC ws2_32 mswsock crypt32)
-endif()
 
 add_executable(smtp_server
     main.cpp
 )
- 
-target_link_libraries(smtp_server
-    PRIVATE
-        smtp_server_core
+
+target_link_libraries(smtp_server 
+    mail_smtp_server
 )
 
-target_compile_features(smtp_server
-    PRIVATE
-        cxx_std_17
-)
+if(WIN32)
+    target_compile_definitions(mail_smtp_server PUBLIC _WIN32_WINNT=0x0A00)
+    target_link_libraries(mail_smtp_server PUBLIC ws2_32 mswsock crypt32)
+endif()
 
 if(MSVC)
-    target_compile_options(smtp_server_core PRIVATE /W4)
+    target_compile_options(mail_smtp_server PRIVATE /W4) 
     target_compile_options(smtp_server PRIVATE /W4)
 
     if(MAIL_WARNINGS_AS_ERRORS)
-        target_compile_options(smtp_server_core PRIVATE /WX)
+        target_compile_options(mail_smtp_server PRIVATE /WX) 
         target_compile_options(smtp_server PRIVATE /WX)
     endif()
 else()
     target_compile_options(
-        smtp_server_core
+        mail_smtp_server 
         PRIVATE
             -Wall
             -Wextra
@@ -93,9 +74,8 @@ else()
             -Wextra
             -Wpedantic
     )
-
     if(MAIL_WARNINGS_AS_ERRORS)
-        target_compile_options(smtp_server_core PRIVATE -Werror)
+        target_compile_options(mail_smtp_server PRIVATE -Werror) 
         target_compile_options(smtp_server PRIVATE -Werror)
     endif()
 endif()

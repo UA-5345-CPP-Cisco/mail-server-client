@@ -1,20 +1,20 @@
 #include "Server.hpp"
 
-using json = nlohmann::json;
-
 void Server::SetNonBlock(int fd)
 {
     int current_flags = fcntl(fd, F_GETFL, 0);
     fcntl(fd, F_SETFL, current_flags | O_NONBLOCK);
-} 
+}
 
 void Server::CheakTimeOut()
 {
+    std::unique_lock<std::shared_mutex> lock(this->map_mutex);
     time_t now = time(NULL);
     for (auto it = this->clinets.begin(); it != this->clinets.end();)
     {
         if ((now - it->second.last_activity) > TIMEOUT)
         {
+            close(it->first);
             it = this->clinets.erase(it);
         }
         else
@@ -84,13 +84,17 @@ void Server::HandleNewConnection()
                 break;
                 break;
             }
-        }
+        } 
         SetNonBlock(current_fd);
-        this->clinets.emplace(current_fd, Client(current_fd));
+        {
+            std::unique_lock<std::shared_mutex> lock(this->map_mutex);
+            this->clinets.emplace(std::piecewise_construct,
+                                  std::forward_as_tuple(current_fd),
+                                  std::forward_as_tuple(current_fd));
+        }
         std::string msg = "Client connected. FD: " + std::to_string(current_fd);
-        this->logger_thread.Enqueue([msg](){
-            Logger::GetInstance().LogDebug("Server::HandleNewConnection", msg);
-        });
+        this->logger_thread.Enqueue([msg]()
+                                    { Logger::GetInstance().LogDebug("Server::HandleNewConnection", msg); });
         struct epoll_event clinet_events{};
         clinet_events.events = EPOLLIN | EPOLLET,
         clinet_events.data.fd = current_fd;
@@ -104,19 +108,34 @@ void Server::HandleNewConnection()
 
 void Server::HandleClientData(int client_fd)
 {
+    Client *client_ptr = nullptr;
+    {
+        std::shared_lock<std::shared_mutex> lock(this->map_mutex);
+        auto it = this->clinets.find(client_fd);
+        if (it != this->clinets.end())
+        {
+            client_ptr = &(it->second);
+        }
+    }
+    if (!client_ptr)
+    {
+        return;
+    }
+    std::unique_lock<std::mutex> client_lock(client_ptr->client_lock);
     while (true)
     {
         char temp_buffer[BUF_SIZE];
         int bytes = recv(client_fd, temp_buffer, sizeof(temp_buffer), 0);
         if (bytes == 0)
         {
+            client_lock.unlock();
             std::string msg = "Client disconnected gracefully. FD: " + std::to_string(client_fd);
-            this->logger_thread.Enqueue([msg](){
-                Logger::GetInstance().LogDebug("Server::HandleClientData",msg);
-            });
+            this->logger_thread.Enqueue([msg]()
+                                        { Logger::GetInstance().LogDebug("Server::HandleClientData", msg); });
+            std::unique_lock<std::shared_mutex> lock(this->map_mutex);
             this->clinets.erase(client_fd);
             close(client_fd);
-            break;
+            return;
         }
         else if (bytes == -1)
         {
@@ -127,14 +146,15 @@ void Server::HandleClientData(int client_fd)
             else
             {
                 close(client_fd);
+                std::unique_lock<std::shared_mutex> lock(this->map_mutex);
                 this->clinets.erase(client_fd);
                 return;
             }
         }
-        this->clinets[client_fd].read_byffer.append(temp_buffer, bytes);
-        this->clinets[client_fd].last_activity = time(NULL);
+        client_ptr->read_byffer.append(temp_buffer, bytes);
+        client_ptr->last_activity = time(NULL);
     }
-    auto &buffer = this->clinets[client_fd].read_byffer;
+    auto &buffer = client_ptr->read_byffer;
     size_t pos = 0;
     while ((pos = buffer.find('\n')) != std::string::npos)
     {
@@ -147,74 +167,74 @@ void Server::HandleClientData(int client_fd)
 
 void Server::ProcessRequest(int client_fd, const std::string &raw_json)
 {
-    std::string msg="Start function for FD: " + std::to_string(client_fd);
-    this->logger_thread.Enqueue([msg](){
-        Logger::GetInstance().LogDebug("Server::ProcessRequest",msg);
-    });
+    std::string msg = "Start function for FD: " + std::to_string(client_fd);
+    this->logger_thread.Enqueue([msg]()
+                                { Logger::GetInstance().LogDebug("Server::ProcessRequest", msg); });
+
     try
     {
-        json request = json::parse(raw_json);
+        boost::json::value parsed_value = boost::json::parse(raw_json);
+        if (!parsed_value.is_object())
+        {
+            SendResponse(client_fd, R"({"status": "ERROR", "message": "Invalid JSON structure"})" + std::string("\n"));
+            return;
+        }
+        boost::json::object &request = parsed_value.as_object();
         if (!request.contains("action"))
         {
             SendResponse(client_fd, R"({"status": "ERROR", "message": "Missing 'action' field"})" + std::string("\n"));
             return;
         }
-        std::string action = request["action"];
+        std::string action = request.at("action").as_string().c_str();
         if (action == "LOGIN")
         {
-            this->logger_thread.Enqueue([raw_json](){
-                Logger::GetInstance().LogTrace("Server::ProcessRequest", raw_json, "Action: LOGIN");
-            });
-            std::string email = request.value("email", "");
-            std::string password = request.value("password", "");
+            this->logger_thread.Enqueue([raw_json]()
+                                        { Logger::GetInstance().LogTrace("Server::ProcessRequest", raw_json, "Action: LOGIN"); });
+            std::string email = request.contains("email") ? request.at("email").as_string().c_str() : "";
+            std::string password = request.contains("password") ? request.at("password").as_string().c_str() : "";
+
             HandleLogin(client_fd, email, password);
         }
         else if (action == "LIST_EMAILS")
         {
-            this->logger_thread.Enqueue([raw_json](){
-               Logger::GetInstance().LogTrace("Server::ProcessRequest", raw_json, "Action: LIST_EMAILS");
-            });
+            this->logger_thread.Enqueue([raw_json]()
+                                        { Logger::GetInstance().LogTrace("Server::ProcessRequest", raw_json, "Action: LIST_EMAILS"); });
             HandleListEmails(client_fd);
         }
         else if (action == "READ_EMAIL")
         {
-            this->logger_thread.Enqueue([raw_json](){
-               Logger::GetInstance().LogTrace("Server::ProcessRequest", raw_json, "Action: READ_EMAIL");
-            });
-            int email_id = request.value("email_id", -1);
+            this->logger_thread.Enqueue([raw_json]()
+                                        { Logger::GetInstance().LogTrace("Server::ProcessRequest", raw_json, "Action: READ_EMAIL"); });
+            int email_id = request.contains("email_id") ? request.at("email_id").as_int64() : -1;
             HandleReadEmail(client_fd, email_id);
         }
         else if (action == "QUIT")
         {
-            this->logger_thread.Enqueue([raw_json](){
-               Logger::GetInstance().LogTrace("Server::ProcessRequest", raw_json, "Action: QUIT");
-            });
+            this->logger_thread.Enqueue([raw_json]()
+                                        { Logger::GetInstance().LogTrace("Server::ProcessRequest", raw_json, "Action: QUIT"); });
             HandleQuit(client_fd);
         }
         else
         {
-            this->logger_thread.Enqueue([raw_json](){
-               Logger::GetInstance().LogTrace("Server::ProcessRequest", raw_json, "Action: UNKNOWN");
-            });
+            this->logger_thread.Enqueue([raw_json]()
+                                        { Logger::GetInstance().LogTrace("Server::ProcessRequest", raw_json, "Action: UNKNOWN"); });
             SendResponse(client_fd, R"({"status": "ERROR", "message": "Unknown action"})" + std::string("\n"));
         }
     }
-    catch (const json::parse_error &e)
+    catch (const std::exception &e)
     {
-        std::string msg="ERROR!!! Invalid JSON format from client " + std::to_string(client_fd);
-        this->logger_thread.Enqueue([msg](){
-            Logger::GetInstance().LogProd("Server::ProcessRequest",msg);
-        });
+        std::string msg = "ERROR!!! Invalid JSON format from client " + std::to_string(client_fd) + ": " + e.what();
+        this->logger_thread.Enqueue([msg]()
+                                    { Logger::GetInstance().LogProd("Server::ProcessRequest", msg); });
         SendResponse(client_fd, R"({"status": "ERROR", "message": "Invalid JSON format"})" + std::string("\n"));
     }
 }
 
 void Server::SendResponse(int client_fd, const std::string &raw_json)
 {
-    std::string msg="Sending to FD: " + std::to_string(client_fd);
-    this->logger_thread.Enqueue([msg,raw_json](){
-        Logger::GetInstance().LogTrace("Server::SendResponse", raw_json, msg);
-    });
+    std::string msg = "Sending to FD: " + std::to_string(client_fd);
+    this->logger_thread.Enqueue([msg, raw_json]()
+                                { Logger::GetInstance().LogTrace("Server::SendResponse", raw_json, msg); });
     size_t total_bytes = 0;
     while (total_bytes < raw_json.size())
     {
@@ -261,9 +281,8 @@ void Server::StartEpollLoop()
 
 void Server::StartServer()
 {
-    this->logger_thread.Enqueue([](){
-        Logger::GetInstance().LogProd("Server::StartServer", "*********Starting Server**********");
-    });
+    this->logger_thread.Enqueue([]()
+                                { Logger::GetInstance().LogProd("Server::StartServer", "*********Starting Server**********"); });
     SetServerSocket(PORT);
     SetEpoll();
     StartEpollLoop();
@@ -271,10 +290,9 @@ void Server::StartServer()
 
 void Server::HandleLogin(int client_fd, const std::string &email, const std::string &password)
 {
-    std::string msg="Email: " + email;
-    this->logger_thread.Enqueue([msg](){
-        Logger::GetInstance().LogTrace("Server::HandleLogin",msg, "Status: OK");
-    });
+    std::string msg = "Email: " + email;
+    this->logger_thread.Enqueue([msg]()
+                                { Logger::GetInstance().LogTrace("Server::HandleLogin", msg, "Status: OK"); });
     std::cout << "[Thread " << std::this_thread::get_id() << "] Login attempt from: " << email << "\n";
     SendResponse(client_fd, R"({"status": "OK", "message": "Logged in successfully"})" + std::string("\n"));
 }

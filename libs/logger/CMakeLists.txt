@@ -1,23 +1,19 @@
-add_library(mail_logger
-    src/Logger.cpp
-    include/logger/Logger.h  
-)
+add_library(mail_logger src/Logger.cpp)
 
 target_include_directories(mail_logger
     PUBLIC 
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>
-)
-
-target_compile_features(mail_logger
-    PUBLIC
-        cxx_std_17
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 find_package(Threads REQUIRED)
 target_link_libraries(mail_logger
     PUBLIC
-        Threads::Threads
+    Threads::Threads
+)
+
+target_compile_features(mail_logger
+    PUBLIC
+        cxx_std_17
 )
 
 if(MSVC)
