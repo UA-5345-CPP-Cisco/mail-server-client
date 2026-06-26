@@ -1,4 +1,4 @@
-#include "Client.h"
+#include "aimap/Client.h"
 
 Client::Client(const std::string& ip, int port)
 {
