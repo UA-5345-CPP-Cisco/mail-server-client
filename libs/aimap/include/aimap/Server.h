@@ -1,9 +1,4 @@
 #pragma once
-#define MAX_EVENTS 10000
-#define TIMEOUT 30
-#define BUF_SIZE 4096
-#define PORT 2500
-
 #include <iostream>
 #include <mutex>
 #include <string>
@@ -18,9 +13,13 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "nlohmann/json.hpp"
 #include "logger/Logger.h"
+#include "nlohmann/json.hpp"
 #include "thread_pool/ThreadPool.h"
+#define MAX_EVENTS 10000
+#define TIMEOUT 30
+#define BUF_SIZE 4096
+#define PORT 2500
 
 enum class ClientState
 {
