@@ -10,6 +10,7 @@
 #include <vector>
 #include <mutex>
 #include <shared_mutex>
+#include<memory>
 #include <time.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -32,7 +33,8 @@ class Client
 public:
     std::mutex client_lock;
 
-private:
+private: 
+    friend class ImapTest;
     friend class Server;
     int socket_fd;
     std::string read_byffer;
@@ -49,14 +51,20 @@ public:
         this->state = ClientState::NotAuthenticated;
         last_activity = time(NULL);
     }
+
+    ~Client()
+    {
+        close(this->socket_fd);
+    }
 };
 
 class Server
 {
 private:
+    friend class ImapTest;
     int server_fd;
     int epoll_fd;
-    std::unordered_map<int, Client> clinets;
+    std::unordered_map<int,std::shared_ptr<Client>> clinets;
     std::vector<struct epoll_event> events;
     ThreadPool thread_pool;
     ThreadPool logger_thread;

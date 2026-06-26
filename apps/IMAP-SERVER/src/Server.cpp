@@ -12,9 +12,8 @@ void Server::CheakTimeOut()
     time_t now = time(NULL);
     for (auto it = this->clinets.begin(); it != this->clinets.end();)
     {
-        if ((now - it->second.last_activity) > TIMEOUT)
+        if ((now - it->second->last_activity) > TIMEOUT)
         {
-            close(it->first);
             it = this->clinets.erase(it);
         }
         else
@@ -82,15 +81,14 @@ void Server::HandleNewConnection()
             {
                 std::cerr << "Accept error: " << errno << "\n";
                 break;
-                break;
             }
-        } 
+        }
         SetNonBlock(current_fd);
         {
             std::unique_lock<std::shared_mutex> lock(this->map_mutex);
-            this->clinets.emplace(std::piecewise_construct,
-                                  std::forward_as_tuple(current_fd),
-                                  std::forward_as_tuple(current_fd));
+            this->clinets.emplace(
+                current_fd,
+                std::make_shared<Client>(current_fd));
         }
         std::string msg = "Client connected. FD: " + std::to_string(current_fd);
         this->logger_thread.Enqueue([msg]()
@@ -108,13 +106,13 @@ void Server::HandleNewConnection()
 
 void Server::HandleClientData(int client_fd)
 {
-    Client *client_ptr = nullptr;
+    std::shared_ptr<Client> client_ptr = nullptr;
     {
         std::shared_lock<std::shared_mutex> lock(this->map_mutex);
         auto it = this->clinets.find(client_fd);
         if (it != this->clinets.end())
         {
-            client_ptr = &(it->second);
+            client_ptr = (it->second);
         }
     }
     if (!client_ptr)
@@ -134,7 +132,6 @@ void Server::HandleClientData(int client_fd)
                                         { Logger::GetInstance().LogDebug("Server::HandleClientData", msg); });
             std::unique_lock<std::shared_mutex> lock(this->map_mutex);
             this->clinets.erase(client_fd);
-            close(client_fd);
             return;
         }
         else if (bytes == -1)
@@ -145,7 +142,6 @@ void Server::HandleClientData(int client_fd)
             }
             else
             {
-                close(client_fd);
                 std::unique_lock<std::shared_mutex> lock(this->map_mutex);
                 this->clinets.erase(client_fd);
                 return;
@@ -160,8 +156,8 @@ void Server::HandleClientData(int client_fd)
     {
         std::string json_message = buffer.substr(0, pos);
         buffer.erase(0, pos + 1);
-        this->thread_pool.Enqueue([this, client_fd, json_message]()
-                                  { this->ProcessRequest(client_fd, json_message); });
+        this->thread_pool.Enqueue([this, client_ptr, json_message]()
+                                  { this->ProcessRequest(client_ptr->socket_fd, json_message); });
     }
 }
 
