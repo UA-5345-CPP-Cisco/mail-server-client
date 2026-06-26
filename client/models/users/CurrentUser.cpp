@@ -9,9 +9,9 @@ namespace ISXCurrentUser
 
 CurrentUser::CurrentUser(QObject* parent) :
 	QObject(parent),
-	m_is_authorized(true),
-	m_username("John Doe"),
-	m_email("johndoe@gmail.com"),
+    m_is_authorized(false),
+    m_username(""),
+    m_email(""),
     m_avatar_path("")
 {
 }
@@ -45,16 +45,16 @@ QString CurrentUser::avatar_path() const
 void CurrentUser::Authorize(
 	const QString& username,
 	const QString& email,
-	const QString& avatar_path
+    const QString& avatar_path
 )
 {
-	if (m_username == username && m_email == email && m_avatar_path == avatar_path && m_is_authorized)
+    if (m_username == username && m_email == email && m_avatar_path == avatar_path && m_is_authorized)
 	{
 		return;
 	}
 
 	m_username = username;
-	m_email = email;
+    m_email = email;
 	m_is_authorized = true;
 
 	if (!avatar_path.isEmpty())

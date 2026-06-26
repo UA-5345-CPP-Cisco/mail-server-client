@@ -16,12 +16,17 @@ ApplicationWindow {
 
     property alias authLoader: authLoader
 
+    // for adding avatar
+    function avatarInitial(name) {
+        var trimmedName = String(name).trim()
+        return trimmedName.length > 0 ? trimmedName.charAt(0).toUpperCase() : "?"
+    }
+
     //FunctionSorter
     function closeMessageWindow()
     {
         newMessageLoader.active = false
         newMessageLoader.source = ""
-
     }
 
     function closeSettingsWindow()
@@ -107,7 +112,8 @@ ApplicationWindow {
 
     //blocks
     id: window
-    visible: true
+    visible: !initialSetupRequired
+    //visible: true
     width: 1024
     height: 768
     minimumHeight: 500
@@ -185,11 +191,7 @@ ApplicationWindow {
                        if(newMessageLoader.selectedItem != null)
                        {
                            draftModel.removeEmailData(parseInt(index))
-                           emailsModel.AddData(
-                               false, true, false,
-                               subject, CurrentUser.username,
-                               recipient, text, ""
-                           )
+                           emailsModel.AddData(false, true, false, subject, CurrentUser.username, recipient, text, "")
                        }
 
                        newMessageLoader.selectedItem = null
@@ -415,14 +417,34 @@ ApplicationWindow {
         opacity: status === Loader.Ready ? 1 : 0
     }
 
-    // Loader для вікна реєстрації/вибору акаунту
-        Loader {
-            id: authLoader
-            anchors.fill: parent
-            z: 2000 // Щоб він був поверх всього (навіть поверх settingsLoader)
+    Loader
+    {
+        id: authLoader
+        active: initialSetupRequired
+        source: active ? "screens/navigation/account/AddAccountQML.qml" : ""
 
-            // Використовуємо властивість, яку ми передали з C++
-            active: initialSetupRequired
-            source: active ? "screens/navigation/account/AddAccountQML.qml" : ""
+        onLoaded:
+        {
+            item.show()
         }
+
+        Connections
+        {
+            target: authLoader.item
+            ignoreUnknownSignals: true
+
+            function onClosing()
+            {
+                if (accountModel.ActiveAccountRow() === -1)
+                {
+                    Qt.quit()
+                }
+                else
+                {
+                    window.visible = true
+                    authLoader.active = false
+                }
+            }
+        }
+    }
 }

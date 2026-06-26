@@ -15,13 +15,13 @@
 #include "headers/users/AccountListModel.h"
 #include "headers/database/UserRepository.h"
 
-
 int main(int argc, char *argv[])
 {
     qputenv("QT_QUICK_BACKEND", "software");
     QQuickStyle::setStyle(QStringLiteral("Fusion"));
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/pngs/assets/Icon.png"));
+
     ISXDatabaseManager::DatabaseManager::EnsureInitialized();
     auto dbPath = ISXDatabaseManager::DatabaseManager::DatabasePath();
     Storage::Database database(dbPath);
@@ -34,6 +34,15 @@ int main(int argc, char *argv[])
     bool hasUsers = repo.HasUsers();
     engine.rootContext()->setContextProperty("initialSetupRequired", !hasUsers);
 
+    if (hasUsers) {
+        auto activeUser = repo.FindActiveUser();
+
+        if (activeUser.has_value()) {
+            QString name = QString::fromStdString(activeUser->username);
+            QString email = QString::fromStdString(activeUser->email);
+            ISXCurrentUser::CurrentUser::GetInstance().Authorize(name, email, "");
+        }
+    }
 
     auto* model = new ISXMail::EmailListModel(&app);
     auto* message_composer = new ISXMail::MessageComposer(&app);
@@ -81,7 +90,6 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("draftSearchModel", draftSearch);
     engine.rootContext()->setContextProperty("MessageComposer", message_composer);
 
-    //current user in system
     engine.rootContext()->setContextProperty(
         "CurrentUser",
         &ISXCurrentUser::CurrentUser::GetInstance()
@@ -93,7 +101,7 @@ int main(int argc, char *argv[])
         1, 0,
         "EmailRole",
         "Not creatable"
-    );
+        );
 
     QObject::connect(
         &engine,
@@ -101,8 +109,9 @@ int main(int argc, char *argv[])
         &app,
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
+
     engine.load(QUrl("qrc:/qt/qml/qtapptestmail/Main.qml"));
-    // ADD THIS CHECK RIGHT HERE:
+
     if (engine.rootObjects().isEmpty()) {
         qWarning() << "--- QML MODULE LOADING FAILED! ---";
         qWarning() << "Check if Main.qml exists inside module 'qtapptestmail'";
@@ -111,4 +120,3 @@ int main(int argc, char *argv[])
 
     return QGuiApplication::exec();
 }
-

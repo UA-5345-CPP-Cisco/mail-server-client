@@ -13,12 +13,6 @@ Rectangle
     signal sentClicked
     signal draftClicked
 
-    function avatarInitial(name)
-       {
-           var trimmedName = String(name).trim()
-           return trimmedName.length > 0 ? trimmedName.charAt(0).toUpperCase() : "?"
-       }
-
     // Header
     Rectangle
     {
@@ -211,28 +205,6 @@ Rectangle
                         }
                     }
                 }
-            }
-        }
-
-        // Loader for Account change popup
-        Loader
-        {
-            id: account_change_loader
-            z: 999
-            anchors.top: horizontal_border.bottom
-            anchors.topMargin: 4
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
-
-            height: item ? item.implicitHeight : 0
-            source: ""
-            opacity: status === Loader.Ready ? 1 : 0
-
-            Behavior on opacity
-            {
-                NumberAnimation { duration: 200 }
             }
         }
     }
@@ -858,6 +830,28 @@ Rectangle
                     }
                 }
             }
+        }
+    }
+
+    // Loader for Account change popup
+    Loader
+    {
+        id: account_change_loader
+        z: 999
+        anchors.top: horizontal_border.bottom
+        anchors.topMargin: 4
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.leftMargin: 0
+        anchors.rightMargin: 0
+
+        height: item ? item.implicitHeight : 0
+        source: ""
+        opacity: status === Loader.Ready ? 1 : 0
+
+        Behavior on opacity
+        {
+            NumberAnimation { duration: 200 }
         }
     }
 }

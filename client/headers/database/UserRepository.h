@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <optional>
 #include <string>
-
+#include <vector>
 #include "Database.h"
 #include "UserRecord.h"
 
@@ -16,8 +16,6 @@ class UserRepository
 public:
 	explicit UserRepository(Database& database);
 
-    bool HasUsers();
-
 	std::int64_t CreateUser(
 		const std::string& username,
 		const std::string& email,
@@ -26,11 +24,13 @@ public:
 
 	std::optional<UserRecord> FindById(std::int64_t user_id) const;
 	std::optional<UserRecord> FindByEmail(const std::string& email) const;
-	std::optional<UserRecord> FindByUsername(
-		const std::string& username
-	) const;
+	std::optional<UserRecord> FindByUsername(const std::string& username) const;
+    std::optional<UserRecord> FindActiveUser() const;
+    std::vector<UserRecord> FindAll() const;
+
 
 	bool UpdateStatus(std::int64_t user_id, UserStatus status);
+    bool HasUsers();
 
 private:
 	Database& m_database;
