@@ -18,7 +18,7 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "json.hpp"
+#include "nlohmann/json.hpp"
 #include "logger/Logger.h"
 #include "thread_pool/ThreadPool.h"
 
