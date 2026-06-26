@@ -25,18 +25,22 @@ class MailMessageRepository
                              MailMessageStatus status = MailMessageStatus::Queued);
 
   std::optional<MailMessageRecord> FindById(std::int64_t message_id) const;
+
   std::vector<MailMessageRecord> FindByStatus(MailMessageStatus status, int limit) const;
 
   bool UpdateStatus(std::int64_t message_id,
                     MailMessageStatus expected_status,
                     MailMessageStatus new_status);
+
   bool FinalizeDelivery(std::int64_t message_id);
 
   private:
   Database& m_database;
 
   MailMessageRecord ReadMessage(const Statement& statement) const;
+
   std::string StatusToString(MailMessageStatus status) const;
+
   MailMessageStatus StatusFromString(const std::string& status) const;
 };
 

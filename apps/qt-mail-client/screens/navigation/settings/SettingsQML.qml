@@ -11,8 +11,7 @@ Rectangle {
     color: "#ffffff"
     radius: 14
 
-    Loader
-    {
+    Loader {
         id: generalSettingsLoader
 
         anchors.fill: parent
@@ -23,12 +22,13 @@ Rectangle {
 
         opacity: status === Loader.Ready ? 1.0 : 0.0
         Behavior on opacity {
-            NumberAnimation { duration: 250 }
+            NumberAnimation {
+                duration: 250
+            }
         }
     }
 
-    Rectangle
-    {
+    Rectangle {
         id: container
 
         x: 16
@@ -57,8 +57,7 @@ Rectangle {
             verticalAlignment: Text.AlignVCenter
         }
     }
-    Rectangle
-    {
+    Rectangle {
         id: buttonToCloseWindow
 
         x: 348.40
@@ -78,16 +77,14 @@ Rectangle {
             clip: true
             color: "transparent"
 
-            MouseArea
-            {
+            MouseArea {
                 id: clickAreaCloseSettingsWindow
                 anchors.fill: parent
 
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
 
-                onClicked:
-                {
+                onClicked: {
                     closeSettingsWindow()
                 }
             }
@@ -149,8 +146,7 @@ Rectangle {
         }
     }
 
-    Rectangle
-    {
+    Rectangle {
         id: container_2
 
         x: 11
@@ -182,8 +178,7 @@ Rectangle {
         }
     }
 
-    Rectangle
-    {
+    Rectangle {
         id: preferences
 
         y: 64
@@ -538,14 +533,12 @@ Rectangle {
             radius: 10
             color: clickAreaAccountSettings.hovered ? "#fff0f0" : "transparent"
 
-            HoverHandler
-            {
+            HoverHandler {
                 id: clickAreaAccountSettings
                 cursorShape: Qt.PointingHandCursor
             }
 
-            TapHandler
-            {
+            TapHandler {
                 onTapped: {
                     if (String(generalSettingsLoader.source) === "") {
                         generalSettingsLoader.active = true
@@ -694,14 +687,12 @@ Rectangle {
             radius: 10
             color: clickAreaGeneralSettings.hovered ? "#fff0f0" : "transparent"
 
-            HoverHandler
-            {
+            HoverHandler {
                 id: clickAreaGeneralSettings
                 cursorShape: Qt.PointingHandCursor
             }
 
-            TapHandler
-            {
+            TapHandler {
                 onTapped: {
                     if (String(generalSettingsLoader.source) === "") {
                         generalSettingsLoader.active = true

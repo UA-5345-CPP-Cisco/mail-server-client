@@ -14,12 +14,15 @@ class Database
 {
   public:
   explicit Database(const std::filesystem::path& path);
+
   ~Database() = default;
 
   Database(const Database&) = delete;
+
   Database& operator=(const Database&) = delete;
 
   Database(Database&&) noexcept = default;
+
   Database& operator=(Database&&) noexcept = default;
 
   void Execute(const std::string& sql);

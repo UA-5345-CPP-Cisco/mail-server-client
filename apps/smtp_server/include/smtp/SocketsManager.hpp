@@ -18,11 +18,17 @@ class ISocketsManager
   virtual ~ISocketsManager() = default;
 
   virtual void Start(const ServerConfig& config) = 0;
+
   virtual std::vector<SmtpEvent> PollEvents() = 0;
+
   virtual void Send(ConnectionId connectionId, std::string_view message) = 0;
+
   virtual void Close(ConnectionId connectionId) = 0;
+
   virtual void StartTls(ConnectionId connectionId) = 0;
+
   virtual void Continue(ConnectionId connectionId) = 0;
+
   virtual void Stop() = 0;
 };
 
@@ -41,14 +47,21 @@ class BoostSocketsManager : public ISocketsManager
 {
   public:
   BoostSocketsManager();
+
   ~BoostSocketsManager() override;
 
   void Start(const ServerConfig& config) override;
+
   std::vector<SmtpEvent> PollEvents() override;
+
   void Send(ConnectionId connectionId, std::string_view message) override;
+
   void Close(ConnectionId connectionId) override;
+
   void StartTls(ConnectionId connectionId) override;
+
   void Continue(ConnectionId connectionId) override;
+
   void Stop() override;
 
   private:

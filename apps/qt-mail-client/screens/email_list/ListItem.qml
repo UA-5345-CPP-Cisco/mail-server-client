@@ -17,8 +17,11 @@ Rectangle {
     property var searchModel: null
 
     signal openRequested(string theme, string name, string sendTo, string content, string time, bool starred)
-    signal starredClicked
-    signal deleteClicked
+
+        signal
+    starredClicked
+        signal
+    deleteClicked
 
     color: "#ffffff"
 
@@ -38,22 +41,22 @@ Rectangle {
         onExited: root.color = "#ffffff"
         onPressed: root.color = "#f3f4f6"
         onClicked: mouse => {
-                       if (mouse.button === Qt.LeftButton) {
-                           root.color = containsMouse ? "#f9fafb" : "#ffffff"
-                           var starPos = button_margin_2.mapToItem(root, 0, 0)
-                           var inStarZone = (mouse.x >= starPos.x - 8
-                                             && mouse.x <= starPos.x + button_margin_2.width + 8
-                                             && mouse.y >= starPos.y - 8 && mouse.y
-                                             <= starPos.y + button_margin_2.height + 8)
-                           if (!inStarZone) {
-                               root.openRequested(root.theme, root.name,
-                                                  root.sendTo, root.content,
-                                                  root.time, root.starred)
-                           }
-                       } else if (mouse.button === Qt.RightButton) {
-                           contextMenu.popup()
-                       }
-                   }
+            if (mouse.button === Qt.LeftButton) {
+                root.color = containsMouse ? "#f9fafb" : "#ffffff"
+                var starPos = button_margin_2.mapToItem(root, 0, 0)
+                var inStarZone = (mouse.x >= starPos.x - 8
+                    && mouse.x <= starPos.x + button_margin_2.width + 8
+                    && mouse.y >= starPos.y - 8 && mouse.y
+                    <= starPos.y + button_margin_2.height + 8)
+                if (!inStarZone) {
+                    root.openRequested(root.theme, root.name,
+                        root.sendTo, root.content,
+                        root.time, root.starred)
+                }
+            } else if (mouse.button === Qt.RightButton) {
+                contextMenu.popup()
+            }
+        }
         onCanceled: root.color = "#ffffff"
     }
     Menu {
@@ -223,8 +226,8 @@ Rectangle {
                         lineHeight: 20
                         lineHeightMode: Text.FixedHeight
                         text: searchModel ? searchModel.highlightAllFoundWords(
-                                                name,
-                                                searchModel.searchedText) : name
+                            name,
+                            searchModel.searchedText) : name
                         textFormat: Text.RichText
                         verticalAlignment: Text.AlignVCenter
                         wrapMode: Text.NoWrap
@@ -289,8 +292,8 @@ Rectangle {
                     lineHeight: 20
                     lineHeightMode: Text.FixedHeight
                     text: searchModel ? searchModel.highlightAllFoundWords(
-                                            theme,
-                                            searchModel.searchedText) : theme
+                        theme,
+                        searchModel.searchedText) : theme
                     textFormat: Text.RichText
                     verticalAlignment: Text.AlignVCenter
                     wrapMode: Text.NoWrap
@@ -304,7 +307,7 @@ Rectangle {
 
                 EmailToolTip {
                     visible: themeHover.hovered
-                             && (themeText.contentWidth > themeText.width)
+                        && (themeText.contentWidth > themeText.width)
                     text: theme
                     x: 0
                     y: themeHolder.height + 4
@@ -332,8 +335,8 @@ Rectangle {
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
                     text: searchModel ? searchModel.highlightAllFoundWords(
-                                            preview,
-                                            searchModel.searchedText) : preview
+                        preview,
+                        searchModel.searchedText) : preview
                     textFormat: Text.RichText
                     verticalAlignment: Text.AlignVCenter
                     wrapMode: Text.NoWrap
@@ -345,10 +348,9 @@ Rectangle {
                     id: previewHover
                 }
 
-                EmailToolTip
-                {
+                EmailToolTip {
                     visible: previewHover.hovered
-                             && (previewText.contentWidth > previewText.width)
+                        && (previewText.contentWidth > previewText.width)
                     text: preview
                     x: 0
                     y: previewHolder.height + 4

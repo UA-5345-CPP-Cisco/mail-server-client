@@ -27,11 +27,17 @@ class MigrationRunner
   std::filesystem::path m_migrations_path;
 
   void EnsureMigrationsTable();
+
   std::vector<Migration> LoadMigrations() const;
+
   void ApplyMigration(const Migration& migration);
+
   bool IsMigrationApplied(int version) const;
+
   void RecordMigration(const Migration& migration);
+
   std::string ReadMigration(const std::filesystem::path& path) const;
+
   int ParseVersion(const std::string& filename) const;
 };
 

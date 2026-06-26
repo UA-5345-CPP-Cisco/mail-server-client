@@ -7,38 +7,34 @@
 #include "headers/database/MailMessageRepository.h"
 #include "headers/database/MessageRecipientRepository.h"
 
-namespace ISXMail
-{
+namespace ISXMail {
 
 class MessageComposer : public QObject
 {
-	Q_OBJECT
+  Q_OBJECT
 
-public:
-	explicit MessageComposer(QObject* parent = nullptr);
+  public:
+  explicit MessageComposer(QObject* parent = nullptr);
 
-	Q_INVOKABLE bool SendMessage(
-		const QString& sender_name,
-		const QString& sender_email,
-		const QString& recipient_email,
-		const QString& subject,
-		const QString& body,
-		bool is_inbox = false
-	);
-	Q_INVOKABLE bool SaveDraft(
-		const QString& sender_name,
-		const QString& sender_email,
-		const QString& recipient_email,
-		const QString& subject,
-		const QString& body
-	);
+  Q_INVOKABLE bool SendMessage(const QString& sender_name,
+                               const QString& sender_email,
+                               const QString& recipient_email,
+                               const QString& subject,
+                               const QString& body,
+                               bool is_inbox = false);
 
-private:
-	Storage::Database m_database;
-	Storage::MailMessageRepository m_repository;
-	Storage::MessageRecipientRepository m_recipient_repository;
+  Q_INVOKABLE bool SaveDraft(const QString& sender_name,
+                             const QString& sender_email,
+                             const QString& recipient_email,
+                             const QString& subject,
+                             const QString& body);
 
-	void EnsureSchema();
+  private:
+  Storage::Database m_database;
+  Storage::MailMessageRepository m_repository;
+  Storage::MessageRecipientRepository m_recipient_repository;
+
+  void EnsureSchema();
 };
 
-}
+} // namespace ISXMail

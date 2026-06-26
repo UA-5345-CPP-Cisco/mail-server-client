@@ -2,8 +2,7 @@ import QtQuick
 import QtQuick.Effects
 import QtQuick.Shapes
 
-Rectangle
-{
+Rectangle {
     id: delegateRoot
     height: 72
     color: "transparent"
@@ -18,8 +17,7 @@ Rectangle
     required property bool isActive
     required property int index
 
-    Rectangle
-    {
+    Rectangle {
         id: buttonToSelectAccount
         x: 8
         y: 8
@@ -29,8 +27,7 @@ Rectangle
         color: delegateMouseArea.containsMouse ? "#f9fafb" : "transparent"
 
         // Аватарка
-        Rectangle
-        {
+        Rectangle {
             id: avatarContainer
             x: 12
             y: 10
@@ -40,22 +37,17 @@ Rectangle
             color: avatarUrl !== "" ? "transparent" : avatarColor
 
             // Зображення якщо є
-            Image
-            {
+            Image {
                 anchors.fill: parent
                 source: avatarUrl !== "" ? avatarUrl : ""
                 visible: avatarUrl !== ""
                 fillMode: Image.PreserveAspectCrop
                 layer.enabled: true
-                layer.effect: Component
-                {
-                    MultiEffect
-                    {
+                layer.effect: Component {
+                    MultiEffect {
                         maskEnabled: true
-                        maskSource: ShaderEffectSource
-                        {
-                            sourceItem: Rectangle
-                            {
+                        maskSource: ShaderEffectSource {
+                            sourceItem: Rectangle {
                                 width: avatarContainer.width
                                 height: avatarContainer.height
                                 radius: avatarContainer.radius
@@ -66,8 +58,7 @@ Rectangle
             }
 
             // Фоллбек — ініціал
-            Text
-            {
+            Text {
                 anchors.centerIn: parent
                 visible: avatarUrl === ""
                 text: avatarInitial
@@ -79,15 +70,13 @@ Rectangle
         }
 
         // Ім'я + email
-        Column
-        {
+        Column {
             x: 60
             y: 10
             width: parent.width - 88
             spacing: 0
 
-            Text
-            {
+            Text {
                 width: parent.width
                 height: 20
                 text: accountName
@@ -99,8 +88,7 @@ Rectangle
                 elide: Text.ElideRight
             }
 
-            Text
-            {
+            Text {
                 width: parent.width
                 height: 16
                 text: accountEmail
@@ -114,31 +102,29 @@ Rectangle
         }
 
         // Галочка активного акаунту
-        Shape
-        {
+        Shape {
             x: parent.width - 28
             y: 20
             width: 16
             height: 16
             visible: isActive
 
-            ShapePath
-            {
+            ShapePath {
                 fillColor: "transparent"
                 strokeColor: "#2b7fff"
                 strokeWidth: 1.33
-                PathSvg { path: "M 10.67 0 L 3.33 7.33 L 0 4" }
+                PathSvg {
+                    path: "M 10.67 0 L 3.33 7.33 L 0 4"
+                }
             }
         }
 
-        MouseArea
-        {
+        MouseArea {
             id: delegateMouseArea
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
-            onClicked:
-            {
+            onClicked: {
                 currentUser.authorize
                 (
                     accountName,

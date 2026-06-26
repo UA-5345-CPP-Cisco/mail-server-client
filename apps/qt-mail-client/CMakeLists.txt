@@ -17,14 +17,14 @@ qt_add_executable(appqtapptestmail
 target_include_directories(appqtapptestmail PRIVATE "include/sqlite3")
 
 file(GLOB ASSET_FILES "assets/*")
-foreach(asset_file ${ASSET_FILES})
-	get_filename_component(file_name ${asset_file} NAME)
-	set_source_files_properties(${asset_file} PROPERTIES QT_RESOURCE_ALIAS "assets/${file_name}")
-endforeach()
+foreach (asset_file ${ASSET_FILES})
+    get_filename_component(file_name ${asset_file} NAME)
+    set_source_files_properties(${asset_file} PROPERTIES QT_RESOURCE_ALIAS "assets/${file_name}")
+endforeach ()
 
 qt_add_qml_module(appqtapptestmail
-	URI qtapptestmail
-	QML_FILES
+        URI qtapptestmail
+        QML_FILES
         Main.qml
         screens/navigation/NavigationQML.qml
         screens/navigation/new_message/NewMessageQML.qml
@@ -41,9 +41,9 @@ qt_add_qml_module(appqtapptestmail
         screens/navigation/account/LoginQML.qml
         screens/navigation/account/AccountItem.qml
         screens/email_list/EmailToolTip.qml
-	RESOURCES
+        RESOURCES
         resources.qrc
-	SOURCES
+        SOURCES
         headers/database/Database.h
         headers/database/MailMessageRecord.h
         headers/database/MailMessageRepository.h
@@ -86,21 +86,21 @@ qt_add_qml_module(appqtapptestmail
 )
 
 set_target_properties(appqtapptestmail PROPERTIES
-	MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-	MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-	MACOSX_BUNDLE TRUE
-	WIN32_EXECUTABLE TRUE
+        MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+        MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+        MACOSX_BUNDLE TRUE
+        WIN32_EXECUTABLE TRUE
 )
 
 target_link_libraries(appqtapptestmail
-	PRIVATE
-		Qt6::Quick
-		Qt6::Sql
-		Qt6::QuickControls2
+        PRIVATE
+        Qt6::Quick
+        Qt6::Sql
+        Qt6::QuickControls2
 )
 
 install(TARGETS appqtapptestmail
-	BUNDLE DESTINATION .
-	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        BUNDLE DESTINATION .
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )

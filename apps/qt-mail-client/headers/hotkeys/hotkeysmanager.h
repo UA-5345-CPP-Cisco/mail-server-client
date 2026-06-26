@@ -1,7 +1,5 @@
 #pragma once
 
-
-namespace ISXHotkeysManager
-{
+namespace ISXHotkeysManager {
 
 }

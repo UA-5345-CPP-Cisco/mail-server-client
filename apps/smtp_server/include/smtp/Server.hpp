@@ -55,8 +55,11 @@ class SmtpServer
 
   private:
   void RouteEvent(SmtpEvent event);
+
   void ScheduleReadySessions();
+
   void RemoveClosedSessions();
+
   std::shared_ptr<SmtpSession> GetOrCreateSession(ConnectionId connectionId);
 
   ServerConfig config_;

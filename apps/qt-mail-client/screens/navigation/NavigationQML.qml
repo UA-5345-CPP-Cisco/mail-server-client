@@ -2,26 +2,28 @@ import QtQuick
 import QtQuick.Effects
 import QtQuick.Shapes
 import QtQuick.Controls
-Rectangle
-{
+
+Rectangle {
     id: navigationQML
 
     color: "#ffffff"
 
-    signal inboxClicked
-    signal starredClicked
-    signal sentClicked
-    signal draftClicked
+        signal
+    inboxClicked
+        signal
+    starredClicked
+        signal
+    sentClicked
+        signal
+    draftClicked
 
-    function avatarInitial(name)
-       {
-           var trimmedName = String(name).trim()
-           return trimmedName.length > 0 ? trimmedName.charAt(0).toUpperCase() : "?"
-       }
+    function avatarInitial(name) {
+        var trimmedName = String(name).trim()
+        return trimmedName.length > 0 ? trimmedName.charAt(0).toUpperCase() : "?"
+    }
 
     // Header
-    Rectangle
-    {
+    Rectangle {
         id: horizontal_border
         anchors.left: parent.left
         anchors.right: parent.right
@@ -31,8 +33,7 @@ Rectangle
         z: 10
 
         // Bottom border
-        Rectangle
-        {
+        Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
@@ -41,8 +42,7 @@ Rectangle
         }
 
         // Avatar
-        Rectangle
-        {
+        Rectangle {
             id: avatar
             x: 12
             y: 14
@@ -52,16 +52,14 @@ Rectangle
             radius: 16
             clip: true
 
-            Image
-            {
+            Image {
                 anchors.fill: parent
                 source: currentUser.avatarPath
                 visible: currentUser.avatarPath !== ""
                 cache: false
                 fillMode: Image.PreserveAspectCrop
             }
-            Text
-            {
+            Text {
                 anchors.centerIn: parent
                 visible: currentUser.avatarPath === ""
                 color: "#ffffff"
@@ -73,8 +71,7 @@ Rectangle
         }
 
         // Content
-        Rectangle
-        {
+        Rectangle {
             id: text_container
             anchors.left: avatar.right
             anchors.leftMargin: 8
@@ -84,8 +81,7 @@ Rectangle
             height: 36
             color: "transparent"
 
-            Rectangle
-            {
+            Rectangle {
                 id: name_holder
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -93,8 +89,7 @@ Rectangle
                 clip: true
                 color: "transparent"
 
-                Text
-                {
+                Text {
                     id: label_username
                     height: 20
                     width: parent.width
@@ -112,8 +107,7 @@ Rectangle
                 }
             }
 
-            Rectangle
-            {
+            Rectangle {
                 id: email_holder
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -122,8 +116,7 @@ Rectangle
                 clip: true
                 color: "transparent"
 
-                Text
-                {
+                Text {
                     id: label_email
                     height: 16
                     width: parent.width
@@ -143,16 +136,14 @@ Rectangle
         }
 
         // Wrapper for the Button and Loader
-        Item
-        {
+        Item {
             id: dropdown_wrapper
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             width: 48
 
-            Rectangle
-            {
+            Rectangle {
                 id: button_burger_pull_emails
                 anchors.centerIn: parent
                 height: 24
@@ -160,8 +151,7 @@ Rectangle
                 color: click_area_pull_emails.pressed ? "#ffdede" : "transparent"
                 radius: 4
 
-                Rectangle
-                {
+                Rectangle {
                     id: svg_icon_container
                     anchors.centerIn: parent
                     height: 16
@@ -170,17 +160,14 @@ Rectangle
                     color: "transparent"
                     scale: click_area_pull_emails.hovered ? 1.5 : 1.0
 
-                    Behavior on scale
-                    {
-                        NumberAnimation
-                        {
+                    Behavior on scale {
+                        NumberAnimation {
                             duration: 150
                             easing.type: Easing.InOutQuad
                         }
                     }
 
-                    Image
-                    {
+                    Image {
                         source: "qrc:/pngs/assets/ic_arrow_down.svg"
                         width: 18
                         height: 18
@@ -191,22 +178,16 @@ Rectangle
                     }
                 }
 
-                HoverHandler
-                {
+                HoverHandler {
                     id: click_area_pull_emails
                     cursorShape: Qt.PointingHandCursor
                 }
 
-                TapHandler
-                {
-                    onTapped:
-                    {
-                        if (String(account_change_loader.source) === "")
-                        {
+                TapHandler {
+                    onTapped: {
+                        if (String(account_change_loader.source) === "") {
                             account_change_loader.source = "account/SwitchAccountQML.qml"
-                        }
-                        else
-                        {
+                        } else {
                             account_change_loader.source = ""
                         }
                     }
@@ -215,8 +196,7 @@ Rectangle
         }
 
         // Loader for Account change popup
-        Loader
-        {
+        Loader {
             id: account_change_loader
             z: 999
             anchors.top: horizontal_border.bottom
@@ -230,15 +210,15 @@ Rectangle
             source: ""
             opacity: status === Loader.Ready ? 1 : 0
 
-            Behavior on opacity
-            {
-                NumberAnimation { duration: 200 }
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 200
+                }
             }
         }
     }
     // Compose button
-    Rectangle
-    {
+    Rectangle {
         id: container_1
 
         anchors.left: parent.left
@@ -248,8 +228,7 @@ Rectangle
         height: 76
         color: "transparent"
 
-        Rectangle
-        {
+        Rectangle {
             id: buttonToComposeEmail
 
             anchors.left: parent.left
@@ -262,40 +241,31 @@ Rectangle
             color: hoverHandlerComposeEmails.hovered ? "#0c43f7" : "#155dfc"
             radius: 10
 
-            HoverHandler
-            {
+            HoverHandler {
                 id: hoverHandlerComposeEmails
                 cursorShape: Qt.PointingHandCursor
             }
 
-                TapHandler
-                {
-                    onTapped:
-                    {
-                        if (newMessageLoader.selectedItem !== null)
-                        {
-                            newMessageLoader.selectedItem = null
+            TapHandler {
+                onTapped: {
+                    if (newMessageLoader.selectedItem !== null) {
+                        newMessageLoader.selectedItem = null
 
-                            newMessageLoader.active = false
-                            newMessageLoader.active = true
-                            newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml"
-                        }
-                        else if (String(newMessageLoader.source) === "")
-                        {
-                            newMessageLoader.selectedItem = null
-                            newMessageLoader.active = true
-                            newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml"
-                        }
-                        else
-                        {
-                            newMessageLoader.source = ""
-                            newMessageLoader.active = false
-                        }
+                        newMessageLoader.active = false
+                        newMessageLoader.active = true
+                        newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml"
+                    } else if (String(newMessageLoader.source) === "") {
+                        newMessageLoader.selectedItem = null
+                        newMessageLoader.active = true
+                        newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml"
+                    } else {
+                        newMessageLoader.source = ""
+                        newMessageLoader.active = false
                     }
                 }
+            }
 
-            Rectangle
-            {
+            Rectangle {
                 id: sVG_1
 
                 x: 16
@@ -305,8 +275,7 @@ Rectangle
                 clip: true
                 color: "transparent"
 
-                Image
-                {
+                Image {
                     source: "qrc:/pngs/assets/ic_compose.svg"
                     width: 18
                     height: 18
@@ -317,8 +286,7 @@ Rectangle
                 }
             }
 
-            Text
-            {
+            Text {
                 id: compose
 
                 x: 42
@@ -342,8 +310,7 @@ Rectangle
     }
 
     // Navigation
-    Rectangle
-    {
+    Rectangle {
         id: nav
 
         anchors.left: parent.left
@@ -354,8 +321,7 @@ Rectangle
         color: "transparent"
 
         // Inbox button
-        Rectangle
-        {
+        Rectangle {
             id: buttonToOpenInbox
 
             anchors.left: parent.left
@@ -368,31 +334,26 @@ Rectangle
 
             color: isInboxSelected ? "#dbdbdb" : (hoverHandlerInboxButton.hovered ? "#f3f4f6" : "#ffffff")
 
-            HoverHandler
-            {
+            HoverHandler {
                 id: hoverHandlerInboxButton
                 cursorShape: Qt.PointingHandCursor
             }
 
-            TapHandler
-            {
-                onTapped:
-                {
+            TapHandler {
+                onTapped: {
                     window.selectedFolder = "inbox"
                     inboxClicked()
                 }
             }
 
             // TEMP ICON
-            Rectangle
-            {
+            Rectangle {
                 id: sVG_2
                 x: 12; y: 11
                 height: 18; width: 18
                 clip: true; color: "transparent"
 
-                Image
-                {
+                Image {
                     source: "qrc:/pngs/assets/ic_inbox.svg"
                     width: 18
                     height: 18
@@ -403,16 +364,14 @@ Rectangle
                 }
             }
 
-            Rectangle
-            {
+            Rectangle {
                 id: container_2
                 x: 42; y: 8
                 height: 24
 
                 color: "transparent"
 
-                Text
-                {
+                Text {
                     id: inbox
                     height: 24; width: parent.width
                     color: "#101828"
@@ -424,8 +383,7 @@ Rectangle
                 }
             }
 
-            Rectangle
-            {
+            Rectangle {
                 id: amountOfInboxHolder
                 anchors.right: parent.right
                 anchors.rightMargin: 12
@@ -433,8 +391,7 @@ Rectangle
                 height: 16; width: 20
                 color: "transparent"
 
-                Text
-                {
+                Text {
                     id: element
                     height: 16; width: parent.width
                     color: "#6a7282"
@@ -452,8 +409,7 @@ Rectangle
         }
 
         // Sent button
-        Rectangle
-        {
+        Rectangle {
             id: buttonToOpenSent
 
             anchors.left: parent.left
@@ -468,31 +424,26 @@ Rectangle
             height: 40
             radius: 10
 
-            HoverHandler
-            {
+            HoverHandler {
                 id: hoverHandlerSentButton
                 cursorShape: Qt.PointingHandCursor
             }
 
-            TapHandler
-            {
-                onTapped:
-                {
+            TapHandler {
+                onTapped: {
                     window.selectedFolder = "sent"
                     sentClicked()
                 }
             }
 
             // TEMP ICON
-            Rectangle
-            {
+            Rectangle {
                 id: sVG_4
                 x: 12; y: 11
                 height: 18; width: 18
                 clip: true; color: "transparent"
 
-                Image
-                {
+                Image {
                     source: "qrc:/pngs/assets/ic_sent.svg"
                     width: 18
                     height: 18
@@ -503,15 +454,13 @@ Rectangle
                 }
             }
 
-            Rectangle
-            {
+            Rectangle {
                 id: container_4
                 x: 42; y: 8
                 height: 24
                 color: "transparent"
 
-                Text
-                {
+                Text {
                     id: sent
                     height: 24; width: parent.width
                     color: "#4a5565"
@@ -527,8 +476,7 @@ Rectangle
                 }
             }
 
-            Rectangle
-            {
+            Rectangle {
                 id: amountOfSentHolder
                 anchors.right: parent.right
                 anchors.rightMargin: 12
@@ -536,8 +484,7 @@ Rectangle
                 height: 16; width: 20
                 color: "transparent"
 
-                Text
-                {
+                Text {
                     id: element_2
                     height: 16; width: parent.width
                     color: "#6a7282"
@@ -555,8 +502,7 @@ Rectangle
         }
 
         // Starred button
-        Rectangle
-        {
+        Rectangle {
             id: buttonToOpenStarred
 
             anchors.left: parent.left
@@ -572,31 +518,26 @@ Rectangle
             height: 40
             radius: 10
 
-            HoverHandler
-            {
+            HoverHandler {
                 id: hoverHandlerStarredButton
                 cursorShape: Qt.PointingHandCursor
             }
 
-            TapHandler
-            {
-                onTapped:
-                {
+            TapHandler {
+                onTapped: {
                     window.selectedFolder = "starred"
                     starredClicked()
                 }
             }
 
             // TEMP ICON
-            Rectangle
-            {
+            Rectangle {
                 id: sVG_3
                 x: 12; y: 11
                 height: 18; width: 18
                 clip: true; color: "transparent"
 
-                Image
-                {
+                Image {
                     source: "qrc:/pngs/assets/ic_star.svg"
                     width: 18
                     height: 18
@@ -607,15 +548,13 @@ Rectangle
                 }
             }
 
-            Rectangle
-            {
+            Rectangle {
                 id: container_3
                 x: 42; y: 8
                 height: 24
                 color: "transparent"
 
-                Text
-                {
+                Text {
                     id: starred
                     height: 24; width: parent.width
                     color: "#4a5565"
@@ -627,8 +566,7 @@ Rectangle
                 }
             }
 
-            Rectangle
-            {
+            Rectangle {
                 id: amountOfStarredHolder
                 anchors.right: parent.right
                 anchors.rightMargin: 12
@@ -636,8 +574,7 @@ Rectangle
                 height: 16; width: 20
                 color: "transparent"
 
-                Text
-                {
+                Text {
                     id: element_1
                     height: 16; width: parent.width
                     color: "#6a7282"
@@ -655,8 +592,7 @@ Rectangle
         }
 
         // Drafts button
-        Rectangle
-        {
+        Rectangle {
             id: buttonToOpenDrafts
 
             anchors.left: parent.left
@@ -671,16 +607,13 @@ Rectangle
             height: 40
             radius: 10
 
-            HoverHandler
-            {
+            HoverHandler {
                 id: hoverHandlerDraftsButton
                 cursorShape: Qt.PointingHandCursor
             }
 
-            TapHandler
-            {
-                onTapped:
-                {
+            TapHandler {
+                onTapped: {
                     window.selectedFolder = "drafts"
                     draftClicked()
                 }
@@ -692,8 +625,7 @@ Rectangle
                 x: 12; y: 11
                 height: 18; width: 18
                 clip: true; color: "transparent"
-                Image
-                {
+                Image {
                     source: "qrc:/pngs/assets/ic_drafts.svg"
                     width: 18
                     height: 18
@@ -704,15 +636,13 @@ Rectangle
                 }
             }
 
-            Rectangle
-            {
+            Rectangle {
                 id: container_5
                 x: 42; y: 8
                 height: 24
                 color: "transparent"
 
-                Text
-                {
+                Text {
                     id: drafts
                     height: 24; width: parent.width
                     color: "#4a5565"
@@ -724,8 +654,7 @@ Rectangle
                 }
             }
 
-            Rectangle
-            {
+            Rectangle {
                 id: amountOfDraftsHolder
                 anchors.right: parent.right
                 anchors.rightMargin: 12
@@ -733,8 +662,7 @@ Rectangle
                 height: 16; width: 20
                 color: "transparent"
 
-                Text
-                {
+                Text {
                     id: element_3
                     height: 16; width: parent.width
                     color: "#6a7282"
@@ -751,8 +679,7 @@ Rectangle
     }
 
     // Footer: Settings button
-    Rectangle
-    {
+    Rectangle {
         id: footer
 
         anchors.left: parent.left
@@ -762,8 +689,7 @@ Rectangle
         height: 60
         color: clickAreaSettings.hovered ? "#dbdbdb" : "#ffffff"
         // Top border
-        Rectangle
-        {
+        Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
@@ -772,8 +698,7 @@ Rectangle
         }
 
         // Settings button
-        Rectangle
-        {
+        Rectangle {
             id: buttonToOpenSettings
 
             anchors.left: parent.left
@@ -787,29 +712,23 @@ Rectangle
 
             radius: 10
 
-            HoverHandler
-            {
+            HoverHandler {
                 id: clickAreaSettings
                 cursorShape: Qt.PointingHandCursor
             }
 
-            TapHandler
-            {
-                onTapped:
-                {
+            TapHandler {
+                onTapped: {
                     settingsLoader.active = true
-                    if (String( settingsLoader.source) === "")
-                    {
-                         settingsLoader.source = "screens/navigation/settings/SettingsQML.qml"
-                    } else
-                    {
-                         settingsLoader.source = ""
+                    if (String(settingsLoader.source) === "") {
+                        settingsLoader.source = "screens/navigation/settings/SettingsQML.qml"
+                    } else {
+                        settingsLoader.source = ""
                     }
                 }
             }
 
-            Text
-            {
+            Text {
                 id: settings
                 height: 20
                 color: "#4a5565"
@@ -827,8 +746,7 @@ Rectangle
                 verticalAlignment: Text.AlignVCenter
 
                 // TEMP ICON
-                Rectangle
-                {
+                Rectangle {
                     id: sVG_6
                     y: 2
                     height: 16; width: 16
@@ -836,18 +754,15 @@ Rectangle
                     anchors.right: parent.left
                     anchors.rightMargin: 5
                     rotation: clickAreaSettings.hovered ? 180 : 0
-                    Behavior on rotation
-                    {
-                        RotationAnimation
-                        {
+                    Behavior on rotation {
+                        RotationAnimation {
                             duration: 500
                             direction: RotationAnimation.Clockwise
                             easing.type: Easing.InOutQuad
                         }
                     }
 
-                    Image
-                    {
+                    Image {
                         source: "qrc:/pngs/assets/ic_settings.svg"
                         width: 16
                         height: 16

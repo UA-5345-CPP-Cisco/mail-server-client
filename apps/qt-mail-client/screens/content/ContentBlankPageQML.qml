@@ -3,11 +3,11 @@ import QtQuick.Shapes
 
 Rectangle {
     id: contentBlankPageQML
-    anchors.top:parent.top
-    anchors.right:parent.right
-    anchors.bottom:parent.bottom
-    width:400
-    height:400
+    anchors.top: parent.top
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    width: 400
+    height: 400
     clip: true
     color: "#ffffff"
 
@@ -34,7 +34,7 @@ Rectangle {
                 color: "transparent"
                 anchors.centerIn: parent
 
-                 // TEMP ICON
+                // TEMP ICON
                 Rectangle {
                     id: sVG
 
@@ -47,8 +47,7 @@ Rectangle {
                     color: "transparent"
                     opacity: 0.30
 
-                    Image
-                    {
+                    Image {
                         source: "qrc:/pngs/assets/ic_select_email.svg"
                         width: 48
                         height: 48
@@ -58,8 +57,7 @@ Rectangle {
                         anchors.centerIn: parent
                     }
                 }
-                Rectangle
-                {
+                Rectangle {
                     id: container_2
 
                     y: 60
@@ -69,8 +67,7 @@ Rectangle {
 
                     color: "transparent"
 
-                    Text
-                    {
+                    Text {
                         id: select_an_email_to_read
 
                         height: 20

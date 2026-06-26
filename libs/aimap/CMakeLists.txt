@@ -24,16 +24,16 @@ target_compile_features(mail_aimap
         cxx_std_17
 )
 
-if(MSVC)
+if (MSVC)
     target_compile_options(mail_aimap PRIVATE /W4)
 
-    if(MAIL_WARNINGS_AS_ERRORS)
+    if (MAIL_WARNINGS_AS_ERRORS)
         target_compile_options(mail_aimap PRIVATE /WX)
-    endif()
-else()
+    endif ()
+else ()
     target_compile_options(mail_aimap PRIVATE -Wall -Wextra -Wpedantic)
 
-    if(MAIL_WARNINGS_AS_ERRORS)
+    if (MAIL_WARNINGS_AS_ERRORS)
         target_compile_options(mail_aimap PRIVATE -Werror)
-    endif()
-endif()
+    endif ()
+endif ()

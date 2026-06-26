@@ -3,18 +3,19 @@
 #include <filesystem>
 #include <string>
 
-namespace ISXDatabaseManager
-{
+namespace ISXDatabaseManager {
 
 class DatabaseManager
 {
-public:
-	static void EnsureInitialized();
-	static std::filesystem::path DatabasePath();
-	static std::filesystem::path MigrationsPath();
+  public:
+  static void EnsureInitialized();
 
-private:
-	static std::filesystem::path ResolveAppDataDirectory();
+  static std::filesystem::path DatabasePath();
+
+  static std::filesystem::path MigrationsPath();
+
+  private:
+  static std::filesystem::path ResolveAppDataDirectory();
 };
 
-}
+} // namespace ISXDatabaseManager

@@ -1,5 +1,4 @@
 #pragma once
-namespace ISXAvatarImageGenerator
-{
+namespace ISXAvatarImageGenerator {
 
 }

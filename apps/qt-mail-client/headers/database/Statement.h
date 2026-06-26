@@ -8,46 +8,54 @@
 
 #include "Database.h"
 
-namespace Storage
-{
+namespace Storage {
 
 class Statement
 {
-public:
-	Statement(Database& database, const std::string& sql);
-	~Statement() = default;
+  public:
+  Statement(Database& database, const std::string& sql);
 
-	Statement(const Statement&) = delete;
-	Statement& operator=(const Statement&) = delete;
+  ~Statement() = default;
 
-	Statement(Statement&&) noexcept = default;
-	Statement& operator=(Statement&&) noexcept = default;
+  Statement(const Statement&) = delete;
 
-	void BindInt(int index, int value);
-	void BindInt64(int index, std::int64_t value);
-	void BindText(int index, const std::string& value);
-	void BindNull(int index);
+  Statement& operator=(const Statement&) = delete;
 
-	bool Step();
+  Statement(Statement&&) noexcept = default;
 
-	std::int64_t ColumnInt64(int index) const;
-	std::string ColumnText(int index) const;
-	bool ColumnIsNull(int index) const;
+  Statement& operator=(Statement&&) noexcept = default;
 
-	std::int64_t LastInsertRowId() const;
-	int ChangedRowCount() const;
+  void BindInt(int index, int value);
 
-private:
-	struct StatementDeleter
-	{
-		void operator()(sqlite3_stmt* statement) const noexcept;
-	};
+  void BindInt64(int index, std::int64_t value);
 
-	using StatementPtr = std::unique_ptr<sqlite3_stmt, StatementDeleter>;
+  void BindText(int index, const std::string& value);
 
-	StatementPtr m_statement;
+  void BindNull(int index);
 
-	void ThrowError(const std::string& message) const;
+  bool Step();
+
+  std::int64_t ColumnInt64(int index) const;
+
+  std::string ColumnText(int index) const;
+
+  bool ColumnIsNull(int index) const;
+
+  std::int64_t LastInsertRowId() const;
+
+  int ChangedRowCount() const;
+
+  private:
+  struct StatementDeleter
+  {
+    void operator()(sqlite3_stmt* statement) const noexcept;
+  };
+
+  using StatementPtr = std::unique_ptr<sqlite3_stmt, StatementDeleter>;
+
+  StatementPtr m_statement;
+
+  void ThrowError(const std::string& message) const;
 };
 
-}
+} // namespace Storage

@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Shapes
 
 
-
 Rectangle {
     id: settingsQML
 
@@ -68,16 +67,14 @@ Rectangle {
             clip: true
             color: "transparent"
 
-            MouseArea
-            {
+            MouseArea {
                 id: clickAreaCloseSettingsWindow
                 anchors.fill: parent
 
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
 
-                onClicked:
-                {
+                onClicked: {
                     closeGeneralSettingsWindow()
                 }
             }
@@ -112,7 +109,8 @@ Rectangle {
                         path: "M 6 0 L 0 4.5 L 6 9"
                     }
                 }
-            }}
+            }
+        }
     }
 
     Rectangle {

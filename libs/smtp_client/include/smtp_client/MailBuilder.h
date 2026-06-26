@@ -17,8 +17,11 @@ class MailBuilder
 {
   public:
   MailBuilder& AddRecipients(const std::vector<std::string>& recipients);
+
   MailBuilder& SetSender(const std::string& sender);
+
   MailBuilder& SetSubject(const std::string& subject);
+
   MailBuilder& SetBody(const std::string& body);
 
   Mail Build();

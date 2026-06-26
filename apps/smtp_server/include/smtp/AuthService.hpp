@@ -31,9 +31,11 @@ class AuthService final : public IAuthService
 {
   public:
   AuthService() = default;
+
   explicit AuthService(std::unordered_map<std::string, std::string> users);
 
   void AddUser(std::string username, std::string secret);
+
   AuthResult Authenticate(const AuthRequest& request) override;
 
   private:

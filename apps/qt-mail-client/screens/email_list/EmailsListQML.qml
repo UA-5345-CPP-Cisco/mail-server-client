@@ -2,13 +2,13 @@ import QtQuick
 import QtQuick.Shapes
 import QtQuick.Controls
 
-Rectangle
-{
+Rectangle {
     id: emailsListQML
     color: "#ffffff"
 
     property bool isDraftMode: false
     property var sourceModel: inboxModel
+
     signal emailOpenRequested(int index, string theme, string name, string sendTo, string content, string time, bool starred)
 
     function activeSearchModel() {
@@ -42,19 +42,18 @@ Rectangle
             sendTo: parent.pSendTo
             time: parent.pTime
             searchModel: parent.pSearchModel
-            onOpenRequested: function(theme, name, sendTo, content, time) {
+            onOpenRequested: function (theme, name, sendTo, content, time) {
                 emailsListQML.emailOpenRequested(parent.pIndex, theme, name, sendTo, content, time, false)
             }
-            onClicked:
-            {
+            onClicked: {
                 newMessageLoader.selectedItem =
-                {
-                    "index": parent.pIndex,
-                    "subject": theme,
-                    "sendTo": sendTo,
-                    "content": content,
-                    "isDraft": true
-                }
+                    {
+                        "index": parent.pIndex,
+                        "subject": theme,
+                        "sendTo": sendTo,
+                        "content": content,
+                        "isDraft": true
+                    }
 
                 newMessageLoader.source = ""
                 newMessageLoader.active = false
@@ -62,20 +61,17 @@ Rectangle
                 newMessageLoader.active = true
                 newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml"
             }
-            onDeleteClicked:
-            {
+            onDeleteClicked: {
                 if (sourceModel)
                     sourceModel.removeEmailData(parent.pIndex)
             }
         }
     }
 
-    Component
-    {
+    Component {
         id: emailsDelegate
 
-        ListItem
-        {
+        ListItem {
             width: parent.width
 
             theme: parent.pTheme
@@ -86,15 +82,13 @@ Rectangle
             time: format_email_time(parent.pTime)
             starred: parent.pStarred
             searchModel: parent.pSearchModel
-            onOpenRequested: function(theme, name, sendTo, content, time, starred) {
+            onOpenRequested: function (theme, name, sendTo, content, time, starred) {
                 emailsListQML.emailOpenRequested(parent.pIndex, theme, name, sendTo, content, parent.pTime, starred)
             }
-            onStarredClicked:
-            {
+            onStarredClicked: {
                 sourceModel.setStarred(parent.pIndex, starred)
             }
-            onDeleteClicked:
-            {
+            onDeleteClicked: {
                 if (sourceModel)
                     sourceModel.removeEmailData(parent.pIndex)
             }
@@ -102,8 +96,7 @@ Rectangle
     }
 
     // Right border (handle of SplitView)
-    Rectangle
-    {
+    Rectangle {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.right: parent.right
@@ -113,20 +106,18 @@ Rectangle
     }
 
     // Left border
-    Rectangle
-    {
+    Rectangle {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         width: 1
         color: "#e5e7eb"
-        z:1
+        z: 1
     }
 
 
     // Search section
-    Rectangle
-    {
+    Rectangle {
         id: searchSection
 
         anchors.left: parent.left
@@ -136,12 +127,10 @@ Rectangle
         height: 70
         color: "#ffffff"
 
-        Rectangle
-        {
+        Rectangle {
             id: searchLine
 
-            anchors
-            {
+            anchors {
                 top: parent.top
                 left: parent.left
                 right: parent.right
@@ -152,8 +141,7 @@ Rectangle
             color: "transparent"
 
             // Search line
-            Rectangle
-            {
+            Rectangle {
                 id: input
 
                 anchors.left: parent.left
@@ -166,15 +154,13 @@ Rectangle
                 color: "#ffffff"
                 radius: 10
 
-                Item
-                {
+                Item {
                     id: searchIconArea
                     x: 12
                     y: 11
                     width: 16
                     height: 16
-                    Image
-                    {
+                    Image {
                         source: "qrc:/pngs/assets/ic_search.svg"
                         width: 15
                         height: 15
@@ -186,9 +172,8 @@ Rectangle
                 }
 
                 // PlaceHolder
-                Rectangle
-                {
-		    id: search_container
+                Rectangle {
+                    id: search_container
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
@@ -198,8 +183,7 @@ Rectangle
                     clip: true
                     color: "transparent"
 
-                    TextField
-                    {
+                    TextField {
                         id: search_input
                         anchors.fill: parent
                         color: "#1f2937"
@@ -216,14 +200,16 @@ Rectangle
                                 searchProxy.searchedText = text
                         }
 
-                        background: Rectangle { color: "transparent" }
+                        background: Rectangle {
+                            color: "transparent"
+                        }
 
                         leftPadding: 0
                         topPadding: 0
                         bottomPadding: 0
-                        cursorDelegate: Item {}
-                        Rectangle
-                        {
+                        cursorDelegate: Item {
+                        }
+                        Rectangle {
                             id: custom_cursor_for_search_container
                             width: 1
                             color: "#1f2937"
@@ -233,21 +219,22 @@ Rectangle
                             visible: parent.activeFocus
 
                             // Smooth right/left movement
-                            Behavior on x
-                            {
-                                NumberAnimation
-                                {
+                            Behavior on x {
+                                NumberAnimation {
                                     duration: 80
                                     easing.type: Easing.OutCubic
                                 }
                             }
 
                             // Smooth flashing
-                            SequentialAnimation on opacity
-                            {
+                            SequentialAnimation on opacity {
                                 loops: Animation.Infinite
-                                NumberAnimation { to: 0; duration: 500; easing.type: Easing.InOutSine }
-                                NumberAnimation { to: 1; duration: 500; easing.type: Easing.InOutSine }
+                                NumberAnimation {
+                                    to: 0; duration: 500; easing.type: Easing.InOutSine
+                                }
+                                NumberAnimation {
+                                    to: 1; duration: 500; easing.type: Easing.InOutSine
+                                }
                             }
                         }
                     }
@@ -257,11 +244,10 @@ Rectangle
     }
 
     // Inbox Separator
-    Rectangle
-    {
+    Rectangle {
         id: separator
 
-        anchors.top:searchSection.bottom
+        anchors.top: searchSection.bottom
         anchors.leftMargin: 0
         anchors.rightMargin: 0
         anchors.topMargin: 0
@@ -272,8 +258,7 @@ Rectangle
         color: "#f9fafb"
 
         // Top border
-        Rectangle
-        {
+        Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
@@ -282,8 +267,7 @@ Rectangle
         }
 
         // Bottom border
-        Rectangle
-        {
+        Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
@@ -291,11 +275,9 @@ Rectangle
             color: "#e5e7eb"
         }
 
-        Rectangle
-        {
+        Rectangle {
             id: heading_3
-            anchors
-            {
+            anchors {
                 left: parent.left
                 right: parent.right
                 top: parent.top
@@ -305,8 +287,7 @@ Rectangle
             color: "transparent"
 
             // Inbox and page label
-            Rectangle
-            {
+            Rectangle {
                 id: frame_3
                 y: -8
                 height: 18
@@ -316,8 +297,7 @@ Rectangle
                 anchors.rightMargin: 0
                 color: "transparent"
 
-                Text
-                {
+                Text {
                     id: inbox
                     height: 16
                     color: "#6a7282"
@@ -334,8 +314,7 @@ Rectangle
                     verticalAlignment: Text.AlignVCenter
                 }
 
-                Text
-                {
+                Text {
                     id: amount
                     anchors.right: parent.right
                     y: 1
@@ -356,8 +335,7 @@ Rectangle
             }
 
             // Navigation buttons
-            Item
-            {
+            Item {
                 id: navButtons
                 x: 564
                 y: -8
@@ -367,8 +345,7 @@ Rectangle
                 height: 18
 
                 // Button back
-                Rectangle
-                {
+                Rectangle {
                     id: button_margin
                     anchors.left: parent.left
                     width: 15
@@ -376,30 +353,25 @@ Rectangle
                     color: "transparent"
                     scale: clickAreaMoveBack.containsMouse ? 1.3 : 1.0
 
-                    Behavior on scale
-                    {
-                        NumberAnimation
-                        {
+                    Behavior on scale {
+                        NumberAnimation {
                             duration: 150
                             easing.type: Easing.InOutQuad
                         }
                     }
-                    MouseArea
-                    {
+                    MouseArea {
                         id: clickAreaMoveBack
                         anchors.fill: parent
 
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
 
-                        onClicked:
-                        {
-                                    if (listView.model)
-                                        listView.model.prevPage()
+                        onClicked: {
+                            if (listView.model)
+                                listView.model.prevPage()
                         }
                     }
-                    Rectangle
-                    {
+                    Rectangle {
                         id: buttonToMoveBack
                         y: 2
                         height: 15
@@ -407,8 +379,7 @@ Rectangle
                         clip: true
                         color: "transparent"
 
-                        Image
-                        {
+                        Image {
                             source: "qrc:/pngs/assets/ic_button_back.svg"
                             width: 15
                             height: 15
@@ -421,8 +392,7 @@ Rectangle
                 }
 
                 // Button forward
-                Rectangle
-                {
+                Rectangle {
                     id: button_margin_1
                     anchors.right: parent.right
                     width: 15
@@ -442,17 +412,14 @@ Rectangle
                         }
                     }
 
-                    Behavior on scale
-                    {
-                        NumberAnimation
-                        {
+                    Behavior on scale {
+                        NumberAnimation {
                             duration: 150
                             easing.type: Easing.InOutQuad
                         }
                     }
 
-                    Rectangle
-                    {
+                    Rectangle {
                         id: buttonToMoveForward
                         y: 2
                         height: 15
@@ -460,8 +427,7 @@ Rectangle
                         clip: true
                         color: "transparent"
 
-                        Image
-                        {
+                        Image {
                             source: "qrc:/pngs/assets/ic_button_forward.svg"
                             width: 15
                             height: 15
@@ -481,20 +447,17 @@ Rectangle
     }
 
     //Emails model conector
-    ListView
-    {
+    ListView {
         id: listView
         clip: true
-        anchors
-        {
+        anchors {
             top: separator.bottom;
             right: parent.right;
             left: parent.left;
             bottom: parent.bottom;
         }
         model: sourceModel
-        delegate: Loader
-        {
+        delegate: Loader {
             width: listView.width
             property string pTheme: emailsTheme
             property string pName: emailsName
@@ -506,8 +469,8 @@ Rectangle
             property var pSearchModel: emailsListQML.activeSearchModel()
             property int pIndex: index
             sourceComponent: isDraftMode
-                             ? draftDelegate
-                             : emailsDelegate
+                ? draftDelegate
+                : emailsDelegate
         }
 
         ScrollBar.vertical: ScrollBar {

@@ -8,6 +8,7 @@ Item {
     implicitHeight: 350
 
     signal backRequested()
+
     signal loginSubmitted(string email, string password)
 
     // Back button
@@ -20,8 +21,7 @@ Item {
         color: "transparent"
         z: 10
 
-        Image
-        {
+        Image {
             anchors.centerIn: parent
             source: "qrc:/pngs/assets/ic_button_back.svg"
 
@@ -34,13 +34,13 @@ Item {
 
         scale: backMouseArea.containsMouse ? 1.3 : 1.0
 
-        Behavior on scale
-        {
-            NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+        Behavior on scale {
+            NumberAnimation {
+                duration: 150; easing.type: Easing.InOutQuad
+            }
         }
 
-        MouseArea
-        {
+        MouseArea {
             id: backMouseArea
             anchors.fill: parent
             hoverEnabled: true
@@ -52,14 +52,12 @@ Item {
     }
 
     // Main content
-    Column
-    {
+    Column {
         anchors.centerIn: parent
         spacing: 20
         width: 320
 
-        Text
-        {
+        Text {
             text: "Register"
             font.family: "Segoe UI"
             font.pixelSize: 28
@@ -68,8 +66,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
-        Text
-        {
+        Text {
             text: "Please enter your details to create a new account"
             font.family: "Segoe UI"
             font.pixelSize: 14
@@ -79,8 +76,7 @@ Item {
         }
 
         // Full name
-        TextField
-        {
+        TextField {
             id: fullName
             width: parent.width
             placeholderText: "Full name"
@@ -92,8 +88,7 @@ Item {
             topPadding: 12
             bottomPadding: 12
 
-            background: Rectangle
-            {
+            background: Rectangle {
                 radius: 8
                 border.color: fullName.activeFocus ? "#1a66ff" : "#e5e7eb"
                 border.width: fullName.activeFocus ? 2 : 1
@@ -102,8 +97,7 @@ Item {
         }
 
         // Email
-        TextField
-        {
+        TextField {
             id: emailField
             width: parent.width
             placeholderText: "Email address"
@@ -115,8 +109,7 @@ Item {
             topPadding: 12
             bottomPadding: 12
 
-            background: Rectangle
-            {
+            background: Rectangle {
                 radius: 8
                 border.color: emailField.activeFocus ? "#1a66ff" : "#e5e7eb"
                 border.width: emailField.activeFocus ? 2 : 1
@@ -125,8 +118,7 @@ Item {
         }
 
         // Password
-        TextField
-        {
+        TextField {
             id: passwordField
             width: parent.width
             placeholderText: "Password"
@@ -139,8 +131,7 @@ Item {
             topPadding: 12
             bottomPadding: 12
 
-            background: Rectangle
-            {
+            background: Rectangle {
                 radius: 8
                 border.color: passwordField.activeFocus ? "#1a66ff" : "#e5e7eb"
                 border.width: passwordField.activeFocus ? 2 : 1
@@ -149,15 +140,13 @@ Item {
         }
 
         // Register button
-        Rectangle
-        {
+        Rectangle {
             width: parent.width
             height: 44
             radius: 8
             color: loginMouseArea.containsMouse ? "#0052cc" : "#1a66ff"
 
-            Text
-            {
+            Text {
                 anchors.centerIn: parent
                 text: "Register"
                 color: "#ffffff"
@@ -166,14 +155,12 @@ Item {
                 font.weight: Font.Bold
             }
 
-            MouseArea
-            {
+            MouseArea {
                 id: loginMouseArea
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onClicked:
-                {
+                onClicked: {
                     root.loginSubmitted(emailField.text, passwordField.text)
                 }
             }

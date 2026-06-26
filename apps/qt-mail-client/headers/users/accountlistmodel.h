@@ -1,66 +1,77 @@
 #ifndef ACCOUNTLISTMODEL_H
 #define ACCOUNTLISTMODEL_H
 #pragma once
-#include <QObject>
-#include <QAbstractListModel>
-#include <QString>
+
 #include <vector>
 
-namespace ISXMail
-{
+#include <QAbstractListModel>
+#include <QObject>
+#include <QString>
+
+namespace ISXMail {
 
 struct AccountData
 {
-    QString account_name;
-    QString account_email;
-    QString avatar_url;
-    QString avatar_color;
-    QString avatar_initial;
-    bool    is_active = false;
+  QString account_name;
+  QString account_email;
+  QString avatar_url;
+  QString avatar_color;
+  QString avatar_initial;
+  bool is_active = false;
 };
 
 enum AccountRole
 {
-    AccountNameRole = Qt::UserRole + 1,
-    AccountEmailRole,
-    AvatarUrlRole,
-    AvatarColorRole,
-    AvatarInitialRole,
-    IsActiveRole
+  AccountNameRole = Qt::UserRole + 1,
+  AccountEmailRole,
+  AvatarUrlRole,
+  AvatarColorRole,
+  AvatarInitialRole,
+  IsActiveRole
 };
 
 class AccountListModel : public QAbstractListModel
 {
-    Q_OBJECT
-    Q_ENUM(AccountRole)
+  Q_OBJECT
+  Q_ENUM(AccountRole)
 
-public:
-    explicit AccountListModel(QObject* parent = nullptr);
+  public:
+  explicit AccountListModel(QObject* parent = nullptr);
 
-    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex& index, int role) const override;
-    QHash<int, QByteArray> roleNames() const override;
+  int rowCount(const QModelIndex& parent = QModelIndex()) const override;
 
-    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
+  QVariant data(const QModelIndex& index, int role) const override;
 
-    void AddData(const AccountData& item);
-    Q_INVOKABLE void AddAccount(const QString& name, const QString& email,
-                                const QString& avatarUrl, const QString& avatarColor,
-                                const QString& avatarInitial, bool isActive = false);
+  QHash<int, QByteArray> roleNames() const override;
 
-    Q_INVOKABLE bool RemoveAccount(int row);
-    Q_INVOKABLE bool SetActiveAccount(int row);
-    Q_INVOKABLE int  ActiveAccountRow() const;
+  bool setData(const QModelIndex& index, const QVariant& value, int role) override;
 
-signals:
-    void accountAdded();
-    void activeAccountChanged(int row);
+  void AddData(const AccountData& item);
 
-private:
-    void LoadFromDatabase();
-    QString DefaultDatabasePath() const;
+  Q_INVOKABLE void AddAccount(const QString& name,
+                              const QString& email,
+                              const QString& avatarUrl,
+                              const QString& avatarColor,
+                              const QString& avatarInitial,
+                              bool isActive = false);
 
-    std::vector<AccountData> m_data;
+  Q_INVOKABLE bool RemoveAccount(int row);
+
+  Q_INVOKABLE bool SetActiveAccount(int row);
+
+  Q_INVOKABLE int ActiveAccountRow() const;
+
+  signals:
+  void accountAdded();
+
+  void activeAccountChanged(int row);
+
+  private:
+  void LoadFromDatabase();
+
+  QString DefaultDatabasePath() const;
+
+  std::vector<AccountData> m_data;
 };
 
 } // namespace ISXMail

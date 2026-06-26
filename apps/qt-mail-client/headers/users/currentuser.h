@@ -3,52 +3,63 @@
 #include <QObject>
 #include <QString>
 
-namespace ISXCurrentUser
-{
+namespace ISXCurrentUser {
 class CurrentUser : public QObject
 {
-    Q_OBJECT
+  Q_OBJECT
 
-    // PROPERTIES
-    Q_PROPERTY(bool isAuthorized READ is_authorized NOTIFY authorizationChanged)
-    Q_PROPERTY(QString username READ username NOTIFY profileChanged)
-    Q_PROPERTY(QString email READ email NOTIFY profileChanged)
-    Q_PROPERTY(QString avatarPath READ avatar_path NOTIFY profileChanged)
+  // PROPERTIES
+  Q_PROPERTY(bool isAuthorized READ is_authorized NOTIFY authorizationChanged)
 
-public:
-    // CONSTRUCTORS
-    CurrentUser(const CurrentUser&) = delete;
-    CurrentUser& operator=(const CurrentUser&) = delete;
+  Q_PROPERTY(QString username READ username NOTIFY profileChanged)
+  Q_PROPERTY(QString email READ email NOTIFY profileChanged)
+  Q_PROPERTY(QString avatarPath READ avatar_path NOTIFY profileChanged)
 
-    // METHODS
-    static CurrentUser& get_instance();
+  public:
+  // CONSTRUCTORS
+  CurrentUser(const CurrentUser&) = delete;
 
-    bool is_authorized() const;
-    QString username() const;
-    QString email() const;
-    QString avatar_path() const;
-    void save_avatar_to_sqlite(const QString& local_path);
-    void load_avatar_from_sqlite();
+  CurrentUser& operator=(const CurrentUser&) = delete;
 
-    Q_INVOKABLE void authorize(const QString& username, const QString& email, const QString& avatar_path = "");
-    Q_INVOKABLE void logout();
-    Q_INVOKABLE void update_avatar_path(const QString& new_path);
+  // METHODS
+  static CurrentUser& get_instance();
 
-signals:
-    // SIGNALS
-    void authorizationChanged();
-    void profileChanged();
+  bool is_authorized() const;
 
-private:
-    // CONSTRUCTORS
-    explicit CurrentUser(QObject* parent = nullptr);
-    ~CurrentUser() override = default;
+  QString username() const;
 
-    // DATA MEMBERS
-    bool m_is_authorized;
-    QString m_username;
-    QString m_email;
-    QString m_avatar_path;
+  QString email() const;
+
+  QString avatar_path() const;
+
+  void save_avatar_to_sqlite(const QString& local_path);
+
+  void load_avatar_from_sqlite();
+
+  Q_INVOKABLE void
+  authorize(const QString& username, const QString& email, const QString& avatar_path = "");
+
+  Q_INVOKABLE void logout();
+
+  Q_INVOKABLE void update_avatar_path(const QString& new_path);
+
+  signals:
+  // SIGNALS
+  void authorizationChanged();
+
+  void profileChanged();
+
+  private:
+  // CONSTRUCTORS
+  explicit CurrentUser(QObject* parent = nullptr);
+
+  ~CurrentUser() override = default;
+
+  // DATA MEMBERS
+  bool m_is_authorized;
+  QString m_username;
+  QString m_email;
+  QString m_avatar_path;
 };
 
-}
+} // namespace ISXCurrentUser

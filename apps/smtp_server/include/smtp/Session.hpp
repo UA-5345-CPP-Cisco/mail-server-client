@@ -82,13 +82,18 @@ class SmtpSessionHandler
   private:
   void
   HandleConnected(const SmtpEvent& event, SmtpSessionState& state, SmtpSessionContext& context);
+
   void HandleMessageReceived(const SmtpEvent& event,
                              SmtpSessionState& state,
                              SmtpSessionContext& context);
+
   void
   HandleDisconnected(const SmtpEvent& event, SmtpSessionState& state, SmtpSessionContext& context);
+
   std::int64_t StoreMessage(const SmtpSessionState& state, SmtpSessionContext& context);
+
   void ResetMailTransaction(SmtpSessionState& state);
+
   void SendReply(SmtpSessionContext& context,
                  ConnectionId connectionId,
                  int statusCode,
@@ -109,6 +114,7 @@ class SmtpSession : public std::enable_shared_from_this<SmtpSession>
 
   // Gives the thread pool at most one task for this session at a time.
   bool TryExtractNextTask(std::function<void()>& task);
+
   bool IsReadyForRemoval() const;
 
   private:

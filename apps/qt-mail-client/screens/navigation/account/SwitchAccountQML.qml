@@ -3,14 +3,11 @@ import QtQuick.Effects
 import QtQuick.Shapes
 
 // SwitchAccountQML.qml
-Rectangle
-{
+Rectangle {
     id: switchAccountQML
-    MouseArea
-    {
+    MouseArea {
         anchors.fill: parent
-        onClicked:
-        {
+        onClicked: {
             switchAccountQML.forceActiveFocus()
         }
     }
@@ -24,8 +21,7 @@ Rectangle
     radius: 14
 
     // Header
-    Rectangle
-    {
+    Rectangle {
         id: header
         anchors.top: parent.top
         anchors.left: parent.left
@@ -33,8 +29,7 @@ Rectangle
         height: 52
         color: "#00000000"
 
-        Text
-        {
+        Text {
             x: 16
             y: 16
             height: 20
@@ -46,8 +41,7 @@ Rectangle
             verticalAlignment: Text.AlignVCenter
         }
 
-        Rectangle
-        {
+        Rectangle {
             anchors.right: parent.right
             anchors.rightMargin: 16
             anchors.verticalCenter: parent.verticalCenter
@@ -55,8 +49,7 @@ Rectangle
             height: 16
             color: "transparent"
 
-            Image
-            {
+            Image {
                 anchors.centerIn: parent
                 source: "qrc:/pngs/assets/ic_close_window_black.svg"
                 width: 15
@@ -68,14 +61,14 @@ Rectangle
 
             scale: closeMouse.containsMouse ? 1.3 : 1.0
 
-            Behavior on scale
-            {
-                NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+            Behavior on scale {
+                NumberAnimation {
+                    duration: 150; easing.type: Easing.InOutQuad
+                }
             }
 
-            MouseArea
-            {
-                id:closeMouse
+            MouseArea {
+                id: closeMouse
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onClicked: switchAccountQML.parent.source = ""
@@ -84,8 +77,7 @@ Rectangle
     }
 
     // Розділювач після header
-    Rectangle
-    {
+    Rectangle {
         anchors.top: header.bottom
         anchors.left: parent.left
         anchors.right: parent.right
@@ -96,8 +88,7 @@ Rectangle
     }
 
     // Список акаунтів
-    ListView
-    {
+    ListView {
         id: accountList
 
         property int maxHeight: 214
@@ -112,12 +103,12 @@ Rectangle
 
         model: accountModel
 
-        delegate: AccountItem {}
+        delegate: AccountItem {
+        }
     }
 
     // Розділювач перед кнопкою
-    Rectangle
-    {
+    Rectangle {
         id: divider
         anchors.top: accountList.bottom
         anchors.left: parent.left
@@ -129,8 +120,7 @@ Rectangle
     }
 
     // Кнопка "Add account"
-    Rectangle
-    {
+    Rectangle {
         id: addButton
         anchors.top: divider.bottom
         anchors.left: parent.left
@@ -138,8 +128,7 @@ Rectangle
         height: 72
         color: "transparent"
 
-        Rectangle
-        {
+        Rectangle {
             x: 8
             y: 8
             width: parent.width - 16
@@ -148,8 +137,7 @@ Rectangle
             color: addMouseArea.containsMouse ? "#f9fafb" : "transparent"
 
             // Іконка аватарки з плюсом
-            Rectangle
-            {
+            Rectangle {
                 x: 12
                 y: 10
                 width: 36
@@ -160,8 +148,7 @@ Rectangle
                 border.width: 1
 
 
-                Image
-                {
+                Image {
                     source: "qrc:/pngs/assets/ic_plus.svg"
                     width: 12
                     height: 12
@@ -169,15 +156,15 @@ Rectangle
                     anchors.centerIn: parent
                     scale: addMouseArea.containsMouse ? 1.3 : 1.0
 
-                    Behavior on scale
-                    {
-                        NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+                    Behavior on scale {
+                        NumberAnimation {
+                            duration: 150; easing.type: Easing.InOutQuad
+                        }
                     }
                 }
             }
 
-            Text
-            {
+            Text {
                 x: 60
                 y: 18
                 height: 20
@@ -189,8 +176,7 @@ Rectangle
                 verticalAlignment: Text.AlignVCenter
             }
 
-            MouseArea
-            {
+            MouseArea {
                 id: addMouseArea
                 anchors.fill: parent
                 hoverEnabled: true
@@ -198,8 +184,7 @@ Rectangle
                 // onClicked: AccountController.startOAuth()
                 onClicked: loginPopup.open()
             }
-            AddAccountQML
-            {
+            AddAccountQML {
                 id: loginPopup
             }
         }
