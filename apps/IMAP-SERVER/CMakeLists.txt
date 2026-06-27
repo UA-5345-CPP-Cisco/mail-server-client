@@ -20,5 +20,5 @@ PRIVATE
 add_executable(mail_back_imap src/main.cpp)
 target_link_libraries(mail_back_imap PRIVATE imap_back_lib)
 
-
-
+add_executable(mail_test_client src/Client.cpp)
+target_include_directories(mail_test_client PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)

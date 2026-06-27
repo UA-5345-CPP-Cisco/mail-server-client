@@ -41,7 +41,7 @@ bool Client::SendCommand(const std::string &command)
     {
         return false;
     }
-    std::string formatted_command = command + "\r\n";
+    std::string formatted_command = command + "\n";
     ssize_t bytesSent = send(this->client_socket, formatted_command.c_str(), formatted_command.length(), 0);
     if (bytesSent < 0)
     {
@@ -76,7 +76,7 @@ void Client::Disconnect()
     }
 }
 
-void Example()
+int main()
 {
     try
     {
@@ -85,8 +85,9 @@ void Example()
         if (myClient.ConnectToServer())
         {
             std::cout << "[Success] Connected to the server!\n";
-            std::cout << "Sending command...\n";
-            myClient.SendCommand("LOGIN roman mypassword123");
+            std::string json_payload = R"({"action": "LOGIN", "email": "roman@mail.com", "password": "mypassword123"})";
+            std::cout << "Sending command: " << json_payload << "\n";
+            myClient.SendCommand(json_payload);
             std::string response = myClient.ReceiveResponse();
             std::cout << "[Server response]: " << response << "\n";
             myClient.Disconnect();
@@ -96,4 +97,5 @@ void Example()
     {
         std::cerr << "[Exception] " << e.what() << " (Error code: " << e.code() << ")\n";
     }
+    return 0;
 }
