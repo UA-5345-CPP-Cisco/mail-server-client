@@ -91,7 +91,7 @@ add_subdirectory(libs/aimap)
 # ──────────────────────────────────────────
 add_subdirectory(apps/smtp_server)
 add_subdirectory(apps/simple-client)
-
+add_subdirectory(apps/aimap_server)
 # ──────────────────────────────────────────
 # Tests
 # ──────────────────────────────────────────
