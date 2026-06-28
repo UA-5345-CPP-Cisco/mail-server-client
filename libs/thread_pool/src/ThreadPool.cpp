@@ -1,53 +1,93 @@
 #include "thread_pool/ThreadPool.h"
-// #include"ThreadPool.h"
-#include <iostream>
 
-void ThreadPool::ShutDown()
+#include <stdexcept>
+#include <utility>
+
+namespace Concurrency {
+
+ThreadPool::ThreadPool(std::size_t workerCount)
 {
+  if (workerCount == 0)
   {
-    std::lock_guard<std::mutex> lock_m(this->queue_mutex);
-    this->stop_pool = true;
+    workerCount = 1;
   }
-  this->cv.notify_all();
-  for (auto& i : workers)
+
+  workers_.reserve(workerCount);
+  for (std::size_t index = 0; index < workerCount; ++index)
   {
-    if (i.joinable())
-    {
-      i.join();
-    }
+    workers_.emplace_back(&ThreadPool::WorkerLoop, this);
   }
 }
 
 ThreadPool::~ThreadPool()
 {
-  this->ShutDown();
+  Stop();
 }
 
-void ThreadPool::Initialize(size_t threads_num)
+std::future<void> ThreadPool::Enqueue(std::function<void()> task)
 {
-  this->stop_pool = false;
-  this->workers.reserve(threads_num);
-  for (size_t i = 0; i < threads_num; i++)
+  auto packagedTask = std::make_shared<std::packaged_task<void()>>(std::move(task));
+  std::future<void> result = packagedTask->get_future();
+
+  AddTask([packagedTask] { (*packagedTask)(); });
+
+  return result;
+}
+
+void ThreadPool::AddTask(std::function<void()> task)
+{
   {
-    this->workers.emplace_back(&ThreadPool::WorkerLoop, this);
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (stopping_)
+    {
+      throw std::runtime_error("ThreadPool is stopping");
+    }
+
+    tasks_.push(std::move(task));
+  }
+
+  condition_.notify_one();
+}
+
+void ThreadPool::Stop()
+{
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    stopping_ = true;
+  }
+
+  condition_.notify_all();
+
+  for (std::thread& worker : workers_)
+  {
+    if (worker.joinable())
+    {
+      worker.join();
+    }
   }
 }
 
 void ThreadPool::WorkerLoop()
 {
-  while (true)
+  for (;;)
   {
     std::function<void()> task;
+
     {
-      std::unique_lock<std::mutex> unique_m(this->queue_mutex);
-      cv.wait(unique_m, [this] { return this->stop_pool || !this->queue.empty(); });
-      if (this->stop_pool && this->queue.empty())
+      std::unique_lock<std::mutex> lock(mutex_);
+      condition_.wait(lock, [this] { return stopping_ || !tasks_.empty(); });
+
+      if (stopping_ && tasks_.empty())
       {
         return;
       }
-      task = this->queue.front();
-      this->queue.pop();
+
+      task = std::move(tasks_.front());
+      tasks_.pop();
     }
+
     task();
   }
 }
+
+} // namespace Concurrency
