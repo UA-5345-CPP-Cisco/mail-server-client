@@ -15,7 +15,7 @@ target_link_libraries(mail_aimap
         mail_logger
         mail_thread_pool
         Threads::Threads
-        PRIVATE
+        #PRIVATE
         nlohmann_json::nlohmann_json
 )
 
