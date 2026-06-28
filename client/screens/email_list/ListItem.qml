@@ -222,7 +222,7 @@ Rectangle {
                         horizontalAlignment: Text.AlignLeft
                         lineHeight: 20
                         lineHeightMode: Text.FixedHeight
-                        text: searchModel ? searchModel.highlightAllFoundWords(
+                        text: searchModel ? searchModel.HighlightAllFoundWords(
                                                 name,
                                                 searchModel.searchedText) : name
                         textFormat: Text.RichText
@@ -288,7 +288,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 20
                     lineHeightMode: Text.FixedHeight
-                    text: searchModel ? searchModel.highlightAllFoundWords(
+                    text: searchModel ? searchModel.HighlightAllFoundWords(
                                             theme,
                                             searchModel.searchedText) : theme
                     textFormat: Text.RichText
@@ -331,7 +331,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: searchModel ? searchModel.highlightAllFoundWords(
+                    text: searchModel ? searchModel.HighlightAllFoundWords(
                                             preview,
                                             searchModel.searchedText) : preview
                     textFormat: Text.RichText
