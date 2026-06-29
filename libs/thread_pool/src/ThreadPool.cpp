@@ -1,7 +1,7 @@
+#include "thread_pool/ThreadPool.h"
+
 #include <stdexcept>
 #include <utility>
-
-#include "thread_pool/ThreadPool.h"
 
 namespace Concurrency {
 

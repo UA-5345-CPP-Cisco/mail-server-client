@@ -154,8 +154,7 @@ void Server::ProcessRequest(int client_fd, const std::string& raw_json)
 {
   std::string msg = "Start function for FD: " + std::to_string(client_fd);
   this->logger_thread.Enqueue(
-    [this, msg]()
-    { logger_.Log(Logging::LogLevel::Debug, "Server::ProcessRequest: " + msg); });
+    [this, msg]() { logger_.Log(Logging::LogLevel::Debug, "Server::ProcessRequest: " + msg); });
   try
   {
     json request = json::parse(raw_json);

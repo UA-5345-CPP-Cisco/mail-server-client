@@ -92,8 +92,8 @@ class Server
   void HandleQuit(int client_fd);
 
   public:
-  Server(const unsigned int max_threads)
-    : thread_pool(max_threads),
+  Server(const unsigned int max_threads) :
+    thread_pool(max_threads),
     logger_thread(1),
     logger_("aimap_server.log", Logging::LogLevel::Trace, true)
   {
