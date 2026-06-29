@@ -30,11 +30,10 @@ class LoggerTest : public testing::Test
 
 TEST_F(LoggerTest, WritesMessagesAtOrAboveMinimumLevel)
 {
-  auto& logger = Logger::GetInstance();
-  ASSERT_TRUE(logger.Initialize(filePath_, LogLevels::ProdLogs, true));
+  Logging::Logger logger(filePath_, Logging::LogLevel::Info, true);
 
-  logger.LogDebug("TestFunc", "hidden");
-  logger.LogProd("TestFunc", "visible");
+  logger.Log(Logging::LogLevel::Debug, "hidden");
+  logger.Log(Logging::LogLevel::Info, "visible");
 
   const std::string contents = ReadLog();
   EXPECT_EQ(contents.find("hidden"), std::string::npos);
@@ -43,11 +42,14 @@ TEST_F(LoggerTest, WritesMessagesAtOrAboveMinimumLevel)
 
 TEST_F(LoggerTest, AppendsToExistingLogFile)
 {
-  auto& logger = Logger::GetInstance();
-  ASSERT_TRUE(logger.Initialize(filePath_, LogLevels::Trace, true));
-
-  logger.LogProd("TestFunc", "first");
-  logger.LogProd("TestFunc", "second");
+  {
+    Logging::Logger logger(filePath_, Logging::LogLevel::Trace, true);
+    logger.Log(Logging::LogLevel::Error, "first");
+  }
+  {
+    Logging::Logger logger(filePath_, Logging::LogLevel::Trace, true);
+    logger.Log(Logging::LogLevel::Warning, "second");
+  }
 
   const std::string contents = ReadLog();
   EXPECT_NE(contents.find("first"), std::string::npos);

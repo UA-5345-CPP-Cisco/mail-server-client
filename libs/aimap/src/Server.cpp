@@ -93,7 +93,8 @@ void Server::HandleNewConnection()
     this->clinets.emplace(current_fd, Client(current_fd));
     std::string msg = "Client connected. FD: " + std::to_string(current_fd);
     this->logger_thread.Enqueue(
-      [msg]() { Logger::GetInstance().LogDebug("Server::HandleNewConnection", msg); });
+      [this, msg]()
+      { logger_.Log(Logging::LogLevel::Debug, "Server::HandleNewConnection: " + msg); });
     struct epoll_event clinet_events
     {
     };
@@ -116,7 +117,8 @@ void Server::HandleClientData(int client_fd)
     {
       std::string msg = "Client disconnected gracefully. FD: " + std::to_string(client_fd);
       this->logger_thread.Enqueue(
-        [msg]() { Logger::GetInstance().LogDebug("Server::HandleClientData", msg); });
+        [this, msg]()
+        { logger_.Log(Logging::LogLevel::Debug, "Server::HandleClientData: " + msg); });
       this->clinets.erase(client_fd);
       close(client_fd);
       break;
@@ -151,8 +153,9 @@ void Server::HandleClientData(int client_fd)
 void Server::ProcessRequest(int client_fd, const std::string& raw_json)
 {
   std::string msg = "Start function for FD: " + std::to_string(client_fd);
-  this->logger_thread.Enqueue([msg]()
-                              { Logger::GetInstance().LogDebug("Server::ProcessRequest", msg); });
+  this->logger_thread.Enqueue(
+    [this, msg]()
+    { logger_.Log(Logging::LogLevel::Debug, "Server::ProcessRequest: " + msg); });
   try
   {
     json request = json::parse(raw_json);
@@ -167,8 +170,11 @@ void Server::ProcessRequest(int client_fd, const std::string& raw_json)
     if (action == "LOGIN")
     {
       this->logger_thread.Enqueue(
-        [raw_json]()
-        { Logger::GetInstance().LogTrace("Server::ProcessRequest", raw_json, "Action: LOGIN"); });
+        [this, raw_json]()
+        {
+          logger_.Log(Logging::LogLevel::Trace,
+                      "Server::ProcessRequest: " + raw_json + " | Action: LOGIN");
+        });
       std::string email = request.value("email", "");
       std::string password = request.value("password", "");
       HandleLogin(client_fd, email, password);
@@ -176,16 +182,20 @@ void Server::ProcessRequest(int client_fd, const std::string& raw_json)
     else if (action == "LIST_EMAILS")
     {
       this->logger_thread.Enqueue(
-        [raw_json]() {
-          Logger::GetInstance().LogTrace("Server::ProcessRequest", raw_json, "Action: LIST_EMAILS");
+        [this, raw_json]()
+        {
+          logger_.Log(Logging::LogLevel::Trace,
+                      "Server::ProcessRequest: " + raw_json + " | Action: LIST_EMAILS");
         });
       HandleListEmails(client_fd);
     }
     else if (action == "READ_EMAIL")
     {
       this->logger_thread.Enqueue(
-        [raw_json]() {
-          Logger::GetInstance().LogTrace("Server::ProcessRequest", raw_json, "Action: READ_EMAIL");
+        [this, raw_json]()
+        {
+          logger_.Log(Logging::LogLevel::Trace,
+                      "Server::ProcessRequest: " + raw_json + " | Action: READ_EMAIL");
         });
       int email_id = request.value("email_id", -1);
       HandleReadEmail(client_fd, email_id);
@@ -193,15 +203,21 @@ void Server::ProcessRequest(int client_fd, const std::string& raw_json)
     else if (action == "QUIT")
     {
       this->logger_thread.Enqueue(
-        [raw_json]()
-        { Logger::GetInstance().LogTrace("Server::ProcessRequest", raw_json, "Action: QUIT"); });
+        [this, raw_json]()
+        {
+          logger_.Log(Logging::LogLevel::Trace,
+                      "Server::ProcessRequest: " + raw_json + " | Action: QUIT");
+        });
       HandleQuit(client_fd);
     }
     else
     {
       this->logger_thread.Enqueue(
-        [raw_json]()
-        { Logger::GetInstance().LogTrace("Server::ProcessRequest", raw_json, "Action: UNKNOWN"); });
+        [this, raw_json]()
+        {
+          logger_.Log(Logging::LogLevel::Trace,
+                      "Server::ProcessRequest: " + raw_json + " | Action: UNKNOWN");
+        });
       SendResponse(client_fd,
                    R"({"status": "ERROR", "message": "Unknown action"})" + std::string("\n"));
     }
@@ -209,8 +225,8 @@ void Server::ProcessRequest(int client_fd, const std::string& raw_json)
   catch (const json::parse_error& e)
   {
     std::string msg = "ERROR!!! Invalid JSON format from client " + std::to_string(client_fd);
-    this->logger_thread.Enqueue([msg]()
-                                { Logger::GetInstance().LogProd("Server::ProcessRequest", msg); });
+    this->logger_thread.Enqueue(
+      [this, msg]() { logger_.Log(Logging::LogLevel::Info, "Server::ProcessRequest: " + msg); });
     SendResponse(client_fd,
                  R"({"status": "ERROR", "message": "Invalid JSON format"})" + std::string("\n"));
   }
@@ -220,7 +236,8 @@ void Server::SendResponse(int client_fd, const std::string& raw_json)
 {
   std::string msg = "Sending to FD: " + std::to_string(client_fd);
   this->logger_thread.Enqueue(
-    [msg, raw_json]() { Logger::GetInstance().LogTrace("Server::SendResponse", raw_json, msg); });
+    [this, msg, raw_json]()
+    { logger_.Log(Logging::LogLevel::Trace, "Server::SendResponse: " + raw_json + " | " + msg); });
   size_t total_bytes = 0;
   while (total_bytes < raw_json.size())
   {
@@ -269,8 +286,10 @@ void Server::StartEpollLoop()
 void Server::StartServer()
 {
   this->logger_thread.Enqueue(
-    []() {
-      Logger::GetInstance().LogProd("Server::StartServer", "*********Starting Server**********");
+    [this]()
+    {
+      logger_.Log(Logging::LogLevel::Info,
+                  "Server::StartServer: *********Starting Server**********");
     });
   SetServerSocket(PORT);
   SetEpoll();
@@ -281,7 +300,8 @@ void Server::HandleLogin(int client_fd, const std::string& email, const std::str
 {
   std::string msg = "Email: " + email;
   this->logger_thread.Enqueue(
-    [msg]() { Logger::GetInstance().LogTrace("Server::HandleLogin", msg, "Status: OK"); });
+    [this, msg]()
+    { logger_.Log(Logging::LogLevel::Trace, "Server::HandleLogin: " + msg + " | Status: OK"); });
   std::cout << "[Thread " << std::this_thread::get_id() << "] Login attempt from: " << email
             << "\n";
   SendResponse(client_fd,

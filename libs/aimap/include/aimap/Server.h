@@ -1,4 +1,5 @@
 #pragma once
+
 #include <iostream>
 #include <mutex>
 #include <string>
@@ -16,6 +17,7 @@
 #include "logger/Logger.h"
 #include "nlohmann/json.hpp"
 #include "thread_pool/ThreadPool.h"
+
 #define MAX_EVENTS 10000
 #define TIMEOUT 30
 #define BUF_SIZE 4096
@@ -58,8 +60,9 @@ class Server
   int epoll_fd;
   std::unordered_map<int, Client> clinets;
   std::vector<struct epoll_event> events;
-  ThreadPool thread_pool;
-  ThreadPool logger_thread;
+  Concurrency::ThreadPool thread_pool;
+  Concurrency::ThreadPool logger_thread;
+  Logging::Logger logger_;
   std::mutex client_mutex;
 
   void SetNonBlock(int fd);
@@ -90,10 +93,11 @@ class Server
 
   public:
   Server(const unsigned int max_threads)
+    : thread_pool(max_threads),
+    logger_thread(1),
+    logger_("aimap_server.log", Logging::LogLevel::Trace, true)
   {
     events.resize(MAX_EVENTS);
-    this->thread_pool.Initialize(max_threads);
-    this->logger_thread.Initialize(1);
   }
 
   Server(const Server& other) = delete;
