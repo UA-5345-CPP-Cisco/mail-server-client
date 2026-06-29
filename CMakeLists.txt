@@ -56,13 +56,12 @@ endif()
 find_package(Threads REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
 
-add_library(sqlite3 STATIC
-		libs/storage/sqlite3/sqlite3.c
+FetchContent_Declare(
+		sqlite3
+		GIT_REPOSITORY https://github.com/sjinks/sqlite3-cmake.git
+		GIT_TAG v3.49.1
 )
-
-target_include_directories(sqlite3 PUBLIC
-		libs/storage/sqlite3
-)
+FetchContent_MakeAvailable(sqlite3)
 
 add_subdirectory(libs/logger)
 add_subdirectory(libs/storage)
