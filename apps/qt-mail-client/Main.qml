@@ -37,6 +37,12 @@ ApplicationWindow
         settingsLoader.source = ""
     }
 
+    function closeAuthWindow()
+    {
+        authLoader.active = false
+        authLoader.source = ""
+    }
+
     function parseDatabaseTimestamp(input_time)
     {
         if (!input_time)
@@ -359,26 +365,8 @@ ApplicationWindow
         }
     }
 
-    MultiEffect
-    {
-        id: blurEffect
-        anchors.fill: splitView
-        source: splitView
 
-        blur: settingsLoader.opacity * 0.5
-        blurEnabled: settingsLoader.active
-        autoPaddingEnabled: false
-
-        Behavior on blur
-        {
-            NumberAnimation
-            {
-                duration: 200
-            }
-        }
-    }
-
-    //main
+    //blocker
     Rectangle
     {
         anchors.fill: parent
@@ -406,6 +394,27 @@ ApplicationWindow
                 }
         }
     }
+    Rectangle
+    {
+        anchors.fill: parent
+        color: "#000000"
+        opacity: authLoader.opacity * 0.4
+        visible: authLoader.active
+        z: 998
+        MouseArea
+        {
+            hoverEnabled: true
+            preventStealing: true
+            enabled: parent.visible
+            anchors.fill: parent
+            onPressed: (mouse) => mouse.accepted = true
+            onReleased: (mouse) => mouse.accepted = true
+            onClicked: (mouse) => mouse.accepted = true
+            onDoubleClicked: (mouse) => mouse.accepted = true
+            onPositionChanged: (mouse) => mouse.accepted = true
+            onWheel: (wheel) => { wheel.accepted = true }
+        }
+    }
 
     //settings loader
     Loader
@@ -413,12 +422,9 @@ ApplicationWindow
         id: settingsLoader
         active: false
         z: 1000
-
         anchors.centerIn: parent
-
         width: item ? item.implicitWidth : 0
         height: item ? item.implicitHeight : 0
-
         Shortcut
         {
             sequence: "Escape"
@@ -428,7 +434,6 @@ ApplicationWindow
                 closeSettingsWindow()
             }
         }
-
         Behavior on opacity
         {
             NumberAnimation
@@ -443,30 +448,28 @@ ApplicationWindow
     Loader
     {
         id: authLoader
-        active: initialSetupRequired
-        source: active ? "screens/navigation/account/AddAccountQML.qml" : ""
-
-        onLoaded:
+        active: false
+        z: 1000
+        anchors.centerIn: parent
+        width: item ? item.implicitWidth : 0
+        height: item ? item.implicitHeight : 0
+        Shortcut
         {
-            item.show()
-        }
-
-        Connections
-        {
-            target: authLoader.item
-            ignoreUnknownSignals: true
-
-            function onClosing()
+            sequence: "Escape"
+            enabled: authLoader.active
+            onActivated:
             {
-                if (accountModel.ActiveAccountRow() === -1)
-                {
-                    Qt.quit()
-                } else
-                {
-                    window.visible = true
-                    authLoader.active = false
-                }
+                closeAuthWindow()
             }
         }
+        Behavior on opacity
+        {
+            NumberAnimation
+            {
+                duration: 200
+            }
+        }
+        opacity: status === Loader.Ready ? 1 : 0
     }
 }
+

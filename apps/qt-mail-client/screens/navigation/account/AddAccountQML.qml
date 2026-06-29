@@ -3,13 +3,15 @@ import QtQuick.Controls
 import QtQuick.Shapes
 import QtQuick.Effects
 
-Window {
-    flags: Qt.Window | Qt.FramelessWindowHint
+Rectangle
+{
     id: rootWindow
-    width: 640
-    height: 460
-    title: "Add an Account"
+    implicitWidth: 640
+    implicitHeight: 460
     visible: true
+    clip: true
+    radius: 14
+
 
     Rectangle
     {
@@ -69,7 +71,7 @@ Window {
 
             onClicked:
             {
-                rootWindow.close()
+                closeAuthWindow()
             }
         }
     }
