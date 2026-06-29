@@ -4,7 +4,7 @@ import QtQuick.Shapes
 
 Rectangle
 {
-    id: delegateRoot
+    id: rootRectangle
     height: 72
     color: "transparent"
     anchors.left: parent.left
@@ -20,18 +20,18 @@ Rectangle
 
     Rectangle
     {
-        id: buttonToSelectAccount
+        id: selectAccountButtonRectangle
         x: 8
         y: 8
         width: parent.width - 16
         height: 56
         radius: 10
-        color: delegateMouseArea.containsMouse ? "#f9fafb" : "transparent"
+        color: delegateClickArea.containsMouse ? "#f9fafb" : "transparent"
 
-        // Аватарка
+        // Avatar wrapper for added users
         Rectangle
         {
-            id: avatarContainer
+            id: avatarContainerRectangle
             x: 12
             y: 10
             width: 36
@@ -39,35 +39,43 @@ Rectangle
             radius: 18
             color: avatarUrl !== "" ? "transparent" : avatarColor
 
-            // Зображення якщо є
             Image
             {
+                id: avatarIcon
                 anchors.fill: parent
                 source: avatarUrl !== "" ? avatarUrl : ""
                 visible: avatarUrl !== ""
                 fillMode: Image.PreserveAspectCrop
                 layer.enabled: true
+
                 layer.effect: Component
                 {
+                    id: maskComponent
+
                     MultiEffect
                     {
+                        id: roundMaskEffect
                         maskEnabled: true
+
                         maskSource: ShaderEffectSource
                         {
+                            id: maskShaderSource
                             sourceItem: Rectangle
                             {
-                                width: avatarContainer.width
-                                height: avatarContainer.height
-                                radius: avatarContainer.radius
+                                id: maskShapeRectangle
+                                width: avatarContainerRectangle.width
+                                height: avatarContainerRectangle.height
+                                radius: avatarContainerRectangle.radius
                             }
                         }
                     }
                 }
             }
 
-            // Фоллбек — ініціал
+            // Text letter (shown if no image)
             Text
             {
+                id: fallbackInitialText
                 anchors.centerIn: parent
                 visible: avatarUrl === ""
                 text: avatarInitial
@@ -78,9 +86,10 @@ Rectangle
             }
         }
 
-        // Ім'я + email
+        // User informations
         Column
         {
+            id: accountTextDataColumn
             x: 60
             y: 10
             width: parent.width - 88
@@ -88,6 +97,7 @@ Rectangle
 
             Text
             {
+                id: accountNameText
                 width: parent.width
                 height: 20
                 text: accountName
@@ -101,6 +111,7 @@ Rectangle
 
             Text
             {
+                id: accountEmailText
                 width: parent.width
                 height: 16
                 text: accountEmail
@@ -113,42 +124,34 @@ Rectangle
             }
         }
 
-        // Галочка активного акаунту
-        Shape
+        // Checkmark for active account
+        Image
         {
+            id: activeCheckmarkIcon
             x: parent.width - 28
             y: 20
             width: 16
             height: 16
             visible: isActive
-
-            ShapePath
-            {
-                fillColor: "transparent"
-                strokeColor: "#2b7fff"
-                strokeWidth: 1.33
-                PathSvg { path: "M 10.67 0 L 3.33 7.33 L 0 4" }
-            }
+            source: "qrc:/pngs/assets/ic_checkmark.svg"
+            sourceSize.width: width * Screen.devicePixelRatio
+            sourceSize.height: height * Screen.devicePixelRatio
+            fillMode: Image.PreserveAspectFit
         }
 
+        // Handles account selection clicks and hover effects
         MouseArea
         {
-            id: delegateMouseArea
+            id: delegateClickArea
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
+
             onClicked:
             {
-                CurrentUser.Authorize
-                (
-                    accountName,
-                    accountEmail,
-                    avatarUrl
-                )
-
+                CurrentUser.Authorize(accountName, accountEmail, avatarUrl)
                 accountModel.SetActiveAccount(index)
             }
         }
     }
 }
-

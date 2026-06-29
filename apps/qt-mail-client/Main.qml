@@ -17,12 +17,18 @@ ApplicationWindow
 
     property alias authLoader: authLoader
 
+    // for adding avatar
+    function avatarInitial(name)
+    {
+        var trimmedName = String(name).trim()
+        return trimmedName.length > 0 ? trimmedName.charAt(0).toUpperCase() : "?"
+    }
+
     //FunctionSorter
     function closeMessageWindow()
     {
         newMessageLoader.active = false
         newMessageLoader.source = ""
-
     }
 
     function closeSettingsWindow()
@@ -31,7 +37,7 @@ ApplicationWindow
         settingsLoader.source = ""
     }
 
-    function parse_database_timestamp(input_time)
+    function parseDatabaseTimestamp(input_time)
     {
         if (!input_time)
         {
@@ -72,31 +78,30 @@ ApplicationWindow
         return null
     }
 
-    function format_email_time(input_time)
+    function formatEmailTime(input_time)
     {
-        let message_date = parse_database_timestamp(input_time)
+        let message_date = parseDatabaseTimestamp(input_time)
         if (!message_date)
             return String(input_time)
 
         let current_date = new Date();
 
         let is_same_day = (message_date.getDate() === current_date.getDate() &&
-                           message_date.getMonth() === current_date.getMonth() &&
-                           message_date.getFullYear() === current_date.getFullYear());
+            message_date.getMonth() === current_date.getMonth() &&
+            message_date.getFullYear() === current_date.getFullYear());
 
         if (is_same_day)
         {
             return Qt.formatDateTime(message_date, "hh:mm");
-        }
-        else
+        } else
         {
             return Qt.formatDateTime(message_date, "MMMM dd").toLowerCase();
         }
     }
 
-    function format_email_time_full(input_time)
+    function formatEmailTimeFull(input_time)
     {
-        let message_date = parse_database_timestamp(input_time)
+        let message_date = parseDatabaseTimestamp(input_time)
         if (!message_date)
             return String(input_time)
 
@@ -109,7 +114,8 @@ ApplicationWindow
 
     //blocks
     id: window
-    visible: true
+    visible: !initialSetupRequired
+    //visible: true
     width: 1024
     height: 768
     minimumHeight: 500
@@ -143,65 +149,63 @@ ApplicationWindow
         property var selectedItem: null
         Behavior on opacity
         {
-            NumberAnimation { duration: 200 }
+            NumberAnimation
+            {
+                duration: 200
+            }
         }
 
         onLoaded:
         {
-                   connections.target = item
-                   if (item && selectedItem)
-                   {
-                       item.newRecipient = selectedItem.sendTo
-                       item.newSubject = selectedItem.subject
-                       item.newText = selectedItem.content
-                       item.newIndex = selectedItem.index
-                       item.isDraft = selectedItem.isDraft === true
-                       item.newTitle = item.isDraft ? "Draft" : "New Message"
-                   }
-                   else
-                    {
-                        item.newRecipient = ""
-                        item.newSubject = ""
-                        item.newText = ""
-                        item.newIndex = ""
-                        item.isDraft = false
-                        item.newTitle = "New Message"
-                    }
-               }
+            connections.target = item
+            if (item && selectedItem)
+            {
+                item.newRecipient = selectedItem.sendTo
+                item.newSubject = selectedItem.subject
+                item.newText = selectedItem.content
+                item.newIndex = selectedItem.index
+                item.isDraft = selectedItem.isDraft === true
+                item.newTitle = item.isDraft ? "Draft" : "New Message"
+            } else
+            {
+                item.newRecipient = ""
+                item.newSubject = ""
+                item.newText = ""
+                item.newIndex = ""
+                item.isDraft = false
+                item.newTitle = "New Message"
+            }
+        }
 
-               Connections
-               {
-                   id: connections
-                   target: null
+        Connections
+        {
+            id: connections
+            target: null
 
-                   function onDraftChanged(index, subject, recipient, text)
-                   {
-                       if(newMessageLoader.selectedItem != null)
-                       {
-                           draftModel.SetEmailData(parseInt(index), recipient, parseInt(EmailRole.SendToRole))
-                           draftModel.SetEmailData(parseInt(index), subject, parseInt(EmailRole.ThemeRole))
-                           draftModel.SetEmailData(parseInt(index), text, parseInt(EmailRole.ContentRole))
-                           draftModel.SetEmailData(parseInt(index), text, parseInt(EmailRole.PreviewRole))
-                       }
+            function onDraftChanged(index, subject, recipient, text)
+            {
+                if (newMessageLoader.selectedItem != null)
+                {
+                    draftModel.SetEmailData(parseInt(index), recipient, parseInt(EmailRole.SendToRole))
+                    draftModel.SetEmailData(parseInt(index), subject, parseInt(EmailRole.ThemeRole))
+                    draftModel.SetEmailData(parseInt(index), text, parseInt(EmailRole.ContentRole))
+                    draftModel.SetEmailData(parseInt(index), text, parseInt(EmailRole.PreviewRole))
+                }
 
-                       newMessageLoader.selectedItem = null
-                   }
+                newMessageLoader.selectedItem = null
+            }
 
-                   function onDraftFinished(index, subject, recipient, text)
-                   {
-                       if(newMessageLoader.selectedItem != null)
-                       {
-                           draftModel.RemoveEmailData(parseInt(index))
-                           emailsModel.AddData(
-                               false, true, false,
-                               subject, CurrentUser.username,
-                               recipient, text, ""
-                           )
-                       }
+            function onDraftFinished(index, subject, recipient, text)
+            {
+                if (newMessageLoader.selectedItem != null)
+                {
+                    draftModel.RemoveEmailData(parseInt(index))
+                    emailsModel.AddData(false, true, false, subject, CurrentUser.username, recipient, text, "")
+                }
 
-                       newMessageLoader.selectedItem = null
-                   }
-               }
+                newMessageLoader.selectedItem = null
+            }
+        }
 
         opacity: status === Loader.Ready ? 1 : 0
     }
@@ -282,23 +286,23 @@ ApplicationWindow
             }
             EmailsListQML
             {
-                id:emailList
+                id: emailList
                 SplitView.preferredWidth: 350
                 SplitView.minimumWidth: 250
                 SplitView.fillHeight: true
-                onEmailOpenRequested: function(index, theme, name, sendTo, content, time, starred)
-                {
-                    window.selectedEmail =
+                onEmailOpenRequested: function (index, theme, name, sendTo, content, time, starred)
                     {
-                        "index": index,
-                        "theme": theme,
-                        "name": name,
-                        "sendTo": sendTo,
-                        "content": content,
-                        "time": time,
-                        "starred": starred
+                        window.selectedEmail =
+                            {
+                                "index": index,
+                                "theme": theme,
+                                "name": name,
+                                "sendTo": sendTo,
+                                "content": content,
+                                "time": time,
+                                "starred": starred
+                            }
                     }
-                }
             }
 
             Item
@@ -365,18 +369,23 @@ ApplicationWindow
         blurEnabled: settingsLoader.active
         autoPaddingEnabled: false
 
-        Behavior on blur {
-            NumberAnimation { duration: 200 }
+        Behavior on blur
+        {
+            NumberAnimation
+            {
+                duration: 200
+            }
         }
     }
 
+    //main
     Rectangle
     {
         anchors.fill: parent
         color: "#000000"
         opacity: settingsLoader.opacity * 0.4
         visible: settingsLoader.active
-        z:998
+        z: 998
         MouseArea
         {
             hoverEnabled: true
@@ -391,12 +400,14 @@ ApplicationWindow
             onPositionChanged: (mouse) => mouse.accepted = true
 
 
-            onWheel: (wheel) => {
-                wheel.accepted = true
-            }
+            onWheel: (wheel) =>
+                {
+                    wheel.accepted = true
+                }
         }
     }
 
+    //settings loader
     Loader
     {
         id: settingsLoader
@@ -420,19 +431,42 @@ ApplicationWindow
 
         Behavior on opacity
         {
-            NumberAnimation { duration: 200 }
+            NumberAnimation
+            {
+                duration: 200
+            }
         }
         opacity: status === Loader.Ready ? 1 : 0
     }
 
     // Loader for account change
-        Loader
-        {
-            id: authLoader
-            anchors.fill: parent
-            z: 2000
+    Loader
+    {
+        id: authLoader
+        active: initialSetupRequired
+        source: active ? "screens/navigation/account/AddAccountQML.qml" : ""
 
-            active: initialSetupRequired
-            source: active ? "screens/navigation/account/AddAccountQML.qml" : ""
+        onLoaded:
+        {
+            item.show()
         }
+
+        Connections
+        {
+            target: authLoader.item
+            ignoreUnknownSignals: true
+
+            function onClosing()
+            {
+                if (accountModel.ActiveAccountRow() === -1)
+                {
+                    Qt.quit()
+                } else
+                {
+                    window.visible = true
+                    authLoader.active = false
+                }
+            }
+        }
+    }
 }

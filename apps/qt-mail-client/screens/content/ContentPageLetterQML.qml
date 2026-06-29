@@ -264,7 +264,7 @@ Rectangle
                         lineHeight: 16
                         lineHeightMode: Text.FixedHeight
 
-                        text: format_email_time_full(contentPageLetterQML.letterTime)
+                        text: formatEmailTimeFull(contentPageLetterQML.letterTime)
                         textFormat: Text.PlainText
                     }
                 }

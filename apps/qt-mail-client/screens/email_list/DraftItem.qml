@@ -105,7 +105,7 @@ Rectangle
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16;
                     lineHeightMode: Text.FixedHeight
-                    text: format_email_time(time);
+                    text: formatEmailTime(time);
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                 }

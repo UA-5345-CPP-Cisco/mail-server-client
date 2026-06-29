@@ -5,6 +5,7 @@
 #include <QAbstractListModel>
 #include <QString>
 #include <vector>
+#include "../../../../libs/storage/include/storage/Database.h"
 
 namespace ISXMail
 {
@@ -60,6 +61,7 @@ private:
     void LoadFromDatabase();
     QString DefaultDatabasePath() const;
 
+    Storage::Database m_database;
     std::vector<AccountData> m_data;
 };
 

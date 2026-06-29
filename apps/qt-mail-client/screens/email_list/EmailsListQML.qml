@@ -86,7 +86,7 @@ Rectangle
             preview: parent.pPreview
             content: parent.pContent
             sendTo: parent.pSendTo
-            time: format_email_time(parent.pTime)
+            time: formatEmailTime(parent.pTime)
             starred: parent.pStarred
             searchModel: parent.pSearchModel
             onOpenRequested: function(theme, name, sendTo, content, time, starred) {

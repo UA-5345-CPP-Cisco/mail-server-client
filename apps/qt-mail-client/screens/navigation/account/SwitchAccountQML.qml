@@ -2,31 +2,32 @@ import QtQuick
 import QtQuick.Effects
 import QtQuick.Shapes
 
-// SwitchAccountQML.qml
 Rectangle
 {
-    id: switchAccountQML
-    MouseArea
-    {
-        anchors.fill: parent
-        onClicked:
-        {
-            switchAccountQML.forceActiveFocus()
-        }
-    }
-
+    id: switchAccountRectangle
 
     implicitWidth: 250
-    implicitHeight: header.height + accountList.contentHeight + addButton.height + 16
+    implicitHeight: headerRectangle.height + accountListView.contentHeight + addButtonRectangle.height + bottomSpacerRectangle.height + 16
 
     clip: false
     color: "#ffffff"
     radius: 14
 
+    MouseArea
+    {
+        id: rootClickArea
+        anchors.fill: parent
+
+        onClicked:
+        {
+            switchAccountRectangle.forceActiveFocus()
+        }
+    }
+
     // Header
     Rectangle
     {
-        id: header
+        id: headerRectangle
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
@@ -35,6 +36,7 @@ Rectangle
 
         Text
         {
+            id: headerTitleText
             x: 16
             y: 16
             height: 20
@@ -48,6 +50,7 @@ Rectangle
 
         Rectangle
         {
+            id: closeButtonWrapperRectangle
             anchors.right: parent.right
             anchors.rightMargin: 16
             anchors.verticalCenter: parent.verticalCenter
@@ -57,6 +60,7 @@ Rectangle
 
             Image
             {
+                id: closeIconImage
                 anchors.centerIn: parent
                 source: "qrc:/pngs/assets/ic_close_window_black.svg"
                 width: 15
@@ -66,27 +70,33 @@ Rectangle
                 fillMode: Image.PreserveAspectFit
             }
 
-            scale: closeMouse.containsMouse ? 1.3 : 1.0
+            scale: closeClickArea.containsMouse ? 1.3 : 1.0
 
             Behavior on scale
             {
-                NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+                id: closeScaleBehavior
+                NumberAnimation { id: closeScaleAnimation; duration: 150; easing.type: Easing.InOutQuad }
             }
 
             MouseArea
             {
-                id:closeMouse
+                id: closeClickArea
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
-                onClicked: switchAccountQML.parent.source = ""
+
+                onClicked:
+                {
+                    switchAccountRectangle.parent.source = ""
+                }
             }
         }
     }
 
-    // Розділювач після header
+    // Divider after header
     Rectangle
     {
-        anchors.top: header.bottom
+        id: headerDividerRectangle
+        anchors.top: headerRectangle.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.leftMargin: 1
@@ -95,13 +105,13 @@ Rectangle
         color: "#e5e7eb"
     }
 
-    // Список акаунтів
+    // Account list
     ListView
     {
-        id: accountList
+        id: accountListView
 
         property int maxHeight: 214
-        anchors.top: header.bottom
+        anchors.top: headerRectangle.bottom
         anchors.topMargin: 1
         anchors.left: parent.left
         anchors.right: parent.right
@@ -115,11 +125,11 @@ Rectangle
         delegate: AccountItem {}
     }
 
-    // Розділювач перед кнопкою
+    // Divider before button
     Rectangle
     {
-        id: divider
-        anchors.top: accountList.bottom
+        id: listDividerRectangle
+        anchors.top: accountListView.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.leftMargin: 1
@@ -128,28 +138,31 @@ Rectangle
         color: "#e5e7eb"
     }
 
-    // Кнопка "Add account"
+    // "Add account" button
     Rectangle
     {
-        id: addButton
-        anchors.top: divider.bottom
+        id: addButtonRectangle
+        anchors.top: listDividerRectangle.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         height: 72
         color: "transparent"
 
+        signal addAccountRequested()
+
         Rectangle
         {
+            id: innerButtonBlockRectangle
             x: 8
             y: 8
             width: parent.width - 16
             height: 56
             radius: 10
-            color: addMouseArea.containsMouse ? "#f9fafb" : "transparent"
+            color: addClickArea.containsMouse ? "#f9fafb" : "transparent"
 
-            // Іконка аватарки з плюсом
             Rectangle
             {
+                id: avatarWrapperRectangle
                 x: 12
                 y: 10
                 width: 36
@@ -159,25 +172,29 @@ Rectangle
                 border.color: "#e5e7eb"
                 border.width: 1
 
-
                 Image
                 {
+                    id: plusIconImage
                     source: "qrc:/pngs/assets/ic_plus.svg"
                     width: 12
                     height: 12
+                    sourceSize.width: width * Screen.devicePixelRatio
+                    sourceSize.height: height * Screen.devicePixelRatio
                     fillMode: Image.PreserveAspectFit
                     anchors.centerIn: parent
-                    scale: addMouseArea.containsMouse ? 1.3 : 1.0
+                    scale: addClickArea.containsMouse ? 1.3 : 1.0
 
                     Behavior on scale
                     {
-                        NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+                        id: plusScaleBehavior
+                        NumberAnimation { id: plusScaleAnimation; duration: 150; easing.type: Easing.InOutQuad }
                     }
                 }
             }
 
             Text
             {
+                id: addButtonText
                 x: 60
                 y: 18
                 height: 20
@@ -191,16 +208,40 @@ Rectangle
 
             MouseArea
             {
-                id: addMouseArea
+                id: addClickArea
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                // onClicked: AccountController.startOAuth()
-                onClicked: loginPopup.open()
+
+                onClicked:
+                {
+                    window.authLoader.active = false
+                    window.authLoader.source = "qrc:/qt/qml/qtapptestmail/screens/navigation/account/AddAccountQML.qml"
+                    window.authLoader.active = true
+                }
             }
-            AddAccountQML
+        }
+    }
+
+    // Background padding block
+    Rectangle
+    {
+        id: bottomSpacerRectangle
+        anchors.top: addButtonRectangle.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: 300
+        color: "#ffffff"
+
+        MouseArea
+        {
+            id: spacerIgnoreClickArea
+            anchors.fill: parent
+            hoverEnabled: true
+
+            onClicked:
             {
-                id: loginPopup
+                // Intentional no-op to capture background clicks
             }
         }
     }

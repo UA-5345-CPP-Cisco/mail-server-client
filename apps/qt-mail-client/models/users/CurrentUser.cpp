@@ -9,9 +9,9 @@ namespace ISXCurrentUser
 
 CurrentUser::CurrentUser(QObject* parent) :
 	QObject(parent),
-	m_is_authorized(true),
-	m_username("John Doe"),
-	m_email("johndoe@gmail.com"),
+    m_is_authorized(false),
+    m_username(""),
+    m_email(""),
     m_avatar_path("")
 {
 }

@@ -22,12 +22,8 @@ int main(int argc, char *argv[])
     qputenv("QT_QUICK_BACKEND", "software");
     QQuickStyle::setStyle(QStringLiteral("Fusion"));
     QGuiApplication app(argc, argv);
-    qInstallMessageHandler([](QtMsgType type, const QMessageLogContext&, const QString& msg) {
-    fprintf(stderr, "%s\n", msg.toLocal8Bit().constData());
-    fflush(stderr);
-});
     app.setWindowIcon(QIcon(":/pngs/assets/Icon.png"));
-    qDebug() << "Current directory:" << QDir::currentPath();
+
     ISXDatabaseManager::DatabaseManager::EnsureInitialized();
     auto dbPath = ISXDatabaseManager::DatabaseManager::DatabasePath();
     Storage::Database database(dbPath);
@@ -40,6 +36,16 @@ int main(int argc, char *argv[])
     bool hasUsers = repo.HasUsers();
     engine.rootContext()->setContextProperty("initialSetupRequired", !hasUsers);
 
+    if (hasUsers) {
+        auto activeUser = repo.FindActiveUser();
+
+        if (activeUser.has_value())
+        {
+            QString name = QString::fromStdString(activeUser->username);
+            QString email = QString::fromStdString(activeUser->email);
+            ISXCurrentUser::CurrentUser::GetInstance().Authorize(name, email, "");
+        }
+    }
 
     auto* model = new ISXMail::EmailListModel(&app);
     auto* message_composer = new ISXMail::MessageComposer(&app);
@@ -87,7 +93,6 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("draftSearchModel", draftSearch);
     engine.rootContext()->setContextProperty("MessageComposer", message_composer);
 
-    //current user in system
     engine.rootContext()->setContextProperty(
         "CurrentUser",
         &ISXCurrentUser::CurrentUser::GetInstance()
@@ -107,17 +112,7 @@ int main(int argc, char *argv[])
         &app,
         []() { qCritical() << "QML object creation failed"; },
         Qt::QueuedConnection);
-    qDebug() << "Current directory:" << QDir::currentPath();
     engine.loadFromModule("qtapptestmail", "Main");
-    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, &app,
-    [](QObject* obj, const QUrl& url) {
-        qDebug() << "Created:" << obj << url;
-    });
-    QObject::connect(&engine, &QQmlApplicationEngine::warnings,
-        [](const QList<QQmlError> &warnings) {
-            for (const auto &w : warnings)
-                qWarning() << w.toString();
-        });
+
     return QGuiApplication::exec();
 }
-

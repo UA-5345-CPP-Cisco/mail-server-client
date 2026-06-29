@@ -1,10 +1,12 @@
 #include "headers/users/AccountListModel.h"
 
+#include "headers/database/DatabaseManager.h"
+#include "storage/UserRepository.h"
+#include "headers/users/CurrentUser.h"
+
 namespace ISXMail
 {
-
-AccountListModel::AccountListModel(QObject* parent)
-    : QAbstractListModel(parent)
+AccountListModel::AccountListModel(QObject* parent) : QAbstractListModel(parent), m_database(ISXDatabaseManager::DatabaseManager::DatabasePath())
 {
     LoadFromDatabase();
 }
@@ -93,16 +95,18 @@ void AccountListModel::AddAccount(const QString& name, const QString& email,
     item.avatar_initial = avatarInitial;
     item.is_active = isActive;
 
-    if (isActive)
-        SetActiveAccount(static_cast<int>(m_data.size()));
-
     AddData(item);
+
+    if (isActive)
+        SetActiveAccount(static_cast<int>(m_data.size())- 1);
 }
 
 bool AccountListModel::RemoveAccount(int row)
 {
     if (row < 0 || static_cast<size_t>(row) >= m_data.size())
+    {
         return false;
+    }
 
     beginRemoveRows(QModelIndex(), row, row);
     m_data.erase(m_data.begin() + row);
@@ -113,14 +117,40 @@ bool AccountListModel::RemoveAccount(int row)
 bool AccountListModel::SetActiveAccount(int row)
 {
     if (row < 0 || static_cast<size_t>(row) >= m_data.size())
+    {
         return false;
+    }
+
+    Storage::UserRepository repo(m_database);
 
     for (size_t i = 0; i < m_data.size(); ++i)
     {
-        const bool shouldBeActive = (static_cast<int>(i) == row);
-        if (m_data[i].is_active != shouldBeActive)
+        const bool should_be_active = (static_cast<int>(i) == row);
+
+        if (m_data[i].is_active != should_be_active)
         {
-            m_data[i].is_active = shouldBeActive;
+            m_data[i].is_active = should_be_active;
+
+            std::string std_email = m_data[i].account_email.toStdString();
+            auto user_record = repo.FindByEmail(std_email);
+
+            if (user_record.has_value())
+            {
+                auto db_status = should_be_active ? Storage::UserStatus::Active : Storage::UserStatus::Disabled;
+                repo.UpdateStatus(user_record->id, db_status);
+            }
+
+            // Synchronize the global application context with the newly activated user
+            if (should_be_active)
+            {
+                ISXCurrentUser::CurrentUser::GetInstance().Authorize(
+                    m_data[i].account_name,
+                    m_data[i].account_email,
+                    m_data[i].avatar_url
+                    );
+            }
+
+            // Notify Qt views that the active role has changed to trigger a UI repaint
             const QModelIndex idx = index(static_cast<int>(i));
             emit dataChanged(idx, idx, { IsActiveRole });
         }
@@ -138,15 +168,52 @@ int AccountListModel::ActiveAccountRow() const
     return -1;
 }
 
+
 void AccountListModel::LoadFromDatabase()
 {
-    AddData({ "Personal", "alexm@gmail.com", "", "#2b7fff", "P", true });
-    AddData({ "Work",     "alex@company.com", "", "#7c3aed", "W", false });
-    AddData({ "Walk",     "alex@no.com", "", "#7c3aed", "G", false });
-    AddData({ "Walk",     "alex@no.com", "", "#7c3aed", "G", false });
-    AddData({ "Walk",     "alex@no.com", "", "#7c3aed", "G", false });
-    AddData({ "Walk",     "alex@no.com", "", "#7c3aed", "G", false });
-    AddData({ "Walk",     "alex@no.com", "", "#7c3aed", "G", false });
+    m_data.clear();
+
+    Storage::UserRepository user_repo(m_database);
+    std::vector<Storage::UserRecord> db_users = user_repo.FindAll();
+
+    std::vector<AccountData> loaded_accounts;
+    int saved_active_row = -1;
+    int counter = 0;
+
+    for (const auto& user : db_users)
+    {
+        AccountData account;
+        account.account_name = QString::fromStdString(user.username);
+        account.account_email = QString::fromStdString(user.email);
+        account.avatar_url = "";
+        account.avatar_color = "#3b82f6";
+
+        account.avatar_initial = account.account_name.isEmpty() ? '?' : account.account_name.at(0).toUpper();
+        account.is_active = (user.status == Storage::UserStatus::Active);
+
+        if (account.is_active)
+        {
+            saved_active_row = static_cast<int>(loaded_accounts.size());
+        }
+
+        loaded_accounts.push_back(account);
+    }
+
+    if (!loaded_accounts.empty())
+    {
+        beginInsertRows(QModelIndex(), 0, static_cast<int>(loaded_accounts.size()) - 1);
+        m_data = std::move(loaded_accounts);
+        endInsertRows();
+
+        if (saved_active_row != -1)
+        {
+            SetActiveAccount(saved_active_row);
+        }
+        else
+        {
+            SetActiveAccount(0);
+        }
+    }
 }
 
 QString AccountListModel::DefaultDatabasePath() const

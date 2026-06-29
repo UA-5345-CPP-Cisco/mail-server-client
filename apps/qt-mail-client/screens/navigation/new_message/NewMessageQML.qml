@@ -243,9 +243,9 @@ Rectangle
                                 let recipient_text = recipientTextField.text.trim()
                                 let message_text = messageBodyTextField.text.trim()
 
-                                MessageComposer.SaveDraft(
-                                    CurrentUser.username,
-                                    CurrentUser.email,
+                            MessageComposer.SaveDraft(
+                                CurrentUser.username,
+                                CurrentUser.email,
                                     recipient_text,
                                     subject_text,
                                     message_text
@@ -258,7 +258,7 @@ Rectangle
                                 {
                                     emailsModel.AddData(
                                         false, false, true,
-                                        subject_text, CurrentUser.username,
+                                    subject_text, CurrentUser.username,
                                         recipient_text, message_text, ""
                                     )
                                 }
