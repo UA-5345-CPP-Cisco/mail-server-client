@@ -115,7 +115,7 @@ Rectangle
                 accountModel.AddAccount(name, email, "", "#3b82f6", firstLetter, true)
                 CurrentUser.Authorize(name, email, "")
 
-                rootWindow.close()
+                closeAuthWindow()
             }
             else
             {
