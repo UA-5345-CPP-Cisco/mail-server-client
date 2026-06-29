@@ -45,7 +45,7 @@ Rectangle
             time: parent.pTime
             searchModel: parent.pSearchModel
             onOpenRequested: function(theme, name, sendTo, content, time)
-                {
+            {
                 emailsListQML.emailOpenRequested(parent.pIndex, theme, name, sendTo, content, time, false)
             }
             onClicked:
@@ -215,7 +215,7 @@ Rectangle
                         onTextChanged: {
                             var searchProxy = emailsListQML.activeSearchModel()
                             if (searchProxy)
-                                searchProxy.searchedText = text
+                                searchProxy.SearchedText = text
                         }
 
                         background: Rectangle { color: "transparent" }

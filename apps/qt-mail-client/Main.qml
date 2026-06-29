@@ -237,18 +237,9 @@ ApplicationWindow
                     x: (handleDelegate.width - width) / 2
                     width: 5
                     height: splitView.height
-                    MouseArea
-                    {
-                        anchors.fill: parent
-
-                        hoverEnabled: true
-
-                        cursorShape: Qt.SizeHorCursor
-
-                        acceptedButtons: Qt.NoButton
-                    }
                 }
             }
+
 
             NavigationQML
             {
