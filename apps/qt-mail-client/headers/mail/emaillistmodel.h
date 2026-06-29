@@ -2,11 +2,13 @@
 
 #include <memory>
 #include <cstdint>
+#include <vector>
+
 #include <QObject>
 #include <QAbstractListModel>
 #include <QtMath>
 #include <QString>
-#include <vector>
+
 
 #include "../../../../libs/storage/include/storage/Database.h"
 #include "../../../../libs/storage/include/storage/MailMessageRepository.h"
@@ -70,12 +72,13 @@ public:
 
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;
     Qt::ItemFlags flags(const QModelIndex& index) const override;
+
 signals:
     void dataAdded();
 
 private:
     void LoadFromDatabase();
-    QString makePreview(const QString& text, int maxLen = 50);
+    QString MakePreview(const QString& text, int maxLen = 50);
     QString DefaultDatabasePath() const;
 
     Storage::Database m_database;

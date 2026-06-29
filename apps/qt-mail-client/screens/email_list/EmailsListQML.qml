@@ -11,7 +11,8 @@ Rectangle
     property var sourceModel: inboxModel
     signal emailOpenRequested(int index, string theme, string name, string sendTo, string content, string time, bool starred)
 
-    function activeSearchModel() {
+    function activeSearchModel()
+    {
         if (sourceModel === inboxModel)
             return inboxSearchModel
         if (sourceModel === sentModel)
@@ -23,10 +24,11 @@ Rectangle
         return inboxSearchModel
     }
 
-    onSourceModelChanged: {
+    onSourceModelChanged:
+    {
         var searchProxy = activeSearchModel()
-        if (searchProxy && search_input.text !== searchProxy.searchedText)
-            search_input.text = searchProxy.searchedText
+        if (searchProxy && searchTextField.text !== searchProxy.searchedText)
+            searchTextField.text = searchProxy.searchedText
     }
 
     Component {
@@ -42,19 +44,20 @@ Rectangle
             sendTo: parent.pSendTo
             time: parent.pTime
             searchModel: parent.pSearchModel
-            onOpenRequested: function(theme, name, sendTo, content, time) {
+            onOpenRequested: function(theme, name, sendTo, content, time)
+                {
                 emailsListQML.emailOpenRequested(parent.pIndex, theme, name, sendTo, content, time, false)
             }
             onClicked:
             {
                 newMessageLoader.selectedItem =
-                {
-                    "index": parent.pIndex,
-                    "subject": theme,
-                    "sendTo": sendTo,
-                    "content": content,
-                    "isDraft": true
-                }
+                    {
+                        "index": parent.pIndex,
+                        "subject": theme,
+                        "sendTo": sendTo,
+                        "content": content,
+                        "isDraft": true
+                    }
 
                 newMessageLoader.source = ""
                 newMessageLoader.active = false
@@ -65,7 +68,7 @@ Rectangle
             onDeleteClicked:
             {
                 if (sourceModel)
-                    sourceModel.removeEmailData(parent.pIndex)
+                    sourceModel.RemoveEmailData(parent.pIndex)
             }
         }
     }
@@ -91,12 +94,12 @@ Rectangle
             }
             onStarredClicked:
             {
-                sourceModel.setStarred(parent.pIndex, starred)
+                sourceModel.SetStarred(parent.pIndex, starred)
             }
             onDeleteClicked:
             {
                 if (sourceModel)
-                    sourceModel.removeEmailData(parent.pIndex)
+                    sourceModel.RemoveEmailData(parent.pIndex)
             }
         }
     }
@@ -154,7 +157,7 @@ Rectangle
             // Search line
             Rectangle
             {
-                id: input
+                id: inputLine
 
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -168,7 +171,7 @@ Rectangle
 
                 Item
                 {
-                    id: searchIconArea
+                    id: searchIcon
                     x: 12
                     y: 11
                     width: 16
@@ -185,10 +188,9 @@ Rectangle
                     }
                 }
 
-                // PlaceHolder
                 Rectangle
                 {
-		    id: search_container
+                    id: searchContainer
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
@@ -200,7 +202,7 @@ Rectangle
 
                     TextField
                     {
-                        id: search_input
+                        id: searchTextField
                         anchors.fill: parent
                         color: "#1f2937"
                         font.family: "Segoe UI"
@@ -224,7 +226,7 @@ Rectangle
                         cursorDelegate: Item {}
                         Rectangle
                         {
-                            id: custom_cursor_for_search_container
+                            id: customCursorContainer
                             width: 1
                             color: "#1f2937"
                             height: parent.font.pixelSize
@@ -259,7 +261,7 @@ Rectangle
     // Inbox Separator
     Rectangle
     {
-        id: separator
+        id: separatorLine
 
         anchors.top:searchSection.bottom
         anchors.leftMargin: 0
@@ -293,7 +295,7 @@ Rectangle
 
         Rectangle
         {
-            id: heading_3
+            id: separatorContainer
             anchors
             {
                 left: parent.left
@@ -307,18 +309,18 @@ Rectangle
             // Inbox and page label
             Rectangle
             {
-                id: frame_3
+                id: textContainer
                 y: -8
                 height: 18
                 anchors.left: parent.left
-                anchors.right: navButtons.left
+                anchors.right: navButtonContainer.left
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
                 color: "transparent"
 
                 Text
                 {
-                    id: inbox
+                    id: inboxText
                     height: 16
                     color: "#6a7282"
                     font.capitalization: Font.AllUppercase
@@ -336,7 +338,7 @@ Rectangle
 
                 Text
                 {
-                    id: amount
+                    id: pageText
                     anchors.right: parent.right
                     y: 1
                     height: 16
@@ -358,7 +360,7 @@ Rectangle
             // Navigation buttons
             Item
             {
-                id: navButtons
+                id: navButtonContainer
                 x: 564
                 y: -8
                 anchors.right: parent.right
@@ -369,12 +371,12 @@ Rectangle
                 // Button back
                 Rectangle
                 {
-                    id: button_margin
+                    id: moveBackButtonContainer
                     anchors.left: parent.left
                     width: 15
                     height: 17
                     color: "transparent"
-                    scale: clickAreaMoveBack.containsMouse ? 1.3 : 1.0
+                    scale: moveBackButtonClickArea.containsMouse ? 1.3 : 1.0
 
                     Behavior on scale
                     {
@@ -386,7 +388,7 @@ Rectangle
                     }
                     MouseArea
                     {
-                        id: clickAreaMoveBack
+                        id: moveBackButtonClickArea
                         anchors.fill: parent
 
                         hoverEnabled: true
@@ -394,13 +396,15 @@ Rectangle
 
                         onClicked:
                         {
-                                    if (listView.model)
-                                        listView.model.prevPage()
+                            if (listView.model)
+                            {
+                                listView.model.PrevPage()
+                            }
                         }
                     }
                     Rectangle
                     {
-                        id: buttonToMoveBack
+                        id: moveBackButton
                         y: 2
                         height: 15
                         width: 15
@@ -423,22 +427,25 @@ Rectangle
                 // Button forward
                 Rectangle
                 {
-                    id: button_margin_1
+                    id: moveForwardButtonContainer
                     anchors.right: parent.right
                     width: 15
                     height: 18
                     color: "transparent"
-                    scale: clickAreaMoveForvard.containsMouse ? 1.3 : 1.0
+                    scale: moveForwardButtonClickArea.containsMouse ? 1.3 : 1.0
                     MouseArea {
-                        id: clickAreaMoveForvard
+                        id: moveForwardButtonClickArea
                         anchors.fill: parent
 
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
 
-                        onClicked: {
+                        onClicked:
+                        {
                             if (listView.model)
-                                listView.model.nextPage()
+                            {
+                                listView.model.NextPage()
+                            }
                         }
                     }
 
@@ -453,7 +460,7 @@ Rectangle
 
                     Rectangle
                     {
-                        id: buttonToMoveForward
+                        id: moveForwardButton
                         y: 2
                         height: 15
                         width: 15
@@ -476,7 +483,8 @@ Rectangle
         }
     }
 
-    HoverHandler {
+    HoverHandler
+    {
         id: listViewHover
     }
 
@@ -487,7 +495,7 @@ Rectangle
         clip: true
         anchors
         {
-            top: separator.bottom;
+            top: separatorLine.bottom;
             right: parent.right;
             left: parent.left;
             bottom: parent.bottom;
@@ -506,16 +514,18 @@ Rectangle
             property var pSearchModel: emailsListQML.activeSearchModel()
             property int pIndex: index
             sourceComponent: isDraftMode
-                             ? draftDelegate
-                             : emailsDelegate
+                ? draftDelegate
+                : emailsDelegate
         }
 
-        ScrollBar.vertical: ScrollBar {
+        ScrollBar.vertical: ScrollBar
+        {
             id: vBar
             active: true
             visible: (listView.contentHeight > listView.height) && listViewHover.hovered
             policy: ScrollBar.AsNeeded
-            contentItem: Rectangle {
+            contentItem: Rectangle
+            {
                 implicitWidth: 6
                 implicitHeight: 100
                 radius: 3

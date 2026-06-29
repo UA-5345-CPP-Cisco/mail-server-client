@@ -1,5 +1,6 @@
 #include "headers/search/MessageSearchModel.h"
 #include "headers/mail/EmailListModel.h"
+
 #include <QVariant>
 
 namespace ISXMail
@@ -11,12 +12,12 @@ MessageSearchModel::MessageSearchModel(QObject* parent)
     setFilterCaseSensitivity(Qt::CaseInsensitive);
 }
 
-QString MessageSearchModel::searchedText() const
+QString MessageSearchModel::SearchedText() const
 {
     return m_searchedText;
 }
 
-void MessageSearchModel::setSearchedText(const QString& text)
+void MessageSearchModel::SetSearchedText(const QString& text)
 {
     if (m_searchedText == text)
     {
@@ -29,7 +30,7 @@ void MessageSearchModel::setSearchedText(const QString& text)
     emit searchedTextChanged();
 }
 
-bool MessageSearchModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
+bool MessageSearchModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const
 {
     const QString word = m_searchedText.trimmed();
 
@@ -44,19 +45,19 @@ bool MessageSearchModel::filterAcceptsRow(int sourceRow, const QModelIndex& sour
         return false;
     }
 
-    const QModelIndex index = src->index(sourceRow, 0, sourceParent);
+    const QModelIndex index = src->index(source_row, 0, source_parent);
 
-    return textMatches(src->data(index,ThemeRole).toString(), word)
-        || textMatches(src->data(index, NameRole).toString(), word)
-        || textMatches(src->data(index, PreviewRole).toString(), word)
-        || textMatches(src->data(index, ContentRole).toString(), word)
-        || textMatches(src->data(index, SendToRole).toString(), word)
-        || textMatches(src->data(index, TimeRole).toString(), word);
+    return TextMatches(src->data(index,ThemeRole).toString(), word)
+        || TextMatches(src->data(index, NameRole).toString(), word)
+        || TextMatches(src->data(index, PreviewRole).toString(), word)
+        || TextMatches(src->data(index, ContentRole).toString(), word)
+        || TextMatches(src->data(index, SendToRole).toString(), word)
+        || TextMatches(src->data(index, TimeRole).toString(), word);
 }
 
-QString MessageSearchModel::highlightAllFoundWords(const QString& text, const QString& searchedText) const
+QString MessageSearchModel::HighlightAllFoundWords(const QString& text, const QString& searched_text) const
 {
-    const QString word = searchedText.trimmed();
+    const QString word = searched_text.trimmed();
 
     if (word.isEmpty())
     {
@@ -84,7 +85,7 @@ QString MessageSearchModel::highlightAllFoundWords(const QString& text, const QS
     return result;
 }
 
-bool MessageSearchModel::textMatches(const QString& candidate, const QString& word) const
+bool MessageSearchModel::TextMatches(const QString& candidate, const QString& word) const
 {
     return candidate.contains(word, Qt::CaseInsensitive);
 }

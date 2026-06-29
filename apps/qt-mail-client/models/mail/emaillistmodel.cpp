@@ -85,9 +85,14 @@ QHash<int, QByteArray> EmailListModel::roleNames() const
 
 void EmailListModel::RemoveData(int row)
 {
-    if (row < 0 || row >= static_cast<int>(m_data.size())) return;
+	if (row < 0 || row >= static_cast<int>(m_data.size()))
+	{
+		return;
+	}
     if (m_data[row].id >= 0 && !m_message_repository.DeleteMessage(m_data[row].id))
-        return;
+    {
+	    return;
+    }
     beginRemoveRows(QModelIndex(), row, row);
     m_data.erase(m_data.begin() + row);
     endRemoveRows();
@@ -95,12 +100,16 @@ void EmailListModel::RemoveData(int row)
 
 bool EmailListModel::DeleteEmail(int row)
 {
-    if (row < 0 || row >= static_cast<int>(m_data.size()))
-        return false;
+	if (row < 0 || row >= static_cast<int>(m_data.size()))
+	{
+		return false;
+	}
 
-    const std::int64_t message_id = m_data[row].id;
-    if (message_id >= 0 && !m_message_repository.DeleteMessage(message_id))
-        return false;
+	const std::int64_t message_id = m_data[row].id;
+	if (message_id >= 0 && !m_message_repository.DeleteMessage(message_id))
+	{
+		return false;
+	}
 
     beginRemoveRows(QModelIndex(), row, row);
     m_data.erase(m_data.begin() + row);
@@ -121,11 +130,11 @@ void EmailListModel::AddData(
 )
 {
 	const QString t = time.isEmpty() ? QTime::currentTime().toString("hh:mm") : time;
-	const QString preview = makePreview(content, 30);
+	const QString preview = MakePreview(content, 30);
 	AddData({-1, is_inbox, is_starred, is_sent, is_draft, theme, name, send_to, preview, content, t});
 }
 
-QString EmailListModel::makePreview(const QString& text, int maxLen)
+QString EmailListModel::MakePreview(const QString& text, int maxLen)
 {
 	if (text.length() <= maxLen)
 	{
@@ -191,7 +200,7 @@ void EmailListModel::LoadFromDatabase()
 			: QStringLiteral("empty");
 		const QString name = QString::fromStdString(message.sender_email);
 		const QString content = QString::fromStdString(message.body);
-		const QString preview = makePreview(content, 30);
+		const QString preview = MakePreview(content, 30);
 		const QString time = QString::fromStdString(message.created_at);
 		const bool is_inbox = message.is_inbox;
 		const bool is_draft = message.is_draft || message.status == Storage::MailMessageStatus::Draft;
@@ -218,14 +227,17 @@ void EmailListModel::LoadFromDatabase()
 bool EmailListModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
     if (!index.isValid() || index.row() >= static_cast<int>(m_data.size()))
-        return false;
-
+    {
+	    return false;
+    }
     switch (role)
     {
     case StarredRole:
         if (m_data[index.row()].id >= 0 &&
             !m_message_repository.UpdateStarred(m_data[index.row()].id, value.toBool()))
-            return false;
+        {
+	        return false;
+        }
         m_data[index.row()].is_starred = value.toBool();
         break;
     case ThemeRole:
@@ -249,4 +261,5 @@ Qt::ItemFlags EmailListModel::flags(const QModelIndex& index) const
 {
     return QAbstractListModel::flags(index) | Qt::ItemIsEditable;
 }
+
 }

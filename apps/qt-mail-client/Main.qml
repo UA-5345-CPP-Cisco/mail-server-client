@@ -178,9 +178,10 @@ ApplicationWindow
                    {
                        if(newMessageLoader.selectedItem != null)
                        {
-                           draftModel.setEmailData(parseInt(index), recipient, parseInt(EmailRole.SendToRole))
-                           draftModel.setEmailData(parseInt(index), subject, parseInt(EmailRole.ThemeRole))
-                           draftModel.setEmailData(parseInt(index), text, parseInt(EmailRole.ContentRole))
+                           draftModel.SetEmailData(parseInt(index), recipient, parseInt(EmailRole.SendToRole))
+                           draftModel.SetEmailData(parseInt(index), subject, parseInt(EmailRole.ThemeRole))
+                           draftModel.SetEmailData(parseInt(index), text, parseInt(EmailRole.ContentRole))
+                           draftModel.SetEmailData(parseInt(index), text, parseInt(EmailRole.PreviewRole))
                        }
 
                        newMessageLoader.selectedItem = null
@@ -190,7 +191,7 @@ ApplicationWindow
                    {
                        if(newMessageLoader.selectedItem != null)
                        {
-                           draftModel.removeEmailData(parseInt(index))
+                           draftModel.RemoveEmailData(parseInt(index))
                            emailsModel.AddData(
                                false, true, false,
                                subject, CurrentUser.username,
@@ -328,7 +329,7 @@ ApplicationWindow
                     onStarClicked:
                     {
                         if (emailList.sourceModel)
-                            emailList.sourceModel.setStarred(parseInt(letterIndex), starred)
+                            emailList.sourceModel.SetStarred(parseInt(letterIndex), starred)
                         if (window.selectedEmail)
                         {
                             window.selectedEmail = {
@@ -346,7 +347,7 @@ ApplicationWindow
                     onDeleteClicked:
                     {
                         if (emailList.sourceModel)
-                            emailList.sourceModel.removeEmailData(parseInt(letterIndex))
+                            emailList.sourceModel.RemoveEmailData(parseInt(letterIndex))
                         window.selectedEmail = null
                     }
                 }
