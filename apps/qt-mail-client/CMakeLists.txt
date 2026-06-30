@@ -2,19 +2,18 @@ cmake_minimum_required(VERSION 3.16)
 
 project(qtapptestmail VERSION 0.1 LANGUAGES CXX C)
 
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
+find_package(SQLite3 REQUIRED)
 
 qt_standard_project_setup(REQUIRES 6.10)
 
 qt_add_executable(appqtapptestmail
         main.cpp
-        include/sqlite3/sqlite3.c
 )
-
-target_include_directories(appqtapptestmail PRIVATE "include/sqlite3")
 
 file(GLOB ASSET_FILES "assets/*")
 foreach (asset_file ${ASSET_FILES})
@@ -97,6 +96,7 @@ target_link_libraries(appqtapptestmail
         Qt6::Quick
         Qt6::Sql
         Qt6::QuickControls2
+        SQLite3::SQLite3
 )
 
 install(TARGETS appqtapptestmail
