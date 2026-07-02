@@ -14,3 +14,4 @@ Description:
 - `clang-check-format.sh` : script for running c++ linter checks
 - `clang-force-format.sh` : script for run c++ linter force cleanup
 - `cmake-configure-debug.sh` : script for building project components in debug mode
+- `run-tests.sh` : script for running tests for project components
