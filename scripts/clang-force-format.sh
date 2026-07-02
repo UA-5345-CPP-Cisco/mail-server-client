@@ -11,4 +11,4 @@ if [[ "${#sources[@]}" -eq 0 ]]; then
   exit 0
 fi
 
-clang-format -i "${sources[@]}"
+"${CLANG_FORMAT:-clang-format}" -i "${sources[@]}"

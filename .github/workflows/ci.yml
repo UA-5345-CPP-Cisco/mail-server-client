@@ -29,11 +29,10 @@ jobs:
           chmod +x llvm.sh
           sudo ./llvm.sh 22
           sudo apt-get install -y clang-format-22
-          sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-22 100
-          clang-format --version
+          clang-format-22 --version
 
       - name: Check formatting
-        run: scripts/clang-check-format.sh
+        run: CLANG_FORMAT=clang-format-22 scripts/clang-check-format.sh
 
       - name: Configure CMake
         run: cmake -B build -DMAIL_BUILD_TESTS=ON

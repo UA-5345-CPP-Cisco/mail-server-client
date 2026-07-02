@@ -11,4 +11,4 @@ if [[ "${#sources[@]}" -eq 0 ]]; then
   exit 0
 fi
 
-clang-format --dry-run --Werror "${sources[@]}"
+"${CLANG_FORMAT:-clang-format}" --dry-run --Werror "${sources[@]}"
