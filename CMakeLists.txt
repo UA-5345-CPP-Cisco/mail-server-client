@@ -12,6 +12,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(MAIL_BUILD_TESTS "Build tests" OFF)
 option(MAIL_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
+option(MAIL_BUILD_QT_CLIENT "Build Qt mail client" OFF)
 
 include(FetchContent)
 
@@ -94,7 +95,10 @@ add_subdirectory(libs/aimap)
 add_subdirectory(apps/smtp_server)
 add_subdirectory(apps/simple-client)
 add_subdirectory(apps/aimap_server)
-add_subdirectory(apps/qt-mail-client)
+
+if(MAIL_BUILD_QT_CLIENT)
+	add_subdirectory(apps/qt-mail-client)
+endif()
 # ──────────────────────────────────────────
 # Tests
 # ──────────────────────────────────────────
