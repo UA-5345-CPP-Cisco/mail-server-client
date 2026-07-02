@@ -9,8 +9,8 @@ add_executable(mail_storage_tests
 target_link_libraries(mail_storage_tests
         PRIVATE
         mail_storage
-        GTest::gtest_main
-        GTest::gmock
+        gtest_main
+        gmock
 )
 
 target_compile_features(mail_storage_tests
@@ -33,7 +33,7 @@ add_executable(smtp_client_tests
 target_link_libraries(smtp_client_tests
         PRIVATE
         smtp_client
-        GTest::gtest_main
+        gtest_main
 )
 
 target_compile_features(smtp_client_tests
@@ -50,7 +50,7 @@ add_executable(logger_tests
 target_link_libraries(logger_tests
         PRIVATE
         mail_logger
-        GTest::gtest_main
+        gtest_main
 )
 
 target_compile_features(logger_tests
@@ -67,7 +67,7 @@ add_executable(thread_pool_tests
 target_link_libraries(thread_pool_tests
         PRIVATE
         mail_thread_pool
-        GTest::gtest_main
+        gtest_main
 )
 
 target_compile_features(thread_pool_tests
@@ -86,7 +86,7 @@ add_executable(smtp_server_configuration_tests
 target_link_libraries(smtp_server_configuration_tests
         PRIVATE
         smtp_server_core
-        GTest::gtest_main
+        gtest_main
 )
 
 target_compile_features(smtp_server_configuration_tests

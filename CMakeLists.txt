@@ -102,7 +102,7 @@ if(MAIL_BUILD_TESTS)
 	enable_testing()
 	FetchContent_Declare(
 			googletest
-			URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+			URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.zip
 			DOWNLOAD_EXTRACT_TIMESTAMP ON
 	)
 	set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)

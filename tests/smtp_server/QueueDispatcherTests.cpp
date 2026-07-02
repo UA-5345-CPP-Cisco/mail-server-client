@@ -87,7 +87,7 @@ TEST_F(QueueDispatcherTest, DeliversToActiveLocalUsersAndIgnoresUnknownUsers)
   users.CreateUser("local-user", "local@example.test", "password-hash");
 
   const std::int64_t messageId = mailMessages.CreateMessage(
-    std::nullopt, "sender@example.test", std::nullopt, "message body", std::nullopt);
+    std::nullopt, "sender@example.test", std::nullopt, "message body", std::nullopt, false);
   messageRecipients.CreateRecipient(
     messageId, "local@example.test", Storage::RecipientType::To, Storage::DeliveryStatus::Queued);
   messageRecipients.CreateRecipient(
@@ -122,7 +122,7 @@ TEST_F(QueueDispatcherTest, FailsMessageWhenNoRecipientIsLocal)
   Storage::MailMessageRepository mailMessages(database);
   Storage::MessageRecipientRepository messageRecipients(database);
   const std::int64_t messageId = mailMessages.CreateMessage(
-    std::nullopt, "sender@example.test", std::nullopt, "message body", std::nullopt);
+    std::nullopt, "sender@example.test", std::nullopt, "message body", std::nullopt, false);
   messageRecipients.CreateRecipient(
     messageId, "remote@external.test", Storage::RecipientType::To, Storage::DeliveryStatus::Queued);
 

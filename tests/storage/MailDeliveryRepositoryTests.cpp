@@ -59,8 +59,13 @@ class MailDeliveryRepositoryTest : public testing::Test
 
   std::int64_t CreateMessage(Storage::MailMessageStatus status = Storage::MailMessageStatus::Queued)
   {
-    return m_message_repository->CreateMessage(
-      std::nullopt, "sender@example.com", std::string("Subject"), "Body", std::nullopt, status);
+    return m_message_repository->CreateMessage(std::nullopt,
+                                               "sender@example.com",
+                                               std::string("Subject"),
+                                               "Body",
+                                               std::nullopt,
+                                               false,
+                                               status);
   }
 
   std::filesystem::path m_database_path;
@@ -79,9 +84,10 @@ TEST_F(MailDeliveryRepositoryTest, CreatesAndFindsMessages)
                                         std::nullopt,
                                         "Parent body",
                                         std::nullopt,
+                                        false,
                                         Storage::MailMessageStatus::Draft);
   const std::int64_t reply_message_id = m_message_repository->CreateMessage(
-    user_id, "sender@example.com", std::string("Reply"), "Reply body", parent_message_id);
+    user_id, "sender@example.com", std::string("Reply"), "Reply body", parent_message_id, false);
 
   const std::optional<Storage::MailMessageRecord> parent =
     m_message_repository->FindById(parent_message_id);
@@ -135,13 +141,13 @@ TEST_F(MailDeliveryRepositoryTest, EnforcesMessageRelationships)
 {
   const std::int64_t user_id = CreateUser();
   const std::int64_t message_id = m_message_repository->CreateMessage(
-    user_id, "sender@example.com", std::nullopt, "Body", std::nullopt);
+    user_id, "sender@example.com", std::nullopt, "Body", std::nullopt, false);
 
   EXPECT_THROW(m_message_repository->CreateMessage(
-                 user_id + 1, "sender@example.com", std::nullopt, "Body", std::nullopt),
+                 user_id + 1, "sender@example.com", std::nullopt, "Body", std::nullopt, false),
                std::runtime_error);
   EXPECT_THROW(m_message_repository->CreateMessage(
-                 user_id, "sender@example.com", std::nullopt, "Body", message_id + 1),
+                 user_id, "sender@example.com", std::nullopt, "Body", message_id + 1, false),
                std::runtime_error);
 
   m_database->Execute("DELETE FROM users WHERE id = 1;");
