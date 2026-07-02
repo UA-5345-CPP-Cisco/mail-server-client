@@ -1,18 +1,26 @@
 name: CI Build & Test
 
 on:
-  push:
-    branches:
-      - main
-      - develop
-      - 'experimental/**'
-      - 'feature/**'
-      - 'bugfix/**'
-      - 'hotfix/**'
   pull_request:
     branches:
       - main
-      - develop
+      - 'development/**'
+    paths:
+      - 'apps/**/*.cpp'
+      - 'apps/**/*.h'
+      - 'apps/**/*.hpp'
+      - 'libs/**/*.cpp'
+      - 'libs/**/*.h'
+      - 'libs/**/*.hpp'
+      - 'tests/**/*.cpp'
+      - 'tests/**/*.h'
+      - 'tests/**/*.hpp'
+      - '**/CMakeLists.txt'
+      - 'cmake/**/*.cmake'
+      - 'CMakePresets.json'
+      - '.clang-format'
+      - 'scripts/*.sh'
+      - '.github/workflows/ci.yml'
 
 jobs:
   build:
