@@ -17,16 +17,25 @@ add_library(mail_storage
 )
 
 target_include_directories(mail_storage
-        PUBLIC
+    PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_link_libraries(mail_storage
+if(TARGET SQLite3::SQLite3)
+    target_link_libraries(mail_storage
         PUBLIC
-        SQLite::SQLite3
-)
+            SQLite3::SQLite3
+    )
+elseif(TARGET SQLite::SQLite3)
+    target_link_libraries(mail_storage
+        PUBLIC
+            SQLite::SQLite3
+    )
+else()
+    message(FATAL_ERROR "SQLite target was not found")
+endif()
 
 target_compile_features(mail_storage
-        PUBLIC
+    PUBLIC
         cxx_std_17
 )

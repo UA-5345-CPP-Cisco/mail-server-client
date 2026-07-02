@@ -1,4 +1,4 @@
-#include "storage/MailMessageRepository.h"
+#include "../include/storage/MailMessageRepository.h"
 
 #include <cstdint>
 #include <optional>
@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "storage/Statement.h"
+#include "../include/storage/Statement.h"
 
 namespace Storage {
 
@@ -20,6 +20,7 @@ MailMessageRepository::CreateMessage(const std::optional<std::int64_t>& sender_u
                                      const std::optional<std::string>& subject,
                                      const std::string& body,
                                      const std::optional<std::int64_t>& reply_to_message_id,
+                                     bool is_inbox,
                                      MailMessageStatus status)
 {
   Statement statement(m_database,
@@ -30,9 +31,12 @@ MailMessageRepository::CreateMessage(const std::optional<std::int64_t>& sender_u
 				subject,
 				body,
 				reply_to_message_id,
+				is_inbox,
+				is_starred,
+				is_draft,
 				status
 			)
-			VALUES (?, ?, ?, ?, ?, ?);
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
 		)SQL");
 
   if (sender_user_id.has_value())
@@ -66,7 +70,10 @@ MailMessageRepository::CreateMessage(const std::optional<std::int64_t>& sender_u
     statement.BindNull(5);
   }
 
-  statement.BindText(6, StatusToString(status));
+  statement.BindInt(6, is_inbox ? 1 : 0);
+  statement.BindInt(7, 0);
+  statement.BindInt(8, status == MailMessageStatus::Draft ? 1 : 0);
+  statement.BindText(9, StatusToString(status));
   statement.Step();
 
   return statement.LastInsertRowId();
@@ -84,6 +91,9 @@ std::optional<MailMessageRecord> MailMessageRepository::FindById(std::int64_t me
 				body,
 				reply_to_message_id,
 				created_at,
+				is_inbox,
+				is_starred,
+				is_draft,
 				status
 			FROM mail_messages
 			WHERE id = ?
@@ -98,6 +108,36 @@ std::optional<MailMessageRecord> MailMessageRepository::FindById(std::int64_t me
   }
 
   return ReadMessage(statement);
+}
+
+std::vector<MailMessageRecord> MailMessageRepository::FindAll() const
+{
+  Statement statement(m_database,
+                      R"SQL(
+			SELECT
+				id,
+				sender_user_id,
+				sender_email,
+				subject,
+				body,
+				reply_to_message_id,
+				created_at,
+				is_inbox,
+				is_starred,
+				is_draft,
+				status
+			FROM mail_messages
+			ORDER BY created_at DESC, id DESC;
+		)SQL");
+
+  std::vector<MailMessageRecord> messages;
+
+  while (statement.Step())
+  {
+    messages.push_back(ReadMessage(statement));
+  }
+
+  return messages;
 }
 
 std::vector<MailMessageRecord> MailMessageRepository::FindByStatus(MailMessageStatus status,
@@ -118,6 +158,9 @@ std::vector<MailMessageRecord> MailMessageRepository::FindByStatus(MailMessageSt
 				body,
 				reply_to_message_id,
 				created_at,
+				is_inbox,
+				is_starred,
+				is_draft,
 				status
 			FROM mail_messages
 			WHERE status = ?
@@ -153,6 +196,36 @@ bool MailMessageRepository::UpdateStatus(std::int64_t message_id,
   statement.BindText(1, StatusToString(new_status));
   statement.BindInt64(2, message_id);
   statement.BindText(3, StatusToString(expected_status));
+  statement.Step();
+
+  return statement.ChangedRowCount() > 0;
+}
+
+bool MailMessageRepository::UpdateStarred(std::int64_t message_id, bool starred)
+{
+  Statement statement(m_database,
+                      R"SQL(
+			UPDATE mail_messages
+			SET is_starred = ?
+			WHERE id = ?;
+		)SQL");
+
+  statement.BindInt(1, starred ? 1 : 0);
+  statement.BindInt64(2, message_id);
+  statement.Step();
+
+  return statement.ChangedRowCount() > 0;
+}
+
+bool MailMessageRepository::DeleteMessage(std::int64_t message_id)
+{
+  Statement statement(m_database,
+                      R"SQL(
+			DELETE FROM mail_messages
+			WHERE id = ?;
+		)SQL");
+
+  statement.BindInt64(1, message_id);
   statement.Step();
 
   return statement.ChangedRowCount() > 0;
@@ -224,7 +297,10 @@ MailMessageRecord MailMessageRepository::ReadMessage(const Statement& statement)
   }
 
   message.created_at = statement.ColumnText(6);
-  message.status = StatusFromString(statement.ColumnText(7));
+  message.is_inbox = statement.ColumnInt64(7) != 0;
+  message.is_starred = statement.ColumnInt64(8) != 0;
+  message.is_draft = statement.ColumnInt64(9) != 0;
+  message.status = StatusFromString(statement.ColumnText(10));
 
   return message;
 }

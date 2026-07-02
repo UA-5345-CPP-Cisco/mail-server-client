@@ -26,5 +26,7 @@
         <file>assets/ic_three_dots.svg</file>
         <file>assets/ic_archive.svg</file>
         <file>assets/ic_close_window_black.svg</file>
+        <file>assets/ic_google_logo.svg</file>
+        <file>assets/ic_checkmark.svg</file>
     </qresource>
 </RCC>

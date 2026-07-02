@@ -3,24 +3,29 @@ import QtQuick.Controls
 import QtQuick.Shapes
 import QtQuick.Effects
 
-Popup {
-    id: root
-    width: 640
-    height: 460
-    modal: true
-    focus: true
-    anchors.centerIn: Overlay.overlay
+Rectangle
+{
+    id: rootWindow
+    implicitWidth: 640
+    implicitHeight: 460
+    visible: true
+    clip: true
+    radius: 14
 
-    // Backround window
-    background: Rectangle {
+
+    Rectangle
+    {
+        id: backgroundRectangle
+        anchors.fill: parent
         color: "#ffffff"
         radius: 14
         border.color: "#e5e7eb"
         border.width: 1
     }
 
-    // Close button
-    Rectangle {
+    Rectangle
+    {
+        id: closeButtonRectangle
         width: 40
         height: 40
         anchors.top: parent.top
@@ -30,7 +35,10 @@ Popup {
         radius: 8
         color: "transparent"
         z: 10
-        Image {
+
+        Image
+        {
+            id: closeIcon
             anchors.centerIn: parent
             source: "qrc:/pngs/assets/ic_close_window_black.svg"
             width: 15
@@ -40,99 +48,147 @@ Popup {
             fillMode: Image.PreserveAspectFit
         }
 
-        scale: closeMouse.containsMouse ? 1.3 : 1.0
+        scale: closeClickArea.containsMouse ? 1.3 : 1.0
 
-        Behavior on scale {
-            NumberAnimation {
-                duration: 150; easing.type: Easing.InOutQuad
+        Behavior on scale
+        {
+            id: closeScaleBehavior
+
+            NumberAnimation
+            {
+                id: closeScaleAnimation
+                duration: 150
+                easing.type: Easing.InOutQuad
             }
         }
 
-        MouseArea {
-            id: closeMouse
+        MouseArea
+        {
+            id: closeClickArea
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
-            onClicked: {
-                root.close()
-                contentLoader.sourceComponent = choiceScreen //?????????
+
+            onClicked:
+            {
+                closeAuthWindow()
             }
         }
     }
 
-    Loader {
+    // Dynamic screen loader for changing screens
+    Loader
+    {
         id: contentLoader
         anchors.fill: parent
-        sourceComponent: choiceScreen
+        sourceComponent: choiceScreenComponent
     }
 
-
-    Connections {
+    // Event routing from loaded screens
+    Connections
+    {
+        id: loaderConnections
         target: contentLoader.item
         ignoreUnknownSignals: true
 
-        // When "Back" is clicked
-        function onBackRequested() {
-            contentLoader.sourceComponent = choiceScreen
+        // Handle back navigation
+        function onBackRequested()
+        {
+            contentLoader.sourceComponent = choiceScreenComponent
         }
 
-        // When "Sign In" is clicked
-        function onLoginSubmitted(email, password) {
-            // authorization logic
-            root.close()
+        // Handle login submit
+        function onLoginSubmitted(email, password)
+        {
+            //rootWindow.close()
         }
 
-        function onRegisterSubmitted(name, email, password) {
-            // Register logic
-            // root.close()
+        // Handle registration submit
+        function onRegisterSubmitted(name, email, password)
+        {
+            var success = regHandler.registerUser(name, email, password);
+
+            if (success)
+            {
+                var firstLetter = avatarInitial(name)
+
+                accountModel.AddAccount(name, email, "", "#3b82f6", firstLetter, true)
+                CurrentUser.Authorize(name, email, "")
+
+                closeAuthWindow()
+            }
+            else
+            {
+                return -1;
+            }
         }
     }
 
-    Component {
-        id: choiceScreen
+    Component
+    {
+        id: choiceScreenComponent
 
-        Item {
+        Item
+        {
+            id: choiceScreenRootItem
             anchors.fill: parent
 
-            Column {
+            Column
+            {
+                id: mainLayoutColumn
                 anchors.centerIn: parent
                 spacing: 30
 
-                Text {
+                Text
+                {
+                    id: mainTitleText
                     text: "Add an Account"
                     font.family: "Segoe UI"
                     font.pixelSize: 32
                     font.weight: Font.Bold
-                    //color: "#6a748b"
                     color: "#000000"
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
 
-
-                Row {
+                Row
+                {
+                    id: optionsRow
                     spacing: 24
                     anchors.horizontalCenter: parent.horizontalCenter
 
-                    // First block
-                    Rectangle {
+                    // Login selection
+                    Rectangle
+                    {
+                        id: loginSelectionBlock
                         width: 260
                         height: 300
                         radius: 12
                         border.color: "#e5e7eb"
                         border.width: 1
                         color: "transparent"
-                        Column {
+
+                        Column
+                        {
+                            id: loginContentColumn
                             anchors.centerIn: parent
                             spacing: 16
                             width: parent.width - 32
-                            Image {
+
+                            Image
+                            {
+                                id: loginIcon
                                 source: "qrc:/pngs/assets/ic_login.svg"
-                                sourceSize.width: 80
-                                sourceSize.height: 80
+                                width: 80
+                                height: 80
+                                sourceSize.width: width * Screen.devicePixelRatio
+                                sourceSize.height: height * Screen.devicePixelRatio
                                 fillMode: Image.PreserveAspectFit
                                 anchors.horizontalCenter: parent.horizontalCenter
                             }
-                            Text {
+
+                            Text
+                            {
+                                id: loginTitleText
                                 text: "Existing User?"
                                 font.family: "Segoe UI"
                                 font.pixelSize: 22
@@ -141,14 +197,18 @@ Popup {
                                 anchors.horizontalCenter: parent.horizontalCenter
                             }
 
-                            // Log In button
-                            Rectangle {
+                            Rectangle
+                            {
+                                id: loginButton
                                 width: 160
                                 height: 44
                                 radius: 8
-                                color: loginMouseArea.containsMouse ? "#0052cc" : "#1a66ff"
+                                color: loginClickArea.containsMouse ? "#0052cc" : "#1a66ff"
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                Text {
+
+                                Text
+                                {
+                                    id: loginButtonText
                                     anchors.centerIn: parent
                                     text: "Log In"
                                     color: "#ffffff"
@@ -156,25 +216,38 @@ Popup {
                                     font.pixelSize: 16
                                     font.weight: Font.Bold
                                 }
-                                scale: loginMouseArea.containsMouse ? 1.15 : 1.0
 
-                                Behavior on scale {
-                                    NumberAnimation {
-                                        duration: 150; easing.type: Easing.InOutQuad
+                                scale: loginClickArea.containsMouse ? 1.05 : 1.0
+
+                                Behavior on scale
+                                {
+                                    id: loginScaleBehavior
+
+                                    NumberAnimation
+                                    {
+                                        id: loginScaleAnimation
+                                        duration: 150
+                                        easing.type: Easing.InOutQuad
                                     }
                                 }
-                                MouseArea {
-                                    id: loginMouseArea
+
+                                MouseArea
+                                {
+                                    id: loginClickArea
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
-                                    onClicked: {
+
+                                    onClicked:
+                                    {
                                         contentLoader.source = "LoginQML.qml"
                                     }
                                 }
                             }
 
-                            Text {
+                            Text
+                            {
+                                id: loginDescriptionText
                                 text: "Access your personal \n or work profile"
                                 font.family: "Segoe UI"
                                 font.pixelSize: 14
@@ -185,27 +258,40 @@ Popup {
                         }
                     }
 
-                    // Second block
-                    Rectangle {
+                    // Redister selection
+                    Rectangle
+                    {
+                        id: registerSelectionBlock
                         width: 260
                         height: 300
                         radius: 12
                         border.color: "#e5e7eb"
                         border.width: 1
                         color: "transparent"
-                        Column {
+
+                        Column
+                        {
+                            id: registerContentColumn
                             anchors.centerIn: parent
                             anchors.verticalCenterOffset: -2
                             spacing: 16
                             width: parent.width - 32
-                            Image {
+
+                            Image
+                            {
+                                id: registerIcon
                                 source: "qrc:/pngs/assets/ic_add_account.svg"
-                                sourceSize.width: 64
-                                sourceSize.height: 64
+                                width: 64
+                                height: 64
+                                sourceSize.width: width * Screen.devicePixelRatio
+                                sourceSize.height: height * Screen.devicePixelRatio
                                 fillMode: Image.PreserveAspectFit
                                 anchors.horizontalCenter: parent.horizontalCenter
                             }
-                            Text {
+
+                            Text
+                            {
+                                id: registerTitleText
                                 text: "New User?"
                                 font.family: "Segoe UI"
                                 font.pixelSize: 22
@@ -214,14 +300,18 @@ Popup {
                                 anchors.horizontalCenter: parent.horizontalCenter
                             }
 
-                            // Register button
-                            Rectangle {
+                            Rectangle
+                            {
+                                id: registerButton
                                 width: 160
                                 height: 44
                                 radius: 8
-                                color: registerMouseArea.containsMouse ? "#0052cc" : "#1a66ff"
+                                color: registerClickArea.containsMouse ? "#0052cc" : "#1a66ff"
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                Text {
+
+                                Text
+                                {
+                                    id: registerButtonText
                                     anchors.centerIn: parent
                                     text: "Register"
                                     color: "#ffffff"
@@ -229,27 +319,38 @@ Popup {
                                     font.pixelSize: 16
                                     font.weight: Font.Bold
                                 }
-                                scale: registerMouseArea.containsMouse ? 1.15 : 1.0
 
-                                Behavior on scale {
-                                    NumberAnimation {
-                                        duration: 150; easing.type: Easing.InOutQuad
+                                scale: registerClickArea.containsMouse ? 1.05 : 1.0
+
+                                Behavior on scale
+                                {
+                                    id: registerScaleBehavior
+
+                                    NumberAnimation
+                                    {
+                                        id: registerScaleAnimation
+                                        duration: 150
+                                        easing.type: Easing.InOutQuad
                                     }
                                 }
 
-
-                                MouseArea {
-                                    id: registerMouseArea
+                                MouseArea
+                                {
+                                    id: registerClickArea
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
-                                    onClicked: {
+
+                                    onClicked:
+                                    {
                                         contentLoader.source = "RegistrationQML.qml"
                                     }
                                 }
                             }
 
-                            Text {
+                            Text
+                            {
+                                id: registerDescriptionText
                                 text: "Create a new account"
                                 font.family: "Segoe UI"
                                 font.pixelSize: 14
@@ -262,6 +363,5 @@ Popup {
                 }
             }
         }
-
     }
 }

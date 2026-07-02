@@ -2,22 +2,17 @@
 
 ## Overview
 
-This document describes the three-layer architecture for displaying and managing email messages in a Qt/QML application.
-The system uses **EmailListModel** as the primary data source, **EmailFilterProxy** to filter emails by folder type (
-Inbox, Sent, Starred, Draft), and **EmailPageProxy** to implement pagination with fixed page sizes.
+This document describes the three-layer architecture for displaying and managing email messages in a Qt/QML application. The system uses **EmailListModel** as the primary data source, **EmailFilterProxy** to filter emails by folder type (Inbox, Sent, Starred, Draft), and **EmailPageProxy** to implement pagination with fixed page sizes.
 
 ---
 
 ## Architecture Layers
 
 ### Layer 1: EmailListModel (Data Source)
-
 ### Layer 2: EmailFilterProxy (Filtering)
-
 ### Layer 3: EmailPageProxy (Pagination)
 
 The chain flows as follows:
-
 ```
 EmailListModel (all emails) 
     ↓
@@ -33,9 +28,7 @@ QML ListView (displays 8 emails per page)
 ## 1. EmailListModel
 
 ### Purpose
-
-**EmailListModel** is the foundational `QAbstractListModel` that stores all email data in memory. It acts as the primary
-data source and does not perform any filtering or pagination itself.
+**EmailListModel** is the foundational `QAbstractListModel` that stores all email data in memory. It acts as the primary data source and does not perform any filtering or pagination itself.
 
 ### Data Structure
 
@@ -57,24 +50,22 @@ struct EmailData {
 
 The model exposes the following Qt roles for QML binding:
 
-| Role          | QML Name        | Type    | Description               |
-|---------------|-----------------|---------|---------------------------|
-| `StarredRole` | `emailsStarred` | bool    | Email is favorited        |
-| `SentRole`    | `emailsSent`    | bool    | Email is in Sent folder   |
-| `DraftRole`   | `emailsDraft`   | bool    | Email is a draft          |
-| `ThemeRole`   | `emailsTheme`   | QString | Email subject             |
-| `NameRole`    | `emailsName`    | QString | Sender's name             |
-| `SendToRole`  | `emailsSendTo`  | QString | Recipient                 |
+| Role | QML Name | Type | Description |
+|------|----------|------|-------------|
+| `StarredRole` | `emailsStarred` | bool | Email is favorited |
+| `SentRole` | `emailsSent` | bool | Email is in Sent folder |
+| `DraftRole` | `emailsDraft` | bool | Email is a draft |
+| `ThemeRole` | `emailsTheme` | QString | Email subject |
+| `NameRole` | `emailsName` | QString | Sender's name |
+| `SendToRole` | `emailsSendTo` | QString | Recipient |
 | `PreviewRole` | `emailsPreview` | QString | Truncated content preview |
-| `ContentRole` | `emailsContent` | QString | Full email body           |
-| `TimeRole`    | `emailsTime`    | QString | Formatted timestamp       |
+| `ContentRole` | `emailsContent` | QString | Full email body |
+| `TimeRole` | `emailsTime` | QString | Formatted timestamp |
 
 ### Public Methods
 
 #### `AddData(const QString& theme, const QString& name, ...)`
-
-Adds a new email entry to the model. Automatically generates a preview by truncating the content to 30 characters and
-uses the current time if no timestamp is provided.
+Adds a new email entry to the model. Automatically generates a preview by truncating the content to 30 characters and uses the current time if no timestamp is provided.
 
 ```cpp
 model->AddData(
@@ -90,7 +81,6 @@ model->AddData(
 ```
 
 #### `AddData(const EmailData& item)`
-
 Adds a pre-constructed `EmailData` struct. Used internally by the overloaded method above.
 
 ### Key Features
@@ -108,7 +98,7 @@ import QtQuick
 import QtQuick.Controls
 
 ListView {
-    model: emailListModel  // Direct binding to EmailListModel
+    model: EmailListModel  // Direct binding to EmailListModel
     delegate: Column {
         Text { text: model.emailsTheme }
         Text { text: model.emailsName }
@@ -122,9 +112,7 @@ ListView {
 ## 2. EmailFilterProxy
 
 ### Purpose
-
-**EmailFilterProxy** is a `QSortFilterProxyModel` that filters emails based on folder type. It sits between
-the `EmailListModel` and the UI, showing only emails that match the current folder criteria.
+**EmailFilterProxy** is a `QSortFilterProxyModel` that filters emails based on folder type. It sits between the `EmailListModel` and the UI, showing only emails that match the current folder criteria.
 
 ### Folder Types
 
@@ -141,12 +129,12 @@ enum FolderType {
 
 The `filterAcceptsRow()` method determines which rows pass through the filter:
 
-| FolderType | Condition               | Result                       |
-|------------|-------------------------|------------------------------|
-| `Inbox`    | `!is_sent && !is_draft` | Shows received/normal emails |
-| `Sent`     | `is_sent == true`       | Shows sent emails only       |
-| `Starred`  | `is_starred == true`    | Shows favorited emails only  |
-| `Draft`    | `is_draft == true`      | Shows draft emails only      |
+| FolderType | Condition | Result |
+|-----------|-----------|--------|
+| `Inbox` | `!is_sent && !is_draft` | Shows received/normal emails |
+| `Sent` | `is_sent == true` | Shows sent emails only |
+| `Starred` | `is_starred == true` | Shows favorited emails only |
+| `Draft` | `is_draft == true` | Shows draft emails only |
 
 ### Implementation Details
 
@@ -218,9 +206,7 @@ onFolderSelected: {
 ## 3. EmailPageProxy
 
 ### Purpose
-
-**EmailPageProxy** is a `QSortFilterProxyModel` that implements pagination on top of filtered data. It shows only the
-emails for the current page (8 emails per page by default).
+**EmailPageProxy** is a `QSortFilterProxyModel` that implements pagination on top of filtered data. It shows only the emails for the current page (8 emails per page by default).
 
 ### Key Properties
 
@@ -230,16 +216,15 @@ Q_PROPERTY(int pageCount   READ pageCount   NOTIFY pageCountChanged)
 Q_PROPERTY(QString emailsCount READ emailsCount NOTIFY emailsCountChanged)
 ```
 
-| Property      | Type    | Description                              |
-|---------------|---------|------------------------------------------|
-| `currentPage` | int     | Currently displayed page (0-indexed)     |
-| `pageCount`   | int     | Total number of pages                    |
+| Property | Type | Description |
+|----------|------|-------------|
+| `currentPage` | int | Currently displayed page (0-indexed) |
+| `pageCount` | int | Total number of pages |
 | `emailsCount` | QString | Total number of emails in current filter |
 
 ### Public Methods
 
 #### `nextPage()`
-
 Advances to the next page if available.
 
 ```cpp
@@ -247,7 +232,6 @@ pageProxy->nextPage();  // Moves to page+1 if possible
 ```
 
 #### `prevPage()`
-
 Goes back to the previous page if possible.
 
 ```cpp
@@ -362,7 +346,7 @@ EmailPageProxy* pageProxy = new EmailPageProxy(this);
 pageProxy->setSourceModel(inboxFilter);
 
 // Expose to QML
-engine.rootContext()->setContextProperty("emailPageProxy", pageProxy);
+engine.rootContext()->setContextProperty("EmailPageProxy", pageProxy);
 ```
 
 ### Adding Emails
@@ -416,23 +400,18 @@ UI updates: "Page 2 of 4"
 ## 🎯 Key Design Patterns
 
 ### 1. Proxy Chain Pattern
-
 Each proxy wraps the previous layer without modifying data:
-
 ```
 Source → Filter → Paginate → UI
 ```
 
 ### 2. Lazy Filtering
-
 Filtering happens only when needed (when data changes or page navigation occurs).
 
 ### 3. Reactive Updates
-
 All properties use Qt's signal/slot mechanism for automatic UI updates.
 
 ### 4. Separation of Concerns
-
 - **EmailListModel**: Data storage only
 - **EmailFilterProxy**: Filtering logic only
 - **EmailPageProxy**: Pagination logic only
@@ -443,27 +422,26 @@ All properties use Qt's signal/slot mechanism for automatic UI updates.
 
 ### Changing Page Size
 
-Edit in `emailpageproxy.h`:
-
+Edit in `EmailPageProxy.h`:
 ```cpp
 static constexpr int m_per_page = 8;  // Change to desired size
 ```
 
 ### Adding New Folder Types
 
-1. Add to enum in `emailfilterproxy.h`:
+1. Add to enum in `EmailFilterProxy.h`:
    ```cpp
    enum FolderType { Inbox, Sent, Starred, Draft, Archive };  // Add Archive
    ```
 
-2. Add filter logic in `emailfilterproxy.cpp`:
+2. Add filter logic in `EmailFilterProxy.cpp`:
    ```cpp
    case Archive: return is_archived;  // New role needed in EmailData
    ```
 
 ### Adding New Email Properties
 
-1. Extend `EmailData` struct in `emaillistmodel.h`
+1. Extend `EmailData` struct in `EmailListModel.h`
 2. Add new role to `EmailRole` enum
 3. Handle in `data()` method's switch statement
 4. Add to `roleNames()` mapping
@@ -472,15 +450,14 @@ static constexpr int m_per_page = 8;  // Change to desired size
 
 ## 📊 Performance Considerations
 
-| Operation       | Complexity | Notes                       |
-|-----------------|------------|-----------------------------|
-| Add email       | O(1)       | Append to vector            |
-| Filter rows     | O(n)       | Checks each row's flags     |
-| Paginate        | O(1)       | Simple range check          |
-| Page navigation | O(n)       | Rebuilds view for new range |
+| Operation | Complexity | Notes |
+|-----------|-----------|-------|
+| Add email | O(1) | Append to vector |
+| Filter rows | O(n) | Checks each row's flags |
+| Paginate | O(1) | Simple range check |
+| Page navigation | O(n) | Rebuilds view for new range |
 
 For applications with thousands of emails, consider:
-
 - Lazy loading from database
 - Virtual scrolling (only render visible rows)
 - Background filtering on worker thread

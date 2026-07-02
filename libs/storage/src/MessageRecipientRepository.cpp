@@ -1,4 +1,4 @@
-#include "storage/MessageRecipientRepository.h"
+#include "../include/storage/MessageRecipientRepository.h"
 
 #include <cstdint>
 #include <optional>
@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "storage/Statement.h"
+#include "../include/storage/Statement.h"
 
 namespace Storage {
 

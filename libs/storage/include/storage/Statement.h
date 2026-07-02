@@ -6,7 +6,7 @@
 
 #include <sqlite3.h>
 
-#include "storage/Database.h"
+#include "Database.h"
 
 namespace Storage {
 

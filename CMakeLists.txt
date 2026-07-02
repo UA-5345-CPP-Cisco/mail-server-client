@@ -44,7 +44,9 @@ FetchContent_Declare(
 set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(cryptopp_cmake)
 
-# --- SQLite3 ---
+find_package(Threads REQUIRED)
+
+# SQLite3
 FetchContent_Declare(
 		sqlite3
 		GIT_REPOSITORY https://github.com/sjinks/sqlite3-cmake.git
@@ -81,8 +83,8 @@ endif()
 # Internal libraries
 # ──────────────────────────────────────────
 add_subdirectory(libs/logger)
-add_subdirectory(libs/thread_pool)
 add_subdirectory(libs/storage)
+add_subdirectory(libs/thread_pool)
 add_subdirectory(libs/smtp_client)
 add_subdirectory(libs/aimap)
 
@@ -92,20 +94,18 @@ add_subdirectory(libs/aimap)
 add_subdirectory(apps/smtp_server)
 add_subdirectory(apps/simple-client)
 add_subdirectory(apps/aimap_server)
+add_subdirectory(apps/qt-mail-client)
 # ──────────────────────────────────────────
 # Tests
 # ──────────────────────────────────────────
 if(MAIL_BUILD_TESTS)
 	enable_testing()
-
 	FetchContent_Declare(
 			googletest
 			URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
 			DOWNLOAD_EXTRACT_TIMESTAMP ON
 	)
-
 	set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 	FetchContent_MakeAvailable(googletest)
-
 	add_subdirectory(tests)
 endif()

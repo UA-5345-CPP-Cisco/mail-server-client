@@ -1,7 +1,6 @@
 # Database Model
 
-This document describes the SQLite layer used by the mail client, including every file in `models/database`, the schema
-in `include/migrations`, and how the runtime code uses it.
+This document describes the SQLite layer used by the mail client, including every file in `models/database`, the schema in `include/migrations`, and how the runtime code uses it.
 
 ## Overview
 
@@ -31,14 +30,14 @@ Responsible for opening and configuring SQLite.
 Key behavior:
 
 - Opens the database with:
-    - `SQLITE_OPEN_READWRITE`
-    - `SQLITE_OPEN_CREATE`
-    - `SQLITE_OPEN_FULLMUTEX`
+  - `SQLITE_OPEN_READWRITE`
+  - `SQLITE_OPEN_CREATE`
+  - `SQLITE_OPEN_FULLMUTEX`
 - Enables a 5 second busy timeout.
 - Sets these pragmas after opening:
-    - `foreign_keys = ON`
-    - `journal_mode = WAL`
-    - `synchronous = NORMAL`
+  - `foreign_keys = ON`
+  - `journal_mode = WAL`
+  - `synchronous = NORMAL`
 
 Why it matters:
 
@@ -56,15 +55,15 @@ Responsibilities:
 - Step through result rows.
 - Read column values.
 - Report:
-    - last inserted row id
-    - number of changed rows
+  - last inserted row id
+  - number of changed rows
 
 Design notes:
 
 - `BindText` uses `SQLITE_TRANSIENT`, so it is safe to pass temporary strings.
 - `Step()` returns:
-    - `true` for `SQLITE_ROW`
-    - `false` for `SQLITE_DONE`
+  - `true` for `SQLITE_ROW`
+  - `false` for `SQLITE_DONE`
 - Errors are translated into `std::runtime_error` with SQLite’s message attached.
 
 ### `models/database/MigrationRunner.cpp`
@@ -82,8 +81,8 @@ Startup flow:
 Important details:
 
 - Migration filenames must start with a numeric prefix followed by `_`.
-    - Example: `001_initial_schema.sql`
-    - Example: `002_mail_delivery.sql`
+  - Example: `001_initial_schema.sql`
+  - Example: `002_mail_delivery.sql`
 - Duplicate migration versions are rejected.
 - Each migration is applied only once.
 
@@ -134,8 +133,8 @@ Behavior:
 - `FindByStatus()` returns messages for a specific status with a row limit.
 - `UpdateStatus()` performs an optimistic update using the expected status.
 - `FinalizeDelivery()` marks a queued/sending message as:
-    - `sent` if at least one recipient is delivered
-    - `failed` otherwise, if no recipients remain in transit
+  - `sent` if at least one recipient is delivered
+  - `failed` otherwise, if no recipients remain in transit
 
 Current schema expectation:
 
@@ -168,13 +167,13 @@ Behavior:
 
 - Supports the delivery queue lifecycle.
 - Uses status strings such as:
-    - `pending`
-    - `queued`
-    - `delivering`
-    - `delivered`
-    - `temporary_failed`
-    - `bounced`
-    - `failed`
+  - `pending`
+  - `queued`
+  - `delivering`
+  - `delivered`
+  - `temporary_failed`
+  - `bounced`
+  - `failed`
 - `ClaimReadyRecipients()` uses a `WITH` query plus `RETURNING` to atomically claim work.
 
 Current schema expectation:
@@ -189,7 +188,7 @@ Current schema expectation:
 - `message_recipients.last_error`
 - `message_recipients.delivered_at`
 
-### `models/database/cachestore.cpp`
+### `models/database/CacheStore.cpp`
 
 Generic cache table helper.
 
@@ -224,10 +223,10 @@ Behavior:
 
 This file is used by:
 
-- `models/users/usercache.cpp`
-- `models/mail/emailcache.cpp`
+- `models/users/UserCache.cpp`
+- `models/mail/EmailCache.cpp`
 
-### `models/database/databasemanager.cpp`
+### `models/database/DatabaseManager.cpp`
 
 Startup helper for database initialization.
 
@@ -249,8 +248,8 @@ Path resolution behavior:
 
 - Database path is stored in the app data directory.
 - Migration path is resolved by checking:
-    - current working directory + `include/migrations`
-    - application directory and up to 6 parent directories
+  - current working directory + `include/migrations`
+  - application directory and up to 6 parent directories
 
 This is what prevents startup crashes like:
 
@@ -346,7 +345,7 @@ Fields:
 
 ### Compose Flow
 
-`NewMessageQML.qml` calls `messageComposer.SendMessage(...)` or `messageComposer.SaveDraft(...)`.
+`NewMessageQML.qml` calls `MessageComposer.SendMessage(...)` or `MessageComposer.SaveDraft(...)`.
 
 That object:
 
@@ -381,9 +380,9 @@ That keeps the error boundary explicit and avoids silent data corruption.
 
 - The runtime still has some domain duplication between UI-facing `EmailListModel` and the raw database schema.
 - `EmailListModel` currently maps:
-    - `theme` from `subject`
-    - `name` from `sender_email`
-    - `send_to` from the first recipient
+  - `theme` from `subject`
+  - `name` from `sender_email`
+  - `send_to` from the first recipient
 - `created_at` is stored and currently displayed as the raw SQLite timestamp string.
 
 ## File Map
@@ -396,6 +395,6 @@ Database-related files currently in `models/database`:
 - `models/database/UserRepository.cpp`
 - `models/database/MailMessageRepository.cpp`
 - `models/database/MessageRecipientRepository.cpp`
-- `models/database/cachestore.cpp`
-- `models/database/databasemanager.cpp`
+- `models/database/CacheStore.cpp`
+- `models/database/DatabaseManager.cpp`
 

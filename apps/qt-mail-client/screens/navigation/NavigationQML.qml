@@ -1,30 +1,21 @@
 import QtQuick
-import QtQuick.Effects
-import QtQuick.Shapes
-import QtQuick.Controls
 
-Rectangle {
+//declaration of QML
+Rectangle
+{
     id: navigationQML
 
     color: "#ffffff"
 
-        signal
-    inboxClicked
-        signal
-    starredClicked
-        signal
-    sentClicked
-        signal
-    draftClicked
+    signal inboxClicked
+    signal starredClicked
+    signal sentClicked
+    signal draftClicked
 
-    function avatarInitial(name) {
-        var trimmedName = String(name).trim()
-        return trimmedName.length > 0 ? trimmedName.charAt(0).toUpperCase() : "?"
-    }
-
-    // Header
-    Rectangle {
-        id: horizontal_border
+    // headerNavigation
+    Rectangle
+    {
+        id: headerNavigation
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
@@ -33,7 +24,8 @@ Rectangle {
         z: 10
 
         // Bottom border
-        Rectangle {
+        Rectangle
+        {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
@@ -42,55 +34,61 @@ Rectangle {
         }
 
         // Avatar
-        Rectangle {
+        Rectangle
+        {
             id: avatar
             x: 12
             y: 14
             height: 32
             width: 32
-            color: currentUser.avatarPath !== "" ? "transparent" : "#2b7fff"
+            color: CurrentUser.avatarPath !== "" ? "transparent" : "#2b7fff"
             radius: 16
             clip: true
 
-            Image {
+            Image
+            {
                 anchors.fill: parent
-                source: currentUser.avatarPath
-                visible: currentUser.avatarPath !== ""
+                source: CurrentUser.avatarPath
+                visible: CurrentUser.avatarPath !== ""
                 cache: false
                 fillMode: Image.PreserveAspectCrop
             }
-            Text {
+            Text
+            {
                 anchors.centerIn: parent
-                visible: currentUser.avatarPath === ""
+                visible: CurrentUser.avatarPath === ""
                 color: "#ffffff"
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Black
-                text: avatarInitial(currentUser.username)
+                text: avatarInitial(CurrentUser.username)
             }
         }
 
         // Content
-        Rectangle {
-            id: text_container
+        Rectangle
+        {
+            id: userInfoWrapper
             anchors.left: avatar.right
             anchors.leftMargin: 8
-            anchors.right: dropdown_wrapper.left
+            anchors.right: accountChangeWrapper.left
             anchors.rightMargin: 4
             anchors.verticalCenter: parent.verticalCenter
             height: 36
             color: "transparent"
 
-            Rectangle {
-                id: name_holder
+            Rectangle
+            {
+                id: userName
                 anchors.left: parent.left
                 anchors.right: parent.right
                 height: 20
                 clip: true
                 color: "transparent"
 
-                Text {
-                    id: label_username
+                Text
+                {
+                    id: userNameText
                     height: 20
                     width: parent.width
                     color: "#101828"
@@ -100,24 +98,26 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 20
                     lineHeightMode: Text.FixedHeight
-                    text: currentUser.username
+                    text: CurrentUser.username
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     wrapMode: Text.Wrap
                 }
             }
 
-            Rectangle {
-                id: email_holder
+            Rectangle
+            {
+                id: userInfo
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.top: name_holder.bottom
+                anchors.top: userName.bottom
                 height: 16
                 clip: true
                 color: "transparent"
 
-                Text {
-                    id: label_email
+                Text
+                {
+                    id: userEmailText
                     height: 16
                     width: parent.width
                     color: "#6a7282"
@@ -127,7 +127,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: currentUser.email
+                    text: CurrentUser.email
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     wrapMode: Text.Wrap
@@ -136,38 +136,44 @@ Rectangle {
         }
 
         // Wrapper for the Button and Loader
-        Item {
-            id: dropdown_wrapper
+        Item
+        {
+            id: accountChangeWrapper
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             width: 48
 
-            Rectangle {
-                id: button_burger_pull_emails
+            Rectangle
+            {
+                id: buttonAccountChange
                 anchors.centerIn: parent
                 height: 24
                 width: 24
-                color: click_area_pull_emails.pressed ? "#ffdede" : "transparent"
+                color: clickAreaAccountChange.pressed ? "#ffdede" : "transparent"
                 radius: 4
 
-                Rectangle {
-                    id: svg_icon_container
+                Rectangle
+                {
+                    id: accounChangeIcon
                     anchors.centerIn: parent
                     height: 16
                     width: 16
                     clip: true
                     color: "transparent"
-                    scale: click_area_pull_emails.hovered ? 1.5 : 1.0
+                    scale: clickAreaAccountChange.hovered ? 1.5 : 1.0
 
-                    Behavior on scale {
-                        NumberAnimation {
+                    Behavior on scale
+                    {
+                        NumberAnimation
+                        {
                             duration: 150
                             easing.type: Easing.InOutQuad
                         }
                     }
 
-                    Image {
+                    Image
+                    {
                         source: "qrc:/pngs/assets/ic_arrow_down.svg"
                         width: 18
                         height: 18
@@ -178,57 +184,44 @@ Rectangle {
                     }
                 }
 
-                HoverHandler {
-                    id: click_area_pull_emails
+                HoverHandler
+                {
+                    id: clickAreaAccountChange
                     cursorShape: Qt.PointingHandCursor
                 }
 
-                TapHandler {
-                    onTapped: {
-                        if (String(account_change_loader.source) === "") {
-                            account_change_loader.source = "account/SwitchAccountQML.qml"
-                        } else {
-                            account_change_loader.source = ""
+                TapHandler
+                {
+                    onTapped:
+                    {
+                        if (String(accountChangeLoader.source) === "")
+                        {
+                            accountChangeLoader.source = "account/SwitchAccountQML.qml"
+                        }
+                        else
+                        {
+                            accountChangeLoader.source = ""
                         }
                     }
                 }
             }
         }
-
-        // Loader for Account change popup
-        Loader {
-            id: account_change_loader
-            z: 999
-            anchors.top: horizontal_border.bottom
-            anchors.topMargin: 4
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 0
-            anchors.rightMargin: 0
-
-            height: item ? item.implicitHeight : 0
-            source: ""
-            opacity: status === Loader.Ready ? 1 : 0
-
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: 200
-                }
-            }
-        }
     }
+    
     // Compose button
-    Rectangle {
-        id: container_1
+    Rectangle
+    {
+        id: composeEmailWrapper
 
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.top: horizontal_border.bottom
+        anchors.top: headerNavigation.bottom
 
         height: 76
         color: "transparent"
 
-        Rectangle {
+        Rectangle
+        {
             id: buttonToComposeEmail
 
             anchors.left: parent.left
@@ -241,32 +234,40 @@ Rectangle {
             color: hoverHandlerComposeEmails.hovered ? "#0c43f7" : "#155dfc"
             radius: 10
 
-            HoverHandler {
+            HoverHandler
+            {
                 id: hoverHandlerComposeEmails
                 cursorShape: Qt.PointingHandCursor
             }
 
-            TapHandler {
-                onTapped: {
-                    if (newMessageLoader.selectedItem !== null) {
+            TapHandler
+            {
+                onTapped:
+                {
+                    if (newMessageLoader.selectedItem !== null)
+                    {
                         newMessageLoader.selectedItem = null
-
                         newMessageLoader.active = false
                         newMessageLoader.active = true
                         newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml"
-                    } else if (String(newMessageLoader.source) === "") {
+                    }
+                    else if (String(newMessageLoader.source) === "")
+                    {
                         newMessageLoader.selectedItem = null
                         newMessageLoader.active = true
                         newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml"
-                    } else {
+                    }
+                    else
+                    {
                         newMessageLoader.source = ""
                         newMessageLoader.active = false
                     }
                 }
             }
 
-            Rectangle {
-                id: sVG_1
+            Rectangle
+            {
+                id: composeEmailIcon
 
                 x: 16
                 y: 13
@@ -275,7 +276,8 @@ Rectangle {
                 clip: true
                 color: "transparent"
 
-                Image {
+                Image
+                {
                     source: "qrc:/pngs/assets/ic_compose.svg"
                     width: 18
                     height: 18
@@ -286,8 +288,9 @@ Rectangle {
                 }
             }
 
-            Text {
-                id: compose
+            Text
+            {
+                id: composeEmailText
 
                 x: 42
                 y: 10
@@ -306,22 +309,23 @@ Rectangle {
                 verticalAlignment: Text.AlignVCenter
             }
         }
-
     }
 
     // Navigation
-    Rectangle {
-        id: nav
+    Rectangle
+    {
+        id: navigationWrapper
 
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.top: container_1.bottom
-        anchors.bottom: footer.top
+        anchors.top: composeEmailWrapper.bottom
+        anchors.bottom: footerNavigation.top
 
         color: "transparent"
 
         // Inbox button
-        Rectangle {
+        Rectangle
+        {
             id: buttonToOpenInbox
 
             anchors.left: parent.left
@@ -334,26 +338,30 @@ Rectangle {
 
             color: isInboxSelected ? "#dbdbdb" : (hoverHandlerInboxButton.hovered ? "#f3f4f6" : "#ffffff")
 
-            HoverHandler {
+            HoverHandler
+            {
                 id: hoverHandlerInboxButton
                 cursorShape: Qt.PointingHandCursor
             }
 
-            TapHandler {
-                onTapped: {
+            TapHandler
+            {
+                onTapped:
+                {
                     window.selectedFolder = "inbox"
                     inboxClicked()
                 }
             }
 
-            // TEMP ICON
-            Rectangle {
-                id: sVG_2
+            Rectangle
+            {
+                id: inboxButtonIcon
                 x: 12; y: 11
                 height: 18; width: 18
                 clip: true; color: "transparent"
 
-                Image {
+                Image
+                {
                     source: "qrc:/pngs/assets/ic_inbox.svg"
                     width: 18
                     height: 18
@@ -364,15 +372,17 @@ Rectangle {
                 }
             }
 
-            Rectangle {
-                id: container_2
+            Rectangle
+            {
+                id: inboxButtonTextWrapper
                 x: 42; y: 8
                 height: 24
 
                 color: "transparent"
 
-                Text {
-                    id: inbox
+                Text
+                {
+                    id: inboxButtonText
                     height: 24; width: parent.width
                     color: "#101828"
                     font.family: "Segoe UI"; font.pixelSize: 16; font.weight: Font.Normal
@@ -383,7 +393,8 @@ Rectangle {
                 }
             }
 
-            Rectangle {
+            Rectangle
+            {
                 id: amountOfInboxHolder
                 anchors.right: parent.right
                 anchors.rightMargin: 12
@@ -391,8 +402,9 @@ Rectangle {
                 height: 16; width: 20
                 color: "transparent"
 
-                Text {
-                    id: element
+                Text
+                {
+                    id: amountOfInboxText
                     height: 16; width: parent.width
                     color: "#6a7282"
                     font.family: "Segoe UI";
@@ -409,7 +421,8 @@ Rectangle {
         }
 
         // Sent button
-        Rectangle {
+        Rectangle
+        {
             id: buttonToOpenSent
 
             anchors.left: parent.left
@@ -424,26 +437,31 @@ Rectangle {
             height: 40
             radius: 10
 
-            HoverHandler {
+            HoverHandler
+            {
                 id: hoverHandlerSentButton
                 cursorShape: Qt.PointingHandCursor
             }
 
-            TapHandler {
-                onTapped: {
+            TapHandler
+            {
+                onTapped:
+                {
                     window.selectedFolder = "sent"
                     sentClicked()
                 }
             }
 
             // TEMP ICON
-            Rectangle {
-                id: sVG_4
+            Rectangle
+            {
+                id: sentButtonIcon
                 x: 12; y: 11
                 height: 18; width: 18
                 clip: true; color: "transparent"
 
-                Image {
+                Image
+                {
                     source: "qrc:/pngs/assets/ic_sent.svg"
                     width: 18
                     height: 18
@@ -454,14 +472,16 @@ Rectangle {
                 }
             }
 
-            Rectangle {
-                id: container_4
+            Rectangle
+            {
+                id: sentButtonTextWrapper
                 x: 42; y: 8
                 height: 24
                 color: "transparent"
 
-                Text {
-                    id: sent
+                Text
+                {
+                    id: sentButtonText
                     height: 24; width: parent.width
                     color: "#4a5565"
                     font.family: "Segoe UI";
@@ -476,7 +496,8 @@ Rectangle {
                 }
             }
 
-            Rectangle {
+            Rectangle
+            {
                 id: amountOfSentHolder
                 anchors.right: parent.right
                 anchors.rightMargin: 12
@@ -484,8 +505,9 @@ Rectangle {
                 height: 16; width: 20
                 color: "transparent"
 
-                Text {
-                    id: element_2
+                Text
+                {
+                    id: amountOfSentText
                     height: 16; width: parent.width
                     color: "#6a7282"
                     font.family: "Segoe UI";
@@ -502,7 +524,8 @@ Rectangle {
         }
 
         // Starred button
-        Rectangle {
+        Rectangle
+        {
             id: buttonToOpenStarred
 
             anchors.left: parent.left
@@ -518,26 +541,31 @@ Rectangle {
             height: 40
             radius: 10
 
-            HoverHandler {
+            HoverHandler
+            {
                 id: hoverHandlerStarredButton
                 cursorShape: Qt.PointingHandCursor
             }
 
-            TapHandler {
-                onTapped: {
+            TapHandler
+            {
+                onTapped:
+                {
                     window.selectedFolder = "starred"
                     starredClicked()
                 }
             }
 
-            // TEMP ICON
-            Rectangle {
-                id: sVG_3
+
+            Rectangle
+            {
+                id: starredButtonIcon
                 x: 12; y: 11
                 height: 18; width: 18
                 clip: true; color: "transparent"
 
-                Image {
+                Image
+                {
                     source: "qrc:/pngs/assets/ic_star.svg"
                     width: 18
                     height: 18
@@ -548,14 +576,16 @@ Rectangle {
                 }
             }
 
-            Rectangle {
-                id: container_3
+            Rectangle
+            {
+                id: starredButtonTextWrapper
                 x: 42; y: 8
                 height: 24
                 color: "transparent"
 
-                Text {
-                    id: starred
+                Text
+                {
+                    id: starredButtonText
                     height: 24; width: parent.width
                     color: "#4a5565"
                     font.family: "Segoe UI"; font.pixelSize: 16; font.weight: Font.Normal
@@ -566,7 +596,8 @@ Rectangle {
                 }
             }
 
-            Rectangle {
+            Rectangle
+            {
                 id: amountOfStarredHolder
                 anchors.right: parent.right
                 anchors.rightMargin: 12
@@ -574,8 +605,9 @@ Rectangle {
                 height: 16; width: 20
                 color: "transparent"
 
-                Text {
-                    id: element_1
+                Text
+                {
+                    id: amountOfStarredText
                     height: 16; width: parent.width
                     color: "#6a7282"
                     font.family: "Segoe UI";
@@ -592,7 +624,8 @@ Rectangle {
         }
 
         // Drafts button
-        Rectangle {
+        Rectangle
+        {
             id: buttonToOpenDrafts
 
             anchors.left: parent.left
@@ -607,25 +640,29 @@ Rectangle {
             height: 40
             radius: 10
 
-            HoverHandler {
+            HoverHandler
+            {
                 id: hoverHandlerDraftsButton
                 cursorShape: Qt.PointingHandCursor
             }
 
-            TapHandler {
-                onTapped: {
+            TapHandler
+            {
+                onTapped:
+                {
                     window.selectedFolder = "drafts"
                     draftClicked()
                 }
             }
 
-            // TEMP ICON
+
             Rectangle {
-                id: sVG_5
+                id: draftsButtonIcon
                 x: 12; y: 11
                 height: 18; width: 18
                 clip: true; color: "transparent"
-                Image {
+                Image
+                {
                     source: "qrc:/pngs/assets/ic_drafts.svg"
                     width: 18
                     height: 18
@@ -636,14 +673,16 @@ Rectangle {
                 }
             }
 
-            Rectangle {
-                id: container_5
+            Rectangle
+            {
+                id: draftsButtonTextWrapper
                 x: 42; y: 8
                 height: 24
                 color: "transparent"
 
-                Text {
-                    id: drafts
+                Text
+                {
+                    id: draftsButtonText
                     height: 24; width: parent.width
                     color: "#4a5565"
                     font.family: "Segoe UI"; font.pixelSize: 16; font.weight: Font.Normal
@@ -654,7 +693,8 @@ Rectangle {
                 }
             }
 
-            Rectangle {
+            Rectangle
+            {
                 id: amountOfDraftsHolder
                 anchors.right: parent.right
                 anchors.rightMargin: 12
@@ -662,8 +702,9 @@ Rectangle {
                 height: 16; width: 20
                 color: "transparent"
 
-                Text {
-                    id: element_3
+                Text
+                {
+                    id: amountOfDraftsText
                     height: 16; width: parent.width
                     color: "#6a7282"
                     font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
@@ -679,8 +720,9 @@ Rectangle {
     }
 
     // Footer: Settings button
-    Rectangle {
-        id: footer
+    Rectangle
+    {
+        id: footerNavigation
 
         anchors.left: parent.left
         anchors.right: parent.right
@@ -688,8 +730,10 @@ Rectangle {
 
         height: 60
         color: clickAreaSettings.hovered ? "#dbdbdb" : "#ffffff"
+
         // Top border
-        Rectangle {
+        Rectangle
+        {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
@@ -698,7 +742,8 @@ Rectangle {
         }
 
         // Settings button
-        Rectangle {
+        Rectangle
+        {
             id: buttonToOpenSettings
 
             anchors.left: parent.left
@@ -712,24 +757,30 @@ Rectangle {
 
             radius: 10
 
-            HoverHandler {
+            HoverHandler
+            {
                 id: clickAreaSettings
                 cursorShape: Qt.PointingHandCursor
             }
 
-            TapHandler {
-                onTapped: {
+            TapHandler
+            {
+                onTapped:
+                {
                     settingsLoader.active = true
-                    if (String(settingsLoader.source) === "") {
-                        settingsLoader.source = "screens/navigation/settings/SettingsQML.qml"
-                    } else {
-                        settingsLoader.source = ""
+                    if (String( settingsLoader.source) === "")
+                    {
+                         settingsLoader.source = "screens/navigation/settings/SettingsQML.qml"
+                    } else
+                    {
+                         settingsLoader.source = ""
                     }
                 }
             }
 
-            Text {
-                id: settings
+            Text
+            {
+                id: settingsButtonText
                 height: 20
                 color: "#4a5565"
                 font.family: "Segoe UI"
@@ -745,24 +796,27 @@ Rectangle {
                 textFormat: Text.PlainText
                 verticalAlignment: Text.AlignVCenter
 
-                // TEMP ICON
-                Rectangle {
-                    id: sVG_6
+                Rectangle
+                {
+                    id: settingsButtonIcon
                     y: 2
                     height: 16; width: 16
                     clip: true; color: "transparent"
                     anchors.right: parent.left
                     anchors.rightMargin: 5
                     rotation: clickAreaSettings.hovered ? 180 : 0
-                    Behavior on rotation {
-                        RotationAnimation {
+                    Behavior on rotation
+                    {
+                        RotationAnimation
+                        {
                             duration: 500
                             direction: RotationAnimation.Clockwise
                             easing.type: Easing.InOutQuad
                         }
                     }
 
-                    Image {
+                    Image
+                    {
                         source: "qrc:/pngs/assets/ic_settings.svg"
                         width: 16
                         height: 16
@@ -773,6 +827,28 @@ Rectangle {
                     }
                 }
             }
+        }
+    }
+
+    // Loader for Account change popup
+    Loader
+    {
+        id: accountChangeLoader
+        z: 999
+        anchors.top: headerNavigation.bottom
+        anchors.topMargin: 4
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.leftMargin: 0
+        anchors.rightMargin: 0
+
+        height: item ? item.implicitHeight : 0
+        source: ""
+        opacity: status === Loader.Ready ? 1 : 0
+
+        Behavior on opacity
+        {
+            NumberAnimation { duration: 200 }
         }
     }
 }

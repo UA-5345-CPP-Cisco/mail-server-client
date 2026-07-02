@@ -1,4 +1,4 @@
-#include "storage/MigrationRunner.h"
+#include "../include/storage/MigrationRunner.h"
 
 #include <algorithm>
 #include <cctype>
@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include "storage/Statement.h"
+#include "../include/storage/Statement.h"
 
 namespace Storage {
 

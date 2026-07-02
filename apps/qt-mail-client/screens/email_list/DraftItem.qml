@@ -1,8 +1,9 @@
 import QtQuick
 import QtQuick.Controls
 
-Rectangle {
-    id: root
+Rectangle
+{
+    id:root
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
@@ -12,24 +13,22 @@ Rectangle {
     property string theme: "Quarterly Report Summary"
     property string name: "ceo@company.com"
     property string preview: "Draft of the quarterly summary for leadership review..."
-    property string content: preview
+    property string content: "Draft of the quarterly summary for leadership review..."
     property string sendTo: ""
     property string time: "Jun 4"
     property var searchModel: null
 
     signal openRequested(string theme, string name, string sendTo, string content, string time)
-
     signal clicked()
-
     signal deleteClicked()
 
-    Behavior on color {
-        ColorAnimation {
-            duration: 150; easing.type: Easing.OutCubic
-        }
+    Behavior on color
+    {
+        ColorAnimation { duration: 150; easing.type: Easing.OutCubic }
     }
 
-    Rectangle {
+    Rectangle
+    {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
@@ -37,10 +36,12 @@ Rectangle {
         color: "#e5e7eb"
     }
 
-    Rectangle {
-        id: container_3
+    Rectangle
+    {
+        id: itemContainer
 
-        anchors {
+        anchors
+        {
             left: parent.left
             right: parent.right
             top: parent.top
@@ -50,24 +51,27 @@ Rectangle {
         color: "transparent"
 
         // Content
-        Rectangle {
-            id: container_4
+        Rectangle
+        {
+            id: headerContainer
             anchors.left: parent.left
             anchors.right: parent.right
             height: 20
             color: "transparent"
 
             // Name
-            Rectangle {
-                id: container_5
+            Rectangle
+            {
+                id: nameContainer
                 anchors.left: parent.left
-                anchors.right: dateHolder.left
+                anchors.right: timeContainer.left
                 height: 20
                 clip: true
                 color: "transparent"
 
-                Text {
-                    id: ceo_company_com
+                Text
+                {
+                    id: nameText
                     height: 20;
                     width: parent.width
                     color: "#101828"
@@ -76,21 +80,23 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 20;
                     lineHeightMode: Text.FixedHeight
-                    text: searchModel ? searchModel.highlightAllFoundWords(name, searchModel.searchedText) : name
+                    text: searchModel ? searchModel.HighlightAllFoundWords(name, searchModel.SearchedText) : name
                     textFormat: Text.RichText;
                     verticalAlignment: Text.AlignVCenter
                 }
             }
 
             // Time
-            Rectangle {
-                id: dateHolder
+            Rectangle
+            {
+                id: timeContainer
                 anchors.right: parent.right
                 y: 2; height: 16; width: 44
                 color: "transparent"
 
-                Text {
-                    id: jun_4
+                Text
+                {
+                    id: timeText
                     x: 8; height: 16; width: 29
                     color: "#6a7282"
                     font.family: "Segoe UI";
@@ -99,7 +105,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16;
                     lineHeightMode: Text.FixedHeight
-                    text: format_email_time(time);
+                    text: formatEmailTime(time);
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                 }
@@ -107,55 +113,62 @@ Rectangle {
         }
 
         // Theme
-        Rectangle {
-            id: container_6
+        Rectangle
+        {
+            id: themeContainer
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.top: container_4.bottom
+            anchors.top: headerContainer.bottom
             anchors.topMargin: 2
             height: 20
             clip: true; color: "transparent"
 
-            Text {
-                id: quarterly_Report_Summary
+            Text
+            {
+                id: themeText
                 height: 20; width: parent.width
                 color: "#101828"
                 font.family: "Segoe UI"; font.pixelSize: 14; font.weight: Font.Normal
                 horizontalAlignment: Text.AlignLeft
                 lineHeight: 20; lineHeightMode: Text.FixedHeight
-                text: searchModel ? searchModel.highlightAllFoundWords(theme, searchModel.searchedText) : theme
+                text: searchModel ? searchModel.HighlightAllFoundWords(theme, searchModel.SearchedText) : theme
                 textFormat: Text.RichText; verticalAlignment: Text.AlignVCenter
-                wrapMode: Text.Wrap
+                wrapMode: Text.NoWrap
+                elide: Text.ElideRight
+                maximumLineCount: 1
             }
         }
 
         // Text preview
-        Rectangle {
-            id: container_7
+        Rectangle
+        {
+            id: previewContainer
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.top: container_6.bottom
+            anchors.top: themeContainer.bottom
             anchors.topMargin: 2
             height: 20
             clip: true; color: "transparent"
 
-            Text {
-                id: draft_preview
+            Text
+            {
+                id: previewText
                 height: 16; width: parent.width
                 color: "#6a7282"
                 font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
                 horizontalAlignment: Text.AlignLeft
                 lineHeight: 16; lineHeightMode: Text.FixedHeight
-                text: searchModel ? searchModel.highlightAllFoundWords(preview, searchModel.searchedText) : preview
+                text: searchModel ? searchModel.HighlightAllFoundWords(preview, searchModel.SearchedText) : preview
                 textFormat: Text.RichText; verticalAlignment: Text.AlignVCenter
                 wrapMode: Text.Wrap
             }
         }
 
         // Draft mark
-        Text {
-            id: draftBadge
-            anchors.top: container_7.bottom
+        Text
+        {
+            id: draftBadgeText
+            anchors.top: previewContainer.bottom
             anchors.topMargin: 2
             height: 16; width: 28
             color: "#fe9a00"
@@ -169,7 +182,9 @@ Rectangle {
             verticalAlignment: Text.AlignVCenter
         }
     }
-    MouseArea {
+
+    MouseArea
+    {
         anchors.fill: parent
         hoverEnabled: true
         acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -177,42 +192,52 @@ Rectangle {
         onEntered: root.color = "#f9fafb"
         onExited: root.color = "#ffffff"
 
-        onPressed: (mouse) => {
-            if (mouse.button === Qt.LeftButton) {
+        onPressed: (mouse) =>
+        {
+            if (mouse.button === Qt.LeftButton)
+            {
                 root.color = "#f3f4f6"
             }
         }
 
-        onClicked: (mouse) => {
-            if (mouse.button === Qt.LeftButton) {
+        onClicked: (mouse) =>
+            {
+            if (mouse.button === Qt.LeftButton)
+            {
                 root.clicked()
-            } else if (mouse.button === Qt.RightButton) {
+            }
+            else if (mouse.button === Qt.RightButton)
+            {
                 contextMenu.x = mouse.x
                 contextMenu.y = mouse.y
                 contextMenu.popup()
             }
         }
 
-        onReleased: {
+        onReleased:
+        {
             root.color = containsMouse ? "#f9fafb" : "#ffffff"
         }
 
         onCanceled: root.color = "#ffffff"
     }
-    Menu {
+    Menu
+    {
         id: contextMenu
 
         // The maximum allowed distance (in pixels) the cursor can wander away from the menu boundaries
         property real maxDistance: 40
 
-        palette {
+        palette
+        {
             base: "#ffffff"
             text: "#1f2937"
             highlight: "#f3f4f6"
             highlightedText: "#1f2937"
         }
 
-        background: Rectangle {
+        background: Rectangle
+        {
             implicitWidth: 200
             implicitHeight: 40
             color: "#ffffff"
@@ -221,13 +246,15 @@ Rectangle {
             border.width: 1
         }
 
-        delegate: MenuItem {
+        delegate: MenuItem
+        {
             id: menuItem
             implicitWidth: 200
             implicitHeight: 36
             padding: 0
 
-            contentItem: Text {
+            contentItem: Text
+            {
                 text: menuItem.text
                 color: menuItem.hovered ? "#1f2937" : "#6b7280"
                 font.pixelSize: 13
@@ -235,19 +262,22 @@ Rectangle {
                 verticalAlignment: Text.AlignVCenter
             }
 
-            background: Rectangle {
+            background: Rectangle
+            {
                 color: menuItem.hovered ? "#f3f4f6" : "transparent"
                 radius: 4
                 anchors.margins: 4
             }
         }
 
-        MenuItem {
+        MenuItem
+        {
             text: "Copy"
             onTriggered: { }
         }
 
-        MenuSeparator {
+        MenuSeparator
+        {
             padding: 4
             contentItem: Rectangle {
                 implicitWidth: 200
@@ -256,7 +286,8 @@ Rectangle {
             }
         }
 
-        MenuItem {
+        MenuItem
+        {
             text: "Delete"
             onClicked: root.deleteClicked()
         }
@@ -269,14 +300,16 @@ Rectangle {
             hoverEnabled: true
             enabled: false
 
-            onPositionChanged: (mouse) => {
+            onPositionChanged: (mouse) =>
+            {
 
                 var p = contextMenu.mapToItem(parent, 0, 0)
 
                 if (mouse.x < p.x - 40 ||
                     mouse.x > p.x + contextMenu.width + 40 ||
                     mouse.y < p.y - 40 ||
-                    mouse.y > p.y + contextMenu.height + 40) {
+                    mouse.y > p.y + contextMenu.height + 40)
+                {
                     contextMenu.close()
                 }
             }

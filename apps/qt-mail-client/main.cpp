@@ -1,87 +1,118 @@
+#include <QDir>
 #include <QGuiApplication>
-#include <QIcon>
 #include <QQmlApplicationEngine>
-#include <QQmlContext>
-#include <QQuickStyle>
 #include <QQuickWindow>
+#include <QQuickStyle>
+#include <QIcon>
+#include <QQmlContext>
+#include "headers/mail/EmailListModel.h"
+#include "headers/mail/EmailFilterProxy.h"
+#include "headers/mail/EmailPageProxy.h"
+#include "headers/mail/MessageComposer.h"
+#include "headers/database/DatabaseManager.h"
+#include "headers/users/CurrentUser.h"
+#include "headers/search/MessageSearchModel.h"
+#include "headers/database/RegistrationHandler.h"
+#include "headers/users/AccountListModel.h"
+#include "../../libs/storage/include/storage/UserRepository.h"
 
-#include "headers/database/databasemanager.h"
-#include "headers/mail/emailfilterproxy.h"
-#include "headers/mail/emaillistmodel.h"
-#include "headers/mail/emailpageproxy.h"
-#include "headers/mail/messagecomposer.h"
-#include "headers/search/messagesearchmodel.h"
-#include "headers/users/accountlistmodel.h"
-#include "headers/users/currentuser.h"
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-  qputenv("QT_QUICK_BACKEND", "software");
-  QQuickStyle::setStyle(QStringLiteral("Fusion"));
-  QGuiApplication app(argc, argv);
-  app.setWindowIcon(QIcon(":/pngs/assets/Icon.png"));
-  ISXDatabaseManager::DatabaseManager::EnsureInitialized();
-  QQmlApplicationEngine engine;
+    qputenv("QT_QUICK_BACKEND", "software");
+    QQuickStyle::setStyle(QStringLiteral("Fusion"));
+    QGuiApplication app(argc, argv);
+    app.setWindowIcon(QIcon(":/pngs/assets/Icon.png"));
 
-  auto* model = new ISXMail::EmailListModel(&app);
-  auto* message_composer = new ISXMail::MessageComposer(&app);
-  auto* account_model = new ISXMail::AccountListModel(&app);
+    ISXDatabaseManager::DatabaseManager::EnsureInitialized();
+    auto dbPath = ISXDatabaseManager::DatabaseManager::DatabasePath();
+    Storage::Database database(dbPath);
+    QQmlApplicationEngine engine;
 
-  auto* inboxFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Inbox, &app);
-  auto* sentFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Sent, &app);
-  auto* starredFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Starred, &app);
-  auto* draftFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Draft, &app);
+    RegistrationHandler regHandler(database);
+    engine.rootContext()->setContextProperty("regHandler", &regHandler);
 
-  inboxFilter->setSourceModel(model);
-  sentFilter->setSourceModel(model);
-  starredFilter->setSourceModel(model);
-  draftFilter->setSourceModel(model);
+    Storage::UserRepository repo(database);
+    bool hasUsers = repo.HasUsers();
+    engine.rootContext()->setContextProperty("initialSetupRequired", !hasUsers);
 
-  auto* inboxSearch = new ISXMail::MessageSearchModel(&app);
-  auto* sentSearch = new ISXMail::MessageSearchModel(&app);
-  auto* starredSearch = new ISXMail::MessageSearchModel(&app);
-  auto* draftSearch = new ISXMail::MessageSearchModel(&app);
+    if (hasUsers) {
+        auto activeUser = repo.FindActiveUser();
 
-  inboxSearch->setSourceModel(inboxFilter);
-  sentSearch->setSourceModel(sentFilter);
-  starredSearch->setSourceModel(starredFilter);
-  draftSearch->setSourceModel(draftFilter);
+        if (activeUser.has_value())
+        {
+            QString name = QString::fromStdString(activeUser->username);
+            QString email = QString::fromStdString(activeUser->email);
+            ISXCurrentUser::CurrentUser::GetInstance().Authorize(name, email, "");
+        }
+    }
 
-  auto* inbox = new ISXMail::EmailPageProxy(&app);
-  auto* sent = new ISXMail::EmailPageProxy(&app);
-  auto* starred = new ISXMail::EmailPageProxy(&app);
-  auto* draft = new ISXMail::EmailPageProxy(&app);
+    auto* model = new ISXMail::EmailListModel(&app);
+    auto* message_composer = new ISXMail::MessageComposer(&app);
+    auto* account_model = new ISXMail::AccountListModel(&app);
 
-  inbox->setSourceModel(inboxSearch);
-  sent->setSourceModel(sentSearch);
-  starred->setSourceModel(starredSearch);
-  draft->setSourceModel(draftSearch);
+    auto* inboxFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Inbox, &app);
+    auto* sentFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Sent, &app);
+    auto* starredFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Starred, &app);
+    auto* draftFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Draft, &app);
 
-  engine.rootContext()->setContextProperty("emailsModel", model);
-  engine.rootContext()->setContextProperty("accountModel", account_model);
-  engine.rootContext()->setContextProperty("inboxModel", inbox);
-  engine.rootContext()->setContextProperty("sentModel", sent);
-  engine.rootContext()->setContextProperty("starredModel", starred);
-  engine.rootContext()->setContextProperty("draftModel", draft);
-  engine.rootContext()->setContextProperty("inboxSearchModel", inboxSearch);
-  engine.rootContext()->setContextProperty("sentSearchModel", sentSearch);
-  engine.rootContext()->setContextProperty("starredSearchModel", starredSearch);
-  engine.rootContext()->setContextProperty("draftSearchModel", draftSearch);
-  engine.rootContext()->setContextProperty("messageComposer", message_composer);
-  // current user in system
-  engine.rootContext()->setContextProperty("currentUser",
-                                           &ISXCurrentUser::CurrentUser::get_instance());
+    inboxFilter->setSourceModel(model);
+    sentFilter->setSourceModel(model);
+    starredFilter->setSourceModel(model);
+    draftFilter->setSourceModel(model);
 
-  qmlRegisterUncreatableMetaObject(
-    ISXMail::staticMetaObject, "ISXMail", 1, 0, "EmailRole", "Not creatable");
+    auto* inboxSearch = new ISXMail::MessageSearchModel(&app);
+    auto* sentSearch = new ISXMail::MessageSearchModel(&app);
+    auto* starredSearch = new ISXMail::MessageSearchModel(&app);
+    auto* draftSearch = new ISXMail::MessageSearchModel(&app);
 
-  QObject::connect(
-    &engine,
-    &QQmlApplicationEngine::objectCreationFailed,
-    &app,
-    []() { QCoreApplication::exit(-1); },
-    Qt::QueuedConnection);
-  engine.loadFromModule("qtapptestmail", "Main");
+    inboxSearch->setSourceModel(inboxFilter);
+    sentSearch->setSourceModel(sentFilter);
+    starredSearch->setSourceModel(starredFilter);
+    draftSearch->setSourceModel(draftFilter);
 
-  return QGuiApplication::exec();
+    auto* inbox = new ISXMail::EmailPageProxy(&app);
+    auto* sent = new ISXMail::EmailPageProxy(&app);
+    auto* starred = new ISXMail::EmailPageProxy(&app);
+    auto* draft = new ISXMail::EmailPageProxy(&app);
+
+    inbox->setSourceModel(inboxSearch);
+    sent->setSourceModel(sentSearch);
+    starred->setSourceModel(starredSearch);
+    draft->setSourceModel(draftSearch);
+
+    engine.rootContext()->setContextProperty("emailsModel", model);
+    engine.rootContext()->setContextProperty("accountModel", account_model);
+    engine.rootContext()->setContextProperty("inboxModel", inbox);
+    engine.rootContext()->setContextProperty("sentModel", sent);
+    engine.rootContext()->setContextProperty("starredModel", starred);
+    engine.rootContext()->setContextProperty("draftModel", draft);
+    engine.rootContext()->setContextProperty("inboxSearchModel", inboxSearch);
+    engine.rootContext()->setContextProperty("sentSearchModel", sentSearch);
+    engine.rootContext()->setContextProperty("starredSearchModel", starredSearch);
+    engine.rootContext()->setContextProperty("draftSearchModel", draftSearch);
+    engine.rootContext()->setContextProperty("MessageComposer", message_composer);
+
+    engine.rootContext()->setContextProperty(
+        "CurrentUser",
+        &ISXCurrentUser::CurrentUser::GetInstance()
+        );
+
+    qmlRegisterUncreatableMetaObject(
+        ISXMail::staticMetaObject,
+        "ISXMail",
+        1, 0,
+        "EmailRole",
+        "Not creatable"
+    );
+
+    QObject::connect(
+        &engine,
+        &QQmlApplicationEngine::objectCreationFailed,
+        &app,
+        []() { qCritical() << "QML object creation failed"; },
+        Qt::QueuedConnection);
+    engine.loadFromModule("qtapptestmail", "Main");
+
+    return QGuiApplication::exec();
 }

@@ -37,9 +37,7 @@ void Server::SetServerSocket(int port)
     throw std::system_error(errno, std::generic_category(), "Failed to setsockopt");
   }
   SetNonBlock(this->server_fd);
-  struct sockaddr_in server_addr
-  {
-  };
+  struct sockaddr_in server_addr{};
   server_addr.sin_family = AF_INET;
   server_addr.sin_port = htons(port);
   server_addr.sin_addr.s_addr = INADDR_ANY;
@@ -60,9 +58,7 @@ void Server::SetEpoll()
   {
     throw std::system_error(errno, std::generic_category(), "Failed to create epoll");
   }
-  struct epoll_event event
-  {
-  };
+  struct epoll_event event{};
   event.events = EPOLLIN;
   event.data.fd = this->server_fd;
   if ((epoll_ctl(this->epoll_fd, EPOLL_CTL_ADD, this->server_fd, &event)) == -1)
@@ -95,9 +91,7 @@ void Server::HandleNewConnection()
     this->logger_thread.Enqueue(
       [this, msg]()
       { logger_.Log(Logging::LogLevel::Debug, "Server::HandleNewConnection: " + msg); });
-    struct epoll_event clinet_events
-    {
-    };
+    struct epoll_event clinet_events{};
     clinet_events.events = EPOLLIN | EPOLLET, clinet_events.data.fd = current_fd;
     if ((epoll_ctl(this->epoll_fd, EPOLL_CTL_ADD, current_fd, &clinet_events)) == -1)
     {

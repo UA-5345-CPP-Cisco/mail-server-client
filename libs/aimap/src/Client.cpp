@@ -20,9 +20,7 @@ bool Client::ConnectToServer()
   {
     throw std::system_error(errno, std::generic_category(), "Failed to create socket");
   }
-  struct sockaddr_in server_addr
-  {
-  };
+  struct sockaddr_in server_addr{};
   server_addr.sin_port = htons(this->port);
   server_addr.sin_family = AF_INET;
   if ((inet_pton(AF_INET, this->ip_addr.c_str(), &server_addr.sin_addr)) <= 0)

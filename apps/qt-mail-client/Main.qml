@@ -4,7 +4,8 @@ import QtQuick.Layouts
 import QtQuick.Effects
 import ISXMail 1.0
 
-ApplicationWindow {
+ApplicationWindow
+{
     //properties
     property string selectedFolder: "inbox"
     property int inboxCount: inboxModel.totalEmailsCount
@@ -14,35 +15,56 @@ ApplicationWindow {
     property string amountText: emailList.sourceModel ? emailList.sourceModel.pageAmountText : "0-0 of 0"
     property var selectedEmail: null
 
-    //FunctionSorter
-    function closeMessageWindow() {
-        newMessageLoader.active = false
-        newMessageLoader.source = ""
+    property alias authLoader: authLoader
 
+    // for adding avatar
+    function avatarInitial(name)
+    {
+        var trimmedName = String(name).trim()
+        return trimmedName.length > 0 ? trimmedName.charAt(0).toUpperCase() : "?"
     }
 
-    function closeSettingsWindow() {
+    //FunctionSorter
+    function closeMessageWindow()
+    {
+        newMessageLoader.active = false
+        newMessageLoader.source = ""
+    }
+
+    function closeSettingsWindow()
+    {
         settingsLoader.active = false
         settingsLoader.source = ""
     }
 
-    function parse_database_timestamp(input_time) {
-        if (!input_time) {
+    function closeAuthWindow()
+    {
+        authLoader.active = false
+        authLoader.source = ""
+    }
+
+    function parseDatabaseTimestamp(input_time)
+    {
+        if (!input_time)
+        {
             return null
         }
 
-        if (input_time instanceof Date) {
+        if (input_time instanceof Date)
+        {
             return input_time
         }
 
         let raw = String(input_time).trim()
-        if (raw === "") {
+        if (raw === "")
+        {
             return null
         }
 
         // SQLite CURRENT_TIMESTAMP is stored as UTC text: "YYYY-MM-DD HH:MM:SS".
         let utcMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})(?:\.\d+)?$/)
-        if (utcMatch) {
+        if (utcMatch)
+        {
             return new Date(Date.UTC(
                 parseInt(utcMatch[1]),
                 parseInt(utcMatch[2]) - 1,
@@ -54,15 +76,17 @@ ApplicationWindow {
         }
 
         let parsed = new Date(raw)
-        if (!isNaN(parsed.getTime())) {
+        if (!isNaN(parsed.getTime()))
+        {
             return parsed
         }
 
         return null
     }
 
-    function format_email_time(input_time) {
-        let message_date = parse_database_timestamp(input_time)
+    function formatEmailTime(input_time)
+    {
+        let message_date = parseDatabaseTimestamp(input_time)
         if (!message_date)
             return String(input_time)
 
@@ -72,15 +96,18 @@ ApplicationWindow {
             message_date.getMonth() === current_date.getMonth() &&
             message_date.getFullYear() === current_date.getFullYear());
 
-        if (is_same_day) {
+        if (is_same_day)
+        {
             return Qt.formatDateTime(message_date, "hh:mm");
-        } else {
+        } else
+        {
             return Qt.formatDateTime(message_date, "MMMM dd").toLowerCase();
         }
     }
 
-    function format_email_time_full(input_time) {
-        let message_date = parse_database_timestamp(input_time)
+    function formatEmailTimeFull(input_time)
+    {
+        let message_date = parseDatabaseTimestamp(input_time)
         if (!message_date)
             return String(input_time)
 
@@ -100,15 +127,18 @@ ApplicationWindow {
     minimumWidth: 750
     title: "Mail Client Interface"
 
-    MouseArea {
+    MouseArea
+    {
         anchors.fill: parent
-        onClicked: {
+        onClicked:
+        {
             window.contentItem.forceActiveFocus()
         }
     }
 
     //new message loader
-    Loader {
+    Loader
+    {
         id: newMessageLoader
         active: false
         z: 999
@@ -122,22 +152,27 @@ ApplicationWindow {
 
         source: ""
         property var selectedItem: null
-        Behavior on opacity {
-            NumberAnimation {
+        Behavior on opacity
+        {
+            NumberAnimation
+            {
                 duration: 200
             }
         }
 
-        onLoaded: {
+        onLoaded:
+        {
             connections.target = item
-            if (item && selectedItem) {
+            if (item && selectedItem)
+            {
                 item.newRecipient = selectedItem.sendTo
                 item.newSubject = selectedItem.subject
                 item.newText = selectedItem.content
                 item.newIndex = selectedItem.index
                 item.isDraft = selectedItem.isDraft === true
                 item.newTitle = item.isDraft ? "Draft" : "New Message"
-            } else {
+            } else
+            {
                 item.newRecipient = ""
                 item.newSubject = ""
                 item.newText = ""
@@ -147,28 +182,30 @@ ApplicationWindow {
             }
         }
 
-        Connections {
+        Connections
+        {
             id: connections
             target: null
 
-            function onDraftChanged(index, subject, recipient, text) {
-                if (newMessageLoader.selectedItem != null) {
-                    draftModel.setEmailData(parseInt(index), recipient, parseInt(EmailRole.SendToRole))
-                    draftModel.setEmailData(parseInt(index), subject, parseInt(EmailRole.ThemeRole))
-                    draftModel.setEmailData(parseInt(index), text, parseInt(EmailRole.ContentRole))
+            function onDraftChanged(index, subject, recipient, text)
+            {
+                if (newMessageLoader.selectedItem != null)
+                {
+                    draftModel.SetEmailData(parseInt(index), recipient, parseInt(EmailRole.SendToRole))
+                    draftModel.SetEmailData(parseInt(index), subject, parseInt(EmailRole.ThemeRole))
+                    draftModel.SetEmailData(parseInt(index), text, parseInt(EmailRole.ContentRole))
+                    draftModel.SetEmailData(parseInt(index), text, parseInt(EmailRole.PreviewRole))
                 }
 
                 newMessageLoader.selectedItem = null
             }
 
-            function onDraftFinished(index, subject, recipient, text) {
-                if (newMessageLoader.selectedItem != null) {
-                    draftModel.removeEmailData(parseInt(index))
-                    emailsModel.AddData(
-                        false, true, false,
-                        subject, currentUser.username,
-                        recipient, text, ""
-                    )
+            function onDraftFinished(index, subject, recipient, text)
+            {
+                if (newMessageLoader.selectedItem != null)
+                {
+                    draftModel.RemoveEmailData(parseInt(index))
+                    emailsModel.AddData(false, true, false, subject, CurrentUser.username, recipient, text, "")
                 }
 
                 newMessageLoader.selectedItem = null
@@ -179,35 +216,33 @@ ApplicationWindow {
     }
 
 
-    RowLayout {
+    RowLayout
+    {
         anchors.fill: parent
         spacing: 0
 
-        SplitView {
+        SplitView
+        {
             id: splitView
-            anchors.fill: parent
+            Layout.fillWidth: true
+            Layout.fillHeight: true
             orientation: Qt.Horizontal
 
-            handle: Rectangle {
+            handle: Rectangle
+            {
                 id: handleDelegate
                 color: "transparent"
-                containmentMask: Item {
+                containmentMask: Item
+                {
                     x: (handleDelegate.width - width) / 2
                     width: 5
                     height: splitView.height
-                    MouseArea {
-                        anchors.fill: parent
-
-                        hoverEnabled: true
-
-                        cursorShape: Qt.SizeHorCursor
-
-                        acceptedButtons: Qt.NoButton
-                    }
                 }
             }
 
-            NavigationQML {
+
+            NavigationQML
+            {
                 id: navMenu
 
                 Layout.preferredWidth: 250
@@ -217,60 +252,70 @@ ApplicationWindow {
                 SplitView.maximumWidth: 350
                 SplitView.fillHeight: true
 
-                onInboxClicked: {
+                onInboxClicked:
+                {
                     emailList.isDraftMode = false
                     emailList.sourceModel = inboxModel
                     window.selectedEmail = null
                     selectedFolder = "inbox"
                 }
-                onStarredClicked: {
+                onStarredClicked:
+                {
                     emailList.isDraftMode = false
                     emailList.sourceModel = starredModel
                     window.selectedEmail = null
                     selectedFolder = "starred"
                 }
-                onSentClicked: {
+                onSentClicked:
+                {
                     emailList.isDraftMode = false
                     emailList.sourceModel = sentModel
                     window.selectedEmail = null
                     selectedFolder = "sent"
                 }
-                onDraftClicked: {
+                onDraftClicked:
+                {
                     emailList.isDraftMode = true
                     emailList.sourceModel = draftModel
                     window.selectedEmail = null
                     selectedFolder = "drafts"
                 }
             }
-            EmailsListQML {
+            EmailsListQML
+            {
                 id: emailList
                 SplitView.preferredWidth: 350
                 SplitView.minimumWidth: 250
                 SplitView.fillHeight: true
-                onEmailOpenRequested: function (index, theme, name, sendTo, content, time, starred) {
-                    window.selectedEmail = {
-                        "index": index,
-                        "theme": theme,
-                        "name": name,
-                        "sendTo": sendTo,
-                        "content": content,
-                        "time": time,
-                        "starred": starred
+                onEmailOpenRequested: function (index, theme, name, sendTo, content, time, starred)
+                    {
+                        window.selectedEmail =
+                            {
+                                "index": index,
+                                "theme": theme,
+                                "name": name,
+                                "sendTo": sendTo,
+                                "content": content,
+                                "time": time,
+                                "starred": starred
+                            }
                     }
-                }
             }
 
-            Item {
+            Item
+            {
                 SplitView.fillWidth: true
                 SplitView.fillHeight: true
                 SplitView.minimumWidth: 250
 
-                ContentBlankPageQML {
+                ContentBlankPageQML
+                {
                     anchors.fill: parent
                     visible: window.selectedEmail === null
                 }
 
-                ContentPageLetterQML {
+                ContentPageLetterQML
+                {
                     anchors.fill: parent
                     visible: window.selectedEmail !== null
 
@@ -282,10 +327,12 @@ ApplicationWindow {
                     letterTime: window.selectedEmail ? window.selectedEmail.time : ""
                     letterStarred: window.selectedEmail ? window.selectedEmail.starred : false
 
-                    onStarClicked: {
+                    onStarClicked:
+                    {
                         if (emailList.sourceModel)
-                            emailList.sourceModel.setStarred(parseInt(letterIndex), starred)
-                        if (window.selectedEmail) {
+                            emailList.sourceModel.SetStarred(parseInt(letterIndex), starred)
+                        if (window.selectedEmail)
+                        {
                             window.selectedEmail = {
                                 "index": window.selectedEmail.index,
                                 "theme": window.selectedEmail.theme,
@@ -298,9 +345,10 @@ ApplicationWindow {
                         }
                     }
 
-                    onDeleteClicked: {
+                    onDeleteClicked:
+                    {
                         if (emailList.sourceModel)
-                            emailList.sourceModel.removeEmailData(parseInt(letterIndex))
+                            emailList.sourceModel.RemoveEmailData(parseInt(letterIndex))
                         window.selectedEmail = null
                     }
                 }
@@ -308,30 +356,17 @@ ApplicationWindow {
         }
     }
 
-    MultiEffect {
-        id: blurEffect
-        anchors.fill: splitView
-        source: splitView
 
-        blur: settingsLoader.opacity * 0.5
-        blurEnabled: settingsLoader.active
-        autoPaddingEnabled: false
-
-        Behavior on blur {
-            NumberAnimation {
-                duration: 200
-            }
-        }
-    }
-
-    Rectangle {
+    //blocker
+    Rectangle
+    {
         anchors.fill: parent
         color: "#000000"
         opacity: settingsLoader.opacity * 0.4
         visible: settingsLoader.active
         z: 998
-        MouseArea {
-
+        MouseArea
+        {
             hoverEnabled: true
             preventStealing: true
             enabled: parent.visible
@@ -344,35 +379,89 @@ ApplicationWindow {
             onPositionChanged: (mouse) => mouse.accepted = true
 
 
-            onWheel: (wheel) => {
-                wheel.accepted = true
-            }
+            onWheel: (wheel) =>
+                {
+                    wheel.accepted = true
+                }
+        }
+    }
+    Rectangle
+    {
+        anchors.fill: parent
+        color: "#000000"
+        opacity: authLoader.opacity * 0.4
+        visible: authLoader.active
+        z: 998
+        MouseArea
+        {
+            hoverEnabled: true
+            preventStealing: true
+            enabled: parent.visible
+            anchors.fill: parent
+            onPressed: (mouse) => mouse.accepted = true
+            onReleased: (mouse) => mouse.accepted = true
+            onClicked: (mouse) => mouse.accepted = true
+            onDoubleClicked: (mouse) => mouse.accepted = true
+            onPositionChanged: (mouse) => mouse.accepted = true
+            onWheel: (wheel) => { wheel.accepted = true }
         }
     }
 
-    Loader {
+    //settings loader
+    Loader
+    {
         id: settingsLoader
         active: false
         z: 1000
-
         anchors.centerIn: parent
-
         width: item ? item.implicitWidth : 0
         height: item ? item.implicitHeight : 0
-
-        Shortcut {
+        Shortcut
+        {
             sequence: "Escape"
             enabled: settingsLoader.active
-            onActivated: {
+            onActivated:
+            {
                 closeSettingsWindow()
             }
         }
+        Behavior on opacity
+        {
+            NumberAnimation
+            {
+                duration: 200
+            }
+        }
+        opacity: status === Loader.Ready ? 1 : 0
+    }
 
-        Behavior on opacity {
-            NumberAnimation {
+    // Loader for account change
+    Loader
+    {
+        id: authLoader
+        active: initialSetupRequired
+        source: initialSetupRequired ? "screens/navigation/account/AddAccountQML.qml" : ""
+        z: 1000
+        anchors.centerIn: parent
+        width: item ? item.implicitWidth : 0
+        height: item ? item.implicitHeight : 0
+        Shortcut
+        {
+            sequence: "Escape"
+            enabled: authLoader.active
+            onActivated:
+            {
+                closeAuthWindow()
+            }
+        }
+        Behavior on opacity
+        {
+            NumberAnimation
+            {
                 duration: 200
             }
         }
         opacity: status === Loader.Ready ? 1 : 0
     }
 }
+

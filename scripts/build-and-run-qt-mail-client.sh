@@ -30,7 +30,7 @@ if command -v brew >/dev/null 2>&1; then
 fi
 
 cmake "${cmake_args[@]}"
-cmake --build "${build_dir}" --parallel
+cmake --build "${build_dir}" --target appqtapptestmail --parallel
 
 if [[ "${mode}" == "build" ]]; then
   exit 0

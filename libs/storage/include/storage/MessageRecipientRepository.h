@@ -5,8 +5,8 @@
 #include <string>
 #include <vector>
 
-#include "storage/Database.h"
-#include "storage/MessageRecipientRecord.h"
+#include "Database.h"
+#include "MessageRecipientRecord.h"
 
 namespace Storage {
 

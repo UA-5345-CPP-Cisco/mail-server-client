@@ -1,14 +1,14 @@
-#include "storage/UserRepository.h"
+#include "../include/storage/UserRepository.h"
 
 #include <cstdint>
 #include <optional>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
-#include "storage/Statement.h"
+#include "../include/storage/Statement.h"
 
 namespace Storage {
-
 UserRepository::UserRepository(Database& database) : m_database(database)
 {
 }
@@ -19,13 +19,13 @@ std::int64_t UserRepository::CreateUser(const std::string& username,
 {
   Statement statement(m_database,
                       R"SQL(
-			INSERT INTO users (
-				username,
-				email,
-				password_hash
-			)
-			VALUES (?, ?, ?);
-		)SQL");
+            INSERT INTO users (
+                username,
+                email,
+                password_hash
+            )
+            VALUES (?, ?, ?);
+        )SQL");
 
   statement.BindText(1, username);
   statement.BindText(2, email);
@@ -39,17 +39,17 @@ std::optional<UserRecord> UserRepository::FindById(std::int64_t user_id) const
 {
   Statement statement(m_database,
                       R"SQL(
-			SELECT
-				id,
-				username,
-				email,
-				password_hash,
-				status,
-				created_at
-			FROM users
-			WHERE id = ?
-			LIMIT 1;
-		)SQL");
+            SELECT
+                id,
+                username,
+                email,
+                password_hash,
+                status,
+                created_at
+            FROM users
+            WHERE id = ?
+            LIMIT 1;
+        )SQL");
 
   statement.BindInt64(1, user_id);
 
@@ -65,17 +65,17 @@ std::optional<UserRecord> UserRepository::FindByEmail(const std::string& email) 
 {
   Statement statement(m_database,
                       R"SQL(
-			SELECT
-				id,
-				username,
-				email,
-				password_hash,
-				status,
-				created_at
-			FROM users
-			WHERE email = ?
-			LIMIT 1;
-		)SQL");
+            SELECT
+                id,
+                username,
+                email,
+                password_hash,
+                status,
+                created_at
+            FROM users
+            WHERE email = ?
+            LIMIT 1;
+        )SQL");
 
   statement.BindText(1, email);
 
@@ -91,17 +91,17 @@ std::optional<UserRecord> UserRepository::FindByUsername(const std::string& user
 {
   Statement statement(m_database,
                       R"SQL(
-			SELECT
-				id,
-				username,
-				email,
-				password_hash,
-				status,
-				created_at
-			FROM users
-			WHERE username = ?
-			LIMIT 1;
-		)SQL");
+            SELECT
+                id,
+                username,
+                email,
+                password_hash,
+                status,
+                created_at
+            FROM users
+            WHERE username = ?
+            LIMIT 1;
+        )SQL");
 
   statement.BindText(1, username);
 
@@ -117,10 +117,10 @@ bool UserRepository::UpdateStatus(std::int64_t user_id, UserStatus status)
 {
   Statement statement(m_database,
                       R"SQL(
-			UPDATE users
-			SET status = ?
-			WHERE id = ?;
-		)SQL");
+            UPDATE users
+            SET status = ?
+            WHERE id = ?;
+        )SQL");
 
   statement.BindText(1, StatusToString(status));
   statement.BindInt64(2, user_id);
@@ -168,6 +168,53 @@ UserStatus UserRepository::StatusFromString(const std::string& status) const
   }
 
   throw std::runtime_error("Unsupported user status: " + status);
+}
+
+bool UserRepository::HasUsers()
+{
+  Statement statement(m_database, "SELECT COUNT(*) FROM users;");
+
+  if (statement.Step())
+  {
+    return statement.ColumnInt64(0) > 0;
+  }
+  return false;
+}
+
+std::optional<UserRecord> UserRepository::FindActiveUser() const
+{
+  Statement statement(m_database,
+                      R"SQL(
+            SELECT
+                id,
+                username,
+                email,
+                password_hash,
+                status,
+                created_at
+            FROM users
+            WHERE status = 'active'
+            LIMIT 1;
+        )SQL");
+
+  if (!statement.Step())
+  {
+    return std::nullopt;
+  }
+
+  return ReadUser(statement);
+}
+
+std::vector<UserRecord> UserRepository::FindAll() const
+{
+  std::vector<UserRecord> users;
+  Statement statement(m_database,
+                      "SELECT id, username, email, password_hash, status, created_at FROM users;");
+  while (statement.Step())
+  {
+    users.push_back(ReadUser(statement));
+  }
+  return users;
 }
 
 } // namespace Storage

@@ -586,6 +586,7 @@ std::int64_t SmtpSessionHandler::StoreMessage(const SmtpSessionState& state,
                                          std::nullopt,
                                          state.messageBuffer,
                                          std::nullopt,
+                                         true,
                                          Storage::MailMessageStatus::Queued);
 
     for (const std::string& recipient : state.recipients)
