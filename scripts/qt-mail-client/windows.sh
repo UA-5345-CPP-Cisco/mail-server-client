@@ -23,6 +23,7 @@ if [[ -z "${qt_prefix}" ]]; then
 fi
 
 mingw_bin="$(find "${qt_base}/Tools" -maxdepth 2 -type d -path '*/bin' | grep mingw | head -1 || true)"
+cmake_bin="$(find "${qt_base}/Tools" -maxdepth 2 -type d -path '*/CMake_*/bin' | head -1 || true)"
 ninja_dir="${qt_base}/Tools/Ninja"
 
 if [[ -z "${qt_prefix}" ]]; then
@@ -35,12 +36,17 @@ if [[ -z "${mingw_bin}" ]]; then
   exit 1
 fi
 
+if [[ -z "${cmake_bin}" ]]; then
+  printf 'Could not locate CMake\n' >&2
+  exit 1
+fi
+
 if [[ ! -d "${ninja_dir}" ]]; then
   printf 'Could not locate Ninja\n' >&2
   exit 1
 fi
 
-export PATH="${qt_prefix}/bin:${mingw_bin}:${ninja_dir}:${PATH}"
+export PATH="${qt_prefix}/bin:${cmake_bin}:${mingw_bin}:${ninja_dir}:${PATH}"
 
 qt_mail_client_require_tool gcc
 qt_mail_client_require_tool g++

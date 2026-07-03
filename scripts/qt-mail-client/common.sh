@@ -58,5 +58,5 @@ qt_mail_client_run_executable() {
   fi
 
   cd "${source_dir}"
-  exec "${executable}"
+  "${executable}"
 }
