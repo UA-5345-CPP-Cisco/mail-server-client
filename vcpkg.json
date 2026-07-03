@@ -1,0 +1,10 @@
+{
+  "name": "mail-server-client",
+  "version-string": "0.1.0",
+  "dependencies": [
+    "openssl",
+    "sqlite3",
+    "qtbase",
+    "qtdeclarative"
+  ]
+}

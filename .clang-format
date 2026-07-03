@@ -1,0 +1,99 @@
+---
+Language: Cpp
+BasedOnStyle: LLVM
+
+# Indentation
+UseTab: Never
+IndentWidth: 2
+TabWidth: 2
+ContinuationIndentWidth: 2
+
+# Line length
+ColumnLimit: 100
+
+# Class access modifiers: public:, protected:, private: at class brace level
+IndentAccessModifiers: false
+AccessModifierOffset: -4
+
+# Namespaces
+NamespaceIndentation: None
+CompactNamespaces: false
+
+# Includes
+IncludeBlocks: Regroup
+IncludeIsMainRegex: '$'
+SortIncludes: true
+IncludeCategories:
+  # clang-format gives the matching .h for a .cpp file category 0 automatically.
+
+  # System / standard library headers
+  - Regex: '^<(algorithm|array|atomic|bitset|cassert|cctype|cerrno|cfenv|cfloat|chrono|cinttypes|climits|cmath|codecvt|complex|condition_variable|csetjmp|csignal|cstdarg|cstddef|cstdint|cstdio|cstdlib|cstring|ctime|cwchar|cwctype|deque|exception|filesystem|forward_list|fstream|functional|future|initializer_list|iomanip|ios|iosfwd|iostream|istream|iterator|limits|list|locale|map|memory|mutex|new|numeric|optional|ostream|queue|random|ratio|regex|scoped_allocator|set|shared_mutex|sstream|stack|stdexcept|streambuf|string|string_view|system_error|thread|tuple|type_traits|typeindex|typeinfo|unordered_map|unordered_set|utility|variant|vector)>$'
+    Priority: 1
+
+  # Third-party angle-bracket headers, e.g. <sqlite3.h>
+  - Regex: '^<.*>$'
+    Priority: 2
+
+  # Project quote headers
+  - Regex: '^".*"$'
+    Priority: 3
+
+# Braces
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterEnum: true
+  AfterFunction: true
+  AfterControlStatement: Always
+  AfterNamespace: false
+  BeforeElse: true
+  BeforeCatch: true
+  BeforeLambdaBody: true
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: false
+
+# Short constructs
+AllowShortFunctionsOnASingleLine: None
+AllowShortBlocksOnASingleLine: Never
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+# Pointers and references: Database* database; const std::string& email;
+DerivePointerAlignment: false
+PointerAlignment: Left
+ReferenceAlignment: Pointer
+
+# Parentheses and spacing
+SpaceBeforeParens: ControlStatements
+SpaceBeforeCpp11BracedList: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+SpaceAfterCStyleCast: false
+
+# Function parameters / arguments
+BinPackArguments: false
+BinPackParameters: false
+AllowAllParametersOfDeclarationOnNextLine: true
+
+# Boolean expressions: break after && / ||
+BreakBeforeBinaryOperators: None
+
+# Constructor initializer lists
+BreakConstructorInitializers: AfterColon
+PackConstructorInitializers: CurrentLine
+ConstructorInitializerIndentWidth: 2
+SpaceBeforeCtorInitializerColon: true
+
+# Inheritance
+BreakInheritanceList: AfterColon
+SpaceBeforeInheritanceColon: true
+
+# Preprocessor: # should start at beginning of line
+IndentPPDirectives: None
+
+# Comments
+ReflowComments: true
