@@ -12,7 +12,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(MAIL_BUILD_TESTS "Build tests" OFF)
 option(MAIL_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
-option(MAIL_BUILD_QT_CLIENT "Build Qt mail client" ON)
+option(MAIL_BUILD_QT_CLIENT "Build Qt mail client" OFF)
 
 include(FetchContent)
 
@@ -46,7 +46,6 @@ set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(cryptopp_cmake)
 
 find_package(Threads REQUIRED)
-find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
 
 # --- nlohmann JSON ---
 FetchContent_Declare(
