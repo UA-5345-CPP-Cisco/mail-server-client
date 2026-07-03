@@ -16,14 +16,20 @@ add_library(mail_storage
         include/storage/UserRepository.h
 )
 
-include(FetchContent)
+if(NOT TARGET SQLite3::SQLite3 AND NOT TARGET SQLite::SQLite3)
+    find_package(SQLite3 QUIET)
+endif()
 
-FetchContent_Declare(
-        sqlite3
-        GIT_REPOSITORY https://github.com/sjinks/sqlite3-cmake.git
-        GIT_TAG v3.49.1
-)
-FetchContent_MakeAvailable(sqlite3)
+if(NOT TARGET SQLite3::SQLite3 AND NOT TARGET SQLite::SQLite3)
+    include(FetchContent)
+
+    FetchContent_Declare(
+            sqlite3
+            GIT_REPOSITORY https://github.com/sjinks/sqlite3-cmake.git
+            GIT_TAG v3.49.1
+    )
+    FetchContent_MakeAvailable(sqlite3)
+endif()
 
 target_include_directories(mail_storage
     PUBLIC
