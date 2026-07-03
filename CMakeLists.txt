@@ -12,7 +12,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(MAIL_BUILD_TESTS "Build tests" OFF)
 option(MAIL_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
-option(MAIL_BUILD_QT_CLIENT "Build Qt mail client" OFF)
+option(MAIL_BUILD_QT_CLIENT "Build Qt mail client" ON)
 
 include(FetchContent)
 
@@ -46,14 +46,7 @@ set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(cryptopp_cmake)
 
 find_package(Threads REQUIRED)
-
-# SQLite3
-FetchContent_Declare(
-		sqlite3
-		GIT_REPOSITORY https://github.com/sjinks/sqlite3-cmake.git
-		GIT_TAG v3.49.1
-)
-FetchContent_MakeAvailable(sqlite3)
+find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
 
 # --- nlohmann JSON ---
 FetchContent_Declare(
