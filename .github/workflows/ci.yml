@@ -24,7 +24,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest 
 
     steps:
       - uses: actions/checkout@v4
@@ -32,20 +32,12 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget gnupg lsb-release software-properties-common libsqlite3-dev libssl-dev ccache
+          sudo apt-get install -y wget gnupg lsb-release software-properties-common libsqlite3-dev libssl-dev
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
           sudo ./llvm.sh 22
           sudo apt-get install -y clang-format-22
           clang-format-22 --version
-
-      - name: Cache ccache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ccache
-          key: ccache-${{ runner.os }}-${{ hashFiles('**/CMakeLists.txt', '**/*.cpp', '**/*.h', '**/*.hpp') }}
-          restore-keys: |
-            ccache-${{ runner.os }}-
 
       - name: Check formatting
         run: CLANG_FORMAT=clang-format-22 scripts/check-clang-format.sh
@@ -55,8 +47,6 @@ jobs:
           cmake -B build
           -DMAIL_BUILD_TESTS=ON
           -DMAIL_BUILD_QT_CLIENT=OFF
-          -DCMAKE_C_COMPILER_LAUNCHER=ccache
-          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 
       - name: Build
         run: cmake --build build --parallel $(nproc)

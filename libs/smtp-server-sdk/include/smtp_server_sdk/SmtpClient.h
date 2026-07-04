@@ -5,7 +5,7 @@
 
 #include <boost/asio.hpp>
 
-#include "smtp_server_sdk//MailBuilder.h"
+#include "smtp_server_sdk/MailBuilder.h"
 
 namespace Smtp {
 

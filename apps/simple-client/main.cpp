@@ -3,8 +3,8 @@
 #include <iostream>
 #include <string>
 
-#include "smtp_client/MailBuilder.h"
-#include "smtp_client/SmtpClient.h"
+#include "smtp_server_sdk/MailBuilder.h"
+#include "smtp_server_sdk/SmtpClient.h"
 
 namespace {
 
