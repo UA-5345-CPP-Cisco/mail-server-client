@@ -48,7 +48,7 @@ jobs:
             ccache-${{ runner.os }}-
 
       - name: Check formatting
-        run: CLANG_FORMAT=clang-format-22 scripts/clang-check-format.sh
+        run: CLANG_FORMAT=clang-format-22 scripts/check-clang-format.sh
 
       - name: Configure CMake
         run: >

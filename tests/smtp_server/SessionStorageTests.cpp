@@ -7,13 +7,13 @@
 #include <gtest/gtest.h>
 
 #include "logger/Logger.h"
+#include "mail_storage/Database.h"
+#include "mail_storage/MailMessageRepository.h"
+#include "mail_storage/MessageRecipientRepository.h"
+#include "mail_storage/MigrationRunner.h"
 #include "smtp/AuthService.hpp"
 #include "smtp/Session.hpp"
 #include "smtp/SocketsManager.hpp"
-#include "storage/Database.h"
-#include "storage/MailMessageRepository.h"
-#include "storage/MessageRecipientRepository.h"
-#include "storage/MigrationRunner.h"
 
 namespace {
 

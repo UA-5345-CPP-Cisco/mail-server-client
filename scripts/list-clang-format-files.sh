@@ -2,8 +2,8 @@
 set -euo pipefail
 
 source_dirs=(
-  "apps/aimap_server"
-  "apps/smtp_server"
+  "apps/mail-server"
+  "apps/smtp-server"
   "apps/simple-client"
   "libs"
   "tests"
