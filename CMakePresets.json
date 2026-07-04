@@ -9,7 +9,8 @@
       "binaryDir": "${sourceDir}/build/windows-debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "MAIL_BUILD_TESTS": "ON"
+        "MAIL_BUILD_TESTS": "ON",
+        "MAIL_BUILD_QT_CLIENT": "OFF"
       }
     },
     {
@@ -19,7 +20,8 @@
       "architecture": "x64",
       "binaryDir": "${sourceDir}/build/windows-release",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "Release",
+        "MAIL_BUILD_QT_CLIENT": "OFF"
       }
     },
     {
@@ -29,7 +31,8 @@
       "binaryDir": "${sourceDir}/build/linux-debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "MAIL_BUILD_TESTS": "ON"
+        "MAIL_BUILD_TESTS": "ON",
+        "MAIL_BUILD_QT_CLIENT": "OFF"
       }
     },
     {
@@ -38,7 +41,8 @@
       "generator": "Unix Makefiles",
       "binaryDir": "${sourceDir}/build/linux-release",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "Release",
+        "MAIL_BUILD_QT_CLIENT": "OFF"
       }
     },
     {
@@ -48,7 +52,8 @@
       "binaryDir": "${sourceDir}/build/macos-debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "MAIL_BUILD_TESTS": "ON"
+        "MAIL_BUILD_TESTS": "ON",
+        "MAIL_BUILD_QT_CLIENT": "OFF"
       }
     },
     {
@@ -57,7 +62,20 @@
       "generator": "Unix Makefiles",
       "binaryDir": "${sourceDir}/build/macos-release",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "Release",
+        "MAIL_BUILD_QT_CLIENT": "OFF"
+      }
+    },
+    {
+      "name": "macos-debug-qt",
+      "displayName": "macOS Debug With Qt Client",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/macos-debug-qt",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "MAIL_BUILD_TESTS": "ON",
+        "MAIL_BUILD_QT_CLIENT": "ON",
+        "CMAKE_PREFIX_PATH": "/opt/homebrew/opt/qt"
       }
     }
   ]

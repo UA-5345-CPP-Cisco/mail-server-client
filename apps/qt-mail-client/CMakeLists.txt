@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
-find_package(SQLite3 REQUIRED)
+#find_package(SQLite3 REQUIRED)
 
 if(NOT TARGET mail_storage)
 	add_subdirectory(
