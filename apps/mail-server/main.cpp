@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "aimap/Server.h"
+#include "mail_server_sdk/Server.h"
 
 int main()
 {
