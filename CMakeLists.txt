@@ -47,14 +47,6 @@ FetchContent_MakeAvailable(cryptopp_cmake)
 
 find_package(Threads REQUIRED)
 
-# SQLite3
-FetchContent_Declare(
-		sqlite3
-		GIT_REPOSITORY https://github.com/sjinks/sqlite3-cmake.git
-		GIT_TAG v3.49.1
-)
-FetchContent_MakeAvailable(sqlite3)
-
 # --- nlohmann JSON ---
 FetchContent_Declare(
 		nlohmann_json
