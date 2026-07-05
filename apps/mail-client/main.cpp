@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <QDir>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -5,6 +7,7 @@
 #include <QQuickStyle>
 #include <QIcon>
 #include <QQmlContext>
+
 #include "headers/mail/EmailListModel.h"
 #include "headers/mail/EmailFilterProxy.h"
 #include "headers/mail/EmailPageProxy.h"
@@ -19,6 +22,10 @@
 
 int main(int argc, char *argv[])
 {
+    std::cout << "main started\n";
+    std::cerr << "stderr works\n";
+    std::clog << "clog works\n";
+
     qputenv("QT_QUICK_BACKEND", "software");
     QQuickStyle::setStyle(QStringLiteral("Fusion"));
     QGuiApplication app(argc, argv);

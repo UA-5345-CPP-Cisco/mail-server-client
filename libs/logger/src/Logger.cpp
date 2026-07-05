@@ -61,6 +61,7 @@ bool Logger::Open(const std::string& filePath)
 
 void Logger::Log(LogLevel level, std::string_view message)
 {
+  std::cerr << "Logger::Log() entered\n";
   std::lock_guard<std::mutex> lock(mutex_);
   if (level < minimumLevel_)
   {

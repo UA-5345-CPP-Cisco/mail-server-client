@@ -558,9 +558,9 @@ Rectangle
                                         true))
                             {
                                 emailsModel.AddData(
-                                    true, false, false,
+                                    false, false, false,
                                     subject_text, CurrentUser.username,
-                                    recipient_text, message_text, ""
+                                    recipient_text, message_text, "", true
                                 )
                             }
                         }

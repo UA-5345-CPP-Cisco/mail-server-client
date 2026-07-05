@@ -5,6 +5,7 @@ project(qtapptestmail VERSION 0.1 LANGUAGES CXX C)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
+set(MAIL_DEV_CONSOLE ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
 #find_package(SQLite3 REQUIRED)
@@ -32,6 +33,7 @@ qt_standard_project_setup(REQUIRES 6.10)
 qt_add_executable(appqtapptestmail
 		main.cpp
 )
+
 
 file(GLOB ASSET_FILES "assets/*")
 foreach(asset_file ${ASSET_FILES})
@@ -91,8 +93,17 @@ set_target_properties(appqtapptestmail PROPERTIES
 		MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
 		MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
 		MACOSX_BUNDLE TRUE
-		WIN32_EXECUTABLE TRUE
 )
+
+if(MAIL_DEV_CONSOLE)
+	set_target_properties(appqtapptestmail PROPERTIES
+			WIN32_EXECUTABLE FALSE
+	)
+else()
+	set_target_properties(appqtapptestmail PROPERTIES
+			WIN32_EXECUTABLE TRUE
+	)
+endif()
 
 target_link_libraries(appqtapptestmail
 	PUBLIC
