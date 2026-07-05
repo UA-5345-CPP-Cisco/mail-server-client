@@ -1,5 +1,4 @@
 add_library(mail_logger
-        STATIC
         src/Logger.cpp
         include/logger/Logger.h
 )

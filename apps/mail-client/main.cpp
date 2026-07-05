@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include <QDir>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -22,10 +20,6 @@
 
 int main(int argc, char *argv[])
 {
-    std::cout << "main started\n";
-    std::cerr << "stderr works\n";
-    std::clog << "clog works\n";
-
     qputenv("QT_QUICK_BACKEND", "software");
     QQuickStyle::setStyle(QStringLiteral("Fusion"));
     QGuiApplication app(argc, argv);

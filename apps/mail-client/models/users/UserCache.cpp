@@ -2,6 +2,7 @@
 
 #include <QJsonDocument>
 #include <QJsonObject>
+
 #include <stdexcept>
 
 namespace ISXCurrentUser {

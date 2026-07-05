@@ -1,5 +1,4 @@
 #include "headers/users/AccountListModel.h"
-
 #include "headers/database/DatabaseManager.h"
 #include "../../../../libs/mail-storage/include/mail_storage/UserRepository.h"
 #include "headers/users/CurrentUser.h"
