@@ -34,7 +34,7 @@ cmake \
   --build "${build_dir}" \
   --target \
   mail_storage_tests \
-  smtp_client_tests \
+  smtp_server_sdk_tests \
   logger_tests \
   thread_pool_tests \
   smtp_server_configuration_tests \

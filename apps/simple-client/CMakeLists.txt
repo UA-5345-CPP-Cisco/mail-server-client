@@ -4,7 +4,7 @@ add_executable(simple_smtp_client
 
 target_link_libraries(simple_smtp_client
         PRIVATE
-        smtp_client
+        smtp_server_sdk
 )
 
 target_compile_features(simple_smtp_client
