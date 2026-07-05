@@ -81,7 +81,7 @@ Rectangle
         // Wrapper
         Rectangle {
             id: windowControlsWrapper
-            x: 320
+            x: 384
             y: 8
             width: 140
             height: 45
@@ -101,7 +101,7 @@ Rectangle
 
             Row {
                 id: newMessageControlsRow
-                x: 340
+                x: 384
                 y: 8
                 anchors.fill: parent
                 anchors.leftMargin: 8
@@ -109,109 +109,6 @@ Rectangle
                 anchors.topMargin: 0
                 anchors.bottomMargin: 0
                 spacing: 8
-
-                //button to minimize window
-                Rectangle {
-                    id: buttonToMinimizeWindow
-                    height: 22
-                    width: 22
-
-                    color: minimizeWindowClickArea.pressed ? "#ffdede" : "transparent"
-                    radius: 4
-
-                    MouseArea {
-                        id: minimizeWindowClickArea
-                        anchors.fill: parent
-
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-
-                        onClicked: {
-                            // MinimizeWindow
-                        }
-                    }
-                    Rectangle {
-                        id: minimizeWindowIcon
-
-                        x: 4
-                        y: 4
-
-                        height: 14
-                        width: 14
-
-                        clip: true
-                        color: "transparent"
-                        scale: minimizeWindowClickArea.containsMouse ? 1.5 : 1.0
-
-                        Behavior on scale {
-                            NumberAnimation {
-                                duration: 150
-                                easing.type: Easing.InOutQuad
-                            }
-                        }
-
-                        Image {
-                            source: "qrc:/pngs/assets/ic_minimize_window.svg"
-                            width: 14
-                            height: 14
-                            sourceSize.width: 120
-                            sourceSize.height: 120
-                            fillMode: Image.PreserveAspectFit
-                            anchors.centerIn: parent
-                        }
-                    }
-                }
-
-                //button to maximize window
-                Rectangle {
-                    id: buttonToMaximizeWindow
-
-                    height: 22
-                    width: 22
-                    radius: 4
-
-                    color: maximizeWindowClickArea.pressed ? "#ffdede" : "transparent"
-
-                    MouseArea {
-                        id: maximizeWindowClickArea
-                        anchors.fill: parent
-
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-
-                        onClicked: {
-                            //MaximizeWindow
-                        }
-                    }
-
-                    Rectangle {
-                        id: maximizeWindowIcon
-                        x: 4
-                        y: 4
-                        height: 14
-                        width: 14
-                        clip: true
-                        color: "transparent"
-                        scale: maximizeWindowClickArea.containsMouse ? 1.5 : 1.0
-
-                        Behavior on scale {
-                            NumberAnimation {
-                                duration: 150
-                                easing.type: Easing.InOutQuad
-                            }
-                        }
-
-                        Image {
-                            source: "qrc:/pngs/assets/ic_extend_window.svg"
-                            width: 14
-                            height: 14
-                            sourceSize.width: 120
-                            sourceSize.height: 120
-                            fillMode: Image.PreserveAspectFit
-                            anchors.centerIn: parent
-                        }
-                    }
-                }
 
                 //button to close window
                 Rectangle
@@ -502,6 +399,7 @@ Rectangle
             }
         }
     }
+
     //footer
     Rectangle
     {

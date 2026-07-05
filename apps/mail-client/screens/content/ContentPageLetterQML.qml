@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Shapes
 import QtQuick.Controls
+import QtQuick.Layouts
 
 Rectangle
 {
@@ -18,371 +19,189 @@ Rectangle
     signal deleteClicked()
     signal starClicked(bool starred)
 
-    // Header
-    Rectangle
-    {
+    //header
+    Rectangle {
         id: header
 
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: parent.top
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: parent.top
+        }
 
         height: 124
-        color: "#ffffff"
+        color: "white"
 
-        // Bottom border
-        Rectangle
-        {
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
+        Rectangle {
+            anchors {
+                left: parent.left
+                right: parent.right
+                bottom: parent.bottom
+            }
+
             height: 1
             color: "#e5e7eb"
         }
 
-        Rectangle
-        {
-            id: container_1
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: 24
+            spacing: 12
 
-            anchors
-            {
-                left: parent.left
-                right: parent.right
-                top: parent.top
-                margins: 24
+            //
+            // SUBJECT
+            //
+
+            Text {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 28
+
+                text: contentPageLetterQML.letterTheme
+
+                color: "#101828"
+
+                font.family: "Segoe UI"
+                font.pixelSize: 20
+                font.weight: Font.Black
+
+                elide: Text.ElideRight
+                wrapMode: Text.NoWrap
+
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignVCenter
             }
 
-            height: 76
-            color: "transparent"
+            //
+            // SECOND ROW
+            //
 
-            // Content: theme and sender
-            Rectangle
-            {
-                id: container_2
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                spacing: 12
 
-                anchors.left: parent.left
-                anchors.right: container_6.left
-                anchors.rightMargin: 8
-                height: 76
-                color: "transparent"
+                //
+                // Avatar
+                //
 
-                // Theme
-                Rectangle
-                {
-                    id: themeHolder
+                Rectangle {
+                    Layout.preferredWidth: 36
+                    Layout.preferredHeight: 36
 
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    height: 28
-                    color: "transparent"
+                    radius: 18
+                    color: "#2b7fff"
 
-                    Text
-                    {
-                        id: themeHolder_1
+                    Text {
+                        anchors.centerIn: parent
 
-                        height: 28
-                        width: parent.width
+                        text: contentPageLetterQML.letterName.length
+                            ? contentPageLetterQML.letterName.charAt(0).toUpperCase()
+                            : ""
+
+                        color: "white"
+
+                        font.family: "Segoe UI"
+                        font.pixelSize: 14
+                        font.weight: Font.Black
+                    }
+                }
+
+                //
+                // Name + recipient
+                //
+
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 0
+
+                    Text {
+                        Layout.fillWidth: true
+
+                        text: contentPageLetterQML.letterName
 
                         color: "#101828"
+
                         font.family: "Segoe UI"
-                        font.pixelSize: 20
-                        font.weight: Font.Black
-                        horizontalAlignment: Text.AlignLeft
-                        lineHeight: 28
-                        lineHeightMode: Text.FixedHeight
-                        text: contentPageLetterQML.letterTheme
-                        textFormat: Text.PlainText
-                        verticalAlignment: Text.AlignVCenter
-                        wrapMode: Text.NoWrap
+                        font.pixelSize: 14
+
                         elide: Text.ElideRight
-                        maximumLineCount: 1
-                    }
-                }
-
-                // Sender
-                Rectangle
-                {
-                    id: container_3
-
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.top: themeHolder.bottom
-                    anchors.topMargin: 12
-                    height: 36
-                    color: "transparent"
-
-                    // Icon
-                    Rectangle
-                    {
-                        id: background
-
-                        height: 36
-                        width: 36
-                        anchors.verticalCenter: parent.verticalCenter
-
-                        color: "#2b7fff"
-                        radius: 18
-
-                        Text
-                        {
-                            id: s
-
-                            anchors.centerIn: parent
-                            height: 20
-                            width: 10
-
-                            color: "#ffffff"
-                            font.family: "Segoe UI"
-                            font.pixelSize: 14
-                            font.weight: Font.Black
-                            horizontalAlignment: Text.AlignHCenter
-                            lineHeight: 20
-                            lineHeightMode: Text.FixedHeight
-                            text: contentPageLetterQML.letterName.length > 0 ? contentPageLetterQML.letterName.charAt(0).toUpperCase() : ""
-                            textFormat: Text.PlainText
-                            verticalAlignment: Text.AlignVCenter
-                        }
+                        wrapMode: Text.NoWrap
                     }
 
-                    // Name To
-                    Rectangle
-                    {
-                        id: container_4
+                    Text {
+                        Layout.fillWidth: true
 
-                        anchors.left: background.right
-                        anchors.leftMargin: 12
-                        height: 36
-                        width: 160
-                        color: "transparent"
-
-                        Rectangle
-                        {
-                            id: nameHolder
-
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            height: 20
-                            color: "transparent"
-
-                            Text
-                            {
-                                id: nameHolder_1
-
-                                height: 20
-                                width: parent.width
-
-                                color: "#101828"
-                                font.family: "Segoe UI"
-                                font.pixelSize: 14
-                                font.weight: Font.Normal
-                                horizontalAlignment: Text.AlignLeft
-                                lineHeight: 20
-                                lineHeightMode: Text.FixedHeight
-                                text: contentPageLetterQML.letterName
-                                textFormat: Text.PlainText
-                                verticalAlignment: Text.AlignVCenter
-                            }
-                        }
-
-                        Rectangle
-                        {
-                            id: container_5
-
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.top: nameHolder.bottom
-                            height: 16
-                            color: "transparent"
-
-                            Text
-                            {
-                                id: to_me
-
-                                height: 16
-                                width: 33
-
-                                color: "#6a7282"
-                                font.family: "Segoe UI"
-                                font.pixelSize: 12
-                                font.weight: Font.Normal
-                                horizontalAlignment: Text.AlignLeft
-                                lineHeight: 16
-                                lineHeightMode: Text.FixedHeight
-                                text: contentPageLetterQML.letterSendTo.length > 0 ? "to " + contentPageLetterQML.letterSendTo : "to me"
-                                textFormat: Text.PlainText
-                                verticalAlignment: Text.AlignVCenter
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Right part
-            Rectangle
-            {
-                id: container_6
-
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.topMargin: 34
-                height: 34
-                width: 131
-                color: "transparent"
-
-                // Time
-                Rectangle
-                {
-                    id: timeHolder
-
-                    // Прибиваємо до правого краю батьківського елемента (картки листа)
-                    anchors.right: parent.right
-                    anchors.rightMargin: 67
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.verticalCenterOffset: 1
-
-                    // Контейнер автоматично розширюється вліво під розмір тексту
-                    width: timeText.implicitWidth
-                    height: 16
-                    color: "transparent"
-
-                    Text
-                    {
-                        id: timeText
-
-                        // Замість anchors.fill розтягуємо тільки по ширині, щоб не ламати висоту
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
+                        text: contentPageLetterQML.letterSendTo.length
+                            ? "to " + contentPageLetterQML.letterSendTo
+                            : "to me"
 
                         color: "#6a7282"
+
                         font.family: "Segoe UI"
                         font.pixelSize: 12
-                        font.weight: Font.Normal
 
-                        // Рівняємо контент по правому краю контейнера
-                        horizontalAlignment: Text.AlignRight
-                        verticalAlignment: Text.AlignVCenter
-                        lineHeight: 16
-                        lineHeightMode: Text.FixedHeight
-
-                        text: formatEmailTimeFull(contentPageLetterQML.letterTime)
-                        textFormat: Text.PlainText
+                        elide: Text.ElideRight
+                        wrapMode: Text.NoWrap
                     }
                 }
 
+                //
+                // Time
+                //
+
+                Text {
+                    Layout.alignment: Qt.AlignVCenter
+
+                    text: formatEmailTimeFull(contentPageLetterQML.letterTime)
+
+                    color: "#6a7282"
+
+                    font.family: "Segoe UI"
+                    font.pixelSize: 12
+                }
+
+                //
                 // Star
-                Rectangle
-                {
-                    id: buttonToFavourite
+                //
 
-                    anchors.right: button.left
-                    anchors.rightMargin: 4
-                    height: 34
-                    width: 34
-                    color: "transparent"
-                    radius: 10
+                Item {
+                    Layout.preferredWidth: 34
+                    Layout.preferredHeight: 34
 
-                    Rectangle
-                    {
-                        id: sVG
+                    MouseArea {
+                        id: clickAreaFavourite
 
-                        x: 8;
-                        y: 8
-                        height: 18;
-                        width: 18
-                        clip: true;
-                        color: "transparent"
-                        MouseArea
-                        {
-                            id: clickAreaFavourite
-                            anchors.fill: parent
-
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-
-                            onClicked:
-                            {
-                                contentPageLetterQML.letterStarred = !contentPageLetterQML.letterStarred
-                                starClicked(contentPageLetterQML.letterStarred)
-                            }
-                        }
-                        scale: clickAreaFavourite.containsMouse ? 1.3 : 1.0
-
-                        Behavior on scale
-                        {
-                            NumberAnimation
-                            {
-                                duration: 150
-                                easing.type: Easing.InOutQuad
-                            }
-                        }
-
-                        Image
-                        {
-                            source: contentPageLetterQML.letterStarred ? "qrc:/pngs/assets/ic_star_active.svg" : "qrc:/pngs/assets/ic_star.svg"
-                            width: 18
-                            height: 18
-                            sourceSize.width: width * Screen.devicePixelRatio
-                            sourceSize.height: height * Screen.devicePixelRatio
-                            fillMode: Image.PreserveAspectFit
-                            anchors.centerIn: parent
-                        }
-                    }
-                }
-
-                // Other button
-                Rectangle
-                {
-                    id: button
-
-                    anchors.right: parent.right
-                    height: 34
-                    width: 34
-                    color: "transparent"
-                    radius: 10
-                    MouseArea
-                    {
-                        id: clickAreaThreeDots
                         anchors.fill: parent
 
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
 
-                        onClicked:
-                        {
-                            // ContextMenu
+                        onClicked: {
+                            contentPageLetterQML.letterStarred =
+                                !contentPageLetterQML.letterStarred
+                            starClicked(contentPageLetterQML.letterStarred)
                         }
                     }
 
-                    Rectangle
-                    {
-                        id: sVG_1
+                    Image {
+                        anchors.centerIn: parent
 
-                        x: 8;
-                        y: 8
-                        height: 18;
                         width: 18
-                        clip: true;
-                        color: "transparent"
-                        scale: clickAreaThreeDots.containsMouse ? 1.5 : 1.0
+                        height: 18
 
-                        Behavior on scale
-                        {
-                            NumberAnimation
-                            {
+                        source: contentPageLetterQML.letterStarred
+                            ? "qrc:/pngs/assets/ic_star_active.svg"
+                            : "qrc:/pngs/assets/ic_star.svg"
+
+                        fillMode: Image.PreserveAspectFit
+
+                        scale: clickAreaFavourite.containsMouse ? 1.3 : 1.0
+
+                        Behavior on scale {
+                            NumberAnimation {
                                 duration: 150
                                 easing.type: Easing.InOutQuad
                             }
-                        }
-
-                        Image
-                        {
-                            source: "qrc:/pngs/assets/ic_three_dots.svg"
-                            width: 18
-                            height: 18
-                            sourceSize.width: width * Screen.devicePixelRatio
-                            sourceSize.height: height * Screen.devicePixelRatio
-                            fillMode: Image.PreserveAspectFit
-                            anchors.centerIn: parent
                         }
                     }
                 }
