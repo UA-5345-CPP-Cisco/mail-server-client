@@ -3,12 +3,15 @@
 #include <optional>
 
 #include "headers/database/DatabaseManager.h"
+#include "../../../../libs/logger/include/logger/Logger.h"
 
 namespace ISXMail
 {
 
 namespace
 {
+Logging::Logger kLogger(Logging::LogLevel::Debug, true);
+
 std::optional<std::string> ToOptionalString(const QString& text)
 {
 	const QString trimmed = text.trimmed();
@@ -28,6 +31,7 @@ MessageComposer::MessageComposer(QObject* parent) :
 	m_repository(m_database),
 	m_recipient_repository(m_database)
 {
+	kLogger.Log(Logging::LogLevel::Info, std::string("MessageComposer: opened DB at ") + ISXDatabaseManager::DatabaseManager::DatabasePath().string());
 }
 
 bool MessageComposer::SendMessage(
@@ -39,14 +43,16 @@ bool MessageComposer::SendMessage(
 	bool is_inbox
 )
 {
-	Q_UNUSED(sender_name)
+	Q_UNUSED(sender_name);
 
 	if (recipient_email.trimmed().isEmpty() || body.trimmed().isEmpty())
 	{
-		return false;
-	}
+			kLogger.Log(Logging::LogLevel::Warning, "MessageComposer::SendMessage: validation failed - recipient or body empty");
+			return false;
+		}
 
-	m_database.Execute("BEGIN IMMEDIATE;");
+		kLogger.Log(Logging::LogLevel::Info, (std::string("MessageComposer::SendMessage: sending to ") + recipient_email.toStdString() + " subject_len=" + std::to_string(subject.size())));
+		m_database.Execute("BEGIN IMMEDIATE;");
 
 	try
 	{
@@ -68,16 +74,20 @@ bool MessageComposer::SendMessage(
 		);
 
 		m_database.Execute("COMMIT;");
+		kLogger.Log(Logging::LogLevel::Info, (std::string("MessageComposer::SendMessage: committed message_id=") + std::to_string(message_id)));
 		return true;
 	}
 	catch (...)
 	{
+		kLogger.Log(Logging::LogLevel::Error, "MessageComposer::SendMessage: exception occurred, attempting ROLLBACK");
 		try
 		{
 			m_database.Execute("ROLLBACK;");
+			kLogger.Log(Logging::LogLevel::Info, "MessageComposer::SendMessage: rollback succeeded");
 		}
 		catch (...)
 		{
+			kLogger.Log(Logging::LogLevel::Error, "MessageComposer::SendMessage: rollback failed");
 		}
 
 		throw;
@@ -92,7 +102,7 @@ bool MessageComposer::SaveDraft(
 	const QString& body
 )
 {
-	Q_UNUSED(sender_name)
+	Q_UNUSED(sender_name);
 
 	if (recipient_email.trimmed().isEmpty() && subject.trimmed().isEmpty() && body.trimmed().isEmpty())
 	{
@@ -122,18 +132,20 @@ bool MessageComposer::SaveDraft(
 				Storage::DeliveryStatus::Pending
 			);
 		}
-
 		m_database.Execute("COMMIT;");
 		return true;
 	}
 	catch (...)
 	{
+		kLogger.Log(Logging::LogLevel::Error, "MessageComposer::SaveDraft: exception occurred, attempting ROLLBACK");
 		try
 		{
 			m_database.Execute("ROLLBACK;");
+			kLogger.Log(Logging::LogLevel::Info, "MessageComposer::SaveDraft: rollback succeeded");
 		}
 		catch (...)
 		{
+			kLogger.Log(Logging::LogLevel::Error, "MessageComposer::SaveDraft: rollback failed");
 		}
 
 		throw;

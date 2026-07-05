@@ -16,6 +16,17 @@ if(NOT TARGET mail_storage)
 	)
 endif()
 
+if(NOT TARGET mail_Logger)
+	add_subdirectory(
+			${CMAKE_CURRENT_SOURCE_DIR}/../../libs/logger
+			${CMAKE_CURRENT_BINARY_DIR}/libs/logger
+	)
+endif()
+
+if(NOT TARGET Threads::Threads)
+	find_package(Threads REQUIRED)
+endif()
+
 qt_standard_project_setup(REQUIRES 6.10)
 
 qt_add_executable(appqtapptestmail
@@ -85,6 +96,7 @@ set_target_properties(appqtapptestmail PROPERTIES
 
 target_link_libraries(appqtapptestmail
 	PUBLIC
+		mail_logger
 		mail_storage
 	PRIVATE
 		Qt6::Quick

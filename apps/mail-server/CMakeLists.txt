@@ -3,9 +3,11 @@ add_executable(mail_server
 )
 
 target_link_libraries(mail_server
+        PUBLIC
+        mail_logger
         PRIVATE
         mail_server_sdk
-        mail_logger
+
 )
 
 target_compile_features(mail_server
