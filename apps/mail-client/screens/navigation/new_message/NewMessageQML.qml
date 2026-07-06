@@ -2,67 +2,70 @@ import QtQuick
 import QtQuick.Shapes
 import QtQuick.Controls
 
-Rectangle
-{
+Rectangle {
     id: newMessageQml
-    implicitHeight: 398
-    implicitWidth: 420
-    border.color: "#e5e7eb"
 
     property bool isDraft: false
+    property bool isReply: false
+    property bool isForward: false
     property string newIndex: ""
-    property string newTitle: "New Message"
-    property string newSubject: ""
     property string newRecipient: ""
+    property string newSubject: ""
     property string newText: ""
+    property string newTitle: "New Message"
 
-    signal draftFinished(string index, string subject, string recipient, string text)
     signal draftChanged(string index, string subject, string recipient, string text)
+    signal draftFinished(string index, string subject, string recipient, string text)
 
+    border.color: "#e5e7eb"
     clip: true
     color: "#fcf3e6"
+    implicitHeight: 398
+    implicitWidth: 420
     radius: 14
 
-    MouseArea
-    {
+    MouseArea {
         anchors.fill: parent
-        onClicked:
-        {
-            newMessageQml.forceActiveFocus()
+
+        onClicked: {
+            newMessageQml.forceActiveFocus();
         }
     }
 
     //header
     Rectangle {
         id: headerNewMessage
+
+        color: "#1e2939"
         height: 38
-        width: parent.width
         topLeftRadius: 14
         topRightRadius: 14
-        color: "#1e2939"
+        width: parent.width
 
         MouseArea {
             id: headerDragClickArea
+
             anchors.fill: parent
             cursorShape: Qt.OpenHandCursor
-            drag.target: newMessageQml
             drag.axis: Drag.XAndYAxis
+            drag.target: newMessageQml
 
             onPressed: cursorShape = Qt.ClosedHandCursor
             onReleased: cursorShape = Qt.OpenHandCursor
         }
-
         Rectangle {
             id: newMessageTitleWrapper
-            x: 12
-            y: 9
-            height: 20
-            width: 250
+
             clip: true
             color: "transparent"
+            height: 20
+            width: 250
+            x: 12
+            y: 9
 
             Text {
                 id: newMessageTitleText
+
                 anchors.fill: parent
                 color: "#ffffff"
                 font.family: "Segoe UI"
@@ -81,121 +84,96 @@ Rectangle
         // Wrapper
         Rectangle {
             id: windowControlsWrapper
+
+            color: "transparent"
+            height: 45
+            width: 140
             x: 384
             y: 8
-            width: 140
-            height: 45
-            color: "transparent"
 
             MouseArea {
                 id: clickBlockerClickArea
+
+                anchors.bottomMargin: 8
                 anchors.fill: parent
                 anchors.leftMargin: -8
                 anchors.rightMargin: 8
                 anchors.topMargin: -8
-                anchors.bottomMargin: 8
-                hoverEnabled: true
                 cursorShape: Qt.ArrowCursor
-
+                hoverEnabled: true
             }
-
             Row {
                 id: newMessageControlsRow
-                x: 384
-                y: 8
+
+                anchors.bottomMargin: 0
                 anchors.fill: parent
                 anchors.leftMargin: 8
                 anchors.rightMargin: -8
                 anchors.topMargin: 0
-                anchors.bottomMargin: 0
                 spacing: 8
+                x: 384
+                y: 8
 
                 //button to close window
-                Rectangle
-                {
+                Rectangle {
                     id: buttonToCloseWindow
-                    height: 22
-                    width: 22
-                    radius: 4
 
                     color: closeMessageBoxClickArea.pressed ? "#ffdede" : "transparent"
+                    height: 22
+                    radius: 4
+                    width: 22
 
-                    MouseArea
-                    {
+                    MouseArea {
                         id: closeMessageBoxClickArea
+
                         anchors.fill: parent
-
-                        hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
 
-                        onClicked:
-                        {
-                            if (subjectTextField.text.trim() === "" && recipientTextField.text.trim() === "" && messageBodyTextField.text.trim() === "")
-                            {
-                                closeMessageWindow()
-                            }
-                            else
-                            {
-                                let subject_text = subjectTextField.text.trim()
-                                let recipient_text = recipientTextField.text.trim()
-                                let message_text = messageBodyTextField.text.trim()
+                        onClicked: {
+                            if ((subjectTextField.text.trim() === "" && recipientTextField.text.trim() === "" && messageBodyTextField.text.trim() === "") || isDraft || isReply || isForward) {
+                                closeMessageWindow();
+                            } else {
+                                let subject_text = subjectTextField.text.trim();
+                                let recipient_text = recipientTextField.text.trim();
+                                let message_text = messageBodyTextField.text.trim();
 
-                            MessageComposer.SaveDraft(
-                                CurrentUser.username,
-                                CurrentUser.email,
-                                    recipient_text,
-                                    subject_text,
-                                    message_text
-                                )
+                                MessageComposer.SaveDraft(CurrentUser.username, CurrentUser.email, recipient_text, subject_text, message_text);
 
-                                if (isDraft)
-                                {
-                                    draftChanged(newIndex, subject_text, recipient_text, message_text)
-                                } else
-                                {
-                                    emailsModel.AddData(
-                                        false, false, true,
-                                    subject_text, CurrentUser.username,
-                                        recipient_text, message_text, ""
-                                    )
+                                if (isDraft) {
+                                    draftChanged(newIndex, subject_text, recipient_text, message_text);
+                                } else {
+                                    emailsModel.AddData(false, false, true, subject_text, CurrentUser.username, recipient_text, message_text, "");
                                 }
-                                closeMessageWindow()
+                                closeMessageWindow();
                             }
                         }
                     }
-
-                    Rectangle
-                    {
+                    Rectangle {
                         id: closeMessageBoxIcon
 
                         anchors.centerIn: parent
-
-                        height: 14
-                        width: 14
-
                         clip: true
                         color: "transparent"
-
+                        height: 14
                         scale: closeMessageBoxClickArea.containsMouse ? 1.5 : 1.0
+                        width: 14
 
-                        Behavior on scale
-                        {
-                            NumberAnimation
-                            {
+                        Behavior on scale {
+                            NumberAnimation {
                                 duration: 150
                                 easing.type: Easing.InOutQuad
                             }
                         }
 
-                        Image
-                        {
-                            source: "qrc:/pngs/assets/ic_close_window.svg"
-                            width: 14
-                            height: 14
-                            sourceSize.width: 120
-                            sourceSize.height: 120
-                            fillMode: Image.PreserveAspectFit
+                        Image {
                             anchors.centerIn: parent
+                            fillMode: Image.PreserveAspectFit
+                            height: 14
+                            source: "qrc:/pngs/assets/ic_close_window.svg"
+                            sourceSize.height: 120
+                            sourceSize.width: 120
+                            width: 14
                         }
                     }
                 }
@@ -204,64 +182,77 @@ Rectangle
     }
 
     //recipient
-    Rectangle
-    {
+    Rectangle {
         id: recipientWrapper
-        y: 38
-        width: parent.width
-        height: 36
-        clip: true
-        color: "#fcf3e6"
+
         border.color: "#e5e7eb"
         border.width: 1
+        clip: true
+        color: "#fcf3e6"
+        height: 36
+        width: parent.width
+        y: 38
 
-        Rectangle
-        {
+        Rectangle {
             id: recipientContainer
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: 12
-            anchors.rightMargin: 12
-            height: 19
-            color: "transparent"
 
-            TextField
-            {
+            anchors.left: parent.left
+            anchors.leftMargin: 12
+            anchors.right: parent.right
+            anchors.rightMargin: 12
+            anchors.verticalCenter: parent.verticalCenter
+            color: "transparent"
+            height: 19
+
+            TextField {
                 id: recipientTextField
+
                 anchors.fill: parent
+                bottomPadding: 0
                 color: "#1f2937"
-                font.pixelSize: 14
                 font.family: "Segoe UI"
+                font.pixelSize: 14
+                leftPadding: 0
                 placeholderText: "To"
                 placeholderTextColor: "#99a1af"
-                background: Item {}
-                leftPadding: 0
-                topPadding: 0
-                bottomPadding: 0
                 text: newRecipient
-                cursorDelegate: Item {}
+                topPadding: 0
 
-                Rectangle
-                {
+                background: Item {
+                }
+                cursorDelegate: Item {
+                }
+
+                Rectangle {
                     id: customCursorRecipient
-                    width: 1
+
+                    anchors.verticalCenter: parent.verticalCenter
                     color: "#1f2937"
                     height: parent.font.pixelSize
-                    anchors.verticalCenter: parent.verticalCenter
-                    x: parent.cursorRectangle.x
                     visible: parent.activeFocus
+                    width: 1
+                    x: parent.cursorRectangle.x
 
-                    Behavior on x
-                    {
-                        NumberAnimation { duration: 80; easing.type: Easing.OutCubic }
-                    }
-                    SequentialAnimation on opacity
-                    {
-                        running: parent.activeFocus
+                    SequentialAnimation on opacity {
                         loops: Animation.Infinite
-                        NumberAnimation { to: 0; duration: 400; easing.type: Easing.InOutSine }
-                        NumberAnimation { to: 1; duration: 400; easing.type: Easing.InOutSine }
+                        running: parent.activeFocus
+
+                        NumberAnimation {
+                            duration: 400
+                            easing.type: Easing.InOutSine
+                            to: 0
+                        }
+                        NumberAnimation {
+                            duration: 400
+                            easing.type: Easing.InOutSine
+                            to: 1
+                        }
+                    }
+                    Behavior on x {
+                        NumberAnimation {
+                            duration: 80
+                            easing.type: Easing.OutCubic
+                        }
                     }
                 }
             }
@@ -269,65 +260,78 @@ Rectangle
     }
 
     //subject field
-    Rectangle
-    {
+    Rectangle {
         id: subjectWrapper
-        y: 72
-        width: parent.width
-        height: 36
-        clip: true
-        color: "#fcf3e6"
+
         border.color: "#e5e7eb"
         border.width: 1
+        clip: true
+        color: "#fcf3e6"
+        height: 36
+        width: parent.width
+        y: 72
 
-        Rectangle
-        {
+        Rectangle {
             id: subjectContainer
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: 12
-            anchors.rightMargin: 12
-            height: 19
-            color: "transparent"
 
-            TextField
-            {
+            anchors.left: parent.left
+            anchors.leftMargin: 12
+            anchors.right: parent.right
+            anchors.rightMargin: 12
+            anchors.verticalCenter: parent.verticalCenter
+            color: "transparent"
+            height: 19
+
+            TextField {
                 id: subjectTextField
+
                 anchors.fill: parent
+                bottomPadding: 0
                 color: "#1f2937"
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Normal
+                leftPadding: 0
                 placeholderText: "Subject"
                 placeholderTextColor: "#99a1af"
-                background: Item {}
                 text: newSubject
-                leftPadding: 0
                 topPadding: 0
-                bottomPadding: 0
-                cursorDelegate: Item {}
 
-                Rectangle
-                {
+                background: Item {
+                }
+                cursorDelegate: Item {
+                }
+
+                Rectangle {
                     id: custonCursorSubject
-                    width: 1
+
+                    anchors.verticalCenter: parent.verticalCenter
                     color: "#1f2937"
                     height: parent.font.pixelSize
-                    anchors.verticalCenter: parent.verticalCenter
-                    x: parent.cursorRectangle.x
                     visible: parent.activeFocus
+                    width: 1
+                    x: parent.cursorRectangle.x
 
-                    Behavior on x
-                    {
-                        NumberAnimation { duration: 80; easing.type: Easing.OutCubic }
-                    }
-                    SequentialAnimation on opacity
-                    {
-                        running: parent.activeFocus
+                    SequentialAnimation on opacity {
                         loops: Animation.Infinite
-                        NumberAnimation { to: 0; duration: 500; easing.type: Easing.InOutSine }
-                        NumberAnimation { to: 1; duration: 500; easing.type: Easing.InOutSine }
+                        running: parent.activeFocus
+
+                        NumberAnimation {
+                            duration: 500
+                            easing.type: Easing.InOutSine
+                            to: 0
+                        }
+                        NumberAnimation {
+                            duration: 500
+                            easing.type: Easing.InOutSine
+                            to: 1
+                        }
+                    }
+                    Behavior on x {
+                        NumberAnimation {
+                            duration: 80
+                            easing.type: Easing.OutCubic
+                        }
                     }
                 }
             }
@@ -335,65 +339,82 @@ Rectangle
     }
 
     //message body field
-    Rectangle
-    {
+    Rectangle {
         id: messageBodyWrapper
-        y: 107
-        height: 233
-        width: parent.width
-        clip: true
-        color: "#fcf3e6"
+
         border.color: "#e5e7eb"
         border.width: 1
+        clip: true
+        color: "#fcf3e6"
+        height: 233
+        width: parent.width
+        y: 107
 
-        Rectangle
-        {
+        Rectangle {
             id: messageBodyContainer
+
             anchors.fill: parent
             anchors.margins: 12
             color: "transparent"
 
-            TextArea
-            {
+            TextArea {
                 id: messageBodyTextField
+
                 anchors.fill: parent
+                bottomPadding: 0
                 color: "#1f2937"
                 font.family: "Segoe UI"
+                font.pixelSize: 14
+                leftPadding: 0
                 placeholderText: "Write your message..."
                 placeholderTextColor: "#99a1af"
-                wrapMode: Text.Wrap
-                font.pixelSize: 14
-                background: Item {}
-                leftPadding: 0
-                topPadding: 0
-                bottomPadding: 0
                 text: newText
-                cursorDelegate: Item {}
+                topPadding: 0
+                wrapMode: Text.Wrap
 
-                Rectangle
-                {
+                background: Item {
+                }
+                cursorDelegate: Item {
+                }
+
+                Rectangle {
                     id: customCursorMessageBody
-                    width: 1
+
                     color: "#1f2937"
                     height: messageBodyTextField.cursorRectangle.height
+                    visible: messageBodyTextField.activeFocus
+                    width: 1
                     x: messageBodyTextField.cursorRectangle.x
                     y: messageBodyTextField.cursorRectangle.y
-                    visible: messageBodyTextField.activeFocus
 
-                    Behavior on x
-                    {
-                        NumberAnimation { duration: 80; easing.type: Easing.OutCubic }
+                    SequentialAnimation on opacity {
+                        loops: Animation.Infinite
+                        running: parent.activeFocus
+
+                        NumberAnimation {
+                            duration: 500
+                            easing.type: Easing.InOutSine
+                            to: 0
+                        }
+                        NumberAnimation {
+                            duration: 500
+                            easing.type: Easing.InOutSine
+                            to: 1
+                        }
+                    }
+                    Behavior on x {
+                        NumberAnimation {
+                            duration: 80
+                            easing.type: Easing.OutCubic
+                        }
                     }
                     Behavior on y
                     {
-                        NumberAnimation { duration: 80; easing.type: Easing.OutCubic }
-                    }
-                    SequentialAnimation on opacity
-                    {
-                        running: parent.activeFocus
-                        loops: Animation.Infinite
-                        NumberAnimation { to: 0; duration: 500; easing.type: Easing.InOutSine }
-                        NumberAnimation { to: 1; duration: 500; easing.type: Easing.InOutSine }
+                        NumberAnimation
+                        {
+                            duration: 80
+                            easing.type: Easing.OutCubic
+                        }
                     }
                 }
             }
@@ -404,92 +425,76 @@ Rectangle
     Rectangle
     {
         id: footerNavigation
-        y: 340
-        width: parent.width
-        height: 58
+
         color: "transparent"
+        height: 58
+        width: parent.width
+        y: 340
 
         // Send
         Rectangle
         {
             id: buttonToSentMessage
-            x: 12
+
             anchors.verticalCenter: parent.verticalCenter
-            height: 32
-            width: 63
             color: "#155dfc"
+            height: 32
             radius: 14
             scale: sentClickArea.containsMouse ? 1.05 : 1.0
+            width: 63
+            x: 12
 
             Behavior on scale
             {
-                NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+                NumberAnimation
+                {
+                    duration: 150
+                    easing.type: Easing.InOutQuad
+                }
             }
-
 
             MouseArea
             {
                 id: sentClickArea
+
                 anchors.fill: parent
-                hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+
                 onClicked:
                 {
                     if (recipientTextField.text === "")
                     {
-                        recipientTextField.text = "Enter Recipient!"
-                    }
-                    else
-                    {
-                        let recipient_text = recipientTextField.text.trim() === "" ? "empty" : recipientTextField.text
-                        let subject_text   = subjectTextField.text.trim()   === "" ? "empty" : subjectTextField.text
-                        let message_text   = messageBodyTextField.text.trim()   === "" ? "empty" : messageBodyTextField.text
+                        recipientTextField.text = "Enter Recipient!";
+                    } else {
+                        let recipient_text = recipientTextField.text.trim() === "" ? "empty" : recipientTextField.text;
+                        let subject_text = subjectTextField.text.trim() === "" ? "empty" : subjectTextField.text;
+                        let message_text = messageBodyTextField.text.trim() === "" ? "empty" : messageBodyTextField.text;
 
-                        if(recipient_text === "inboxtest")
+                        if (recipient_text === "inboxtest")
                         {
-                            if (!isDraft && MessageComposer.SendMessage(
-                                        CurrentUser.username,
-                                        CurrentUser.email,
-                                        recipientTextField.text.trim(),
-                                        subject_text,
-                                        message_text,
-                                        true))
+                            if (!isDraft &&
+                                MessageComposer.SendMessage(CurrentUser.username, CurrentUser.email, recipientTextField.text.trim(), subject_text, message_text, true))
                             {
-                                emailsModel.AddData(
-                                    false, false, false,
-                                    subject_text, CurrentUser.username,
-                                    recipient_text, message_text, "", true
-                                )
+                                emailsModel.AddData(false, false, false, subject_text, CurrentUser.username, recipient_text, message_text, "", true);
                             }
-                        }
-                        else if (!isDraft && MessageComposer.SendMessage(
-                                    CurrentUser.username,
-                                    CurrentUser.email,
-                                    recipientTextField.text.trim(),
-                                    subject_text,
-                                    message_text,
-                                    false))
+                        } else if (!isDraft && MessageComposer.SendMessage(CurrentUser.username, CurrentUser.email, recipientTextField.text.trim(), subject_text, message_text, false))
                         {
-                            emailsModel.AddData(
-                                false, true, false,
-                                subject_text, CurrentUser.username,
-                                recipient_text, message_text, ""
-                            )
-                        }
-                        else
+                            emailsModel.AddData(false, true, false, subject_text, CurrentUser.username, recipient_text, message_text, "");
+                        } else
                         {
-                            draftFinished(newIndex, subject_text, recipient_text, message_text)
+                            draftFinished(newIndex, subject_text, recipient_text, message_text);
                         }
-                        messageBodyTextField.clear()
-                        recipientTextField.clear()
-                        subjectTextField.clear()
+                        messageBodyTextField.clear();
+                        recipientTextField.clear();
+                        subjectTextField.clear();
                     }
                 }
             }
-
             Text
             {
                 id: sentButtonText
+
                 anchors.centerIn: parent
                 color: "#ffffff"
                 font.family: "Segoe UI"
@@ -504,51 +509,58 @@ Rectangle
         Rectangle
         {
             id: buttonToDelete
-            x: 85
+
             anchors.verticalCenter: parent.verticalCenter
-            height: 28
-            width: 28
             color: "transparent"
+            height: 28
             radius: 4
             scale: deleteClickArea.containsMouse ? 1.2 : 1.0
+            width: 28
+            x: 85
 
             Behavior on scale
             {
-                NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+                NumberAnimation
+                {
+                    duration: 150
+                    easing.type: Easing.InOutQuad
+                }
             }
 
             MouseArea
             {
                 id: deleteClickArea
+
                 anchors.fill: parent
-                hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+
                 onClicked:
                 {
-                    messageBodyTextField.clear()
-                    recipientTextField.clear()
-                    subjectTextField.clear()
+                    messageBodyTextField.clear();
+                    recipientTextField.clear();
+                    subjectTextField.clear();
                 }
             }
-
             Rectangle
             {
                 id: deleteButtonIcon
+
                 anchors.centerIn: parent
-                height: 16
-                width: 16
                 clip: true
                 color: "transparent"
+                height: 16
+                width: 16
 
                 Image
                 {
-                    source: "qrc:/pngs/assets/ic_bin.svg"
-                    width: 16
-                    height: 16
-                    sourceSize.width: 120
-                    sourceSize.height: 120
-                    fillMode: Image.PreserveAspectFit
                     anchors.centerIn: parent
+                    fillMode: Image.PreserveAspectFit
+                    height: 16
+                    source: "qrc:/pngs/assets/ic_bin.svg"
+                    sourceSize.height: 120
+                    sourceSize.width: 120
+                    width: 16
                 }
             }
         }
