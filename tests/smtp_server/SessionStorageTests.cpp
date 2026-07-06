@@ -7,14 +7,13 @@
 #include <gtest/gtest.h>
 
 #include "logger/Logger.h"
-#include "smtp/AuthService.hpp"
-#include "smtp/Session.hpp"
-#include "smtp/SocketsManager.hpp"
 #include "mail_storage/Database.h"
 #include "mail_storage/MailMessageRepository.h"
 #include "mail_storage/MessageRecipientRepository.h"
 #include "mail_storage/MigrationRunner.h"
-
+#include "smtp/AuthService.hpp"
+#include "smtp/Session.hpp"
+#include "smtp/SocketsManager.hpp"
 
 namespace {
 
@@ -96,7 +95,7 @@ class SessionStorageTest : public testing::Test
       return {};
     }
 
-    return m_socketsManager.responses.back().substr(0,3);
+    return m_socketsManager.responses.back().substr(0, 3);
   }
 
   std::string PrepareDatabasePath(const std::string& path)
@@ -120,15 +119,14 @@ class SessionStorageTest : public testing::Test
   smtp::AuthService m_authService;
   TestLogger m_logger;
 
-  smtp::SmtpSessionContext m_context{
-    m_config,
-    m_socketsManager,
-    m_authService,
-    m_database,
-    m_mailMessages,
-    m_messageRecipients,
-    m_storageMutex,
-    m_logger};
+  smtp::SmtpSessionContext m_context{m_config,
+                                     m_socketsManager,
+                                     m_authService,
+                                     m_database,
+                                     m_mailMessages,
+                                     m_messageRecipients,
+                                     m_storageMutex,
+                                     m_logger};
 
   smtp::SmtpSessionState m_state{m_connectionId};
   smtp::SmtpSessionHandler m_handler;
@@ -138,7 +136,7 @@ class SessionStorageTest : public testing::Test
 
 class SmtpSessionQueueTest : public ::testing::Test
 {
-protected:
+  protected:
   void SetUp()
   {
     Storage::MigrationRunner migrations(m_database, SMTP_SERVER_TEST_MIGRATIONS_DIR);
@@ -167,7 +165,6 @@ protected:
     return path;
   }
 
-
   const std::string m_databasePath{"smtp-session-storage-test.db"};
   const smtp::ConnectionId m_connectionId{1};
 
@@ -181,15 +178,14 @@ protected:
   smtp::AuthService m_authService;
   TestLogger m_logger;
 
-  smtp::SmtpSessionContext m_context{
-      m_config,
-      m_socketsManager,
-      m_authService,
-      m_database,
-      m_mailMessages,
-      m_messageRecipients,
-      m_storageMutex,
-      m_logger};
+  smtp::SmtpSessionContext m_context{m_config,
+                                     m_socketsManager,
+                                     m_authService,
+                                     m_database,
+                                     m_mailMessages,
+                                     m_messageRecipients,
+                                     m_storageMutex,
+                                     m_logger};
 
   smtp::SmtpSessionHandler m_handler;
 
@@ -199,7 +195,7 @@ protected:
 TEST_F(SessionStorageTest, StoresAcceptedMessageAndQueuesRecipients)
 {
   Send("HELO client.test");
-  Send( "MAIL FROM:<sender@example.com>");
+  Send("MAIL FROM:<sender@example.com>");
   Send("RCPT TO:<first@example.com>");
   Send("RCPT TO:<second@example.com>");
   Send("DATA");
@@ -231,7 +227,7 @@ TEST_F(SessionStorageTest, RejectRCPTBeforeMAIL)
 TEST_F(SessionStorageTest, RejectDATABeforeRCPT)
 {
   Send("HELO client.test");
-  Send( "MAIL FROM:<sender@example.com>");
+  Send("MAIL FROM:<sender@example.com>");
   Send("DATA");
 
   EXPECT_EQ(GetLastErrorMessage(), "503");
@@ -243,7 +239,7 @@ TEST_F(SessionStorageTest, RejectMessageBiggerThanLimit)
   m_config.maxMessageSizeBytes = 1;
 
   Send("HELO client.test");
-  Send( "MAIL FROM:<sender@example.com>");
+  Send("MAIL FROM:<sender@example.com>");
   Send("RCPT TO:<first@example.com>");
   Send("RCPT TO:<second@example.com>");
   Send("DATA");
@@ -259,7 +255,7 @@ TEST_F(SessionStorageTest, CheckDataResettingAfterTransaction)
   m_config.maxMessageSizeBytes = 1;
 
   Send("HELO client.test");
-  Send( "MAIL FROM:<sender@example.com>");
+  Send("MAIL FROM:<sender@example.com>");
   Send("RCPT TO:<first@example.com>");
   Send("RCPT TO:<second@example.com>");
   Send("DATA");
@@ -269,7 +265,7 @@ TEST_F(SessionStorageTest, CheckDataResettingAfterTransaction)
   EXPECT_TRUE(m_state.recipients.empty());
   EXPECT_EQ(m_state.sender, "");
 
-  Send( "MAIL FROM:<notsender@example.com>");
+  Send("MAIL FROM:<notsender@example.com>");
   EXPECT_TRUE(m_state.recipients.empty());
   EXPECT_EQ(m_state.sender, "notsender@example.com");
 }
@@ -285,7 +281,8 @@ TEST_F(SessionStorageTest, CheckCloseStatementWithQUIT)
 TEST_F(SessionStorageTest, CheckCloseStatementWithDirectEvent)
 {
   Send("HELO client.test");
-  m_handler.HandleEvent({smtp::SmtpEventType::Disconnected, m_connectionId, ""}, m_state, m_context);
+  m_handler.HandleEvent(
+    {smtp::SmtpEventType::Disconnected, m_connectionId, ""}, m_state, m_context);
 
   EXPECT_EQ(m_state.phase, smtp::SmtpSessionPhase::Closed);
 }
@@ -342,7 +339,7 @@ TEST_F(SessionStorageTest, RejectWhenAuthRequiredAndNoAuth)
   m_config.requireAuthentication = true;
 
   Send("HELO client.test");
-  Send( "MAIL FROM:<notsender@example.com>");
+  Send("MAIL FROM:<notsender@example.com>");
 
   EXPECT_EQ(GetLastErrorMessage(), "530");
 }
@@ -370,7 +367,8 @@ TEST_F(SessionStorageTest, SuccessfulTlsEventHandle)
   m_config.tls.enabled = true;
 
   Send("STARTTLS");
-  m_handler.HandleEvent({smtp::SmtpEventType::TlsSucceeded, m_connectionId, ""}, m_state, m_context);
+  m_handler.HandleEvent(
+    {smtp::SmtpEventType::TlsSucceeded, m_connectionId, ""}, m_state, m_context);
   EXPECT_TRUE(m_state.tlsActive);
   EXPECT_FALSE(m_state.tlsHandshakePending);
 }

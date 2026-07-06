@@ -79,7 +79,6 @@ TEST_F(ConfigurationTest, LoadsConfigurationWithInvalidStoragePath)
 		}
 	})");
 
-
   EXPECT_THROW((void)smtp::Configuration{path_}, std::runtime_error);
 }
 
