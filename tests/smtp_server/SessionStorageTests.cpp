@@ -10,10 +10,10 @@
 #include "smtp/AuthService.hpp"
 #include "smtp/Session.hpp"
 #include "smtp/SocketsManager.hpp"
-#include "../../libs/mail-storage/include/mail_storage/Database.h"
-#include "../../libs/mail-storage/include/mail_storage/MailMessageRepository.h"
-#include "../../libs/mail-storage/include/mail_storage/MessageRecipientRepository.h"
-#include "../../libs/mail-storage/include/mail_storage/MigrationRunner.h"
+#include "mail_storage/Database.h"
+#include "mail_storage/MailMessageRepository.h"
+#include "mail_storage/MessageRecipientRepository.h"
+#include "mail_storage/MigrationRunner.h"
 
 
 namespace {
@@ -254,7 +254,7 @@ TEST_F(SessionStorageTest, RejectMessageBiggerThanLimit)
   EXPECT_TRUE(queued.empty());
 }
 
-TEST_F(SessionStorageTest, CheckDataResetingAfterTransaction)
+TEST_F(SessionStorageTest, CheckDataResettingAfterTransaction)
 {
   m_config.maxMessageSizeBytes = 1;
 
@@ -441,7 +441,7 @@ TEST_F(SmtpSessionQueueTest, IsReadyForRemovalAfterDisconnect)
   EXPECT_TRUE(m_session->IsReadyForRemoval());
 }
 
-TEST_F(SmtpSessionQueueTest, CheckTHeConnectionIdGetter)
+TEST_F(SmtpSessionQueueTest, CheckTheConnectionIdGetter)
 {
   EXPECT_EQ(m_session->Connection(), 1);
 }

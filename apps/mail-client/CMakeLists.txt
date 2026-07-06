@@ -17,7 +17,7 @@ if(NOT TARGET mail_storage)
 	)
 endif()
 
-if(NOT TARGET mail_Logger)
+if(NOT TARGET mail_logger)
 	add_subdirectory(
 			${CMAKE_CURRENT_SOURCE_DIR}/../../libs/logger
 			${CMAKE_CURRENT_BINARY_DIR}/libs/logger

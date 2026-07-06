@@ -1,4 +1,7 @@
 #include "headers/mail/EmailCache.h"
+
+#include <sstream>
+
 #include "../../../../libs/logger/include/logger/Logger.h"
 
 namespace ISXMail {

@@ -15,7 +15,7 @@ namespace
   {
     switch (role)
     {
-      case InboxRole: return "IndoxRole";
+      case InboxRole: return "InboxRole";
       case StarredRole: return "StarredRole";
       case SentRole: return "SentRole";
       case DraftRole: return "DraftRole";
@@ -144,8 +144,9 @@ bool EmailListModel::DeleteEmail(int row)
     beginRemoveRows(QModelIndex(), row, row);
     m_data.erase(m_data.begin() + row);
     endRemoveRows();
+	kLogger.Log(Logging::LogLevel::Debug, GetStdString(QString("EmailListModel::RemoveData: data was removed at %1").arg(QString::number(row))));
     return true;
-    kLogger.Log(Logging::LogLevel::Debug, GetStdString(QString("EmailListModel::RemoveData: data was removed at %1").arg(QString::number(row))));
+    
 }
 
 void EmailListModel::AddData(

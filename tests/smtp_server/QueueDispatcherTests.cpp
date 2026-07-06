@@ -10,11 +10,11 @@
 
 #include "logger/Logger.h"
 #include "smtp/QueueDispatcher.hpp"
-#include "../../libs/mail-storage/include/mail_storage/Database.h"
-#include "../../libs/mail-storage/include/mail_storage/MailMessageRepository.h"
-#include "../../libs/mail-storage/include/mail_storage/MessageRecipientRepository.h"
-#include "../../libs/mail-storage/include/mail_storage/MigrationRunner.h"
-#include "../../libs/mail-storage/include/mail_storage/UserRepository.h"
+#include "mail_storage/Database.h"
+#include "mail_storage/MailMessageRepository.h"
+#include "mail_storage/MessageRecipientRepository.h"
+#include "mail_storage/MigrationRunner.h"
+#include "mail_storage/UserRepository.h"
 #include "thread_pool/ThreadPool.h"
 
 namespace {
@@ -166,7 +166,7 @@ TEST_F(QueueDispatcherTest, SkipPollWhenIntervalBig)
   EXPECT_EQ(taskCountBefore, m_thread_pool.taskCount);
 }
 
-TEST_F(QueueDispatcherTest, BastchSizeLimitsPerPoll)
+TEST_F(QueueDispatcherTest, BatchSizeLimitsPerPoll)
 {
   m_users.CreateUser("local-user", "local@example.test", "password-hash");
 
