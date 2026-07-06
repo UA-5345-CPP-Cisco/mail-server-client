@@ -6,7 +6,7 @@ namespace ISXMail{
 
     namespace
     {
-      static Logging::Logger kLogger(Logging::LogLevel::Debug, false);
+      static Logging::Logger kLogger(Logging::LogLevel::Debug, true);
     }
 
     EmailFilterProxy::EmailFilterProxy(FolderType type, QObject *parent)

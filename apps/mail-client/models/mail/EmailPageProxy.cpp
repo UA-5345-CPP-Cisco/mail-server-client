@@ -6,7 +6,7 @@ namespace ISXMail{
 
 namespace
 {
-  static Logging::Logger kLogger(Logging::LogLevel::Debug, false);
+  static Logging::Logger kLogger(Logging::LogLevel::Debug, true);
 }
 
 EmailPageProxy::EmailPageProxy(QObject* parent) :

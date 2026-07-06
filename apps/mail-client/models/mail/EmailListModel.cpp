@@ -10,7 +10,7 @@ namespace ISXMail
 
 namespace
 {
-  static Logging::Logger kLogger(Logging::LogLevel::Debug, false);
+  static Logging::Logger kLogger(Logging::LogLevel::Debug, true);
   QString GetEnumString(int role)
   {
     switch (role)
