@@ -10,7 +10,7 @@
 #include "../../../../libs/mail-storage/include/mail_storage/MigrationRunner.h"
 
 namespace {
-Logging::Logger kLogger(Logging::LogLevel::Debug, false);
+Logging::Logger kLogger(Logging::LogLevel::Debug, true);
 }
 
 namespace ISXDatabaseManager

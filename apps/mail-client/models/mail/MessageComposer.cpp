@@ -10,7 +10,7 @@ namespace ISXMail
 
 namespace
 {
-Logging::Logger kLogger(Logging::LogLevel::Debug, false);
+Logging::Logger kLogger(Logging::LogLevel::Debug, true);
 
 std::optional<std::string> ToOptionalString(const QString& text)
 {

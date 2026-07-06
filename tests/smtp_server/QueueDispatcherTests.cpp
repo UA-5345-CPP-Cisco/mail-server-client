@@ -10,11 +10,11 @@
 
 #include "logger/Logger.h"
 #include "smtp/QueueDispatcher.hpp"
-#include "storage/Database.h"
-#include "storage/MailMessageRepository.h"
-#include "storage/MessageRecipientRepository.h"
-#include "storage/MigrationRunner.h"
-#include "storage/UserRepository.h"
+#include "../../libs/mail-storage/include/mail_storage/Database.h"
+#include "../../libs/mail-storage/include/mail_storage/MailMessageRepository.h"
+#include "../../libs/mail-storage/include/mail_storage/MessageRecipientRepository.h"
+#include "../../libs/mail-storage/include/mail_storage/MigrationRunner.h"
+#include "../../libs/mail-storage/include/mail_storage/UserRepository.h"
 #include "thread_pool/ThreadPool.h"
 
 namespace {

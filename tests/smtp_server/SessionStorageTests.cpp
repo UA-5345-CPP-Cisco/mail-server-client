@@ -10,10 +10,11 @@
 #include "smtp/AuthService.hpp"
 #include "smtp/Session.hpp"
 #include "smtp/SocketsManager.hpp"
-#include "storage/Database.h"
-#include "storage/MailMessageRepository.h"
-#include "storage/MessageRecipientRepository.h"
-#include "storage/MigrationRunner.h"
+#include "../../libs/mail-storage/include/mail_storage/Database.h"
+#include "../../libs/mail-storage/include/mail_storage/MailMessageRepository.h"
+#include "../../libs/mail-storage/include/mail_storage/MessageRecipientRepository.h"
+#include "../../libs/mail-storage/include/mail_storage/MigrationRunner.h"
+
 
 namespace {
 

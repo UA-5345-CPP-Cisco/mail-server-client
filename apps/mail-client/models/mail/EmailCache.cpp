@@ -6,7 +6,7 @@ namespace ISXMail {
 EmailListCache::EmailListCache(Storage::CacheStore& store) :
 	m_store(store)
 {
-	static Logging::Logger kLogger(Logging::LogLevel::Debug, false);
+	static Logging::Logger kLogger(Logging::LogLevel::Debug, true);
 	kLogger.Log(Logging::LogLevel::Debug, "EmailListCache: constructed");
 }
 

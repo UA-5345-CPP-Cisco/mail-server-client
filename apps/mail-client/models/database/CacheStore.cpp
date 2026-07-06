@@ -13,7 +13,7 @@
 namespace Storage {
 
 namespace {
-Logging::Logger kLogger(Logging::LogLevel::Debug, false);
+Logging::Logger kLogger(Logging::LogLevel::Debug, true);
 constexpr const char* kCacheSchema = R"SQL(
 	CREATE TABLE IF NOT EXISTS cache_entries (
 		cache_namespace TEXT NOT NULL,
