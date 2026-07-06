@@ -5,7 +5,7 @@ project(qtapptestmail VERSION 0.1 LANGUAGES CXX C)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
-set(MAIL_DEV_CONSOLE ON)
+set(WINDOWS_DEV_CONSOLE OFF)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
 #find_package(SQLite3 REQUIRED)
@@ -95,7 +95,7 @@ set_target_properties(appqtapptestmail PROPERTIES
 		MACOSX_BUNDLE TRUE
 )
 
-if(MAIL_DEV_CONSOLE)
+if(WINDOWS_DEV_CONSOLE)
 	set_target_properties(appqtapptestmail PROPERTIES
 			WIN32_EXECUTABLE FALSE
 	)
