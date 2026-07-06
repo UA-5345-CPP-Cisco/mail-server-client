@@ -220,7 +220,7 @@ TEST_F(QueueDispatcherTest, MultipleMessagesInSinglePoll)
   dispatcher.Poll();
 
   const auto first_message = m_mail_messages.FindById(message_id);
-  const auto second_message = m_mail_messages.FindById(message_id);
+  const auto second_message = m_mail_messages.FindById(message_id1);
   ASSERT_TRUE(first_message.has_value());
   ASSERT_TRUE(second_message.has_value());
   EXPECT_EQ(first_message->status, Storage::MailMessageStatus::Sent);
