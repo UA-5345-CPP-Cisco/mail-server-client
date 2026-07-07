@@ -10,7 +10,7 @@ namespace ISXMail
 
 namespace
 {
-Logging::Logger kLogger(Logging::LogLevel::Debug, true);
+
 
 std::optional<std::string> ToOptionalString(const QString& text)
 {
@@ -31,7 +31,7 @@ MessageComposer::MessageComposer(QObject* parent) :
 	m_repository(m_database),
 	m_recipient_repository(m_database)
 {
-	kLogger.Log(Logging::LogLevel::Info, std::string("MessageComposer: opened DB at ") + ISXDatabaseManager::DatabaseManager::DatabasePath().string());
+	Logging::Logger::Instance().Log(Logging::LogLevel::Info, std::string("MessageComposer: opened DB at ") + ISXDatabaseManager::DatabaseManager::DatabasePath().string());
 }
 
 bool MessageComposer::SendMessage(
@@ -47,11 +47,11 @@ bool MessageComposer::SendMessage(
 
 	if (recipient_email.trimmed().isEmpty() || body.trimmed().isEmpty())
 	{
-			kLogger.Log(Logging::LogLevel::Warning, "MessageComposer::SendMessage: validation failed - recipient or body empty");
+			Logging::Logger::Instance().Log(Logging::LogLevel::Warning, "MessageComposer::SendMessage: validation failed - recipient or body empty");
 			return false;
 		}
 
-		kLogger.Log(Logging::LogLevel::Info, (std::string("MessageComposer::SendMessage: sending to ") + recipient_email.toStdString() + " subject_len=" + std::to_string(subject.size())));
+		Logging::Logger::Instance().Log(Logging::LogLevel::Info, (std::string("MessageComposer::SendMessage: sending to ") + recipient_email.toStdString() + " subject_len=" + std::to_string(subject.size())));
 		m_database.Execute("BEGIN IMMEDIATE;");
 
 	try
@@ -74,20 +74,20 @@ bool MessageComposer::SendMessage(
 		);
 
 		m_database.Execute("COMMIT;");
-		kLogger.Log(Logging::LogLevel::Info, (std::string("MessageComposer::SendMessage: committed message_id=") + std::to_string(message_id)));
+		Logging::Logger::Instance().Log(Logging::LogLevel::Info, (std::string("MessageComposer::SendMessage: committed message_id=") + std::to_string(message_id)));
 		return true;
 	}
 	catch (...)
 	{
-		kLogger.Log(Logging::LogLevel::Error, "MessageComposer::SendMessage: exception occurred, attempting ROLLBACK");
+		Logging::Logger::Instance().Log(Logging::LogLevel::Error, "MessageComposer::SendMessage: exception occurred, attempting ROLLBACK");
 		try
 		{
 			m_database.Execute("ROLLBACK;");
-			kLogger.Log(Logging::LogLevel::Info, "MessageComposer::SendMessage: rollback succeeded");
+			Logging::Logger::Instance().Log(Logging::LogLevel::Info, "MessageComposer::SendMessage: rollback succeeded");
 		}
 		catch (...)
 		{
-			kLogger.Log(Logging::LogLevel::Error, "MessageComposer::SendMessage: rollback failed");
+			Logging::Logger::Instance().Log(Logging::LogLevel::Error, "MessageComposer::SendMessage: rollback failed");
 		}
 
 		throw;
@@ -137,15 +137,15 @@ bool MessageComposer::SaveDraft(
 	}
 	catch (...)
 	{
-		kLogger.Log(Logging::LogLevel::Error, "MessageComposer::SaveDraft: exception occurred, attempting ROLLBACK");
+		Logging::Logger::Instance().Log(Logging::LogLevel::Error, "MessageComposer::SaveDraft: exception occurred, attempting ROLLBACK");
 		try
 		{
 			m_database.Execute("ROLLBACK;");
-			kLogger.Log(Logging::LogLevel::Info, "MessageComposer::SaveDraft: rollback succeeded");
+			Logging::Logger::Instance().Log(Logging::LogLevel::Info, "MessageComposer::SaveDraft: rollback succeeded");
 		}
 		catch (...)
 		{
-			kLogger.Log(Logging::LogLevel::Error, "MessageComposer::SaveDraft: rollback failed");
+			Logging::Logger::Instance().Log(Logging::LogLevel::Error, "MessageComposer::SaveDraft: rollback failed");
 		}
 
 		throw;

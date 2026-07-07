@@ -10,7 +10,6 @@ namespace ISXMail
 
 namespace
 {
-  static Logging::Logger kLogger(Logging::LogLevel::Debug, true);
   QString GetEnumString(int role)
   {
     switch (role)
@@ -40,7 +39,7 @@ EmailListModel::EmailListModel(QObject* parent) :
 	m_message_repository(m_database),
 	m_recipient_repository(m_database)
 {
-  kLogger.Log(Logging::LogLevel::Debug, "EmailListModel: constructed");
+  Logging::Logger::Instance().Log(Logging::LogLevel::Debug, "EmailListModel: constructed");
 	LoadFromDatabase();
 }
 
@@ -125,7 +124,7 @@ void EmailListModel::RemoveData(int row)
     m_data.erase(m_data.begin() + row);
     endRemoveRows();
 
-    kLogger.Log(Logging::LogLevel::Debug, GetStdString(QString("EmailListModel::RemoveData: data was removed at %1").arg(QString::number(row))));
+    Logging::Logger::Instance().Log(Logging::LogLevel::Debug, GetStdString(QString("EmailListModel::RemoveData: data was removed at %1").arg(QString::number(row))));
 }
 
 bool EmailListModel::DeleteEmail(int row)
@@ -144,7 +143,7 @@ bool EmailListModel::DeleteEmail(int row)
     beginRemoveRows(QModelIndex(), row, row);
     m_data.erase(m_data.begin() + row);
     endRemoveRows();
-	kLogger.Log(Logging::LogLevel::Debug, GetStdString(QString("EmailListModel::RemoveData: data was removed at %1").arg(QString::number(row))));
+	Logging::Logger::Instance().Log(Logging::LogLevel::Debug, GetStdString(QString("EmailListModel::RemoveData: data was removed at %1").arg(QString::number(row))));
     return true;
     
 }
@@ -188,7 +187,7 @@ void EmailListModel::AddData(const EmailData& item)
 	beginInsertRows(QModelIndex(), 0, 0);
 	m_data.insert(m_data.begin(), item);
 	endInsertRows();
-  kLogger.Log(Logging::LogLevel::Debug, "EmailListModel::AddData: data was added");
+  Logging::Logger::Instance().Log(Logging::LogLevel::Debug, "EmailListModel::AddData: data was added");
 	emit dataAdded();
 }
 
@@ -204,7 +203,7 @@ bool EmailListModel::SetStarred(int row, bool starred)
     m_data[row].is_starred = starred;
     const QModelIndex idx = index(row, 0);
     emit dataChanged(idx, idx, {StarredRole});
-    kLogger.Log(Logging::LogLevel::Debug, GetStdString(QString("EmailListModel::SetStarred: data at %1 changed %2 field to %3")
+    Logging::Logger::Instance().Log(Logging::LogLevel::Debug, GetStdString(QString("EmailListModel::SetStarred: data at %1 changed %2 field to %3")
       .arg(row)
       .arg(GetEnumString(StarredRole))
       .arg(starred ? "true" : "false")));
@@ -259,7 +258,7 @@ void EmailListModel::LoadFromDatabase()
 	}
 
 	endInsertRows();
-  kLogger.Log(Logging::LogLevel::Debug, "EmailListModel::LoadFromDatabase: data was loaded from database");
+  Logging::Logger::Instance().Log(Logging::LogLevel::Debug, "EmailListModel::LoadFromDatabase: data was loaded from database");
 }
 
 bool EmailListModel::setData(const QModelIndex& index, const QVariant& value, int role)
@@ -291,7 +290,7 @@ bool EmailListModel::setData(const QModelIndex& index, const QVariant& value, in
         return false;
     }
 
-    kLogger.Log(Logging::LogLevel::Debug, GetStdString(QString("EmailListModel::setData: data at %1 changed value of role %2")
+    Logging::Logger::Instance().Log(Logging::LogLevel::Debug, GetStdString(QString("EmailListModel::setData: data at %1 changed value of role %2")
       .arg(QString::number(index.row()))
       .arg(GetEnumString(role))
       ));

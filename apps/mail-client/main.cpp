@@ -16,6 +16,7 @@
 #include "headers/database/RegistrationHandler.h"
 #include "headers/users/AccountListModel.h"
 #include "../../libs/mail-storage/include/mail_storage/UserRepository.h"
+#include "../../libs/logger/include/logger/Logger.h"
 
 
 int main(int argc, char *argv[])
@@ -29,6 +30,8 @@ int main(int argc, char *argv[])
     auto dbPath = ISXDatabaseManager::DatabaseManager::DatabasePath();
     Storage::Database database(dbPath);
     QQmlApplicationEngine engine;
+
+    Logging::Logger kLogger(Logging::LogLevel::Debug, true);
 
     RegistrationHandler regHandler(database);
     engine.rootContext()->setContextProperty("regHandler", &regHandler);

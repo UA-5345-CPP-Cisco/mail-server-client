@@ -6,14 +6,13 @@ namespace ISXMail{
 
 namespace
 {
-  static Logging::Logger kLogger(Logging::LogLevel::Debug, true);
 }
 
 EmailPageProxy::EmailPageProxy(QObject* parent) :
     QSortFilterProxyModel(parent)
 {
-  static Logging::Logger kLogger(Logging::LogLevel::Debug, false);
-  kLogger.Log(Logging::LogLevel::Debug, "EmailPageProxy: constructed");
+
+  Logging::Logger::Instance().Log(Logging::LogLevel::Debug, "EmailPageProxy: constructed");
 }
 
 void EmailPageProxy::NextPage()
@@ -27,7 +26,7 @@ void EmailPageProxy::NextPage()
         emit pageAmountTextChanged();
     }
 
-  kLogger.Log(Logging::LogLevel::Debug, QString("EmailPageProxy::NextPage: current page - " + QString::number(m_current_page)).toStdString());
+  Logging::Logger::Instance().Log(Logging::LogLevel::Debug, QString("EmailPageProxy::NextPage: current page - " + QString::number(m_current_page)).toStdString());
 }
 
 void EmailPageProxy::PrevPage()
@@ -41,7 +40,7 @@ void EmailPageProxy::PrevPage()
         emit pageAmountTextChanged();
     }
 
-  kLogger.Log(Logging::LogLevel::Debug, QString("EmailPageProxy::PrevPage: current page - " + QString::number(m_current_page)).toStdString());
+  Logging::Logger::Instance().Log(Logging::LogLevel::Debug, QString("EmailPageProxy::PrevPage: current page - " + QString::number(m_current_page)).toStdString());
 }
 
 int EmailPageProxy::CurrentPage() const
@@ -79,7 +78,7 @@ void EmailPageProxy::setSourceModel(QAbstractItemModel *source_model)
                 this,
                 &EmailPageProxy::RecalcValues);
     }
-    kLogger.Log(Logging::LogLevel::Debug, "EmailPageProxy::setSourceModel: source model was assigned successfully");
+    Logging::Logger::Instance().Log(Logging::LogLevel::Debug, "EmailPageProxy::setSourceModel: source model was assigned successfully");
     RecalcValues();
 }
 
@@ -164,7 +163,7 @@ bool EmailPageProxy::SetStarred(int proxyRow, bool starred)
 
 void EmailPageProxy::RemoveEmailData(int proxyRow)
 {
-    kLogger.Log(Logging::LogLevel::Debug, "EmailPageProxy::setSourceModel: source model was assigned successfully");
+    Logging::Logger::Instance().Log(Logging::LogLevel::Debug, "EmailPageProxy::setSourceModel: source model was assigned successfully");
     QModelIndex idx = index(proxyRow, 0);
 
     while (auto* proxy =

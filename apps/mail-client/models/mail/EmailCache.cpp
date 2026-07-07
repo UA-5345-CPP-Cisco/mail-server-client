@@ -9,8 +9,7 @@ namespace ISXMail {
 EmailListCache::EmailListCache(Storage::CacheStore& store) :
 	m_store(store)
 {
-	static Logging::Logger kLogger(Logging::LogLevel::Debug, true);
-	kLogger.Log(Logging::LogLevel::Debug, "EmailListCache: constructed");
+	Logging::Logger::Instance().Log(Logging::LogLevel::Debug, "EmailListCache: constructed");
 }
 
 void EmailListCache::Save(
@@ -24,8 +23,7 @@ void EmailListCache::Save(
 	{
 	std::ostringstream oss;
 	oss << "EmailListCache::Save: folder=" << folder.toStdString() << " search=" << search_text.toStdString() << " version=" << version << " ttl=" << ttl.count();
-	static Logging::Logger kLogger(Logging::LogLevel::Debug, true);
-	kLogger.Log(Logging::LogLevel::Debug, oss.str());
+	Logging::Logger::Instance().Log(Logging::LogLevel::Debug, oss.str());
 
 	m_store.Put(
 		MakeNamespace(folder).toStdString(),
@@ -47,15 +45,13 @@ std::optional<CachedEmailList> EmailListCache::Load(
 		MakeKey(folder, search_text).toStdString(),
 		allow_stale
 	);
-
-		static Logging::Logger kLogger(Logging::LogLevel::Debug, true);
 		if (!entry.has_value())
 		{
-			kLogger.Log(Logging::LogLevel::Debug, (std::string("EmailListCache::Load: miss folder=") + folder.toStdString() + " search=" + search_text.toStdString()));
+			Logging::Logger::Instance().Log(Logging::LogLevel::Debug, (std::string("EmailListCache::Load: miss folder=") + folder.toStdString() + " search=" + search_text.toStdString()));
 			return std::nullopt;
 		}
 
-		kLogger.Log(Logging::LogLevel::Debug, (std::string("EmailListCache::Load: hit folder=") + folder.toStdString() + " search=" + search_text.toStdString() + " version=" + std::to_string(entry->version)));
+		Logging::Logger::Instance().Log(Logging::LogLevel::Debug, (std::string("EmailListCache::Load: hit folder=") + folder.toStdString() + " search=" + search_text.toStdString() + " version=" + std::to_string(entry->version)));
 		return CachedEmailList{
 			folder,
 			search_text,
@@ -67,8 +63,7 @@ std::optional<CachedEmailList> EmailListCache::Load(
 void EmailListCache::InvalidateFolder(const QString& folder)
 {
 	{
-	static Logging::Logger kLogger(Logging::LogLevel::Debug, true);
-	kLogger.Log(Logging::LogLevel::Debug, (std::string("EmailListCache::InvalidateFolder: folder=") + folder.toStdString()));
+	Logging::Logger::Instance().Log(Logging::LogLevel::Debug, (std::string("EmailListCache::InvalidateFolder: folder=") + folder.toStdString()));
 	m_store.InvalidateNamespace(MakeNamespace(folder).toStdString());
 }
 }
@@ -76,8 +71,7 @@ void EmailListCache::InvalidateFolder(const QString& folder)
 void EmailListCache::InvalidateAll()
 {
 	{
-	static Logging::Logger kLogger(Logging::LogLevel::Debug, true);
-	kLogger.Log(Logging::LogLevel::Debug, "EmailListCache::InvalidateAll");
+	Logging::Logger::Instance().Log(Logging::LogLevel::Debug, "EmailListCache::InvalidateAll");
 	m_store.InvalidateNamespacePrefix(Namespace().toStdString());
 }
 }
