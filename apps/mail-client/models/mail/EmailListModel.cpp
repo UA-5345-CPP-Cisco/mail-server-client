@@ -10,22 +10,38 @@ namespace ISXMail
 
 namespace
 {
-  QString GetEnumString(int role)
+QString GetEnumString(int role)
+
+{
+
+  switch (role)
+
   {
-    switch (role)
-    {
-      case InboxRole: return "InboxRole";
-      case StarredRole: return "StarredRole";
-      case SentRole: return "SentRole";
-      case DraftRole: return "DraftRole";
-      case ThemeRole: return "ThemeRole";
-      case NameRole: return "NameRole";
-      case PreviewRole: return "PreviewRole";
-      case ContentRole: return "ContentRole";
-      case TimeRole: return "TimeRole";
-      case SendToRole: return "SendToRole";
-    }
+    case InboxRole: return QStringLiteral("InboxRole");
+
+    case StarredRole: return QStringLiteral("StarredRole");
+
+    case SentRole: return QStringLiteral("SentRole");
+
+    case DraftRole: return QStringLiteral("DraftRole");
+
+    case ThemeRole: return QStringLiteral("ThemeRole");
+
+    case NameRole: return QStringLiteral("NameRole");
+
+    case PreviewRole: return QStringLiteral("PreviewRole");
+
+    case ContentRole: return QStringLiteral("ContentRole");
+
+    case TimeRole: return QStringLiteral("TimeRole");
+
+    case SendToRole: return QStringLiteral("SendToRole");
+
+    default: return QStringLiteral("UnknownRole");
+
   }
+}
+
 
   std::string GetStdString(const QString& str)
   {
@@ -128,7 +144,9 @@ void EmailListModel::RemoveData(int row)
 }
 
 bool EmailListModel::DeleteEmail(int row)
-{
+    Logging::Logger::Instance().Log(Logging::LogLevel::Debug,
+                                   GetStdString(QString("EmailListModel::DeleteEmail: data was removed at %1")
+                                                  .arg(QString::number(row))));
 	if (row < 0 || row >= static_cast<int>(m_data.size()))
 	{
 		return false;
