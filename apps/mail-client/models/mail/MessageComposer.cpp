@@ -3,7 +3,7 @@
 #include <optional>
 
 #include "headers/database/DatabaseManager.h"
-#include "../../../../libs/logger/include/logger/Logger.h"
+#include "logger/Logger.h"
 
 namespace ISXMail
 {

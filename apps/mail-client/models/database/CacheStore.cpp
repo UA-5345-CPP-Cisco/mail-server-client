@@ -7,8 +7,8 @@
 #include <stdexcept>
 #include <ctime>
 
-#include "../../../../libs/mail-storage/include/mail_storage/Statement.h"
-#include "../../../../libs/logger/include/logger/Logger.h"
+#include "mail_storage/Statement.h"
+#include "logger/Logger.h"
 
 namespace Storage {
 

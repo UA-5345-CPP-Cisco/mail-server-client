@@ -5,9 +5,9 @@
 #include <QDir>
 #include <QStandardPaths>
 
-#include "../../../../libs/mail-storage/include/mail_storage/Database.h"
-#include "../../../../libs/logger/include/logger/Logger.h"
-#include "../../../../libs/mail-storage/include/mail_storage/MigrationRunner.h"
+#include "mail_storage/Database.h"
+#include "logger/Logger.h"
+#include "mail_storage/MigrationRunner.h"
 
 namespace {
 

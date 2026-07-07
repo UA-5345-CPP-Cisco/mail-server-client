@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-#include "../../../../libs/logger/include/logger/Logger.h"
+#include "logger/Logger.h"
 
 namespace ISXMail {
 
