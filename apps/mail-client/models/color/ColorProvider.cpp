@@ -25,6 +25,11 @@ QColor ColorProvider::Button() const
 	return m_button;
 }
 
+QColor ColorProvider::Hover() const
+{
+	return m_hover;
+}
+
 QColor ColorProvider::Outline() const
 {
 	return m_outline;
@@ -63,7 +68,7 @@ bool ColorProvider::LoadScheme(const QString& path)
 	}
 
 	UpdateFromModel();
-	emit ColorsChanged();
+	emit colorsChanged();
 
 	return true;
 }
@@ -89,7 +94,7 @@ bool ColorProvider::SetTheme(Theme theme)
 	}
 
 	UpdateFromModel();
-	emit ColorsChanged();
+	emit colorsChanged();
 
 	return true;
 }

@@ -1,0 +1,12 @@
+{
+  "background": "#0b0f19",
+  "surface": "#101828",
+  "button": "#ffffff",
+  "outline": "#1f2937",
+  "hover": "#f9fafb",
+  "primaryText": "#f9fafb",
+  "secondaryText": "#9ca3af",
+  "highlight": "#1f2937",
+  "border": "#1f2937",
+  "transparent": "#00000000"
+}

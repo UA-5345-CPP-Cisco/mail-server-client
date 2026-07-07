@@ -9,14 +9,15 @@ namespace ISXMail {
 // CONSTRUCTORS
 ColorModel::ColorModel()
 {
-	m_colors[Role::Background]    = QColor("#ffffff");
-	m_colors[Role::Surface]       = QColor("#f9fafb");
+	m_colors[Role::Background]    = QColor("#FFFFFF");
+	m_colors[Role::Surface]       = QColor("#F9FAFB");
 	m_colors[Role::Button]        = QColor("#101828");
-	m_colors[Role::Outline]       = QColor("#e5e7eb");
+	m_colors[Role::Outline]       = QColor("#E5E7EB");
+	m_colors[Role::Hover]         = QColor("#1f2937");
 	m_colors[Role::PrimaryText]   = QColor("#101828");
-	m_colors[Role::SecondaryText] = QColor("#6a7282");
-	m_colors[Role::Highlight]     = QColor("#f3f4f6");
-	m_colors[Role::Border]        = QColor("#e5e7eb");
+	m_colors[Role::SecondaryText] = QColor("#6A7282");
+	m_colors[Role::Highlight]     = QColor("#F3F4F6");
+	m_colors[Role::Border]        = QColor("#E5E7EB");
 	m_colors[Role::Transparent]   = QColor(Qt::transparent);
 }
 
@@ -105,6 +106,7 @@ ColorModel::Role ColorModel::RoleFromString(const QString& name)
 	if (key == "surface") return Role::Surface;
 	if (key == "button") return Role::Button;
 	if (key == "outline") return Role::Outline;
+	if (key == "hover") return Role::Hover;
 	if (key == "primarytext" || key == "primary" || key == "text") return Role::PrimaryText;
 	if (key == "secondarytext" || key == "secondary") return Role::SecondaryText;
 	if (key == "highlight" || key == "hover") return Role::Highlight;
@@ -119,4 +121,4 @@ QColor ColorModel::FromHex(const QString& hex)
 	return QColor(hex.trimmed());
 }
 
-} 
+}

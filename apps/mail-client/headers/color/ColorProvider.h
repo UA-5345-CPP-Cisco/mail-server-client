@@ -13,15 +13,16 @@ class ColorProvider : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QColor background READ Background NOTIFY ColorsChanged)
-    Q_PROPERTY(QColor surface READ Surface NOTIFY ColorsChanged)
-    Q_PROPERTY(QColor button READ Button NOTIFY ColorsChanged)
-    Q_PROPERTY(QColor outline READ Outline NOTIFY ColorsChanged)
-    Q_PROPERTY(QColor primaryText READ PrimaryText NOTIFY ColorsChanged)
-    Q_PROPERTY(QColor secondaryText READ SecondaryText NOTIFY ColorsChanged)
-    Q_PROPERTY(QColor highlight READ Highlight NOTIFY ColorsChanged)
-    Q_PROPERTY(QColor border READ Border NOTIFY ColorsChanged)
-    Q_PROPERTY(QColor transparent READ Transparent NOTIFY ColorsChanged)
+    Q_PROPERTY(QColor background READ Background NOTIFY colorsChanged)
+    Q_PROPERTY(QColor surface READ Surface NOTIFY colorsChanged)
+    Q_PROPERTY(QColor button READ Button NOTIFY colorsChanged)
+    Q_PROPERTY(QColor outline READ Outline NOTIFY colorsChanged)
+    Q_PROPERTY(QColor hover READ Hover NOTIFY colorsChanged)
+    Q_PROPERTY(QColor primaryText READ PrimaryText NOTIFY colorsChanged)
+    Q_PROPERTY(QColor secondaryText READ SecondaryText NOTIFY colorsChanged)
+    Q_PROPERTY(QColor highlight READ Highlight NOTIFY colorsChanged)
+    Q_PROPERTY(QColor border READ Border NOTIFY colorsChanged)
+    Q_PROPERTY(QColor transparent READ Transparent NOTIFY colorsChanged)
 public:
 
     explicit ColorProvider(QObject* parent = nullptr);
@@ -32,6 +33,7 @@ public:
     QColor Outline() const;
     QColor PrimaryText() const;
     QColor SecondaryText() const;
+    QColor Hover() const;
     QColor Highlight() const;
     QColor Border() const;
     QColor Transparent() const;
@@ -40,7 +42,7 @@ public:
     Q_INVOKABLE bool SetTheme(const QString& theme_name);
 
     signals:
-        void ColorsChanged();
+        void colorsChanged();
 private:
 
     void UpdateFromModel();
@@ -50,6 +52,7 @@ private:
     QColor m_surface;
     QColor m_button;
     QColor m_outline;
+    QColor m_hover;
     QColor m_primary_text;
     QColor m_secondary_text;
     QColor m_highlight;

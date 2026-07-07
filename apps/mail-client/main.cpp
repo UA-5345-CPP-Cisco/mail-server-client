@@ -100,7 +100,6 @@ int main(int argc, char *argv[])
         &ISXCurrentUser::CurrentUser::GetInstance()
         );
 
-    // Color provider for QML: exposes color(roleName) and qcolor(roleName)
     auto* colorProvider = new ISXMail::ColorProvider(&app);
     engine.rootContext()->setContextProperty("Color", colorProvider);
 

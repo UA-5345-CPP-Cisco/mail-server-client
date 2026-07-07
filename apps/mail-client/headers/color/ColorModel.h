@@ -21,6 +21,7 @@ public:
         Surface,
         Button,
         Outline,
+        Hover,
         PrimaryText,
         SecondaryText,
         Highlight,
@@ -35,7 +36,7 @@ public:
     QColor Color(Role role) const;
     QColor Color(const QString& role_name) const;
     void SetColor(Role role, const QColor& color);
-    
+
     static QString RoleToString(Role r);
     static Role RoleFromString(const QString& name);
     static QColor FromHex(const QString& hex);
