@@ -52,7 +52,8 @@ std::optional<CachedEmailList> EmailListCache::Load(
 		}
 
 		Logging::Logger::Instance().Log(Logging::LogLevel::Debug, (std::string("EmailListCache::Load: hit folder=") + folder.toStdString() + " search=" + search_text.toStdString() + " version=" + std::to_string(entry->version)));
-		return CachedEmailList{
+		return CachedEmailList
+		{
 			folder,
 			search_text,
 			QString::fromStdString(entry->payload),
@@ -62,11 +63,10 @@ std::optional<CachedEmailList> EmailListCache::Load(
 
 void EmailListCache::InvalidateFolder(const QString& folder)
 {
-	{
 	Logging::Logger::Instance().Log(Logging::LogLevel::Debug, (std::string("EmailListCache::InvalidateFolder: folder=") + folder.toStdString()));
 	m_store.InvalidateNamespace(MakeNamespace(folder).toStdString());
 }
-}
+
 
 void EmailListCache::InvalidateAll()
 {

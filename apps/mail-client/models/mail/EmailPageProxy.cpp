@@ -163,7 +163,7 @@ bool EmailPageProxy::SetStarred(int proxyRow, bool starred)
 
 void EmailPageProxy::RemoveEmailData(int proxyRow)
 {
-    Logging::Logger::Instance().Log(Logging::LogLevel::Debug, "EmailPageProxy::setSourceModel: source model was assigned successfully");
+    Logging::Logger::Instance().Log(Logging::LogLevel::Debug, "EmailPageProxy::RemoveEmailData: source model was assigned successfully");
     QModelIndex idx = index(proxyRow, 0);
 
     while (auto* proxy =

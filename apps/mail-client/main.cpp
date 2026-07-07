@@ -31,8 +31,7 @@ int main(int argc, char *argv[])
     Storage::Database database(dbPath);
     QQmlApplicationEngine engine;
 
-    Logging::Logger kLogger(Logging::LogLevel::Debug, true);
-
+    (void)Logging::Logger::Instance();
     RegistrationHandler regHandler(database);
     engine.rootContext()->setContextProperty("regHandler", &regHandler);
 
