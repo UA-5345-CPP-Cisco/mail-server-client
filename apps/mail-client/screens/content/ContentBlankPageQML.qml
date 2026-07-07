@@ -9,12 +9,12 @@ Rectangle {
     width:400
     height:400
     clip: true
-    color: "#ffffff"
+    color: Color.color("background")
 
     Rectangle {
         id: background
 
-        color: "#ffffff"
+        color: Color.color("background")
         anchors.centerIn: parent
 
         Rectangle {
@@ -76,7 +76,7 @@ Rectangle {
                         height: 20
                         width: 142
 
-                        color: "#6a7282"
+                        color: Color.color("secondaryText")
                         font.family: "Segoe UI"
                         font.pixelSize: 14
                         font.weight: Font.Normal

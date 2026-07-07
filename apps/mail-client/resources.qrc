@@ -28,5 +28,7 @@
         <file>assets/ic_close_window_black.svg</file>
         <file>assets/ic_google_logo.svg</file>
         <file>assets/ic_checkmark.svg</file>
+        <file>assets/DarkColorScheme.json</file>
+        <file>assets/LightColorScheme.json</file>
     </qresource>
 </RCC>

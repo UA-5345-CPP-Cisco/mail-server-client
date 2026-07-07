@@ -87,6 +87,10 @@ qt_add_qml_module(appqtapptestmail
 		headers/users/AccountListModel.h
 		models/users/AccountListModel.cpp
 		models/database/RegistrationHandler.cpp
+		models/color/ColorModel.cpp
+		headers/color/ColorModel.h
+		headers/color/ColorProvider.h
+		models/color/ColorProvider.cpp
 )
 
 set_target_properties(appqtapptestmail PROPERTIES

@@ -11,6 +11,7 @@
 #include "headers/mail/EmailPageProxy.h"
 #include "headers/mail/MessageComposer.h"
 #include "headers/database/DatabaseManager.h"
+#include "headers/color/ColorProvider.h"
 #include "headers/users/CurrentUser.h"
 #include "headers/search/MessageSearchModel.h"
 #include "headers/database/RegistrationHandler.h"
@@ -98,6 +99,10 @@ int main(int argc, char *argv[])
         "CurrentUser",
         &ISXCurrentUser::CurrentUser::GetInstance()
         );
+
+    // Color provider for QML: exposes color(roleName) and qcolor(roleName)
+    auto* colorProvider = new ISXMail::ColorProvider(&app);
+    engine.rootContext()->setContextProperty("Color", colorProvider);
 
     qmlRegisterUncreatableMetaObject(
         ISXMail::staticMetaObject,
