@@ -70,10 +70,8 @@ void EmailListCache::InvalidateFolder(const QString& folder)
 
 void EmailListCache::InvalidateAll()
 {
-	{
 	Logging::Logger::Instance().Log(Logging::LogLevel::Debug, "EmailListCache::InvalidateAll");
 	m_store.InvalidateNamespacePrefix(Namespace().toStdString());
-}
 }
 
 QString EmailListCache::Namespace() const
