@@ -7,7 +7,6 @@
 
 namespace Logging {
 
-
 enum class LogLevel
 {
   Trace,
