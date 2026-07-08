@@ -215,7 +215,7 @@ Rectangle {
                             id: customCursorContainer
 
                             anchors.verticalCenter: parent.verticalCenter
-                            color:Color.hover
+                            color: Color.secondaryText
                             height: parent.font.pixelSize
                             visible: parent.activeFocus
                             width: 1

@@ -1,7 +1,7 @@
 {
   "background":         "#ffffff",
   "surface":            "#f9fafb",
-  "button":             "#101828",
+  "button":             "#e2e8f0",
   "buttonSpecial":      "#155dfc",
   "buttonSpecialHover": "#0c43f7",
   "buttonSpecialText":  "#ffffff",

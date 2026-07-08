@@ -40,7 +40,7 @@ Rectangle
             x: 16
             y: 16
             height: 20
-            color: Color.button
+            color: Color.primaryText
             font.family: "Segoe UI"
             font.pixelSize: 14
             font.weight: Font.Black

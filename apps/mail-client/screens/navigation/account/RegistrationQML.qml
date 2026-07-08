@@ -69,7 +69,7 @@ Item {
             id: titleText
 
             anchors.horizontalCenter: parent.horizontalCenter
-            color: Color.button
+            color: Color.primaryText
             font.family: "Segoe UI"
             font.pixelSize: 28
             font.weight: Font.Bold
@@ -91,7 +91,7 @@ Item {
             id: fullNameTextField
 
             bottomPadding: 12
-            color: Color.button
+            color: Color.primaryText
             font.family: "Segoe UI"
             font.pixelSize: 14
             leftPadding: 16
@@ -115,7 +115,7 @@ Item {
                 id: nameCustomCursorRectangle
 
                 anchors.verticalCenter: parent.verticalCenter
-                color: Color.hover
+                color: Color.secondaryText
                 height: parent.font.pixelSize + 4
                 visible: parent.activeFocus
                 width: 1.5
@@ -160,7 +160,7 @@ Item {
             id: emailTextField
 
             bottomPadding: 12
-            color: Color.button
+            color: Color.primaryText
             font.family: "Segoe UI"
             font.pixelSize: 14
             leftPadding: 16
@@ -184,7 +184,7 @@ Item {
                 id: emailCustomCursorRectangle
 
                 anchors.verticalCenter: parent.verticalCenter
-                color: Color.hover
+                color: Color.secondaryText
                 height: parent.font.pixelSize + 4
                 visible: parent.activeFocus
                 width: 1.5
@@ -229,7 +229,7 @@ Item {
             id: passwordTextField
 
             bottomPadding: 12
-            color: Color.button
+            color: Color.background
             echoMode: TextInput.Password
             font.family: "Segoe UI"
             font.pixelSize: 14
@@ -254,7 +254,7 @@ Item {
                 id: passwordCustomCursorRectangle
 
                 anchors.verticalCenter: parent.verticalCenter
-                color: Color.hover
+                color: Color.secondaryText
                 height: parent.font.pixelSize + 4
                 visible: parent.activeFocus
                 width: 1.5
@@ -353,7 +353,7 @@ Item {
 
             border.color: Color.outline
             border.width: 1
-            color: googleClickArea.containsMouse ? Color.hover : Color.button
+            color: googleClickArea.containsMouse ? Color.button : Color.hover
             height: 44
             radius: 8
             scale: googleClickArea.containsMouse ? 1.03 : 1.0

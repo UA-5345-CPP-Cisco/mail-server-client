@@ -37,7 +37,6 @@ Rectangle {
         hoverEnabled: true
         propagateComposedEvents: true
 
-        onCanceled: root.state = 0
         onClicked: mouse => {
             if (mouse.button === Qt.LeftButton) {
                 root.color = containsMouse ? Color.surface : Color.background;
@@ -216,7 +215,7 @@ Rectangle {
                     Text {
                         id: nameText
 
-                        color: Color.button
+                        color: Color.primaryText
                         elide: Text.ElideRight
                         font.family: "Segoe UI"
                         font.pixelSize: 14
@@ -280,7 +279,7 @@ Rectangle {
                 Text {
                     id: themeText
 
-                    color: Color.button
+                    color: Color.primaryText
                     elide: Text.ElideRight
                     font.family: "Segoe UI"
                     font.pixelSize: 14

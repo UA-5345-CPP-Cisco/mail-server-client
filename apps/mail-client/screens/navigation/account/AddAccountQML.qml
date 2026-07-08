@@ -9,6 +9,7 @@ Rectangle {
     clip: true
     implicitHeight: 460
     implicitWidth: 640
+    color: Color.background
     radius: 14
     visible: true
 
@@ -16,7 +17,7 @@ Rectangle {
         id: backgroundRectangle
 
         anchors.fill: parent
-        border.color: Color.outline
+        border.color: Color.border
         border.width: 1
         color: Color.background
         radius: 14

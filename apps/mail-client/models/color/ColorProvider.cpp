@@ -161,17 +161,12 @@ bool ColorProvider::SetTheme(const QString& theme_name)
 }
 
 
-bool ColorProvider::IsDarkTheme() const
+	QString ColorProvider::CurrentTheme() const
 {
 	QSettings settings("ISX", "MailClient");
-	return settings.value("theme", "Light").toString() == "Dark";
+	return settings.value("theme", "Light").toString();
 }
-
-void ColorProvider::SetDarkTheme(bool dark)
-{
-	SetTheme(dark ? Theme::Dark : Theme::Light);
-	emit themeChanged();
-}
+	
 void ColorProvider::updateFromModel()
 {
 	m_background     		= m_model.Color(ColorModel::Role::Background);

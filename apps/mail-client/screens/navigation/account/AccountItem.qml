@@ -101,7 +101,7 @@ Rectangle
                 width: parent.width
                 height: 20
                 text: accountName
-                color: Color.button
+                color: Color.primaryText
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Normal

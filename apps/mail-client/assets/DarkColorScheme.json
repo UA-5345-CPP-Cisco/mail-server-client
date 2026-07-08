@@ -1,9 +1,9 @@
 {
   "background":         "#141922",
   "surface":            "#1a2130",
-  "button":             "#e2e8f0",
+  "button":             "#101828",
   "buttonSpecial":      "#1b199c",
-  "buttonSpecialHover": "#1d4ed8",
+  "buttonSpecialHover": "#151473",
   "buttonSpecialText":  "#ffffff",
   "selected":           "#324461",
   "outline":            "#2a3347",

@@ -86,7 +86,7 @@ Rectangle {
                 Text {
                     id: userNameText
 
-                    color: Color.button
+                    color: Color.primaryText
                     font.family: "Segoe UI"
                     font.pixelSize: 14
                     font.weight: Font.Normal

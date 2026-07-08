@@ -5,8 +5,6 @@ import QtQuick.Layouts
 Rectangle {
     id: settingsContainer
 
-    property bool isDarkTheme;
-
     clip: true
     color: Color.background
     implicitHeight: 313
@@ -28,7 +26,7 @@ Rectangle {
         Text {
             id: settingsTitleText
 
-            color: Color.button
+            color: Color.primaryText
             font.family: "Segoe UI"
             font.pixelSize: 16
             font.weight: Font.Black
@@ -342,7 +340,7 @@ Rectangle {
                         Text {
                             id: themeTitleText
 
-                            color: Color.button
+                            color: Color.primaryText
                             font.family: "Segoe UI"
 
                             font.pixelSize: 14
@@ -391,7 +389,7 @@ Rectangle {
             Rectangle {
                 id: themeAnimatedSlider
 
-                property int currentIndex: 0
+                property int currentIndex: Color.currentTheme === "Dark" ? 1 : 0
                 property var options: ["Light", "Dark"]
 
                 color: Color.background
@@ -470,7 +468,7 @@ Rectangle {
         Rectangle {
             id: accountSettingsButton
 
-            color: clickAreaAccountSettings.hovered ? Color.hover : Color.transparent
+            color: clickAreaAccountSettings.hovered ? Color.highlight : Color.background
             height: 60
             radius: 10
             width: 350.40
@@ -553,7 +551,7 @@ Rectangle {
                     Text {
                         id: accountTitleText
 
-                        color: Color.button
+                        color: Color.primaryText
                         font.family: "Segoe UI"
                         font.pixelSize: 14
                         font.weight: Font.Normal
@@ -599,7 +597,7 @@ Rectangle {
         Rectangle {
             id: generalSettingsButton
 
-            color: clickAreaGeneralSettings.hovered ? Color.hover : Color.transparent
+            color: clickAreaGeneralSettings.hovered ? Color.highlight : Color.background
             height: 60
             radius: 10
             width: 350.40
@@ -688,7 +686,7 @@ Rectangle {
                     Text {
                         id: generalTitleText
 
-                        color: Color.button
+                        color: Color.primaryText
                         font.family: "Segoe UI"
                         font.pixelSize: 14
                         font.weight: Font.Normal

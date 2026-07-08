@@ -58,7 +58,7 @@ Rectangle {
             {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 28
-                color: Color.button
+                color: Color.primaryText
                 elide: Text.ElideRight
                 font.family: "Segoe UI"
                 font.pixelSize: 20
@@ -110,7 +110,7 @@ Rectangle {
 
                     Text {
                         Layout.fillWidth: true
-                        color: Color.button
+                        color: Color.primaryText
                         elide: Text.ElideRight
                         font.family: "Segoe UI"
                         font.pixelSize: 14

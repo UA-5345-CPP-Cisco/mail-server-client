@@ -72,7 +72,7 @@ Rectangle {
                 Text {
                     id: nameText
 
-                    color: Color.button
+                    color: Color.primaryText
                     font.family: "Segoe UI"
                     font.pixelSize: 14
                     font.weight: Font.Normal
@@ -132,7 +132,7 @@ Rectangle {
             Text {
                 id: themeText
 
-                color: Color.button
+                color: Color.primaryText
                 elide: Text.ElideRight
                 font.family: "Segoe UI"
                 font.pixelSize: 14
@@ -206,7 +206,6 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
 
-        onCanceled: root.state = 0
         onClicked: mouse => {
             if (mouse.button === Qt.LeftButton) {
                 root.clicked();
