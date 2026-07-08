@@ -1,9 +1,9 @@
 add_executable(mail_storage_tests
-        storage/DatabaseTests.cpp
-        storage/MailDeliveryRepositoryTests.cpp
-        storage/MigrationRunnerTests.cpp
-        storage/StatementTests.cpp
-        storage/UserRepositoryTests.cpp
+        mail_storage/DatabaseTests.cpp
+        mail_storage/MailDeliveryRepositoryTests.cpp
+        mail_storage/MigrationRunnerTests.cpp
+        mail_storage/StatementTests.cpp
+        mail_storage/UserRepositoryTests.cpp
 )
 
 target_link_libraries(mail_storage_tests
@@ -20,28 +20,28 @@ target_compile_features(mail_storage_tests
 
 target_compile_definitions(mail_storage_tests
         PRIVATE
-        STORAGE_TEST_MIGRATIONS_DIR="${PROJECT_SOURCE_DIR}/libs/storage/migrations"
+        STORAGE_TEST_MIGRATIONS_DIR="${PROJECT_SOURCE_DIR}/libs/mail-storage/migrations"
 )
 
 include(GoogleTest)
 gtest_discover_tests(mail_storage_tests)
 
-add_executable(smtp_client_tests
-        smtp_client/SmtpClientTests.cpp
+add_executable(smtp_server_sdk_tests
+        smtp_server_sdk/MailBuilderTests.cpp
 )
 
-target_link_libraries(smtp_client_tests
+target_link_libraries(smtp_server_sdk_tests
         PRIVATE
-        smtp_client
+        smtp_server_sdk
         gtest_main
 )
 
-target_compile_features(smtp_client_tests
+target_compile_features(smtp_server_sdk_tests
         PRIVATE
         cxx_std_17
 )
 
-gtest_discover_tests(smtp_client_tests)
+gtest_discover_tests(smtp_server_sdk_tests)
 
 add_executable(logger_tests
         logger/LoggerTests.cpp
@@ -96,7 +96,7 @@ target_compile_features(smtp_server_configuration_tests
 
 target_compile_definitions(smtp_server_configuration_tests
         PRIVATE
-        SMTP_SERVER_TEST_MIGRATIONS_DIR="${PROJECT_SOURCE_DIR}/libs/storage/migrations"
+        SMTP_SERVER_TEST_MIGRATIONS_DIR="${PROJECT_SOURCE_DIR}/libs/mail-storage/migrations"
 )
 
 gtest_discover_tests(smtp_server_configuration_tests)

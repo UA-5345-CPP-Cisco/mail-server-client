@@ -1,7 +1,7 @@
 {
 	"database": {
 		"storage_path": "data/mail-server-example.db",
-		"migrations_path": "libs/storage/migrations"
+		"migrations_path": "libs/mail_storage/migrations"
 	},
 	"server": {
 		"host": "0.0.0.0",

@@ -10,9 +10,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-option(MAIL_BUILD_TESTS "Build tests" OFF)
+option(MAIL_BUILD_TESTS "Build tests" ON)
 option(MAIL_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
-option(MAIL_BUILD_QT_CLIENT "Build Qt mail client" ON)
+option(MAIL_BUILD_QT_CLIENT "Build Qt mail client" OFF)
 
 include(FetchContent)
 
@@ -46,7 +46,6 @@ set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(cryptopp_cmake)
 
 find_package(Threads REQUIRED)
-find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
 
 # --- nlohmann JSON ---
 FetchContent_Declare(
@@ -77,20 +76,20 @@ endif()
 # Internal libraries
 # ──────────────────────────────────────────
 add_subdirectory(libs/logger)
-add_subdirectory(libs/storage)
+add_subdirectory(libs/mail-storage)
 add_subdirectory(libs/thread_pool)
-add_subdirectory(libs/smtp_client)
-add_subdirectory(libs/aimap)
+add_subdirectory(libs/smtp-server-sdk)
+add_subdirectory(libs/mail-server-sdk)
 
 # ──────────────────────────────────────────
 # Applications
 # ──────────────────────────────────────────
-add_subdirectory(apps/smtp_server)
+add_subdirectory(apps/smtp-server)
 add_subdirectory(apps/simple-client)
-add_subdirectory(apps/aimap_server)
+add_subdirectory(apps/mail-server)
 
 if(MAIL_BUILD_QT_CLIENT)
-	add_subdirectory(apps/qt-mail-client)
+	add_subdirectory(apps/mail-client)
 endif()
 # ──────────────────────────────────────────
 # Tests
