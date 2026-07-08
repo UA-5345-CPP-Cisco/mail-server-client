@@ -184,7 +184,7 @@ Rectangle {
                                 id: loginButton
 
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                color: loginClickArea.containsMouse ? Color.hover : Color.button
+                                color: loginClickArea.containsMouse ? Color.buttonSpecialHover : Color.buttonSpecial
                                 height: 44
                                 radius: 8
                                 scale: loginClickArea.containsMouse ? 1.05 : 1.0
@@ -270,7 +270,7 @@ Rectangle {
                                 id: registerTitleText
 
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                color: Color.secondaryText
+                                color: Color.primaryText
                                 font.family: "Segoe UI"
                                 font.pixelSize: 22
                                 font.weight: Font.Bold
@@ -280,7 +280,7 @@ Rectangle {
                                 id: registerButton
 
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                color: registerClickArea.containsMouse ? Color.hover : Color.button
+                                color: registerClickArea.containsMouse ? Color.buttonSpecialHover : Color.buttonSpecial
                                 height: 44
                                 radius: 8
                                 scale: registerClickArea.containsMouse ? 1.05 : 1.0

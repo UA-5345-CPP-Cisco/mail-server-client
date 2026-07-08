@@ -147,7 +147,7 @@ Rectangle {
 
                 anchors.left: parent.left
                 anchors.right: parent.right
-                border.color: color.border
+                border.color: Color.border
                 border.width: 1
                 clip: true
                 color: Color.background
