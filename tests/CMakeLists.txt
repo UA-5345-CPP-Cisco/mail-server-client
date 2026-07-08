@@ -112,30 +112,30 @@ add_executable(state_tests
 		state_tests/UserCacheTests.cpp
 		state_tests/EmailFilterProxyTests.cpp
 		state_tests/EmailListModelTests.cpp
-		../apps/qt-mail-client/models/users/CurrentUser.cpp
-		../apps/qt-mail-client/models/users/UserCache.cpp
-		../apps/qt-mail-client/models/mail/EmailCache.cpp
-		../apps/qt-mail-client/models/mail/EmailListModel.cpp
-		../apps/qt-mail-client/models/mail/EmailFilterProxy.cpp
-		../apps/qt-mail-client/models/mail/EmailPageProxy.cpp
-		../apps/qt-mail-client/models/users/AccountListModel.cpp
-		../apps/qt-mail-client/models/database/CacheStore.cpp
-		../apps/qt-mail-client/models/database/DatabaseManager.cpp
-		../apps/qt-mail-client/headers/users/CurrentUser.h
-		../apps/qt-mail-client/headers/users/UserCache.h
-		../apps/qt-mail-client/headers/mail/EmailCache.h
-		../apps/qt-mail-client/headers/mail/EmailListModel.h
-		../apps/qt-mail-client/headers/mail/EmailFilterProxy.h
-		../apps/qt-mail-client/headers/mail/EmailPageProxy.h
-		../apps/qt-mail-client/headers/users/AccountListModel.h
-		../apps/qt-mail-client/headers/database/CacheStore.h
-		../apps/qt-mail-client/headers/database/DatabaseManager.h
+		../apps/mail-client/models/users/CurrentUser.cpp
+		../apps/mail-client/models/users/UserCache.cpp
+		../apps/mail-client/models/mail/EmailCache.cpp
+		../apps/mail-client/models/mail/EmailListModel.cpp
+		../apps/mail-client/models/mail/EmailFilterProxy.cpp
+		../apps/mail-client/models/mail/EmailPageProxy.cpp
+		../apps/mail-client/models/users/AccountListModel.cpp
+		../apps/mail-client/models/database/CacheStore.cpp
+		../apps/mail-client/models/database/DatabaseManager.cpp
+		../apps/mail-client/headers/users/CurrentUser.h
+		../apps/mail-client/headers/users/UserCache.h
+		../apps/mail-client/headers/mail/EmailCache.h
+		../apps/mail-client/headers/mail/EmailListModel.h
+		../apps/mail-client/headers/mail/EmailFilterProxy.h
+		../apps/mail-client/headers/mail/EmailPageProxy.h
+		../apps/mail-client/headers/users/AccountListModel.h
+		../apps/mail-client/headers/database/CacheStore.h
+		../apps/mail-client/headers/database/DatabaseManager.h
 )
 
 target_include_directories(state_tests
 		PRIVATE
-		../apps/qt-mail-client
-		../apps/qt-mail-client/headers
+		../apps/mail-client
+		../apps/mail-client/headers
 )
 
 target_link_libraries(state_tests

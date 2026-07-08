@@ -3,7 +3,7 @@
 #include "users/AccountListModel.h"
 #include "users/CurrentUser.h"
 #include "database/DatabaseManager.h"
-#include "../../../../libs/storage/include/storage/UserRepository.h" // Перевір свій точний шлях
+#include "../../../../libs/mail-storage/include/mail_storage/UserRepository.h"
 
 class AccountListModelTests : public ::testing::Test {
 protected:
@@ -23,11 +23,11 @@ TEST_F(AccountListModelTests, CanChangeRowCount) {
     const ISXMail::AccountData temp_data0, temp_data1;
     int row_count_now = model.rowCount();
     model.AddData(temp_data0);
-    EXPECT_EQ(model.rowCount(), row_count_now+1);
+    EXPECT_EQ(model.rowCount(), row_count_now + 1);
     model.AddData(temp_data1);
-    EXPECT_EQ(model.rowCount(), row_count_now+2);
+    EXPECT_EQ(model.rowCount(), row_count_now + 2);
     EXPECT_TRUE(model.RemoveAccount(1));
-    EXPECT_EQ(model.rowCount(), row_count_now+1);
+    EXPECT_EQ(model.rowCount(), row_count_now + 1);
 }
 
 TEST_F(AccountListModelTests, DataParseCheck) {
@@ -35,9 +35,9 @@ TEST_F(AccountListModelTests, DataParseCheck) {
     const ISXMail::AccountData temp_data{.account_name = "temp_role"};
     model.AddData(temp_data);
     QModelIndex index = model.index(0, 0);
-    EXPECT_EQ(model.data(index,ISXMail::AccountNameRole).toString(), "temp_role");
+    EXPECT_EQ(model.data(index, ISXMail::AccountNameRole).toString(), "temp_role");
     QModelIndex bad_index = model.index(999, 0);
-    EXPECT_TRUE(model.data(bad_index,ISXMail::AccountNameRole).isNull());
+    EXPECT_TRUE(model.data(bad_index, ISXMail::AccountNameRole).isNull());
 }
 
 TEST_F(AccountListModelTests, RoleNameCheck) {
@@ -53,22 +53,22 @@ TEST_F(AccountListModelTests, SetDataTest) {
     int role = ISXMail::AccountNameRole;
     QModelIndex bad_index = model.index(999, 0);
     QModelIndex index = model.index(0, 0);
-    EXPECT_FALSE(model.setData(bad_index,empty_value,role));
-    EXPECT_FALSE(model.setData(index,empty_value,-1));
+    EXPECT_FALSE(model.setData(bad_index, empty_value, role));
+    EXPECT_FALSE(model.setData(index, empty_value, -1));
     const ISXMail::AccountData temp_data{.account_name = "OLD_NAME"};
     model.AddData(temp_data);
     QModelIndex valid_index = model.index(0, 0);
     model.setData(valid_index, "NEW_NAME", ISXMail::AccountNameRole);
-    EXPECT_EQ(model.data(valid_index,ISXMail::AccountNameRole).toString(), "NEW_NAME");
+    EXPECT_EQ(model.data(valid_index, ISXMail::AccountNameRole).toString(), "NEW_NAME");
 }
 
 TEST_F(AccountListModelTests, AddAcountTestNonActive) {
     ISXMail::AccountListModel model;
     int old_row_count = model.rowCount();
     model.AddAccount("bob", "bob", "bob", "bob", "bob", false);
-    EXPECT_EQ(model.rowCount(), old_row_count+1);
+    EXPECT_EQ(model.rowCount(), old_row_count + 1);
     QModelIndex index = model.index(0, 0);
-    EXPECT_EQ("bob", model.data(index,ISXMail::AccountNameRole).toString());
+    EXPECT_EQ("bob", model.data(index, ISXMail::AccountNameRole).toString());
 }
 
 TEST_F(AccountListModelTests, AddAcountTestActive) {
