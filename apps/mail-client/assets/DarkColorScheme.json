@@ -4,6 +4,8 @@
   "button":             "#e2e8f0",
   "buttonSpecial":      "#23219c",
   "buttonSpecialHover": "#1d4ed8",
+  "buttonSpecialText":  "#ffffff",
+  "selected":           "#324461",
   "outline":            "#2a3347",
   "avatar":             "#3b82f6",
   "hover":              "#1f2a3c",

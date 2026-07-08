@@ -259,7 +259,7 @@ Rectangle {
             Text {
                 id: composeEmailText
 
-                color: Color.background
+                color: Color.buttonSpecialText
                 font.family: "Segoe UI"
                 font.pixelSize: 16
                 font.weight: Font.Regular
@@ -297,7 +297,7 @@ Rectangle {
             anchors.leftMargin: 8
             anchors.right: parent.right
             anchors.rightMargin: 8
-            color: isInboxSelected ? "#dbdbdb" : (hoverHandlerInboxButton.hovered ? Color.highlight : Color.background)
+            color: isInboxSelected ? Color.selected : (hoverHandlerInboxButton.hovered ? Color.highlight : Color.background)
             height: 40
             radius: 10
 
@@ -399,7 +399,7 @@ Rectangle {
             anchors.rightMargin: 8
             anchors.top: buttonToOpenInbox.bottom
             anchors.topMargin: 4
-            color: isSentSelected ? "#dbdbdb" : (hoverHandlerSentButton.hovered ? Color.highlight : Color.background)
+            color: isSentSelected ? Color.selected : (hoverHandlerSentButton.hovered ? Color.highlight : Color.background)
             height: 40
             radius: 10
 
@@ -503,7 +503,7 @@ Rectangle {
             anchors.rightMargin: 8
             anchors.top: buttonToOpenSent.bottom
             anchors.topMargin: 4
-            color: isStarredSelected ? "#dbdbdb" : (hoverHandlerStarredButton.hovered ? Color.highlight : Color.background)
+            color: isStarredSelected ? Color.selected : (hoverHandlerStarredButton.hovered ? Color.highlight : Color.background)
             height: 40
             radius: 10
 
@@ -605,7 +605,7 @@ Rectangle {
             anchors.rightMargin: 8
             anchors.top: buttonToOpenStarred.bottom
             anchors.topMargin: 4
-            color: isDraftsSelected ? "#dbdbdb" : (hoverHandlerDraftsButton.hovered ? Color.highlight : Color.background)
+            color: isDraftsSelected ? Color.selected : (hoverHandlerDraftsButton.hovered ? Color.highlight : Color.background)
             height: 40
             radius: 10
 
@@ -703,7 +703,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        color: clickAreaSettings.hovered ? "#dbdbdb" : Color.background
+        color: clickAreaSettings.hovered ? Color.selected : Color.background
         height: 60
 
         // Top border
@@ -724,7 +724,7 @@ Rectangle {
             anchors.right: parent.right
             anchors.rightMargin: 12
             anchors.verticalCenter: parent.verticalCenter
-            color: clickAreaSettings.hovered ? "#dbdbdb" : Color.background
+            color: clickAreaSettings.hovered ? Color.selected : Color.background
             height: 36
             radius: 10
 

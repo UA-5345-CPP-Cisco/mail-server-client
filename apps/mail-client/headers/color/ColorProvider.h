@@ -22,6 +22,8 @@ class ColorProvider : public QObject
     Q_PROPERTY(QColor secondaryText READ SecondaryText NOTIFY colorsChanged)
     Q_PROPERTY(QColor highlight READ Highlight NOTIFY colorsChanged)
     Q_PROPERTY(QColor border READ Border NOTIFY colorsChanged)
+    Q_PROPERTY(QColor buttonSpecialText READ ButtonSpecialText NOTIFY colorsChanged)
+    Q_PROPERTY(QColor selected READ Selected NOTIFY colorsChanged)
     Q_PROPERTY(QColor buttonSpecial READ ButtonSpecial NOTIFY colorsChanged)
     Q_PROPERTY(QColor buttonSpecialHover READ ButtonSpecialHover NOTIFY colorsChanged)
     Q_PROPERTY(QColor avatar READ Avatar NOTIFY colorsChanged)
@@ -38,6 +40,8 @@ public:
     QColor SecondaryText() const;
     QColor Hover() const;
     QColor Highlight() const;
+    QColor ButtonSpecialText() const;
+    QColor Selected() const;
     QColor Border() const;
     QColor ButtonSpecial() const;
     QColor ButtonSpecialHover() const;
@@ -68,6 +72,8 @@ private:
     QColor m_secondary_text;
     QColor m_highlight;
     QColor m_border;
+    QColor m_button_special_text;
+    QColor m_selected;
     QColor m_transparent;
 };
 

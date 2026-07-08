@@ -24,6 +24,8 @@ public:
         ButtonSpecial,
         ButtonSpecialHover,
         Avatar,
+        ButtonSpecialText,
+        Selected,
         Hover,
         PrimaryText,
         SecondaryText,

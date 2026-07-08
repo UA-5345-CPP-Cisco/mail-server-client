@@ -250,7 +250,7 @@ Item {
                 id: loginButtonText
 
                 anchors.centerIn: parent
-                color: Color.background
+                color: Color.buttonSpecialText
                 font.family: "Segoe UI"
                 font.pixelSize: 16
                 font.weight: Font.Bold

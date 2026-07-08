@@ -32,7 +32,15 @@ QColor ColorProvider::Button() const
 {
 	return m_button;
 }
+QColor ColorProvider::ButtonSpecialText() const
+{
+	return m_button_special_text;
+}
 
+QColor ColorProvider::Selected() const
+{
+	return m_selected;
+}
 QColor ColorProvider::Hover() const
 {
 	return m_hover;
@@ -147,6 +155,8 @@ void ColorProvider::updateFromModel()
 	m_button_special 		= m_model.Color(ColorModel::Role::ButtonSpecial);
 	m_button_special_hover	= m_model.Color(ColorModel::Role::ButtonSpecialHover);
 	m_avatar				= m_model.Color(ColorModel::Role::Avatar);
+	m_button_special_text	= m_model.Color(ColorModel::Role::ButtonSpecialText);
+	m_selected				= m_model.Color(ColorModel::Role::Selected);
 	m_secondary_text 		= m_model.Color(ColorModel::Role::SecondaryText);
 	m_highlight      		= m_model.Color(ColorModel::Role::Highlight);
 	m_border         		= m_model.Color(ColorModel::Role::Border);

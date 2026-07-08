@@ -313,7 +313,7 @@ Rectangle {
                 id: reply
 
                 anchors.centerIn: parent
-                color: Color.background
+                color: Color.buttonSpecialText
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Normal
@@ -335,7 +335,7 @@ Rectangle {
             anchors.left: buttonToReply.right
             anchors.leftMargin: 8
             anchors.verticalCenter: parent.verticalCenter
-            border.color: Color.outline
+            border.color: Color.secondaryText
             border.width: 1
             color: Color.transparent
             height: 38

@@ -78,20 +78,22 @@ QString ColorModel::RoleToString(Role role)
 {
 	switch (role)
 	{
-	case Role::Background:    return "background";
-	case Role::Surface:       return "surface";
-	case Role::Button:        return "button";
-	case Role::Outline:       return "outline";
-	case Role::Hover:         return "hover";
-	case Role::ButtonSpecial:  return "buttonspecial";
-	case Role::ButtonSpecialHover: return "buttonspecialhover";
-	case Role::Avatar:        return "avatar";
-	case Role::PrimaryText:   return "primaryText";
-	case Role::SecondaryText: return "secondaryText";
-	case Role::Highlight:     return "highlight";
-	case Role::Border:        return "border";
-	case Role::Transparent:   return "transparent";
-	default:                  return "unknown";
+	case Role::Background:    		return "background";
+	case Role::Surface:       		return "surface";
+	case Role::Button:        		return "button";
+	case Role::Outline:       		return "outline";
+	case Role::Hover:         		return "hover";
+	case Role::ButtonSpecial:		return "buttonspecial";
+	case Role::ButtonSpecialHover:	return "buttonspecialhover";
+	case Role::Avatar:				return "avatar";
+	case Role::ButtonSpecialText:	return "buttonSpecialText";
+	case Role::Selected:			return "selected";
+	case Role::PrimaryText:   		return "primaryText";
+	case Role::SecondaryText: 		return "secondaryText";
+	case Role::Highlight:     		return "highlight";
+	case Role::Border:        		return "border";
+	case Role::Transparent:   		return "transparent";
+	default:                  		return "unknown";
 	}
 }
 
@@ -99,19 +101,25 @@ ColorModel::Role ColorModel::RoleFromString(const QString& name)
 {
 	const QString key = name.trimmed().toLower();
 
-	if (key == "background") return Role::Background;
-	if (key == "surface") return Role::Surface;
-	if (key == "button") return Role::Button;
-	if (key == "outline") return Role::Outline;
-	if (key == "hover") return Role::Hover;
-	if (key == "buttonspecial") return Role::ButtonSpecial;
-	if (key == "buttonspecialhover") return Role::ButtonSpecialHover;
-	if (key == "avatar") return Role::Avatar;
-	if (key == "primarytext" || key == "primary" || key == "text") return Role::PrimaryText;
-	if (key == "secondarytext" || key == "secondary") return Role::SecondaryText;
-	if (key == "highlight" || key == "hover") return Role::Highlight;
-	if (key == "border") return Role::Border;
-	if (key == "transparent") return Role::Transparent;
+	if (key == "background")			return Role::Background;
+	if (key == "surface")				return Role::Surface;
+	if (key == "button")				return Role::Button;
+	if (key == "outline")				return Role::Outline;
+	if (key == "hover")					return Role::Hover;
+	if (key == "buttonspecial")			return Role::ButtonSpecial;
+	if (key == "buttonspecialhover")	return Role::ButtonSpecialHover;
+	if (key == "avatar")				return Role::Avatar;
+	if (key == "buttonspecialtext")		return Role::ButtonSpecialText;
+	if (key == "selected")				return Role::Selected;
+	if (key == "primarytext"
+		|| key == "primary"
+		|| key == "text")				return Role::PrimaryText;
+	if (key == "secondarytext"
+		|| key == "secondary")			return Role::SecondaryText;
+	if (key == "highlight"
+		|| key == "hover")				return Role::Highlight;
+	if (key == "border")				return Role::Border;
+	if (key == "transparent")			return Role::Transparent;
 
 	return Role::Unknown;
 }
