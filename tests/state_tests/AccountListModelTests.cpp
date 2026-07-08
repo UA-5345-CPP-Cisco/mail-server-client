@@ -124,7 +124,8 @@ TEST_F(AccountListModelTests, LoadFromDatabaseRestoresAlreadyActiveUser) {
     int active_row = model.ActiveAccountRow();
     EXPECT_NE(active_row, -1);
     QModelIndex bob_index = model.index(active_row, 0);
-    EXPECT_EQ(model.data(bob_index, ISXMail::AccountNameRole).toString(), "bob");
+    EXPECT_EQ(model.data(bob_index, ISXMail::AccountNameRole).toString(),
+              "bob");
     auto& current_user = ISXCurrentUser::CurrentUser::GetInstance();
     EXPECT_TRUE(current_user.is_authorized());
     EXPECT_EQ(current_user.username(), "bob");
