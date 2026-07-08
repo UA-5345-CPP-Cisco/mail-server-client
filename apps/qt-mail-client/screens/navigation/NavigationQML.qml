@@ -41,7 +41,7 @@ Rectangle
             y: 14
             height: 32
             width: 32
-            color: CurrentUser.avatarPath !== "" ? "transparent" : "#2b7fff"
+            color: CurrentUser.isAuthorized ? (CurrentUser.avatarPath !== "" ? "transparent" : "#2b7fff") : "#6a7282"
             radius: 16
             clip: true
 
@@ -91,14 +91,14 @@ Rectangle
                     id: userNameText
                     height: 20
                     width: parent.width
-                    color: "#101828"
                     font.family: "Segoe UI"
                     font.pixelSize: 14
                     font.weight: Font.Normal
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 20
                     lineHeightMode: Text.FixedHeight
-                    text: CurrentUser.username
+                    text: CurrentUser.isAuthorized ? CurrentUser.username : "Sign in"
+                    color: CurrentUser.isAuthorized ? "#101828" : "#6a7282"
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     wrapMode: Text.Wrap
@@ -127,7 +127,7 @@ Rectangle
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: CurrentUser.email
+                    text: CurrentUser.isAuthorized ? CurrentUser.email : "No account active"
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     wrapMode: Text.Wrap

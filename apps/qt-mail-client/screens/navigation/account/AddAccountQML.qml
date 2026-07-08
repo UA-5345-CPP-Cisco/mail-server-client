@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Shapes
 import QtQuick.Effects
+//import "scripts/validator.js" as Validator
 
 Rectangle
 {
@@ -14,7 +15,15 @@ Rectangle
 
     function getValidationError(type, text) 
     {
-        var value = text.trim()
+        var value = text.trim();
+        var value_lower = text.trim().toLowerCase()
+        const layouts = 
+        [
+            "qwertyuiop", 
+            "asdfghjkl", 
+            "zxcvbnm", 
+            "1234567890"
+        ];
 
         if (type === "email") 
         {
@@ -44,10 +53,26 @@ Rectangle
                 return "Password must be at least 6 characters long"
             }
 
-            var common_passwords = ["123456", "1234567", "1234567", "12345678", "123456789", "qwerty", "password"]
-            if (common_passwords.indexOf(value.toLowerCase()) !== -1 || /^(.)\1+$/.test(value)) 
+            if (value.length < 10) 
             {
-                return "This password is too simple"
+                for (let layout of layouts) 
+                {
+                    for (let i = 0; i <= layout.length - 5; i++) 
+                    {
+                        let forward = layout.substring(i, i + 5);
+                        let backward = forward.split("").reverse().join("");
+            
+                        if (value_lower.includes(forward) || value_lower.includes(backward)) 
+                        {
+                            return "Password cannot contain simple sequences";
+                        }
+                    }
+                }
+            }
+
+            if (/(.)\1{4,}/.test(value)) 
+            {
+                return "Password cannot contain repeated characters";
             }
 
             if (!/[A-Z]/.test(value)) 
@@ -69,7 +94,6 @@ Rectangle
         }
         return ""
     }
-
 
     Rectangle
     {
@@ -93,6 +117,8 @@ Rectangle
         radius: 8
         color: "transparent"
         z: 10
+
+        visible: !initialSetupRequired
 
         Image
         {

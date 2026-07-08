@@ -14,7 +14,6 @@ ApplicationWindow
     property int draftsCount: draftModel.totalEmailsCount
     property string amountText: emailList.sourceModel ? emailList.sourceModel.pageAmountText : "0-0 of 0"
     property var selectedEmail: null
-
     property alias authLoader: authLoader
 
     // for adding avatar
@@ -288,18 +287,18 @@ ApplicationWindow
                 SplitView.minimumWidth: 250
                 SplitView.fillHeight: true
                 onEmailOpenRequested: function (index, theme, name, sendTo, content, time, starred)
+                {
+                    window.selectedEmail =
                     {
-                        window.selectedEmail =
-                            {
-                                "index": index,
-                                "theme": theme,
-                                "name": name,
-                                "sendTo": sendTo,
-                                "content": content,
-                                "time": time,
-                                "starred": starred
-                            }
+                        "index": index,
+                        "theme": theme,
+                        "name": name,
+                        "sendTo": sendTo,
+                        "content": content,
+                        "time": time,
+                        "starred": starred
                     }
+                }
             }
 
             Item
@@ -448,7 +447,8 @@ ApplicationWindow
         Shortcut
         {
             sequence: "Escape"
-            enabled: authLoader.active
+            //enabled: authLoader.active
+            enabled: !initialSetupRequired
             onActivated:
             {
                 closeAuthWindow()

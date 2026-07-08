@@ -165,7 +165,7 @@ Item {
                 id: emailBackgroundRectangle
                 radius: 8
                 border.color: rootItem.emailError !== "" ? "#fda29b" : (emailTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
-                border.width: emailTextField.activeFocus || rootItem.emailError !== "" ? 2 : 1
+                border.width: emailTextField.activeFocus ? 2 : 1
                 color: "#ffffff"
             }
 
@@ -204,7 +204,7 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 12
             visible: emailError !== ""
-            topPadding: -10
+            topPadding: -14
         }
 
 
@@ -252,7 +252,7 @@ Item {
             {
                 id: passwordBackgroundRectangle
                 radius: 8
-                border.color: passwordTextField.activeFocus ? "#1a66ff" : "#e5e7eb"
+                border.color: rootItem.passwordError !== "" ? "#fda29b" : (passwordTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
                 border.width: passwordTextField.activeFocus ? 2 : 1
                 color: "#ffffff"
             }
@@ -292,7 +292,7 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 12
             visible: passwordError !== ""
-            topPadding: -10
+            topPadding: -14
         }
 
         // Basic register
