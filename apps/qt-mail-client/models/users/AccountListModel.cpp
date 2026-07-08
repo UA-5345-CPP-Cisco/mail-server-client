@@ -93,7 +93,7 @@ void AccountListModel::AddAccount(const QString& name, const QString& email,
     item.avatar_url = avatarUrl;
     item.avatar_color = avatarColor;
     item.avatar_initial = avatarInitial;
-    item.is_active = isActive;
+    item.is_active = false;
 
     AddData(item);
 
@@ -195,7 +195,7 @@ void AccountListModel::LoadFromDatabase()
         {
             saved_active_row = static_cast<int>(loaded_accounts.size());
         }
-
+        account.is_active = false;
         loaded_accounts.push_back(account);
     }
 
