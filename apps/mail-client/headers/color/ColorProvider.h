@@ -50,8 +50,6 @@ public:
     Q_INVOKABLE bool LoadScheme(const QString& path);
     Q_INVOKABLE bool SetTheme(Theme theme);
     Q_INVOKABLE bool SetTheme(const QString& theme_name);
-    Q_INVOKABLE bool LoadThemeFromFile(const QString& file_path);
-    Q_INVOKABLE bool SaveThemeToFile(const QString& file_path, Theme theme);
 
     signals:
         void colorsChanged();

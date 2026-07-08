@@ -1,20 +1,19 @@
 #include "headers/color/ColorProvider.h"
 #include "logger/Logger.h"
 
-#include <QFile>
-#include <QIODevice>
-#include <QJsonDocument>
-#include <QJsonObject>
+#include <QSettings>
 namespace ISXMail {
 
 // CONSTRUCTORS
 ColorProvider::ColorProvider(QObject* parent)
 	: QObject(parent)
 {
-	if (!LoadThemeFromFile(":/pngs/assets/settings.json"))
-	{
-		SetTheme(Theme::Light);
-	}
+	QSettings settings("ISX", "MailClient");
+
+	const QString theme =
+		settings.value("theme", "Light").toString();
+
+	SetTheme(theme);
 }
 
 // METHODS
@@ -107,40 +106,57 @@ bool ColorProvider::LoadScheme(const QString& path)
 bool ColorProvider::SetTheme(Theme theme)
 {
 	QString path;
+
 	switch (theme)
 	{
-	case Theme::Light:
-		path = ":/pngs/assets/LightColorScheme.json";
-		break;
+		case Theme::Light:
+			path = ":/pngs/assets/LightColorScheme.json";
+			break;
 
-	case Theme::Dark:
-		path = ":/pngs/assets/DarkColorScheme.json";
-		break;
+		case Theme::Dark:
+			path = ":/pngs/assets/DarkColorScheme.json";
+			break;
 	}
-	SaveThemeToFile(":/pngs/assets/settings.json", theme);
 
 	if (!m_model.LoadFromFile(path))
 	{
-		Logging::Logger::Instance().Log(Logging::LogLevel::Info, "ColorProvider::SetTheme: Failed to load theme");
+		Logging::Logger::Instance().Log(
+			Logging::LogLevel::Error,
+			"ColorProvider::SetTheme: Failed to load theme file.");
+
 		return false;
 	}
 
 	updateFromModel();
+
+	QSettings settings("ISX", "MailClient");
+	settings.setValue("theme",
+		theme == Theme::Dark ? "Dark" : "Light");
+
 	emit colorsChanged();
-	Logging::Logger::Instance().Log(Logging::LogLevel::Info, "ColorProvider::SetTheme: Theme loaded successfully");
+
+	Logging::Logger::Instance().Log(
+		Logging::LogLevel::Info,
+		"ColorProvider::SetTheme: Theme loaded successfully.");
+
 	return true;
 }
 
 bool ColorProvider::SetTheme(const QString& theme_name)
 {
-	if (theme_name.trimmed().toLower() == "dark")
-	{
+	const QString theme = theme_name.trimmed().toLower();
+
+	if (theme == "dark")
 		return SetTheme(Theme::Dark);
-	}
-	else if (theme_name.trimmed().toLower() == "light")
-	{
+
+	if (theme == "light")
 		return SetTheme(Theme::Light);
-	}
+
+	Logging::Logger::Instance().Log(
+		Logging::LogLevel::Warning,
+		"ColorProvider::SetTheme: Unknown theme '" +
+		theme_name.toStdString() + "'.");
+
 	return false;
 }
 
@@ -161,40 +177,6 @@ void ColorProvider::updateFromModel()
 	m_highlight      		= m_model.Color(ColorModel::Role::Highlight);
 	m_border         		= m_model.Color(ColorModel::Role::Border);
 	m_transparent    		= m_model.Color(ColorModel::Role::Transparent);
-}
-
-bool ColorProvider::LoadThemeFromFile(const QString& file_path)
-{
-	QFile file(file_path);
-
-	if (!file.open(QIODevice::ReadOnly))
-		return false;
-
-	const auto document = QJsonDocument::fromJson(file.readAll());
-
-	if (!document.isObject())
-		return false;
-
-	const QString theme =
-		document.object().value("theme").toString("Light");
-
-	return SetTheme(theme);
-}
-bool ColorProvider::SaveThemeToFile(const QString& file_path,
-										Theme theme)
-{
-	QFile file(file_path);
-
-	if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
-		return false;
-
-	QJsonObject object;
-	object["theme"] =
-		theme == Theme::Dark ? "Dark" : "Light";
-
-	file.write(QJsonDocument(object).toJson());
-
-	return true;
 }
 
 }
