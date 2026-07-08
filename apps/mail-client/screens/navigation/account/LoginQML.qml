@@ -96,6 +96,7 @@ Item {
             font.pixelSize: 14
             leftPadding: 16
             placeholderText: "Email address"
+            placeholderTextColor: Color.secondaryText
             rightPadding: 16
             topPadding: 12
             width: parent.width
@@ -166,6 +167,7 @@ Item {
             font.pixelSize: 14
             leftPadding: 16
             placeholderText: "Password"
+            placeholderTextColor: Color.secondaryText
             rightPadding: 16
             topPadding: 12
             width: parent.width
