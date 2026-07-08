@@ -1,4 +1,5 @@
 #include "headers/color/ColorProvider.h"
+#include "logger/Logger.h"
 
 namespace ISXMail {
 
@@ -64,10 +65,11 @@ bool ColorProvider::LoadScheme(const QString& path)
 {
 	if (!m_model.LoadFromFile(path))
 	{
+		Logging::Logger::Instance().Log(Logging::LogLevel::Info, "ColorProvider::LoadScheme: Failed to find path");
 		return false;
 	}
 
-	UpdateFromModel();
+	updateFromModel();
 	emit colorsChanged();
 
 	return true;
@@ -80,22 +82,23 @@ bool ColorProvider::SetTheme(Theme theme)
 	switch (theme)
 	{
 	case Theme::Light:
-		path = ":/assets/LightColorScheme.json";
+		path = ":/pngs/assets/LightColorScheme.json";
 		break;
 
 	case Theme::Dark:
-		path = ":/assets/DarkColorScheme.json";
+		path = ":/pngs/assets/DarkColorScheme.json";
 		break;
 	}
 
 	if (!m_model.LoadFromFile(path))
 	{
+		Logging::Logger::Instance().Log(Logging::LogLevel::Info, "ColorProvider::SetTheme: Failed to load theme");
 		return false;
 	}
 
-	UpdateFromModel();
+	updateFromModel();
 	emit colorsChanged();
-
+	Logging::Logger::Instance().Log(Logging::LogLevel::Info, "ColorProvider::SetTheme: Theme loaded successfully");
 	return true;
 }
 
@@ -105,16 +108,21 @@ bool ColorProvider::SetTheme(const QString& theme_name)
 	{
 		return SetTheme(Theme::Dark);
 	}
-	return SetTheme(Theme::Light);
+	else if (theme_name.trimmed().toLower() == "light")
+	{
+		return SetTheme(Theme::Light);
+	}
+	return false;
 }
 
-void ColorProvider::UpdateFromModel()
+void ColorProvider::updateFromModel()
 {
 	m_background     = m_model.Color(ColorModel::Role::Background);
 	m_surface        = m_model.Color(ColorModel::Role::Surface);
 	m_button         = m_model.Color(ColorModel::Role::Button);
 	m_outline        = m_model.Color(ColorModel::Role::Outline);
 	m_primary_text   = m_model.Color(ColorModel::Role::PrimaryText);
+	m_hover          = m_model.Color(ColorModel::Role::Hover);
 	m_secondary_text = m_model.Color(ColorModel::Role::SecondaryText);
 	m_highlight      = m_model.Color(ColorModel::Role::Highlight);
 	m_border         = m_model.Color(ColorModel::Role::Border);

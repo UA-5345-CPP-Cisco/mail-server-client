@@ -16,19 +16,19 @@ Rectangle {
         id: background
 
         anchors.centerIn: parent
-        color: "#ffffff"
+        color: Color.background
 
         Rectangle {
             id: container
 
             anchors.centerIn: parent
-            color: "transparent"
+            color: Color.transparent
 
             Rectangle {
                 id: container_1
 
                 anchors.centerIn: parent
-                color: "transparent"
+                color: Color.transparent
                 height: 80
                 width: 141
 
@@ -36,7 +36,7 @@ Rectangle {
                     id: sVG
 
                     clip: true
-                    color: "transparent"
+                    color: Color.transparent
                     height: 48
                     opacity: 0.30
                     width: 48
@@ -55,7 +55,7 @@ Rectangle {
                 Rectangle {
                     id: container_2
 
-                    color: "transparent"
+                    color: Color.transparent
                     height: 20
                     width: 141
                     y: 60
@@ -63,7 +63,7 @@ Rectangle {
                     Text {
                         id: select_an_email_to_read
 
-                        color: "#6a7282"
+                        color: Color.secondaryText
                         font.family: "Segoe UI"
                         font.pixelSize: 14
                         font.weight: Font.Normal

@@ -45,7 +45,7 @@ public:
         void colorsChanged();
 private:
 
-    void UpdateFromModel();
+    void updateFromModel();
 
     ColorModel m_model;
     QColor m_background;

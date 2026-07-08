@@ -1,4 +1,5 @@
 #include "headers/color/ColorModel.h"
+#include "logger/Logger.h"
 
 #include <QFile>
 #include <QJsonDocument>
@@ -7,19 +8,8 @@
 namespace ISXMail {
 
 // CONSTRUCTORS
-ColorModel::ColorModel()
-{
-	m_colors[Role::Background]    = QColor("#FFFFFF");
-	m_colors[Role::Surface]       = QColor("#F9FAFB");
-	m_colors[Role::Button]        = QColor("#101828");
-	m_colors[Role::Outline]       = QColor("#E5E7EB");
-	m_colors[Role::Hover]         = QColor("#1f2937");
-	m_colors[Role::PrimaryText]   = QColor("#101828");
-	m_colors[Role::SecondaryText] = QColor("#6A7282");
-	m_colors[Role::Highlight]     = QColor("#F3F4F6");
-	m_colors[Role::Border]        = QColor("#E5E7EB");
-	m_colors[Role::Transparent]   = QColor(Qt::transparent);
-}
+ColorModel::ColorModel() = default;
+
 
 // METHODS
 bool ColorModel::LoadFromFile(const QString& path)
@@ -27,6 +17,7 @@ bool ColorModel::LoadFromFile(const QString& path)
 	QFile file(path);
 	if (!file.open(QIODevice::ReadOnly))
 	{
+		Logging::Logger::Instance().Log(Logging::LogLevel::Info, "ColorModel::LoadFromFile: Failed to open theme JSON file: " + path.toStdString());
 		return false;
 	}
 
@@ -49,6 +40,7 @@ bool ColorModel::LoadFromJson(const QJsonObject& obj)
 
 		if (role == Role::Unknown || !it.value().isString())
 		{
+			Logging::Logger::Instance().Log(Logging::LogLevel::Info, "ColorModel::LoadFromJson: UnknownRole");
 			continue;
 		}
 
@@ -56,6 +48,7 @@ bool ColorModel::LoadFromJson(const QJsonObject& obj)
 
 		if (!color.isValid())
 		{
+			Logging::Logger::Instance().Log(Logging::LogLevel::Info, "ColorModel::LoadFromJson: InvalidColor");
 			continue;
 		}
 
@@ -89,6 +82,7 @@ QString ColorModel::RoleToString(Role role)
 	case Role::Surface:       return "surface";
 	case Role::Button:        return "button";
 	case Role::Outline:       return "outline";
+	case Role::Hover:         return "hover";
 	case Role::PrimaryText:   return "primaryText";
 	case Role::SecondaryText: return "secondaryText";
 	case Role::Highlight:     return "highlight";

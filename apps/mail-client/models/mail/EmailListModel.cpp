@@ -144,9 +144,13 @@ void EmailListModel::RemoveData(int row)
 }
 
 bool EmailListModel::DeleteEmail(int row)
-    Logging::Logger::Instance().Log(Logging::LogLevel::Debug,
-                                   GetStdString(QString("EmailListModel::DeleteEmail: data was removed at %1")
-                                                  .arg(QString::number(row))));
+{
+    Logging::Logger::Instance().Log(Logging::LogLevel::Debug,
+
+                                   GetStdString(QString("EmailListModel::DeleteEmail: data was removed at %1")
+
+                                                  .arg(QString::number(row))));
+
 	if (row < 0 || row >= static_cast<int>(m_data.size()))
 	{
 		return false;
@@ -163,7 +167,6 @@ bool EmailListModel::DeleteEmail(int row)
     endRemoveRows();
 	Logging::Logger::Instance().Log(Logging::LogLevel::Debug, GetStdString(QString("EmailListModel::RemoveData: data was removed at %1").arg(QString::number(row))));
     return true;
-    
 }
 
 void EmailListModel::AddData(
