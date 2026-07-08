@@ -5,7 +5,7 @@ project(qtapptestmail VERSION 0.1 LANGUAGES CXX C)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
-set(WINDOWS_DEV_CONSOLE OFF)
+set(WINDOWS_DEV_CONSOLE ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
 #find_package(SQLite3 REQUIRED)
@@ -122,6 +122,7 @@ target_link_libraries(appqtapptestmail
 target_include_directories(appqtapptestmail
 		PRIVATE
 		${CMAKE_CURRENT_SOURCE_DIR}
+		${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 install(TARGETS appqtapptestmail

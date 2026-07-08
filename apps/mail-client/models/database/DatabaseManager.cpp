@@ -5,12 +5,12 @@
 #include <QDir>
 #include <QStandardPaths>
 
-#include "../../../../libs/mail-storage/include/mail_storage/Database.h"
-#include "../../../../libs/logger/include/logger/Logger.h"
-#include "../../../../libs/mail-storage/include/mail_storage/MigrationRunner.h"
+#include "mail_storage/Database.h"
+#include "logger/Logger.h"
+#include "mail_storage/MigrationRunner.h"
 
 namespace {
-Logging::Logger kLogger(Logging::LogLevel::Debug, false);
+
 }
 
 namespace ISXDatabaseManager
@@ -18,18 +18,18 @@ namespace ISXDatabaseManager
 
 void DatabaseManager::EnsureInitialized()
 {
-	kLogger.Log(Logging::LogLevel::Info, std::string("DatabaseManager::EnsureInitialized: database_path=") + DatabasePath().string());
+	Logging::Logger::Instance().Log(Logging::LogLevel::Info, std::string("DatabaseManager::EnsureInitialized: database_path=") + DatabasePath().string());
 	Storage::Database database(DatabasePath());
-	kLogger.Log(Logging::LogLevel::Info, std::string("DatabaseManager::EnsureInitialized: migrations_path=") + MigrationsPath().string());
+	Logging::Logger::Instance().Log(Logging::LogLevel::Info, std::string("DatabaseManager::EnsureInitialized: migrations_path=") + MigrationsPath().string());
 	Storage::MigrationRunner runner(database, MigrationsPath());
 	runner.Run();
-	kLogger.Log(Logging::LogLevel::Info, "DatabaseManager::EnsureInitialized: migrations applied");
+	Logging::Logger::Instance().Log(Logging::LogLevel::Info, "DatabaseManager::EnsureInitialized: migrations applied");
 }
 
 std::filesystem::path DatabaseManager::DatabasePath()
 {
 	auto path = ResolveAppDataDirectory() / "qtapptestmail.sqlite";
-	kLogger.Log(Logging::LogLevel::Debug, std::string("DatabaseManager::DatabasePath: ") + path.string());
+	Logging::Logger::Instance().Log(Logging::LogLevel::Debug, std::string("DatabaseManager::DatabasePath: ") + path.string());
 	return path;
 }
 
@@ -40,7 +40,7 @@ std::filesystem::path DatabaseManager::MigrationsPath()
 
 	if (std::filesystem::exists(current_path))
 	{
-		kLogger.Log(Logging::LogLevel::Debug, (std::string("DatabaseManager::MigrationsPath: using current_path=") + current_path.string()));
+		Logging::Logger::Instance().Log(Logging::LogLevel::Debug, (std::string("DatabaseManager::MigrationsPath: using current_path=") + current_path.string()));
 		return current_path;
 	}
 
@@ -49,10 +49,10 @@ std::filesystem::path DatabaseManager::MigrationsPath()
 	for (int depth = 0; depth < 6; ++depth)
 	{
 		const std::filesystem::path candidate = probe / relative_path;
-		kLogger.Log(Logging::LogLevel::Debug, (std::string("DatabaseManager::MigrationsPath: probing candidate=") + candidate.string()));
+		Logging::Logger::Instance().Log(Logging::LogLevel::Debug, (std::string("DatabaseManager::MigrationsPath: probing candidate=") + candidate.string()));
 		if (std::filesystem::exists(candidate))
 		{
-			kLogger.Log(Logging::LogLevel::Debug, (std::string("DatabaseManager::MigrationsPath: found candidate=") + candidate.string()));
+			Logging::Logger::Instance().Log(Logging::LogLevel::Debug, (std::string("DatabaseManager::MigrationsPath: found candidate=") + candidate.string()));
 			return candidate;
 		}
 
@@ -64,7 +64,7 @@ std::filesystem::path DatabaseManager::MigrationsPath()
 		probe = probe.parent_path();
 	}
 
-	kLogger.Log(Logging::LogLevel::Warning, (std::string("DatabaseManager::MigrationsPath: falling back to current_path=") + current_path.string()));
+	Logging::Logger::Instance().Log(Logging::LogLevel::Warning, (std::string("DatabaseManager::MigrationsPath: falling back to current_path=") + current_path.string()));
 	return current_path;
 }
 
@@ -75,18 +75,18 @@ std::filesystem::path DatabaseManager::ResolveAppDataDirectory()
 	if (app_data_dir.isEmpty())
 	{
 		app_data_dir = QCoreApplication::applicationDirPath() + "/qtapptestmail";
-		kLogger.Log(Logging::LogLevel::Warning, std::string("DatabaseManager::ResolveAppDataDirectory: writableLocation was empty, using ") + app_data_dir.toStdString());
+		Logging::Logger::Instance().Log(Logging::LogLevel::Warning, std::string("DatabaseManager::ResolveAppDataDirectory: writableLocation was empty, using ") + app_data_dir.toStdString());
 	}
 	else
 	{
-		kLogger.Log(Logging::LogLevel::Debug, std::string("DatabaseManager::ResolveAppDataDirectory: using ") + app_data_dir.toStdString());
+		Logging::Logger::Instance().Log(Logging::LogLevel::Debug, std::string("DatabaseManager::ResolveAppDataDirectory: using ") + app_data_dir.toStdString());
 	}
 
 	QDir dir;
 	if (!dir.exists(app_data_dir))
 	{
 		dir.mkpath(app_data_dir);
-		kLogger.Log(Logging::LogLevel::Info, std::string("DatabaseManager::ResolveAppDataDirectory: created directory ") + app_data_dir.toStdString());
+		Logging::Logger::Instance().Log(Logging::LogLevel::Info, std::string("DatabaseManager::ResolveAppDataDirectory: created directory ") + app_data_dir.toStdString());
 	}
 
 	return std::filesystem::path(app_data_dir.toStdString());

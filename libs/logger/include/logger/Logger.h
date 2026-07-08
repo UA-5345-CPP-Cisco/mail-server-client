@@ -27,6 +27,11 @@ class ILogger
 class Logger final : public ILogger
 {
   public:
+  static Logger& Instance()
+  {
+    static Logger instance(LogLevel::Debug, false);
+    return instance;
+  }
   explicit Logger(LogLevel minimumLevel = LogLevel::Info, bool flushAfterWrite = false);
 
   Logger(const std::string& filePath,

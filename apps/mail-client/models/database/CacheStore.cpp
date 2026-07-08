@@ -7,13 +7,13 @@
 #include <stdexcept>
 #include <ctime>
 
-#include "../../../../libs/mail-storage/include/mail_storage/Statement.h"
-#include "../../../../libs/logger/include/logger/Logger.h"
+#include "mail_storage/Statement.h"
+#include "logger/Logger.h"
 
 namespace Storage {
 
 namespace {
-Logging::Logger kLogger(Logging::LogLevel::Debug, false);
+
 constexpr const char* kCacheSchema = R"SQL(
 	CREATE TABLE IF NOT EXISTS cache_entries (
 		cache_namespace TEXT NOT NULL,
@@ -36,7 +36,7 @@ CacheStore::CacheStore(Database& database) :
 
 void CacheStore::EnsureSchema() const
 {
-	kLogger.Log(Logging::LogLevel::Info, "CacheStore::EnsureSchema: executing schema creation");
+	Logging::Logger::Instance().Log(Logging::LogLevel::Info, "CacheStore::EnsureSchema: executing schema creation");
 	m_database.Execute(kCacheSchema);
 }
 
@@ -57,7 +57,7 @@ void CacheStore::Put(
 	{
 		std::ostringstream oss;
 		oss << "CacheStore::Put: namespace=" << cache_namespace << " key=" << cache_key << " version=" << version << " ttl=" << ttl.count();
-		kLogger.Log(Logging::LogLevel::Debug, oss.str());
+		Logging::Logger::Instance().Log(Logging::LogLevel::Debug, oss.str());
 	}
 
 	Statement statement(
@@ -86,7 +86,7 @@ void CacheStore::Put(
 	statement.BindInt64(4, version);
 	statement.BindText(5, TimePointToString(expires_at));
 	statement.Step();
-	kLogger.Log(Logging::LogLevel::Debug, (std::string("CacheStore::Put: stored entry for namespace=") + cache_namespace + " key=" + cache_key));
+	Logging::Logger::Instance().Log(Logging::LogLevel::Debug, (std::string("CacheStore::Put: stored entry for namespace=") + cache_namespace + " key=" + cache_key));
 }
 
 std::optional<CacheStore::Entry> CacheStore::Get(
@@ -117,12 +117,12 @@ std::optional<CacheStore::Entry> CacheStore::Get(
 	{
 		std::ostringstream oss;
 		oss << "CacheStore::Get: namespace=" << cache_namespace << " key=" << cache_key;
-		kLogger.Log(Logging::LogLevel::Debug, oss.str());
+		Logging::Logger::Instance().Log(Logging::LogLevel::Debug, oss.str());
 	}
 
 	if (!statement.Step())
 	{
-		kLogger.Log(Logging::LogLevel::Debug, (std::string("CacheStore::Get: miss for namespace=") + cache_namespace + " key=" + cache_key));
+		Logging::Logger::Instance().Log(Logging::LogLevel::Debug, (std::string("CacheStore::Get: miss for namespace=") + cache_namespace + " key=" + cache_key));
 		return std::nullopt;
 	}
 
@@ -130,11 +130,11 @@ std::optional<CacheStore::Entry> CacheStore::Get(
 
 	if (!allow_stale && entry.expires_at <= std::chrono::system_clock::now())
 	{
-		kLogger.Log(Logging::LogLevel::Debug, (std::string("CacheStore::Get: entry expired namespace=") + entry.cache_namespace + " key=" + entry.cache_key));
+		Logging::Logger::Instance().Log(Logging::LogLevel::Debug, (std::string("CacheStore::Get: entry expired namespace=") + entry.cache_namespace + " key=" + entry.cache_key));
 		return std::nullopt;
 	}
 
-	kLogger.Log(Logging::LogLevel::Debug, (std::string("CacheStore::Get: hit namespace=") + entry.cache_namespace + " key=" + entry.cache_key + " version=" + std::to_string(entry.version)));
+	Logging::Logger::Instance().Log(Logging::LogLevel::Debug, (std::string("CacheStore::Get: hit namespace=") + entry.cache_namespace + " key=" + entry.cache_key + " version=" + std::to_string(entry.version)));
 	return entry;
 }
 
@@ -162,7 +162,7 @@ void CacheStore::Invalidate(
 
 	statement.BindText(1, cache_namespace);
 	statement.BindText(2, cache_key);
-	kLogger.Log(Logging::LogLevel::Debug, (std::string("CacheStore::Invalidate: deleting namespace=") + cache_namespace + " key=" + cache_key));
+	Logging::Logger::Instance().Log(Logging::LogLevel::Debug, (std::string("CacheStore::Invalidate: deleting namespace=") + cache_namespace + " key=" + cache_key));
 	statement.Step();
 }
 
@@ -177,7 +177,7 @@ void CacheStore::InvalidateNamespace(const std::string& cache_namespace)
 	);
 
 	statement.BindText(1, cache_namespace);
-		kLogger.Log(Logging::LogLevel::Debug, (std::string("CacheStore::InvalidateNamespace: deleting namespace=") + cache_namespace));
+		Logging::Logger::Instance().Log(Logging::LogLevel::Debug, (std::string("CacheStore::InvalidateNamespace: deleting namespace=") + cache_namespace));
 		statement.Step();
 }
 
@@ -194,7 +194,7 @@ void CacheStore::InvalidateNamespacePrefix(
 	);
 
 	statement.BindText(1, EscapeLike(cache_namespace_prefix) + "%");
-		kLogger.Log(Logging::LogLevel::Debug, (std::string("CacheStore::InvalidateNamespacePrefix: prefix=") + cache_namespace_prefix));
+		Logging::Logger::Instance().Log(Logging::LogLevel::Debug, (std::string("CacheStore::InvalidateNamespacePrefix: prefix=") + cache_namespace_prefix));
 		statement.Step();
 }
 
@@ -236,7 +236,7 @@ std::chrono::system_clock::time_point CacheStore::StringToTimePoint(
 
     if (stream.fail())
     {
-        kLogger.Log(Logging::LogLevel::Error, (std::string("CacheStore::StringToTimePoint: Failed to parse cache timestamp: ") + text));
+        Logging::Logger::Instance().Log(Logging::LogLevel::Error, (std::string("CacheStore::StringToTimePoint: Failed to parse cache timestamp: ") + text));
         throw std::runtime_error("Failed to parse cache timestamp: " + text);
     }
 
@@ -253,7 +253,7 @@ std::chrono::system_clock::time_point CacheStore::StringToTimePoint(
 
     if (time_value == -1)
     {
-        kLogger.Log(Logging::LogLevel::Error, "CacheStore::StringToTimePoint: Failed to convert broken-down time to UTC time_t");
+        Logging::Logger::Instance().Log(Logging::LogLevel::Error, "CacheStore::StringToTimePoint: Failed to convert broken-down time to UTC time_t");
         throw std::runtime_error("Failed to convert broken-down time to UTC time_t");
     }
 

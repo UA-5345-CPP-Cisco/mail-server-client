@@ -6,7 +6,7 @@
 
 #include <vector>
 
-#include "../../../../libs/mail-storage/include/mail_storage/Database.h"
+#include "mail_storage/Database.h"
 
 namespace ISXMail
 {
