@@ -9,7 +9,7 @@ ToolTip {
     contentItem: Text
     {
         text: root.text
-        color: Color.background
+        color: Color.secondaryText
         font.family: "Segoe UI"
         font.pixelSize: 12
     }

@@ -28,6 +28,7 @@ class ColorProvider : public QObject
     Q_PROPERTY(QColor buttonSpecialHover READ ButtonSpecialHover NOTIFY colorsChanged)
     Q_PROPERTY(QColor avatar READ Avatar NOTIFY colorsChanged)
     Q_PROPERTY(QColor transparent READ Transparent NOTIFY colorsChanged)
+    Q_PROPERTY(bool darkTheme READ IsDarkTheme WRITE SetDarkTheme NOTIFY themeChanged)
 public:
 
     explicit ColorProvider(QObject* parent = nullptr);
@@ -51,11 +52,16 @@ public:
     Q_INVOKABLE bool SetTheme(Theme theme);
     Q_INVOKABLE bool SetTheme(const QString& theme_name);
 
+
     signals:
         void colorsChanged();
+        void themeChanged();
 private:
 
     void updateFromModel();
+    bool IsDarkTheme() const;
+
+    void SetDarkTheme(bool dark);
 
     ColorModel m_model;
     QColor m_background;

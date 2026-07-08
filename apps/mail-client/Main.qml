@@ -361,7 +361,7 @@ ApplicationWindow {
     Rectangle
     {
         anchors.fill: parent
-        color: "#000000"
+        color: Color.transparent
         opacity: settingsLoader.opacity * 0.4
         visible: settingsLoader.active
         z: 998
@@ -387,7 +387,7 @@ ApplicationWindow {
     Rectangle
     {
         anchors.fill: parent
-        color: "#000000"
+        color: Color.transparent
         opacity: authLoader.opacity * 0.4
         visible: authLoader.active
         z: 998

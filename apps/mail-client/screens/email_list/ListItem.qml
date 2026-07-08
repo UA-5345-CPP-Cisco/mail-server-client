@@ -3,393 +3,344 @@ import QtQuick.Effects
 import QtQuick.Shapes
 import QtQuick.Controls
 
-Rectangle
-{
+Rectangle {
     id: root
-    height: 92
 
-    property bool starred: false
-    property string theme: "ThemeHolder"
+    property string content: preview
     property string name: "NameHolder"
     property string preview: "TextHolderTextHolderTextHolderTextHolde...."
-    property string content: preview
-    property string sendTo: ""
-    property string time: "10:30"
     property var searchModel: null
+    property string sendTo: ""
+    property bool starred: false
+    property string theme: "ThemeHolder"
+    property string time: "10:30"
+    property int state: 0
 
+    signal deleteClicked
     signal openRequested(string theme, string name, string sendTo, string content, string time, bool starred)
-        signal starredClicked
-        signal deleteClicked
+    signal starredClicked
 
-    color: Color.background
+    color: state === 2 ? Color.highlight : state === 1 ? Color.surface : Color.background
+    height: 92
 
-    Behavior on color
-    {
-        ColorAnimation
-        {
+    Behavior on color {
+        ColorAnimation {
             duration: 150
             easing.type: Easing.OutCubic
         }
     }
+
     MouseArea
     {
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
         anchors.fill: parent
         hoverEnabled: true
         propagateComposedEvents: true
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-        onEntered: root.color = Color.surface
-        onExited: root.color = Color.background
-        onPressed: root.color = Color.highlight
+        onCanceled: root.state = 0
         onClicked: mouse => {
-            if (mouse.button === Qt.LeftButton)
-            {
-                root.color = containsMouse ? Color.surface : Color.background
-                var starPos = favouriteButtonContainer.mapToItem(root, 0, 0)
-                var inStarZone = (mouse.x >= starPos.x - 8
-                    && mouse.x <= starPos.x + favouriteButtonContainer.width + 8
-                    && mouse.y >= starPos.y - 8 && mouse.y
-                    <= starPos.y + favouriteButtonContainer.height + 8)
-                if (!inStarZone)
-                {
-                    root.openRequested(root.theme, root.name,
-                        root.sendTo, root.content,
-                        root.time, root.starred)
+            if (mouse.button === Qt.LeftButton) {
+                root.color = containsMouse ? Color.surface : Color.background;
+                var starPos = favouriteButtonContainer.mapToItem(root, 0, 0);
+                var inStarZone = (mouse.x >= starPos.x - 8 && mouse.x <= starPos.x + favouriteButtonContainer.width + 8 && mouse.y >= starPos.y - 8 && mouse.y <= starPos.y + favouriteButtonContainer.height + 8);
+                if (!inStarZone) {
+                    root.openRequested(root.theme, root.name, root.sendTo, root.content, root.time, root.starred);
                 }
-            } else if (mouse.button === Qt.RightButton)
-            {
-                contextMenu.popup()
+            } else if (mouse.button === Qt.RightButton) {
+                contextMenu.popup();
             }
         }
-        onCanceled: root.color = Color.background
+        onEntered: root.state = 1
+        onExited: root.state = 0
+        onPressed: root.state = 2
     }
-    Menu
-    {
+    Menu {
         id: contextMenu
 
-        palette
-        {
-            base: Color.background
-            text:Color.hover
-            highlight: Color.highlight
-            highlightedText:Color.hover
-        }
-
-        background: Rectangle
-        {
-            implicitWidth: 200
-            implicitHeight: 40
-            color: Color.background
-            radius: 8
+        background: Rectangle {
             border.color: Color.outline
             border.width: 1
-        }
-
-        delegate: MenuItem
-        {
-            id: menuItem
+            color: Color.background
+            implicitHeight: 40
             implicitWidth: 200
+            radius: 8
+        }
+        delegate: MenuItem {
+            id: menuItem
+
             implicitHeight: 36
+            implicitWidth: 200
             padding: 0
 
-            contentItem: Text
-            {
-                text: menuItem.text
-                color: menuItem.hovered ?Color.hover : Color.highlight
-                font.pixelSize: 13
-                leftPadding: 12
-                verticalAlignment: Text.AlignVCenter
-            }
-
-            background: Rectangle
-            {
+            background: Rectangle {
+                anchors.margins: 4
                 color: menuItem.hovered ? Color.highlight : Color.transparent
                 radius: 4
-                anchors.margins: 4
+            }
+            contentItem: Text {
+                color: Color.secondaryText
+                font.pixelSize: 13
+                leftPadding: 12
+                text: menuItem.text
+                verticalAlignment: Text.AlignVCenter
             }
         }
 
-        MenuItem
-        {
+        palette {
+            base: Color.background
+            highlight: Color.highlight
+            highlightedText: Color.hover
+            text: Color.hover
+        }
+        MenuItem {
             text: "Copy"
-            onTriggered:
-            {
 
-            }
+            onTriggered: {}
         }
-
-        MenuSeparator
-        {
+        MenuSeparator {
             padding: 4
-            contentItem: Rectangle
-            {
-                implicitWidth: 200
-                implicitHeight: 1
+
+            contentItem: Rectangle {
                 color: Color.outline
+                implicitHeight: 1
+                implicitWidth: 200
             }
         }
+        MenuItem {
 
-        MenuItem
-        {
             text: "Delete"
-            onClicked: root.deleteClicked()
+            onTriggered: root.deleteClicked()
         }
     }
 
     // Bottom border
-    Rectangle
-    {
+    Rectangle {
+        anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        height: 1
         color: Color.outline
+        height: 1
     }
-
     Rectangle {
         id: itemContainer
-        anchors
-        {
+
+        color: Color.transparent
+        height: 60
+
+        anchors {
             left: parent.left
+            margins: 16
             right: parent.right
             top: parent.top
-            margins: 16
         }
-        height: 60
-        color: Color.transparent
 
         // Star icon
-        Rectangle
-        {
+        Rectangle {
             id: favouriteButtonContainer
-            height: 17
-            width: 15
+
             anchors.verticalCenter: parent.verticalCenter
             color: Color.transparent
-            MouseArea {
-                id: favouriteButtonClickArea
-                anchors.fill: parent
-                anchors.margins: -8
-                cursorShape: Qt.PointingHandCursor
-
-                z: 10
-                onClicked:
-                {
-                    root.starred = !root.starred
-                    root.starredClicked()
-                }
-            }
+            height: 17
             scale: favouriteButtonClickArea.containsMouse ? 1.1 : 1.0
+            width: 15
 
-            Behavior on scale
-            {
-                NumberAnimation
-                {
+            Behavior on scale {
+                NumberAnimation {
                     duration: 150
                     easing.type: Easing.InOutQuad
                 }
             }
 
-            Rectangle
-            {
+            MouseArea {
+                id: favouriteButtonClickArea
+
+                anchors.fill: parent
+                anchors.margins: -8
+                cursorShape: Qt.PointingHandCursor
+                z: 10
+
+                onClicked: {
+                    root.starred = !root.starred;
+                    root.starredClicked();
+                }
+            }
+            Rectangle {
                 id: favouriteButton
-                y: 2
-                height: 18
-                width: 18
+
                 clip: true
                 color: Color.transparent
+                height: 18
+                width: 18
+                y: 2
 
-                Image
-                {
-                    source: starred ? "qrc:/pngs/assets/ic_star_active.svg" : "qrc:/pngs/assets/ic_star.svg"
-                    width: 18
-                    height: 18
-                    sourceSize.width: width * Screen.devicePixelRatio
-                    sourceSize.height: height * Screen.devicePixelRatio
-                    fillMode: Image.PreserveAspectFit
+                Image {
                     anchors.centerIn: parent
+                    fillMode: Image.PreserveAspectFit
+                    height: 18
+                    source: starred ? "qrc:/pngs/assets/ic_star_active.svg" : "qrc:/pngs/assets/ic_star.svg"
+                    sourceSize.height: height * Screen.devicePixelRatio
+                    sourceSize.width: width * Screen.devicePixelRatio
+                    width: 18
                 }
             }
         }
 
         // Content
-        Rectangle
-        {
+        Rectangle {
             id: contentContainer
+
             anchors.left: favouriteButtonContainer.right
             anchors.leftMargin: 8
             anchors.right: parent.right
-            height: 60
             color: Color.transparent
+            height: 60
 
-            Rectangle
-            {
+            Rectangle {
                 id: headerContainer
+
                 anchors.left: parent.left
                 anchors.right: parent.right
-                height: 20
                 clip: true
                 color: Color.transparent
+                height: 20
 
-                Rectangle
-                {
+                Rectangle {
                     id: nameContainer
+
                     anchors.left: parent.left
                     anchors.right: timeContainer.left
-                    height: 20
                     clip: true
                     color: Color.transparent
+                    height: 20
 
-                    Text
-                    {
+                    Text {
                         id: nameText
-                        height: 20
-                        width: parent.width
+
                         color: Color.button
+                        elide: Text.ElideRight
                         font.family: "Segoe UI"
                         font.pixelSize: 14
                         font.weight: Font.Black
+                        height: 20
                         horizontalAlignment: Text.AlignLeft
                         lineHeight: 20
                         lineHeightMode: Text.FixedHeight
-                        text: searchModel ? searchModel.HighlightAllFoundWords(
-                            name,
-                            searchModel.SearchedText) : name
+                        maximumLineCount: 1
+                        text: searchModel ? searchModel.HighlightAllFoundWords(name, searchModel.SearchedText) : name
                         textFormat: Text.RichText
                         verticalAlignment: Text.AlignVCenter
+                        width: parent.width
                         wrapMode: Text.NoWrap
-                        elide: Text.ElideRight
-                        maximumLineCount: 1
                     }
-
-                    HoverHandler
-                    {
+                    HoverHandler {
                         id: nameHover
                     }
-
-                    EmailToolTip
-                    {
-                        visible: nameHover.hovered && (nameText.contentWidth > nameText.width)
+                    EmailToolTip {
                         text: name
+                        visible: nameHover.hovered && (nameText.contentWidth > nameText.width)
                         x: 0
                         y: nameContainer.height + 4
                     }
                 }
-
-                Rectangle
-                {
+                Rectangle {
                     id: timeContainer
+
                     anchors.right: parent.right
                     anchors.rightMargin: 0
                     anchors.verticalCenter: parent.verticalCenter
+                    color: Color.transparent
                     height: 16
                     width: timeText.implicitWidth
-                    color: Color.transparent
 
-                    Text
-                    {
+                    Text {
                         id: timeText
+
                         anchors.fill: parent
                         color: Color.secondaryText
                         font.family: "Segoe UI"
                         font.pixelSize: 12
                         font.weight: Font.Normal
                         horizontalAlignment: Text.AlignRight
-                        verticalAlignment: Text.AlignVCenter
                         text: time
                         textFormat: Text.PlainText
+                        verticalAlignment: Text.AlignVCenter
                     }
                 }
             }
-
-            Rectangle
-            {
+            Rectangle {
                 id: themeContainer
+
                 anchors.left: parent.left
                 anchors.right: parent.right
-                y: 22
-                height: 20
                 clip: true
                 color: Color.transparent
+                height: 20
+                y: 22
 
-                Text
-                {
+                Text {
                     id: themeText
-                    height: 20
-                    width: parent.width
+
                     color: Color.button
+                    elide: Text.ElideRight
                     font.family: "Segoe UI"
                     font.pixelSize: 14
                     font.weight: Font.Black
+                    height: 20
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 20
                     lineHeightMode: Text.FixedHeight
-                    text: searchModel ? searchModel.HighlightAllFoundWords(
-                        theme,
-                        searchModel.SearchedText) : theme
+                    maximumLineCount: 1
+                    text: searchModel ? searchModel.HighlightAllFoundWords(theme, searchModel.SearchedText) : theme
                     textFormat: Text.RichText
                     verticalAlignment: Text.AlignVCenter
+                    width: parent.width
                     wrapMode: Text.NoWrap
-                    elide: Text.ElideRight
-                    maximumLineCount: 1
                 }
-
-                HoverHandler
-                {
+                HoverHandler {
                     id: themeHover
                 }
-
-                EmailToolTip
-                {
-                    visible: themeHover.hovered
-                        && (themeText.contentWidth > themeText.width)
+                EmailToolTip {
                     text: theme
+                    visible: themeHover.hovered && (themeText.contentWidth > themeText.width)
                     x: 0
                     y: themeContainer.height + 4
                 }
             }
-
-            Rectangle
-            {
+            Rectangle {
                 id: previewContainer
+
                 anchors.left: parent.left
                 anchors.right: parent.right
-                y: 44
-                height: 16
                 clip: true
                 color: Color.transparent
+                height: 16
+                y: 44
 
-                Text
-                {
+                Text {
                     id: previewText
-                    height: 16
-                    width: parent.width
+
                     color: Color.secondaryText
+                    elide: Text.ElideRight
                     font.family: "Segoe UI"
                     font.pixelSize: 12
                     font.weight: Font.Normal
+                    height: 16
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: searchModel ? searchModel.HighlightAllFoundWords(
-                        preview,
-                        searchModel.SearchedText) : preview
+                    maximumLineCount: 1
+                    text: searchModel ? searchModel.HighlightAllFoundWords(preview, searchModel.SearchedText) : preview
                     textFormat: Text.RichText
                     verticalAlignment: Text.AlignVCenter
+                    width: parent.width
                     wrapMode: Text.NoWrap
-                    elide: Text.ElideRight
-                    maximumLineCount: 1
                 }
-
-                HoverHandler
-                {
+                HoverHandler {
                     id: previewHover
                 }
-
-                EmailToolTip
-                {
-                    visible: previewHover.hovered
+                EmailToolTip {
                     text: content
+                    visible: previewHover.hovered
                     x: 0
                     y: previewContainer.height + 4
                 }
