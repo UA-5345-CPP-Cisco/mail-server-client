@@ -30,5 +30,6 @@
         <file>assets/ic_checkmark.svg</file>
         <file>assets/DarkColorScheme.json</file>
         <file>assets/LightColorScheme.json</file>
+        <file>assets/theme.json</file>
     </qresource>
 </RCC>

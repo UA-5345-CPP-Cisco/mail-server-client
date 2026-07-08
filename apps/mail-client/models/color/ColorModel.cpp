@@ -83,6 +83,9 @@ QString ColorModel::RoleToString(Role role)
 	case Role::Button:        return "button";
 	case Role::Outline:       return "outline";
 	case Role::Hover:         return "hover";
+	case Role::ButtonSpecial:  return "buttonspecial";
+	case Role::ButtonSpecialHover: return "buttonspecialhover";
+	case Role::Avatar:        return "avatar";
 	case Role::PrimaryText:   return "primaryText";
 	case Role::SecondaryText: return "secondaryText";
 	case Role::Highlight:     return "highlight";
@@ -101,6 +104,9 @@ ColorModel::Role ColorModel::RoleFromString(const QString& name)
 	if (key == "button") return Role::Button;
 	if (key == "outline") return Role::Outline;
 	if (key == "hover") return Role::Hover;
+	if (key == "buttonspecial") return Role::ButtonSpecial;
+	if (key == "buttonspecialhover") return Role::ButtonSpecialHover;
+	if (key == "avatar") return Role::Avatar;
 	if (key == "primarytext" || key == "primary" || key == "text") return Role::PrimaryText;
 	if (key == "secondarytext" || key == "secondary") return Role::SecondaryText;
 	if (key == "highlight" || key == "hover") return Role::Highlight;

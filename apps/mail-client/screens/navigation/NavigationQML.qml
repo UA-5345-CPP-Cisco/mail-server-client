@@ -41,7 +41,7 @@ Rectangle
             y: 14
             height: 32
             width: 32
-            color: CurrentUser.avatarPath !== "" ? Color.transparent : "#2b7fff"
+            color: CurrentUser.avatarPath !== "" ? Color.transparent : Color.avatar
             radius: 16
             clip: true
 
@@ -150,7 +150,7 @@ Rectangle
                 anchors.centerIn: parent
                 height: 24
                 width: 24
-                color: clickAreaAccountChange.pressed ? "#ffdede" : Color.transparent
+                color: clickAreaAccountChange.pressed ? Color.hover : Color.transparent
                 radius: 4
 
                 Rectangle
@@ -231,7 +231,7 @@ Rectangle
 
             height: 44
 
-            color: hoverHandlerComposeEmails.hovered ? "#0c43f7" : "#155dfc"
+            color: hoverHandlerComposeEmails.hovered ? Color.buttonSpecialHover : Color.buttonSpecial
             radius: 10
 
             HoverHandler
@@ -483,7 +483,7 @@ Rectangle
                 {
                     id: sentButtonText
                     height: 24; width: parent.width
-                    color: "#4a5565"
+                    color: Color.primaryText
                     font.family: "Segoe UI";
                     font.pixelSize: 16;
                     font.weight: Font.Normal
@@ -587,7 +587,7 @@ Rectangle
                 {
                     id: starredButtonText
                     height: 24; width: parent.width
-                    color: "#4a5565"
+                    color: Color.primaryText
                     font.family: "Segoe UI"; font.pixelSize: 16; font.weight: Font.Normal
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 24; lineHeightMode: Text.FixedHeight
@@ -684,7 +684,7 @@ Rectangle
                 {
                     id: draftsButtonText
                     height: 24; width: parent.width
-                    color: "#4a5565"
+                    color: Color.secondaryText
                     font.family: "Segoe UI"; font.pixelSize: 16; font.weight: Font.Normal
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 24; lineHeightMode: Text.FixedHeight
@@ -782,7 +782,7 @@ Rectangle
             {
                 id: settingsButtonText
                 height: 20
-                color: "#4a5565"
+                color: Color.secondaryText
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Normal

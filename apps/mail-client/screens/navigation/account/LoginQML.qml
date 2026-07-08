@@ -86,7 +86,7 @@ Item {
             text: "Please enter your details to sign in"
             font.family: "Segoe UI"
             font.pixelSize: 14
-            color: "#6a748b"
+            color: Color.secondaryText
             anchors.horizontalCenter: parent.horizontalCenter
             bottomPadding: 10
         }
@@ -110,7 +110,7 @@ Item {
             {
                 id: emailBackgroundRectangle
                 radius: 8
-                border.color: emailTextField.activeFocus ? "#1a66ff" : Color.outline
+                border.color: emailTextField.activeFocus ? Color.hover : Color.outline
                 border.width: emailTextField.activeFocus ? 2 : 1
                 color: Color.background
             }
@@ -162,7 +162,7 @@ Item {
             {
                 id: passwordBackgroundRectangle
                 radius: 8
-                border.color: passwordTextField.activeFocus ? "#1a66ff" : Color.outline
+                border.color: passwordTextField.activeFocus ? Color.hover : Color.outline
                 border.width: passwordTextField.activeFocus ? 2 : 1
                 color: Color.background
             }
@@ -201,7 +201,7 @@ Item {
             width: parent.width
             height: 44
             radius: 8
-            color: loginClickArea.containsMouse ? "#0052cc" : "#1a66ff"
+            color: loginClickArea.containsMouse ? Color.hover : Color.outline
 
             scale: loginClickArea.containsMouse ? 1.03 : 1.0
 

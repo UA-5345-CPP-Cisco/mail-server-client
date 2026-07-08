@@ -147,7 +147,7 @@ Rectangle {
 
                 anchors.left: parent.left
                 anchors.right: parent.right
-                border.color: "#d1d5dc"
+                border.color: color.border
                 border.width: 1
                 clip: true
                 color: Color.background
@@ -196,7 +196,7 @@ Rectangle {
                         horizontalAlignment: Text.AlignLeft
                         leftPadding: 0
                         placeholderText: "Search mail"
-                        placeholderTextColor: "#99a1af"
+                        placeholderTextColor: Color.secondaryText
                         topPadding: 0
 
                         background: Rectangle {
@@ -327,7 +327,7 @@ Rectangle {
                     id: pageText
 
                     anchors.right: parent.right
-                    color: "#000000"
+                    color: Color.secondaryText
                     font.capitalization: Font.AllUppercase
                     font.family: "Segoe UI"
                     font.letterSpacing: 0.60

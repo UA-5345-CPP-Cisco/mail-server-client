@@ -5,6 +5,8 @@ import QtQuick.Layouts
 Rectangle {
     id: settingsContainer
 
+    property bool isDarkTheme;
+
     clip: true
     color: Color.background
     implicitHeight: 313
@@ -168,8 +170,8 @@ Rectangle {
                         y: 6
 
                         ShapePath {
-                            fillColor: "#00000000"
-                            strokeColor: "#4a5565"
+                            fillColor: Color.transparent
+                            strokeColor: Color.outline
                             strokeWidth: 1.50
 
                             PathSvg {
@@ -186,8 +188,8 @@ Rectangle {
                         y: 1.50
 
                         ShapePath {
-                            fillColor: "#00000000"
-                            strokeColor: "#4a5565"
+                            fillColor: Color.transparent
+                            strokeColor: Color.outline
                             strokeWidth: 1.50
 
                             PathSvg {
@@ -204,8 +206,8 @@ Rectangle {
                         y: 15
 
                         ShapePath {
-                            fillColor: "#00000000"
-                            strokeColor: "#4a5565"
+                            fillColor: Color.transparent
+                            strokeColor: Color.outline
                             strokeWidth: 1.50
 
                             PathSvg {
@@ -222,8 +224,8 @@ Rectangle {
                         y: 3.70
 
                         ShapePath {
-                            fillColor: "#00000000"
-                            strokeColor: "#4a5565"
+                            fillColor: Color.transparent
+                            strokeColor: Color.outline
                             strokeWidth: 1.50
 
                             PathSvg {
@@ -240,8 +242,8 @@ Rectangle {
                         y: 13.24
 
                         ShapePath {
-                            fillColor: "#00000000"
-                            strokeColor: "#4a5565"
+                            fillColor: Color.transparent
+                            strokeColor: Color.outline
                             strokeWidth: 1.50
 
                             PathSvg {
@@ -258,8 +260,8 @@ Rectangle {
                         y: 9
 
                         ShapePath {
-                            fillColor: "#00000000"
-                            strokeColor: "#4a5565"
+                            fillColor: Color.transparent
+                            strokeColor: Color.outline
                             strokeWidth: 1.50
 
                             PathSvg {
@@ -276,8 +278,8 @@ Rectangle {
                         y: 9
 
                         ShapePath {
-                            fillColor: "#00000000"
-                            strokeColor: "#4a5565"
+                            fillColor: Color.transparent
+                            strokeColor: Color.outline
                             strokeWidth: 1.50
 
                             PathSvg {
@@ -294,8 +296,8 @@ Rectangle {
                         y: 13.24
 
                         ShapePath {
-                            fillColor: "#00000000"
-                            strokeColor: "#4a5565"
+                            fillColor: Color.transparent
+                            strokeColor: Color.outline
                             strokeWidth: 1.50
 
                             PathSvg {
@@ -312,8 +314,8 @@ Rectangle {
                         y: 3.70
 
                         ShapePath {
-                            fillColor: "#00000000"
-                            strokeColor: "#4a5565"
+                            fillColor: Color.transparent
+                            strokeColor: Color.outline
                             strokeWidth: 1.50
 
                             PathSvg {
@@ -342,6 +344,7 @@ Rectangle {
 
                             color: Color.button
                             font.family: "Segoe UI"
+
                             font.pixelSize: 14
                             font.weight: Font.Normal
                             height: 20
@@ -391,7 +394,7 @@ Rectangle {
                 property int currentIndex: 0
                 property var options: ["Light", "Dark"]
 
-                color: "#f1f5f9"
+                color: Color.background
                 height: 32
                 radius: 8
                 width: 140
@@ -401,7 +404,7 @@ Rectangle {
                 Rectangle {
                     id: sliderPod
 
-                    border.color: "#e2e8f0"
+                    border.color: Color.border
                     border.width: 1
                     color: Color.background
                     height: parent.height - 8
@@ -432,7 +435,7 @@ Rectangle {
 
                             Text {
                                 anchors.centerIn: parent
-                                color: themeAnimatedSlider.currentIndex === index ? "#0f172a" : "#64748b"
+                                color: themeAnimatedSlider.currentIndex === index ? Color.primaryText : Color.secondaryText
                                 font.family: "Segoe UI"
                                 font.pixelSize: 12
                                 font.weight: themeAnimatedSlider.currentIndex === index ? Font.DemiBold : Font.Normal
@@ -467,7 +470,7 @@ Rectangle {
         Rectangle {
             id: accountSettingsButton
 
-            color: clickAreaAccountSettings.hovered ? "#fff0f0" : Color.transparent
+            color: clickAreaAccountSettings.hovered ? Color.hover : Color.transparent
             height: 60
             radius: 10
             width: 350.40
@@ -503,8 +506,8 @@ Rectangle {
                     y: 11.25
 
                     ShapePath {
-                        fillColor: "#00000000"
-                        strokeColor: "#4a5565"
+                        fillColor: Color.transparent
+                        strokeColor: Color.outline
                         strokeWidth: 1.50
 
                         PathSvg {
@@ -521,8 +524,8 @@ Rectangle {
                     y: 2.25
 
                     ShapePath {
-                        fillColor: "#00000000"
-                        strokeColor: "#4a5565"
+                        fillColor: Color.transparent
+                        strokeColor: Color.outline
                         strokeWidth: 1.50
 
                         PathSvg {
@@ -596,7 +599,7 @@ Rectangle {
         Rectangle {
             id: generalSettingsButton
 
-            color: clickAreaGeneralSettings.hovered ? "#fff0f0" : Color.transparent
+            color: clickAreaGeneralSettings.hovered ? Color.hover : Color.transparent
             height: 60
             radius: 10
             width: 350.40
@@ -637,9 +640,9 @@ Rectangle {
                     y: 1.50
 
                     ShapePath {
-                        fillColor: "#00000000"
+                        fillColor: Color.transparent
                         fillRule: ShapePath.WindingFill
-                        strokeColor: "#4a5565"
+                        strokeColor: Color.outline
                         strokeWidth: 1.50
 
                         PathSvg {
@@ -656,8 +659,8 @@ Rectangle {
                     y: 6.75
 
                     ShapePath {
-                        fillColor: "#00000000"
-                        strokeColor: "#4a5565"
+                        fillColor: Color.transparent
+                        strokeColor: Color.outline
                         strokeWidth: 1.50
 
                         PathSvg {

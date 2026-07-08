@@ -32,7 +32,7 @@ Rectangle
         anchors.left: parent.left
         anchors.right: parent.right
         height: 52
-        color: "#00000000"
+        color: Color.transparent
 
         Text
         {
@@ -199,7 +199,7 @@ Rectangle
                 y: 18
                 height: 20
                 text: "Add account"
-                color: "#4a5565"
+                color: Color.primaryText
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Normal

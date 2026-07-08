@@ -20,13 +20,15 @@ Rectangle {
     color: Color.background
 
     //header
-    Rectangle {
+    Rectangle
+    {
         id: header
 
-        color: "white"
+        color: Color.background
         height: 124
 
-        anchors {
+        anchors
+        {
             left: parent.left
             right: parent.right
             top: parent.top
@@ -41,7 +43,8 @@ Rectangle {
                 right: parent.right
             }
         }
-        ColumnLayout {
+        ColumnLayout
+        {
             anchors.fill: parent
             anchors.margins: 24
             spacing: 12
@@ -50,7 +53,8 @@ Rectangle {
             // SUBJECT
             //
 
-            Text {
+            Text
+            {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 28
                 color: Color.button
@@ -77,15 +81,17 @@ Rectangle {
                 // Avatar
                 //
 
-                Rectangle {
+                Rectangle
+                {
                     Layout.preferredHeight: 36
                     Layout.preferredWidth: 36
-                    color: "#2b7fff"
+                    color: Color.avatar
                     radius: 18
 
-                    Text {
+                    Text
+                    {
                         anchors.centerIn: parent
-                        color: "white"
+                        color: Color.background
                         font.family: "Segoe UI"
                         font.pixelSize: 14
                         font.weight: Font.Black
@@ -211,7 +217,7 @@ Rectangle {
                     color: Color.transparent
                 }
                 contentItem: Rectangle {
-                    color: letterScrollBar.pressed ? "#4a5565" : "#9ca3af"
+                    color: letterScrollBar.pressed ? Color.secondaryText : Color.primaryText
                     implicitWidth: 2
                     opacity: letterScrollBar.policy === ScrollBar.AlwaysOff ? 0 : 0.8
                     radius: 2
@@ -221,7 +227,7 @@ Rectangle {
             Text {
                 id: letterBody
 
-                color: "#4a5565"
+                color: Color.secondaryText
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Normal
@@ -263,7 +269,7 @@ Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: 16
             anchors.verticalCenter: parent.verticalCenter
-            color: "#155dfc"
+            color: Color.buttonSpecial
             height: 38
             radius: 10
             scale: clickAreaReply.containsMouse ? 1.1 : 1.0
@@ -375,7 +381,7 @@ Rectangle {
                 id: forward
 
                 anchors.centerIn: parent
-                color: "#4a5565"
+                color: Color.secondaryText
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Normal

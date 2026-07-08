@@ -86,7 +86,7 @@ Item {
             text: "Please enter your details to create a new account"
             font.family: "Segoe UI"
             font.pixelSize: 14
-            color: "#6a748b"
+            color: Color.secondaryText
             anchors.horizontalCenter: parent.horizontalCenter
             bottomPadding: 10
         }
@@ -110,7 +110,7 @@ Item {
             {
                 id: fullNameBackgroundRectangle
                 radius: 8
-                border.color: fullNameTextField.activeFocus ? "#1a66ff" : Color.outline
+                border.color: fullNameTextField.activeFocus ? Color.hover : Color.outline
                 border.width: fullNameTextField.activeFocus ? 2 : 1
                 color: Color.background
             }
@@ -161,7 +161,7 @@ Item {
             {
                 id: emailBackgroundRectangle
                 radius: 8
-                border.color: emailTextField.activeFocus ? "#1a66ff" : Color.outline
+                border.color: emailTextField.activeFocus ? Color.hover : Color.outline
                 border.width: emailTextField.activeFocus ? 2 : 1
                 color: Color.background
             }
@@ -213,7 +213,7 @@ Item {
             {
                 id: passwordBackgroundRectangle
                 radius: 8
-                border.color: passwordTextField.activeFocus ? "#1a66ff" : Color.outline
+                border.color: passwordTextField.activeFocus ? Color.hover : Color.outline
                 border.width: passwordTextField.activeFocus ? 2 : 1
                 color: Color.background
             }
@@ -252,7 +252,7 @@ Item {
             width: parent.width
             height: 44
             radius: 8
-            color: registerClickArea.containsMouse ? "#0052cc" : "#1a66ff"
+            color: registerClickArea.containsMouse ? Color.hover : Color.button
 
             scale: registerClickArea.containsMouse ? 1.03 : 1.0
 
@@ -300,7 +300,7 @@ Item {
             width: parent.width
             height: 44
             radius: 8
-            color: googleClickArea.containsMouse ? "#f5f5f5" : Color.background
+            color: googleClickArea.containsMouse ? Color.hover : Color.background
             border.color: Color.outline
             border.width: 1
 
@@ -340,7 +340,7 @@ Item {
                     id: googleButtonText
                     anchors.verticalCenter: parent.verticalCenter
                     text: "Register with Google"
-                    color: "#374151"
+                    color: Color.secondaryText
                     font.family: "Segoe UI"
                     font.pixelSize: 16
                     font.weight: Font.Medium

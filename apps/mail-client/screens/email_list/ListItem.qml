@@ -95,7 +95,7 @@ Rectangle
             contentItem: Text
             {
                 text: menuItem.text
-                color: menuItem.hovered ?Color.hover : "#6b7280"
+                color: menuItem.hovered ?Color.hover : Color.highlight
                 font.pixelSize: 13
                 leftPadding: 12
                 verticalAlignment: Text.AlignVCenter
