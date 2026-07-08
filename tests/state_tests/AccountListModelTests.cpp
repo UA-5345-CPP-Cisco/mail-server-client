@@ -107,7 +107,7 @@ TEST_F(AccountListModelTests, LoadFromDatabaseActivatesFirstUserIfNoneActive) {
     EXPECT_EQ(model.rowCount(), 2);
     QModelIndex first_user_index = model.index(0, 0);
     EXPECT_TRUE(model.data(first_user_index, ISXMail::IsActiveRole).toBool());
-    auto &current_user = ISXCurrentUser::CurrentUser::GetInstance();
+    auto& current_user = ISXCurrentUser::CurrentUser::GetInstance();
     EXPECT_TRUE(current_user.is_authorized());
     EXPECT_EQ(current_user.username(), "bob");
 }
@@ -125,10 +125,7 @@ TEST_F(AccountListModelTests, LoadFromDatabaseRestoresAlreadyActiveUser) {
     EXPECT_NE(active_row, -1);
     QModelIndex bob_index = model.index(active_row, 0);
     EXPECT_EQ(model.data(bob_index, ISXMail::AccountNameRole).toString(), "bob");
-    auto &current_user = ISXCurrentUser::CurrentUser::GetInstance();
+    auto& current_user = ISXCurrentUser::CurrentUser::GetInstance();
     EXPECT_TRUE(current_user.is_authorized());
     EXPECT_EQ(current_user.username(), "bob");
 }
-
-
-
