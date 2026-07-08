@@ -21,6 +21,7 @@ namespace ISXMail{
 
         Q_INVOKABLE bool SetEmailData(int proxy_row, const QVariant& value, int role);
         Q_INVOKABLE bool SetStarred(int proxy_row, bool starred);
+        Q_INVOKABLE void ToggleArchive(int row);
 
         Q_INVOKABLE void RemoveEmailData(int proxy_row);
 

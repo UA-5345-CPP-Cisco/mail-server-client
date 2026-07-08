@@ -24,6 +24,7 @@ CREATE TABLE mail_messages
 
 	CHECK (status IN (
 		'draft',
+		'archive',
 		'queued',
 		'sending',
 		'sent',

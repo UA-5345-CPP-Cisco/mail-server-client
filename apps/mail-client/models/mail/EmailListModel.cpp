@@ -37,6 +37,8 @@ QString GetEnumString(int role)
 
     case SendToRole: return QStringLiteral("SendToRole");
 
+    case ArchiveRole: return QStringLiteral("ArchiveRole");
+
     default: return QStringLiteral("UnknownRole");
 
   }
@@ -93,6 +95,8 @@ QVariant EmailListModel::data(const QModelIndex& index, int role) const
 		return item.is_sent;
 	case DraftRole:
 		return item.is_draft;
+	case ArchiveRole:
+	  return item.is_archive;
 	case ThemeRole:
 		return item.theme;
 	case NameRole:
@@ -117,6 +121,7 @@ QHash<int, QByteArray> EmailListModel::roleNames() const
 		{StarredRole, "emailsStarred"},
 		{SentRole, "emailsSent"},
 		{DraftRole, "emailsDraft"},
+    {ArchiveRole, "emailsArchive"},
 		{ThemeRole, "emailsTheme"},
 		{NameRole, "emailsName"},
 		{SendToRole, "emailsSendTo"},
@@ -173,6 +178,7 @@ void EmailListModel::AddData(
 	bool is_starred,
 	bool is_sent,
 	bool is_draft,
+	bool is_archive,
 	const QString& theme,
 	const QString& name,
 	const QString& send_to,
@@ -183,7 +189,7 @@ void EmailListModel::AddData(
 {
 	const QString t = time.isEmpty() ? QTime::currentTime().toString("hh:mm") : time;
 	const QString preview = MakePreview(content, 30);
-	AddData({-1, is_inbox, is_starred, is_sent, is_draft, theme, name, send_to, preview, content, t});
+	AddData({-1, is_inbox, is_starred, is_sent, is_draft, is_archive, theme, name, send_to, preview, content, t});
 }
 
 QString EmailListModel::MakePreview(const QString& text, int maxLen)
@@ -262,6 +268,7 @@ void EmailListModel::LoadFromDatabase()
 		const bool is_inbox = message.is_inbox;
 		const bool is_draft = message.is_draft || message.status == Storage::MailMessageStatus::Draft;
 		const bool is_sent = !is_inbox && message.status == Storage::MailMessageStatus::Sent;
+	  const bool is_archive = message.is_archive || message.status == Storage::MailMessageStatus::Archive;
 
     m_data.push_back({
 			message.id,
@@ -269,6 +276,7 @@ void EmailListModel::LoadFromDatabase()
 			message.is_starred,
 			is_sent,
 			is_draft,
+      is_archive,
 			theme,
 			name,
 			recipient_email,
@@ -317,6 +325,29 @@ bool EmailListModel::setData(const QModelIndex& index, const QVariant& value, in
       ));
     emit dataChanged(index, index, {role});
     return true;
+}
+
+void EmailListModel::ToggleArchive(int row)
+{
+  if (row < 0 || row >= static_cast<int>(m_data.size()))
+  {
+    return;
+  }
+
+  const std::int64_t message_id = m_data[row].id;
+  if (message_id >= 0 && !m_message_repository.UpdateArchive(message_id, !m_data[row].is_archive))
+  {
+    return;
+  }
+
+  m_data[row].is_archive = !m_data[row].is_archive;
+  const QModelIndex idx = index(row, 0);
+  emit dataChanged(idx, idx, {ArchiveRole});
+
+  Logging::Logger::Instance().Log(Logging::LogLevel::Debug, GetStdString(QString("EmailListModel::ToggleArchive: data at %1 changed %2 field to %3")
+    .arg(row)
+    .arg(GetEnumString(ArchiveRole))
+    .arg(m_data[row].is_archive ? "true" : "false")));
 }
 
 Qt::ItemFlags EmailListModel::flags(const QModelIndex& index) const
