@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    auto* model = new ISXMail::EmailListModel(&app);
+        auto* model = new ISXMail::EmailListModel(&app);
     auto* message_composer = new ISXMail::MessageComposer(&app);
     auto* account_model = new ISXMail::AccountListModel(&app);
 
@@ -59,31 +59,37 @@ int main(int argc, char *argv[])
     auto* sentFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Sent, &app);
     auto* starredFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Starred, &app);
     auto* draftFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Draft, &app);
+    auto* archiveFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Archive, &app);
 
     inboxFilter->setSourceModel(model);
     sentFilter->setSourceModel(model);
     starredFilter->setSourceModel(model);
     draftFilter->setSourceModel(model);
+    archiveFilter->setSourceModel(model);
 
     auto* inboxSearch = new ISXMail::MessageSearchModel(&app);
     auto* sentSearch = new ISXMail::MessageSearchModel(&app);
     auto* starredSearch = new ISXMail::MessageSearchModel(&app);
     auto* draftSearch = new ISXMail::MessageSearchModel(&app);
+    auto* archiveSearch = new ISXMail::MessageSearchModel(&app);
 
     inboxSearch->setSourceModel(inboxFilter);
     sentSearch->setSourceModel(sentFilter);
     starredSearch->setSourceModel(starredFilter);
     draftSearch->setSourceModel(draftFilter);
+    archiveSearch->setSourceModel(archiveFilter);
 
     auto* inbox = new ISXMail::EmailPageProxy(&app);
     auto* sent = new ISXMail::EmailPageProxy(&app);
     auto* starred = new ISXMail::EmailPageProxy(&app);
     auto* draft = new ISXMail::EmailPageProxy(&app);
+    auto* archive = new ISXMail::EmailPageProxy(&app);
 
     inbox->setSourceModel(inboxSearch);
     sent->setSourceModel(sentSearch);
     starred->setSourceModel(starredSearch);
     draft->setSourceModel(draftSearch);
+    archive->setSourceModel(archiveSearch);
 
     engine.rootContext()->setContextProperty("emailsModel", model);
     engine.rootContext()->setContextProperty("accountModel", account_model);
@@ -91,10 +97,12 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("sentModel", sent);
     engine.rootContext()->setContextProperty("starredModel", starred);
     engine.rootContext()->setContextProperty("draftModel", draft);
+    engine.rootContext()->setContextProperty("archiveModel", archive);
     engine.rootContext()->setContextProperty("inboxSearchModel", inboxSearch);
     engine.rootContext()->setContextProperty("sentSearchModel", sentSearch);
     engine.rootContext()->setContextProperty("starredSearchModel", starredSearch);
     engine.rootContext()->setContextProperty("draftSearchModel", draftSearch);
+    engine.rootContext()->setContextProperty("archiveSearchModel", archiveSearch);
     engine.rootContext()->setContextProperty("MessageComposer", message_composer);
 
     engine.rootContext()->setContextProperty(

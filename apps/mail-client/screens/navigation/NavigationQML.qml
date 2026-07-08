@@ -4,10 +4,16 @@ import QtQuick
 Rectangle {
     id: navigationQML
 
-    signal draftClicked
-    signal inboxClicked
-    signal sentClicked
-    signal starredClicked
+        signal
+    draftClicked
+        signal
+    inboxClicked
+        signal
+    sentClicked
+        signal
+    starredClicked
+        signal
+    archiveClicked
 
     color: Color.background
 
@@ -262,7 +268,7 @@ Rectangle {
                 color: Color.buttonSpecialText
                 font.family: "Segoe UI"
                 font.pixelSize: 16
-                font.weight: Font.Regular
+                font.weight: Font.Normal
                 height: 24
                 horizontalAlignment: Text.AlignHCenter
                 lineHeight: 24
@@ -694,7 +700,92 @@ Rectangle {
                 }
             }
         }
+
+        Rectangle {
+            id: buttonToOpenArchives
+
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: 8
+            anchors.rightMargin: 8
+            anchors.top: buttonToOpenDrafts.bottom
+            anchors.topMargin: 4
+            property bool isArchivesSelected: selectedFolder === "archive"
+
+            color: isArchivesSelected ? "#dbdbdb" : (hoverHandlerArchivesButton.hovered ? "#f3f4f6" : "#ffffff")
+            height: 40
+            radius: 10
+
+            HoverHandler {
+                id: hoverHandlerArchivesButton
+                cursorShape: Qt.PointingHandCursor
+            }
+
+            TapHandler {
+                onTapped: {
+                    window.selectedFolder = "archive"
+                    archiveClicked()
+                }
+            }
+
+            Rectangle {
+                id: archivesButtonIcon
+                x: 12; y: 11
+                height: 18; width: 18
+                clip: true; color: "transparent"
+                Image {
+                    source: "qrc:/pngs/assets/ic_archive.svg"
+                    width: 18
+                    height: 18
+                    sourceSize.width: width * Screen.devicePixelRatio
+                    sourceSize.height: height * Screen.devicePixelRatio
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
+                }
+            }
+
+            Rectangle {
+                id: archivesButtonTextWrapper
+                x: 42; y: 8
+                height: 24
+                color: "transparent"
+
+                Text {
+                    id: archivesButtonText
+                    height: 24; width: parent.width
+                    color: "#4a5565"
+                    font.family: "Segoe UI"; font.pixelSize: 16; font.weight: Font.Normal
+                    horizontalAlignment: Text.AlignLeft
+                    lineHeight: 24; lineHeightMode: Text.FixedHeight
+                    text: "Archive"; textFormat: Text.PlainText
+                    verticalAlignment: Text.AlignVCenter; wrapMode: Text.Wrap
+                }
+            }
+
+            Rectangle {
+                id: amountOfArchivesHolder
+                anchors.right: parent.right
+                anchors.rightMargin: 12
+                anchors.verticalCenter: parent.verticalCenter
+                height: 16; width: 20
+                color: "transparent"
+
+                Text {
+                    id: amountOfArchivesText
+                    height: 16; width: parent.width
+                    color: "#6a7282"
+                    font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
+                    horizontalAlignment: Text.AlignHCenter
+                    lineHeight: 16;
+                    lineHeightMode: Text.FixedHeight
+                    text: archiveCount;
+                    textFormat: Text.PlainText
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+        }
     }
+
 
     // Footer: Settings button
     Rectangle {

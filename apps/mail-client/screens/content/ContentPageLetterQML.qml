@@ -16,6 +16,7 @@ Rectangle {
 
     signal deleteClicked
     signal starClicked(bool starred)
+    signal archiveClicked
 
     color: Color.background
 
@@ -436,6 +437,7 @@ Rectangle {
 
                     onClicked: {
                         // MinimizeWindow
+                        archiveClicked();
                     }
                 }
                 Image {

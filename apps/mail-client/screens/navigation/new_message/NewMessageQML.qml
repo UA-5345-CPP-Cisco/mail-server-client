@@ -143,7 +143,7 @@ Rectangle {
                                 if (isDraft) {
                                     draftChanged(newIndex, subject_text, recipient_text, message_text);
                                 } else {
-                                    emailsModel.AddData(false, false, true, subject_text, CurrentUser.username, recipient_text, message_text, "");
+                                    emailsModel.AddData(false, false, true, false, subject_text, CurrentUser.username, recipient_text, message_text, "");
                                 }
                                 closeMessageWindow();
                             }
@@ -464,10 +464,10 @@ Rectangle {
 
                         if (recipient_text === "inboxtest") {
                             if (!isDraft && MessageComposer.SendMessage(CurrentUser.username, CurrentUser.email, recipientTextField.text.trim(), subject_text, message_text, true)) {
-                                emailsModel.AddData(false, false, false, subject_text, CurrentUser.username, recipient_text, message_text, "", true);
+                                emailsModel.AddData(false, false, false, false, subject_text, CurrentUser.username, recipient_text, message_text, "", true);
                             }
                         } else if (!isDraft && MessageComposer.SendMessage(CurrentUser.username, CurrentUser.email, recipientTextField.text.trim(), subject_text, message_text, false)) {
-                            emailsModel.AddData(false, true, false, subject_text, CurrentUser.username, recipient_text, message_text, "");
+                            emailsModel.AddData(false, true, false, false, subject_text, CurrentUser.username, recipient_text, message_text, "");
                         } else {
                             draftFinished(newIndex, subject_text, recipient_text, message_text);
                         }

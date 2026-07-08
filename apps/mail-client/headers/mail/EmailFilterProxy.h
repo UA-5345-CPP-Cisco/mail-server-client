@@ -10,7 +10,7 @@ namespace ISXMail{
     {
         Q_OBJECT;
     public:
-        enum FolderType { Inbox, Sent, Starred, Draft };
+        enum FolderType { Inbox, Sent, Starred, Draft,  Archive};
         Q_ENUM(FolderType);
 
         explicit EmailFilterProxy(FolderType type, QObject *parent = nullptr);

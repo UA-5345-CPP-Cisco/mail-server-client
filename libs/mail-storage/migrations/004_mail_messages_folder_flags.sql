@@ -3,3 +3,6 @@ ALTER TABLE mail_messages
 
 ALTER TABLE mail_messages
     ADD COLUMN is_draft INTEGER NOT NULL DEFAULT 0;
+
+ALTER TABLE mail_messages
+    ADD COLUMN is_archive INTEGER NOT NULL DEFAULT 0;

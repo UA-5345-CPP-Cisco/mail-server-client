@@ -463,7 +463,7 @@ Rectangle {
         id: listViewHover
     }
 
-    //Emails model conector
+    //Emails model connector
     ListView {
         id: listView
 
