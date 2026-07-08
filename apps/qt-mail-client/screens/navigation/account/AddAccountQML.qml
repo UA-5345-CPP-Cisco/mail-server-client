@@ -12,6 +12,64 @@ Rectangle
     clip: true
     radius: 14
 
+    function getValidationError(type, text) 
+    {
+        var value = text.trim()
+
+        if (type === "email") 
+        {
+            if (value.length === 0)
+            {
+                return "Email cannot be empty"
+            }
+
+            var email_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+            if (!email_regex.test(value)) 
+            {
+                return "Invalid email format"
+            }
+
+            return ""
+        }
+
+        if (type === "password") 
+        {
+            if (value.length === 0) 
+            {
+                return "Password cannot be empty"
+            }
+
+            if (value.length < 6) 
+            {
+                return "Password must be at least 6 characters long"
+            }
+
+            var common_passwords = ["123456", "1234567", "1234567", "12345678", "123456789", "qwerty", "password"]
+            if (common_passwords.indexOf(value.toLowerCase()) !== -1 || /^(.)\1+$/.test(value)) 
+            {
+                return "This password is too simple"
+            }
+
+            if (!/[A-Z]/.test(value)) 
+            {
+                return "Password must contain at least one uppercase letter"
+            }
+
+            if (!/\d/.test(value)) 
+            {
+                return "Password must contain at least one number"
+            }
+
+            if (!/[!@#$%^&*(),.?":{}|<>\-_]/.test(value))
+            {
+                return "Password must contain at least one special character"
+            }
+
+            return ""
+        }
+        return ""
+    }
+
 
     Rectangle
     {

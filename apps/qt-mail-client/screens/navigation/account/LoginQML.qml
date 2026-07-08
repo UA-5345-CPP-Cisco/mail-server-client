@@ -9,6 +9,9 @@ Item {
 
     signal backRequested()
     signal loginSubmitted(string email, string password)
+    property string emailError: ""
+    property string passwordError: ""
+    property bool passwordVisible: false
 
     // Button to go back to previous screen
     Rectangle
@@ -110,8 +113,8 @@ Item {
             {
                 id: emailBackgroundRectangle
                 radius: 8
-                border.color: emailTextField.activeFocus ? "#1a66ff" : "#e5e7eb"
-                border.width: emailTextField.activeFocus ? 2 : 1
+                border.color: rootItem.emailError !== "" ? "#fda29b" : (emailTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
+                border.width: emailTextField.activeFocus || rootItem.emailError !== "" ? 2 : 1
                 color: "#ffffff"
             }
 
@@ -140,7 +143,19 @@ Item {
                     NumberAnimation { id: emailCursorFadeIn; to: 1; duration: 400; easing.type: Easing.InOutSine }
                 }
             }
+            onTextChanged: rootItem.emailError = ""
         }
+
+        // Error message for email field
+        Text {
+            text: rootItem.emailError
+            color: "#f04438"
+            font.family: "Segoe UI"
+            font.pixelSize: 12
+            visible: emailError !== ""
+            topPadding: -10
+        }
+
 
         // Pasword field for login screen
         TextField
@@ -148,7 +163,8 @@ Item {
             id: passwordTextField
             width: parent.width
             placeholderText: "Password"
-            echoMode: TextInput.Password
+            //echoMode: TextInput.Password
+            echoMode: passwordVisible ? TextInput.Normal : TextInput.Password
             font.family: "Segoe UI"
             font.pixelSize: 14
             color: "#101828"
@@ -157,6 +173,27 @@ Item {
             topPadding: 12
             bottomPadding: 12
             cursorDelegate: Item {}
+
+            Image
+            { 
+                id: eyeIcon
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: 12
+                source: passwordVisible ? "qrc:/pngs/assets/ic_eye_open.svg" : "qrc:/pngs/assets/ic_eye_closed.svg"
+                width: 20
+                height: 20
+                sourceSize.width: width * Screen.devicePixelRatio
+                sourceSize.height: height * Screen.devicePixelRatio
+                fillMode: Image.PreserveAspectFit
+
+                MouseArea 
+                {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: passwordVisible = !passwordVisible
+                }
+            }
 
             background: Rectangle
             {
@@ -192,6 +229,17 @@ Item {
                     NumberAnimation { id: passwordCursorFadeIn; to: 1; duration: 400; easing.type: Easing.InOutSine }
                 }
             }
+            onTextChanged: rootItem.passwordError = ""
+        }
+
+        // Error message for password field
+        Text {
+            text: rootItem.passwordError
+            color: "#f04438"
+            font.family: "Segoe UI"
+            font.pixelSize: 12
+            visible: passwordError !== ""
+            topPadding: -10
         }
 
         // Button to login
@@ -237,7 +285,11 @@ Item {
 
                 onClicked:
                 {
-                    rootItem.loginSubmitted(emailTextField.text, passwordTextField.text)
+                    var emailErr = rootWindow.getValidationError("email", emailTextField.text)
+                    var pwdErr = rootWindow.getValidationError("password", passwordTextField.text)
+                    emailError = emailErr
+                    passwordError = pwdErr
+                    //rootItem.loginSubmitted(emailTextField.text, passwordTextField.text)
                 }
             }
         }
