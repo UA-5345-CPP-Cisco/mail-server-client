@@ -39,7 +39,7 @@ Rectangle {
 
         onClicked: mouse => {
             if (mouse.button === Qt.LeftButton) {
-                root.color = containsMouse ? Color.surface : Color.background;
+                root.state = containsMouse ? 1 : 0;
                 var starPos = favouriteButtonContainer.mapToItem(root, 0, 0);
                 var inStarZone = (mouse.x >= starPos.x - 8 && mouse.x <= starPos.x + favouriteButtonContainer.width + 8 && mouse.y >= starPos.y - 8 && mouse.y <= starPos.y + favouriteButtonContainer.height + 8);
                 if (!inStarZone) {
@@ -49,9 +49,14 @@ Rectangle {
                 contextMenu.popup();
             }
         }
-        onEntered: root.state = 1
+        onEntered: root.state = 2
         onExited: root.state = 0
-        onPressed: root.state = 2
+        onPressed: mouse => {
+            if (mouse.button === Qt.LeftButton) {
+                root.state = 1;
+            }
+        }
+
     }
     Menu {
         id: contextMenu
@@ -89,7 +94,7 @@ Rectangle {
             base: Color.background
             highlight: Color.highlight
             highlightedText: Color.hover
-            text: Color.hover
+            text: Color.secondaryText
         }
         MenuItem {
             text: "Copy"
