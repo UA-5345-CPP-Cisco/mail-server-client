@@ -194,7 +194,7 @@ ApplicationWindow {
             handle: Rectangle {
                 id: handleDelegate
 
-                color: "transparent"
+                color: Color.transparent
 
                 containmentMask: Item {
                     height: splitView.height

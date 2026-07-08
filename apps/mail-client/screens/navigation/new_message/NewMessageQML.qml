@@ -17,7 +17,7 @@ Rectangle {
     signal draftChanged(string index, string subject, string recipient, string text)
     signal draftFinished(string index, string subject, string recipient, string text)
 
-    border.color: "#e5e7eb"
+    border.color: Color.outline
     clip: true
     color: "#fcf3e6"
     implicitHeight: 398
@@ -57,7 +57,7 @@ Rectangle {
             id: newMessageTitleWrapper
 
             clip: true
-            color: "transparent"
+            color: Color.transparent
             height: 20
             width: 250
             x: 12
@@ -67,7 +67,7 @@ Rectangle {
                 id: newMessageTitleText
 
                 anchors.fill: parent
-                color: "#ffffff"
+                color: Color.background
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Normal
@@ -85,7 +85,7 @@ Rectangle {
         Rectangle {
             id: windowControlsWrapper
 
-            color: "transparent"
+            color: Color.transparent
             height: 45
             width: 140
             x: 384
@@ -118,7 +118,7 @@ Rectangle {
                 Rectangle {
                     id: buttonToCloseWindow
 
-                    color: closeMessageBoxClickArea.pressed ? "#ffdede" : "transparent"
+                    color: closeMessageBoxClickArea.pressed ? "#ffdede" : Color.transparent
                     height: 22
                     radius: 4
                     width: 22
@@ -154,7 +154,7 @@ Rectangle {
 
                         anchors.centerIn: parent
                         clip: true
-                        color: "transparent"
+                        color: Color.transparent
                         height: 14
                         scale: closeMessageBoxClickArea.containsMouse ? 1.5 : 1.0
                         width: 14
@@ -185,7 +185,7 @@ Rectangle {
     Rectangle {
         id: recipientWrapper
 
-        border.color: "#e5e7eb"
+        border.color: Color.outline
         border.width: 1
         clip: true
         color: "#fcf3e6"
@@ -201,7 +201,7 @@ Rectangle {
             anchors.right: parent.right
             anchors.rightMargin: 12
             anchors.verticalCenter: parent.verticalCenter
-            color: "transparent"
+            color: Color.transparent
             height: 19
 
             TextField {
@@ -209,7 +209,7 @@ Rectangle {
 
                 anchors.fill: parent
                 bottomPadding: 0
-                color: "#1f2937"
+                color:Color.hover
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 leftPadding: 0
@@ -227,7 +227,7 @@ Rectangle {
                     id: customCursorRecipient
 
                     anchors.verticalCenter: parent.verticalCenter
-                    color: "#1f2937"
+                    color:Color.hover
                     height: parent.font.pixelSize
                     visible: parent.activeFocus
                     width: 1
@@ -263,7 +263,7 @@ Rectangle {
     Rectangle {
         id: subjectWrapper
 
-        border.color: "#e5e7eb"
+        border.color: Color.outline
         border.width: 1
         clip: true
         color: "#fcf3e6"
@@ -279,7 +279,7 @@ Rectangle {
             anchors.right: parent.right
             anchors.rightMargin: 12
             anchors.verticalCenter: parent.verticalCenter
-            color: "transparent"
+            color: Color.transparent
             height: 19
 
             TextField {
@@ -287,7 +287,7 @@ Rectangle {
 
                 anchors.fill: parent
                 bottomPadding: 0
-                color: "#1f2937"
+                color:Color.hover
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Normal
@@ -306,7 +306,7 @@ Rectangle {
                     id: custonCursorSubject
 
                     anchors.verticalCenter: parent.verticalCenter
-                    color: "#1f2937"
+                    color:Color.hover
                     height: parent.font.pixelSize
                     visible: parent.activeFocus
                     width: 1
@@ -342,7 +342,7 @@ Rectangle {
     Rectangle {
         id: messageBodyWrapper
 
-        border.color: "#e5e7eb"
+        border.color: Color.outline
         border.width: 1
         clip: true
         color: "#fcf3e6"
@@ -355,14 +355,14 @@ Rectangle {
 
             anchors.fill: parent
             anchors.margins: 12
-            color: "transparent"
+            color: Color.transparent
 
             TextArea {
                 id: messageBodyTextField
 
                 anchors.fill: parent
                 bottomPadding: 0
-                color: "#1f2937"
+                color:Color.hover
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 leftPadding: 0
@@ -380,7 +380,7 @@ Rectangle {
                 Rectangle {
                     id: customCursorMessageBody
 
-                    color: "#1f2937"
+                    color:Color.hover
                     height: messageBodyTextField.cursorRectangle.height
                     visible: messageBodyTextField.activeFocus
                     width: 1
@@ -426,7 +426,7 @@ Rectangle {
     {
         id: footerNavigation
 
-        color: "transparent"
+        color: Color.transparent
         height: 58
         width: parent.width
         y: 340
@@ -496,7 +496,7 @@ Rectangle {
                 id: sentButtonText
 
                 anchors.centerIn: parent
-                color: "#ffffff"
+                color: Color.background
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Normal
@@ -511,7 +511,7 @@ Rectangle {
             id: buttonToDelete
 
             anchors.verticalCenter: parent.verticalCenter
-            color: "transparent"
+            color: Color.transparent
             height: 28
             radius: 4
             scale: deleteClickArea.containsMouse ? 1.2 : 1.0
@@ -548,7 +548,7 @@ Rectangle {
 
                 anchors.centerIn: parent
                 clip: true
-                color: "transparent"
+                color: Color.transparent
                 height: 16
                 width: 16
 

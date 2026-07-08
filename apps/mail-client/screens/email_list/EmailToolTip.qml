@@ -9,14 +9,14 @@ ToolTip {
     contentItem: Text
     {
         text: root.text
-        color: "#ffffff"
+        color: Color.background
         font.family: "Segoe UI"
         font.pixelSize: 12
     }
 
     background: Rectangle
     {
-        color: "#1f2937"
+        color:Color.hover
         radius: 6
     }
 }

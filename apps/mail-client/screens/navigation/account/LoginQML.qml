@@ -19,7 +19,7 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         radius: 8
-        color: "transparent"
+        color: Color.transparent
         z: 10
 
         Image
@@ -76,7 +76,7 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 28
             font.weight: Font.Black
-            color: "#101828"
+            color: Color.button
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
@@ -99,7 +99,7 @@ Item {
             placeholderText: "Email address"
             font.family: "Segoe UI"
             font.pixelSize: 14
-            color: "#101828"
+            color: Color.button
             leftPadding: 16
             rightPadding: 16
             topPadding: 12
@@ -110,16 +110,16 @@ Item {
             {
                 id: emailBackgroundRectangle
                 radius: 8
-                border.color: emailTextField.activeFocus ? "#1a66ff" : "#e5e7eb"
+                border.color: emailTextField.activeFocus ? "#1a66ff" : Color.outline
                 border.width: emailTextField.activeFocus ? 2 : 1
-                color: "#ffffff"
+                color: Color.background
             }
 
             Rectangle
             {
                 id: emailCustomCursorRectangle
                 width: 1.5
-                color: "#1f2937"
+                color:Color.hover
                 height: parent.font.pixelSize + 4
                 anchors.verticalCenter: parent.verticalCenter
                 x: parent.length > 0 ? parent.cursorRectangle.x : 14
@@ -151,7 +151,7 @@ Item {
             echoMode: TextInput.Password
             font.family: "Segoe UI"
             font.pixelSize: 14
-            color: "#101828"
+            color: Color.button
             leftPadding: 16
             rightPadding: 16
             topPadding: 12
@@ -162,16 +162,16 @@ Item {
             {
                 id: passwordBackgroundRectangle
                 radius: 8
-                border.color: passwordTextField.activeFocus ? "#1a66ff" : "#e5e7eb"
+                border.color: passwordTextField.activeFocus ? "#1a66ff" : Color.outline
                 border.width: passwordTextField.activeFocus ? 2 : 1
-                color: "#ffffff"
+                color: Color.background
             }
 
             Rectangle
             {
                 id: passwordCustomCursorRectangle
                 width: 1.5
-                color: "#1f2937"
+                color:Color.hover
                 height: parent.font.pixelSize + 4
                 anchors.verticalCenter: parent.verticalCenter
                 x: parent.length > 0 ? parent.cursorRectangle.x : 14
@@ -222,7 +222,7 @@ Item {
                 id: loginButtonText
                 anchors.centerIn: parent
                 text: "Sign In"
-                color: "#ffffff"
+                color: Color.background
                 font.family: "Segoe UI"
                 font.pixelSize: 16
                 font.weight: Font.Bold

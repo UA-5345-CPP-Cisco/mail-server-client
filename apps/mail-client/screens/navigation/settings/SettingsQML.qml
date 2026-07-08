@@ -6,7 +6,7 @@ Rectangle {
     id: settingsContainer
 
     clip: true
-    color: "#ffffff"
+    color: Color.background
     implicitHeight: 313
     implicitWidth: 382
     radius: 14
@@ -17,7 +17,7 @@ Rectangle {
     Rectangle {
         id: headerContainer
 
-        color: "transparent"
+        color: Color.transparent
         height: 24
         width: 65
         x: 16
@@ -26,7 +26,7 @@ Rectangle {
         Text {
             id: settingsTitleText
 
-            color: "#101828"
+            color: Color.button
             font.family: "Segoe UI"
             font.pixelSize: 16
             font.weight: Font.Black
@@ -42,7 +42,7 @@ Rectangle {
         Rectangle {
             id: closeButtonWrapper
 
-            color: "transparent"
+            color: Color.transparent
             height: 18
             width: 18
             x: 330
@@ -52,7 +52,7 @@ Rectangle {
                 id: closeIconContainer
 
                 clip: true
-                color: "transparent"
+                color: Color.transparent
                 height: 18
                 scale: closeSettingsMouseArea.containsMouse ? 1.5 : 1.0
                 width: 18
@@ -94,7 +94,7 @@ Rectangle {
     Rectangle {
         id: versionWrapper
 
-        color: "transparent"
+        color: Color.transparent
         height: 16
         width: 350.40
         x: 11
@@ -103,7 +103,7 @@ Rectangle {
         Text {
             id: versionText
 
-            color: "#6a7282"
+            color: Color.secondaryText
             font.family: "Segoe UI"
             font.pixelSize: 12
             font.weight: Font.Normal
@@ -125,7 +125,7 @@ Rectangle {
     Rectangle {
         id: preferencesContainer
 
-        color: "transparent"
+        color: Color.transparent
         height: 220
         width: 382.40
         y: 64
@@ -134,7 +134,7 @@ Rectangle {
         Rectangle {
             id: themeSettingsContainer
 
-            color: "transparent"
+            color: Color.transparent
             height: 60
             radius: 10
             width: 350.40
@@ -144,7 +144,7 @@ Rectangle {
             Rectangle {
                 id: themeIconWrapper
 
-                color: "transparent"
+                color: Color.transparent
                 height: 36
                 width: 106
                 x: 16
@@ -154,7 +154,7 @@ Rectangle {
                     id: themeIconSvg
 
                     clip: true
-                    color: "transparent"
+                    color: Color.transparent
                     height: 18
                     width: 18
                     y: 9
@@ -325,7 +325,7 @@ Rectangle {
                 Rectangle {
                     id: themeTextWrapper
 
-                    color: "transparent"
+                    color: Color.transparent
                     height: 36
                     width: 76
                     x: 30
@@ -333,14 +333,14 @@ Rectangle {
                     Rectangle {
                         id: themeTitleWrapper
 
-                        color: "transparent"
+                        color: Color.transparent
                         height: 20
                         width: 76
 
                         Text {
                             id: themeTitleText
 
-                            color: "#101828"
+                            color: Color.button
                             font.family: "Segoe UI"
                             font.pixelSize: 14
                             font.weight: Font.Normal
@@ -357,7 +357,7 @@ Rectangle {
                     Rectangle {
                         id: themeSubtitleWrapper
 
-                        color: "transparent"
+                        color: Color.transparent
                         height: 16
                         width: 76
                         y: 20
@@ -365,7 +365,7 @@ Rectangle {
                         Text {
                             id: themeSubtitleText
 
-                            color: "#6a7282"
+                            color: Color.secondaryText
                             font.family: "Segoe UI"
                             font.pixelSize: 12
                             font.weight: Font.Normal
@@ -403,7 +403,7 @@ Rectangle {
 
                     border.color: "#e2e8f0"
                     border.width: 1
-                    color: "#ffffff"
+                    color: Color.background
                     height: parent.height - 8
                     radius: 6
                     width: (parent.width - 8) / themeAnimatedSlider.options.length
@@ -451,9 +451,9 @@ Rectangle {
 
                                     // load corresponding color scheme
                                     if (modelData.toLowerCase() === "dark") {
-                                        ColorProvider.SetTheme("dark");
+                                        Color.SetTheme("dark");
                                     } else {
-                                        ColorProvider.SetTheme("light");
+                                        Color.SetTheme("light");
                                     }
                                 }
                             }
@@ -467,7 +467,7 @@ Rectangle {
         Rectangle {
             id: accountSettingsButton
 
-            color: clickAreaAccountSettings.hovered ? "#fff0f0" : "transparent"
+            color: clickAreaAccountSettings.hovered ? "#fff0f0" : Color.transparent
             height: 60
             radius: 10
             width: 350.40
@@ -488,7 +488,7 @@ Rectangle {
                 id: accountIconContainer
 
                 clip: true
-                color: "transparent"
+                color: Color.transparent
                 height: 18
                 width: 18
                 x: 16
@@ -534,7 +534,7 @@ Rectangle {
             Rectangle {
                 id: accountTextContainer
 
-                color: "transparent"
+                color: Color.transparent
                 height: 36
                 width: 196
                 x: 46
@@ -543,14 +543,14 @@ Rectangle {
                 Rectangle {
                     id: accountTitleWrapper
 
-                    color: "transparent"
+                    color: Color.transparent
                     height: 20
                     width: 196
 
                     Text {
                         id: accountTitleText
 
-                        color: "#101828"
+                        color: Color.button
                         font.family: "Segoe UI"
                         font.pixelSize: 14
                         font.weight: Font.Normal
@@ -567,7 +567,7 @@ Rectangle {
                 Rectangle {
                     id: accountSubtitleWrapper
 
-                    color: "transparent"
+                    color: Color.transparent
                     height: 16
                     width: 196
                     y: 20
@@ -575,7 +575,7 @@ Rectangle {
                     Text {
                         id: accountSubtitleText
 
-                        color: "#6a7282"
+                        color: Color.secondaryText
                         font.family: "Segoe UI"
                         font.pixelSize: 12
                         font.weight: Font.Normal
@@ -596,7 +596,7 @@ Rectangle {
         Rectangle {
             id: generalSettingsButton
 
-            color: clickAreaGeneralSettings.hovered ? "#fff0f0" : "transparent"
+            color: clickAreaGeneralSettings.hovered ? "#fff0f0" : Color.transparent
             height: 60
             radius: 10
             width: 350.40
@@ -622,7 +622,7 @@ Rectangle {
                 id: generalIconContainer
 
                 clip: true
-                color: "transparent"
+                color: Color.transparent
                 height: 18
                 width: 18
                 x: 16
@@ -669,7 +669,7 @@ Rectangle {
             Rectangle {
                 id: generalTextContainer
 
-                color: "transparent"
+                color: Color.transparent
                 height: 36
                 width: 180
                 x: 46
@@ -678,14 +678,14 @@ Rectangle {
                 Rectangle {
                     id: generalTitleWrapper
 
-                    color: "transparent"
+                    color: Color.transparent
                     height: 20
                     width: 180
 
                     Text {
                         id: generalTitleText
 
-                        color: "#101828"
+                        color: Color.button
                         font.family: "Segoe UI"
                         font.pixelSize: 14
                         font.weight: Font.Normal
@@ -702,7 +702,7 @@ Rectangle {
                 Rectangle {
                     id: generalSubtitleWrapper
 
-                    color: "transparent"
+                    color: Color.transparent
                     height: 16
                     width: 180
                     y: 20
@@ -710,7 +710,7 @@ Rectangle {
                     Text {
                         id: generalSubtitleText
 
-                        color: "#6a7282"
+                        color: Color.secondaryText
                         font.family: "Segoe UI"
                         font.pixelSize: 12
                         font.weight: Font.Normal

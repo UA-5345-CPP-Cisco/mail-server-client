@@ -21,7 +21,7 @@ Rectangle
         signal starredClicked
         signal deleteClicked
 
-    color: "#ffffff"
+    color: Color.background
 
     Behavior on color
     {
@@ -38,13 +38,13 @@ Rectangle
         propagateComposedEvents: true
         acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-        onEntered: root.color = "#f9fafb"
-        onExited: root.color = "#ffffff"
-        onPressed: root.color = "#f3f4f6"
+        onEntered: root.color = Color.surface
+        onExited: root.color = Color.background
+        onPressed: root.color = Color.highlight
         onClicked: mouse => {
             if (mouse.button === Qt.LeftButton)
             {
-                root.color = containsMouse ? "#f9fafb" : "#ffffff"
+                root.color = containsMouse ? Color.surface : Color.background
                 var starPos = favouriteButtonContainer.mapToItem(root, 0, 0)
                 var inStarZone = (mouse.x >= starPos.x - 8
                     && mouse.x <= starPos.x + favouriteButtonContainer.width + 8
@@ -61,7 +61,7 @@ Rectangle
                 contextMenu.popup()
             }
         }
-        onCanceled: root.color = "#ffffff"
+        onCanceled: root.color = Color.background
     }
     Menu
     {
@@ -69,19 +69,19 @@ Rectangle
 
         palette
         {
-            base: "#ffffff"
-            text: "#1f2937"
-            highlight: "#f3f4f6"
-            highlightedText: "#1f2937"
+            base: Color.background
+            text:Color.hover
+            highlight: Color.highlight
+            highlightedText:Color.hover
         }
 
         background: Rectangle
         {
             implicitWidth: 200
             implicitHeight: 40
-            color: "#ffffff"
+            color: Color.background
             radius: 8
-            border.color: "#e5e7eb"
+            border.color: Color.outline
             border.width: 1
         }
 
@@ -95,7 +95,7 @@ Rectangle
             contentItem: Text
             {
                 text: menuItem.text
-                color: menuItem.hovered ? "#1f2937" : "#6b7280"
+                color: menuItem.hovered ?Color.hover : "#6b7280"
                 font.pixelSize: 13
                 leftPadding: 12
                 verticalAlignment: Text.AlignVCenter
@@ -103,7 +103,7 @@ Rectangle
 
             background: Rectangle
             {
-                color: menuItem.hovered ? "#f3f4f6" : "transparent"
+                color: menuItem.hovered ? Color.highlight : Color.transparent
                 radius: 4
                 anchors.margins: 4
             }
@@ -125,7 +125,7 @@ Rectangle
             {
                 implicitWidth: 200
                 implicitHeight: 1
-                color: "#e5e7eb"
+                color: Color.outline
             }
         }
 
@@ -143,7 +143,7 @@ Rectangle
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         height: 1
-        color: "#e5e7eb"
+        color: Color.outline
     }
 
     Rectangle {
@@ -156,7 +156,7 @@ Rectangle
             margins: 16
         }
         height: 60
-        color: "transparent"
+        color: Color.transparent
 
         // Star icon
         Rectangle
@@ -165,7 +165,7 @@ Rectangle
             height: 17
             width: 15
             anchors.verticalCenter: parent.verticalCenter
-            color: "transparent"
+            color: Color.transparent
             MouseArea {
                 id: favouriteButtonClickArea
                 anchors.fill: parent
@@ -197,7 +197,7 @@ Rectangle
                 height: 18
                 width: 18
                 clip: true
-                color: "transparent"
+                color: Color.transparent
 
                 Image
                 {
@@ -220,7 +220,7 @@ Rectangle
             anchors.leftMargin: 8
             anchors.right: parent.right
             height: 60
-            color: "transparent"
+            color: Color.transparent
 
             Rectangle
             {
@@ -229,7 +229,7 @@ Rectangle
                 anchors.right: parent.right
                 height: 20
                 clip: true
-                color: "transparent"
+                color: Color.transparent
 
                 Rectangle
                 {
@@ -238,14 +238,14 @@ Rectangle
                     anchors.right: timeContainer.left
                     height: 20
                     clip: true
-                    color: "transparent"
+                    color: Color.transparent
 
                     Text
                     {
                         id: nameText
                         height: 20
                         width: parent.width
-                        color: "#101828"
+                        color: Color.button
                         font.family: "Segoe UI"
                         font.pixelSize: 14
                         font.weight: Font.Black
@@ -284,13 +284,13 @@ Rectangle
                     anchors.verticalCenter: parent.verticalCenter
                     height: 16
                     width: timeText.implicitWidth
-                    color: "transparent"
+                    color: Color.transparent
 
                     Text
                     {
                         id: timeText
                         anchors.fill: parent
-                        color: "#6a7282"
+                        color: Color.secondaryText
                         font.family: "Segoe UI"
                         font.pixelSize: 12
                         font.weight: Font.Normal
@@ -310,14 +310,14 @@ Rectangle
                 y: 22
                 height: 20
                 clip: true
-                color: "transparent"
+                color: Color.transparent
 
                 Text
                 {
                     id: themeText
                     height: 20
                     width: parent.width
-                    color: "#101828"
+                    color: Color.button
                     font.family: "Segoe UI"
                     font.pixelSize: 14
                     font.weight: Font.Black
@@ -357,14 +357,14 @@ Rectangle
                 y: 44
                 height: 16
                 clip: true
-                color: "transparent"
+                color: Color.transparent
 
                 Text
                 {
                     id: previewText
                     height: 16
                     width: parent.width
-                    color: "#6a7282"
+                    color: Color.secondaryText
                     font.family: "Segoe UI"
                     font.pixelSize: 12
                     font.weight: Font.Normal

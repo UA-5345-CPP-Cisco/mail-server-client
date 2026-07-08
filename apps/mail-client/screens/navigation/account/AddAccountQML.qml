@@ -17,9 +17,9 @@ Rectangle
     {
         id: backgroundRectangle
         anchors.fill: parent
-        color: "#ffffff"
+        color: Color.background
         radius: 14
-        border.color: "#e5e7eb"
+        border.color: Color.outline
         border.width: 1
     }
 
@@ -33,7 +33,7 @@ Rectangle
         anchors.topMargin: 4
         anchors.rightMargin: 4
         radius: 8
-        color: "transparent"
+        color: Color.transparent
         z: 10
 
         Image
@@ -163,9 +163,9 @@ Rectangle
                         width: 260
                         height: 300
                         radius: 12
-                        border.color: "#e5e7eb"
+                        border.color: Color.outline
                         border.width: 1
-                        color: "transparent"
+                        color: Color.transparent
 
                         Column
                         {
@@ -211,7 +211,7 @@ Rectangle
                                     id: loginButtonText
                                     anchors.centerIn: parent
                                     text: "Log In"
-                                    color: "#ffffff"
+                                    color: Color.background
                                     font.family: "Segoe UI"
                                     font.pixelSize: 16
                                     font.weight: Font.Bold
@@ -265,9 +265,9 @@ Rectangle
                         width: 260
                         height: 300
                         radius: 12
-                        border.color: "#e5e7eb"
+                        border.color: Color.outline
                         border.width: 1
-                        color: "transparent"
+                        color: Color.transparent
 
                         Column
                         {
@@ -314,7 +314,7 @@ Rectangle
                                     id: registerButtonText
                                     anchors.centerIn: parent
                                     text: "Register"
-                                    color: "#ffffff"
+                                    color: Color.background
                                     font.family: "Segoe UI"
                                     font.pixelSize: 16
                                     font.weight: Font.Bold

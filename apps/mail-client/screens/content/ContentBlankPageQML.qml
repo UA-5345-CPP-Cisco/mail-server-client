@@ -8,7 +8,7 @@ Rectangle {
     anchors.right: parent.right
     anchors.top: parent.top
     clip: true
-    color: "#ffffff"
+    color: Color.background
     height: 400
     width: 400
 

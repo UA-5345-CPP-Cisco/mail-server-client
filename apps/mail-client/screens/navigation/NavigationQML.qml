@@ -5,7 +5,7 @@ Rectangle
 {
     id: navigationQML
 
-    color: "#ffffff"
+    color: Color.background
 
     signal inboxClicked
     signal starredClicked
@@ -20,7 +20,7 @@ Rectangle
         anchors.right: parent.right
         anchors.top: parent.top
         height: 60
-        color: "#ffffff"
+        color: Color.background
         z: 10
 
         // Bottom border
@@ -30,7 +30,7 @@ Rectangle
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             height: 1
-            color: "#e5e7eb"
+            color: Color.outline
         }
 
         // Avatar
@@ -41,7 +41,7 @@ Rectangle
             y: 14
             height: 32
             width: 32
-            color: CurrentUser.avatarPath !== "" ? "transparent" : "#2b7fff"
+            color: CurrentUser.avatarPath !== "" ? Color.transparent : "#2b7fff"
             radius: 16
             clip: true
 
@@ -57,7 +57,7 @@ Rectangle
             {
                 anchors.centerIn: parent
                 visible: CurrentUser.avatarPath === ""
-                color: "#ffffff"
+                color: Color.background
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Black
@@ -75,7 +75,7 @@ Rectangle
             anchors.rightMargin: 4
             anchors.verticalCenter: parent.verticalCenter
             height: 36
-            color: "transparent"
+            color: Color.transparent
 
             Rectangle
             {
@@ -84,14 +84,14 @@ Rectangle
                 anchors.right: parent.right
                 height: 20
                 clip: true
-                color: "transparent"
+                color: Color.transparent
 
                 Text
                 {
                     id: userNameText
                     height: 20
                     width: parent.width
-                    color: "#101828"
+                    color: Color.button
                     font.family: "Segoe UI"
                     font.pixelSize: 14
                     font.weight: Font.Normal
@@ -113,14 +113,14 @@ Rectangle
                 anchors.top: userName.bottom
                 height: 16
                 clip: true
-                color: "transparent"
+                color: Color.transparent
 
                 Text
                 {
                     id: userEmailText
                     height: 16
                     width: parent.width
-                    color: "#6a7282"
+                    color: Color.secondaryText
                     font.family: "Segoe UI"
                     font.pixelSize: 12
                     font.weight: Font.Normal
@@ -150,7 +150,7 @@ Rectangle
                 anchors.centerIn: parent
                 height: 24
                 width: 24
-                color: clickAreaAccountChange.pressed ? "#ffdede" : "transparent"
+                color: clickAreaAccountChange.pressed ? "#ffdede" : Color.transparent
                 radius: 4
 
                 Rectangle
@@ -160,7 +160,7 @@ Rectangle
                     height: 16
                     width: 16
                     clip: true
-                    color: "transparent"
+                    color: Color.transparent
                     scale: clickAreaAccountChange.hovered ? 1.5 : 1.0
 
                     Behavior on scale
@@ -218,7 +218,7 @@ Rectangle
         anchors.top: headerNavigation.bottom
 
         height: 76
-        color: "transparent"
+        color: Color.transparent
 
         Rectangle
         {
@@ -274,7 +274,7 @@ Rectangle
                 height: 18
                 width: 18
                 clip: true
-                color: "transparent"
+                color: Color.transparent
 
                 Image
                 {
@@ -297,7 +297,7 @@ Rectangle
                 height: 24
                 width: 69
 
-                color: "#ffffff"
+                color: Color.background
                 font.family: "Segoe UI"
                 font.pixelSize: 16
                 font.weight: Font.Normal
@@ -321,7 +321,7 @@ Rectangle
         anchors.top: composeEmailWrapper.bottom
         anchors.bottom: footerNavigation.top
 
-        color: "transparent"
+        color: Color.transparent
 
         // Inbox button
         Rectangle
@@ -336,7 +336,7 @@ Rectangle
             radius: 10
             property bool isInboxSelected: selectedFolder === "inbox"
 
-            color: isInboxSelected ? "#dbdbdb" : (hoverHandlerInboxButton.hovered ? "#f3f4f6" : "#ffffff")
+            color: isInboxSelected ? "#dbdbdb" : (hoverHandlerInboxButton.hovered ? Color.highlight : Color.background)
 
             HoverHandler
             {
@@ -358,7 +358,7 @@ Rectangle
                 id: inboxButtonIcon
                 x: 12; y: 11
                 height: 18; width: 18
-                clip: true; color: "transparent"
+                clip: true; color: Color.transparent
 
                 Image
                 {
@@ -378,13 +378,13 @@ Rectangle
                 x: 42; y: 8
                 height: 24
 
-                color: "transparent"
+                color: Color.transparent
 
                 Text
                 {
                     id: inboxButtonText
                     height: 24; width: parent.width
-                    color: "#101828"
+                    color: Color.button
                     font.family: "Segoe UI"; font.pixelSize: 16; font.weight: Font.Normal
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 24; lineHeightMode: Text.FixedHeight
@@ -400,13 +400,13 @@ Rectangle
                 anchors.rightMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
                 height: 16; width: 20
-                color: "transparent"
+                color: Color.transparent
 
                 Text
                 {
                     id: amountOfInboxText
                     height: 16; width: parent.width
-                    color: "#6a7282"
+                    color: Color.secondaryText
                     font.family: "Segoe UI";
                     font.pixelSize: 12;
                     font.weight: Font.Normal
@@ -433,7 +433,7 @@ Rectangle
             anchors.topMargin: 4
             property bool isSentSelected: selectedFolder === "sent"
 
-            color: isSentSelected ? "#dbdbdb" : (hoverHandlerSentButton.hovered ? "#f3f4f6" : "#ffffff")
+            color: isSentSelected ? "#dbdbdb" : (hoverHandlerSentButton.hovered ? Color.highlight : Color.background)
             height: 40
             radius: 10
 
@@ -458,7 +458,7 @@ Rectangle
                 id: sentButtonIcon
                 x: 12; y: 11
                 height: 18; width: 18
-                clip: true; color: "transparent"
+                clip: true; color: Color.transparent
 
                 Image
                 {
@@ -477,7 +477,7 @@ Rectangle
                 id: sentButtonTextWrapper
                 x: 42; y: 8
                 height: 24
-                color: "transparent"
+                color: Color.transparent
 
                 Text
                 {
@@ -503,13 +503,13 @@ Rectangle
                 anchors.rightMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
                 height: 16; width: 20
-                color: "transparent"
+                color: Color.transparent
 
                 Text
                 {
                     id: amountOfSentText
                     height: 16; width: parent.width
-                    color: "#6a7282"
+                    color: Color.secondaryText
                     font.family: "Segoe UI";
                     font.pixelSize: 12;
                     font.weight: Font.Normal
@@ -537,7 +537,7 @@ Rectangle
             property bool isStarredSelected: selectedFolder === "starred"
 
 
-            color: isStarredSelected ? "#dbdbdb" : (hoverHandlerStarredButton.hovered ? "#f3f4f6" : "#ffffff")
+            color: isStarredSelected ? "#dbdbdb" : (hoverHandlerStarredButton.hovered ? Color.highlight : Color.background)
             height: 40
             radius: 10
 
@@ -562,7 +562,7 @@ Rectangle
                 id: starredButtonIcon
                 x: 12; y: 11
                 height: 18; width: 18
-                clip: true; color: "transparent"
+                clip: true; color: Color.transparent
 
                 Image
                 {
@@ -581,7 +581,7 @@ Rectangle
                 id: starredButtonTextWrapper
                 x: 42; y: 8
                 height: 24
-                color: "transparent"
+                color: Color.transparent
 
                 Text
                 {
@@ -603,13 +603,13 @@ Rectangle
                 anchors.rightMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
                 height: 16; width: 20
-                color: "transparent"
+                color: Color.transparent
 
                 Text
                 {
                     id: amountOfStarredText
                     height: 16; width: parent.width
-                    color: "#6a7282"
+                    color: Color.secondaryText
                     font.family: "Segoe UI";
                     font.pixelSize: 12;
                     font.weight: Font.Normal
@@ -636,7 +636,7 @@ Rectangle
             anchors.topMargin: 4
             property bool isDraftsSelected: selectedFolder === "drafts"
 
-            color: isDraftsSelected ? "#dbdbdb" : (hoverHandlerDraftsButton.hovered ? "#f3f4f6" : "#ffffff")
+            color: isDraftsSelected ? "#dbdbdb" : (hoverHandlerDraftsButton.hovered ? Color.highlight : Color.background)
             height: 40
             radius: 10
 
@@ -660,7 +660,7 @@ Rectangle
                 id: draftsButtonIcon
                 x: 12; y: 11
                 height: 18; width: 18
-                clip: true; color: "transparent"
+                clip: true; color: Color.transparent
                 Image
                 {
                     source: "qrc:/pngs/assets/ic_drafts.svg"
@@ -678,7 +678,7 @@ Rectangle
                 id: draftsButtonTextWrapper
                 x: 42; y: 8
                 height: 24
-                color: "transparent"
+                color: Color.transparent
 
                 Text
                 {
@@ -700,13 +700,13 @@ Rectangle
                 anchors.rightMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
                 height: 16; width: 20
-                color: "transparent"
+                color: Color.transparent
 
                 Text
                 {
                     id: amountOfDraftsText
                     height: 16; width: parent.width
-                    color: "#6a7282"
+                    color: Color.secondaryText
                     font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
                     horizontalAlignment: Text.AlignHCenter
                     lineHeight: 16;
@@ -729,7 +729,7 @@ Rectangle
         anchors.bottom: parent.bottom
 
         height: 60
-        color: clickAreaSettings.hovered ? "#dbdbdb" : "#ffffff"
+        color: clickAreaSettings.hovered ? "#dbdbdb" : Color.background
 
         // Top border
         Rectangle
@@ -738,7 +738,7 @@ Rectangle
             anchors.right: parent.right
             anchors.top: parent.top
             height: 1
-            color: "#e5e7eb"
+            color: Color.outline
         }
 
         // Settings button
@@ -750,7 +750,7 @@ Rectangle
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: 12
-            color: clickAreaSettings.hovered ? "#dbdbdb" : "#ffffff"
+            color: clickAreaSettings.hovered ? "#dbdbdb" : Color.background
             anchors.rightMargin: 12
 
             height: 36
@@ -801,7 +801,7 @@ Rectangle
                     id: settingsButtonIcon
                     y: 2
                     height: 16; width: 16
-                    clip: true; color: "transparent"
+                    clip: true; color: Color.transparent
                     anchors.right: parent.left
                     anchors.rightMargin: 5
                     rotation: clickAreaSettings.hovered ? 180 : 0
