@@ -182,5 +182,27 @@ void EmailPageProxy::RemoveEmailData(int proxyRow)
     model->RemoveData(idx.row());
 }
 
+void EmailPageProxy::ToggleArchive(int row)
+{
+  QModelIndex idx = index(row, 0);
+
+  while (auto* proxy =
+         qobject_cast<QAbstractProxyModel*>(
+             const_cast<QAbstractItemModel*>(idx.model())))
+  {
+    idx = proxy->mapToSource(idx);
+  }
+
+  auto* model = qobject_cast<EmailListModel*>(
+      const_cast<QAbstractItemModel*>(idx.model()));
+
+  if (!model || !idx.isValid())
+  {
+    return;
+  }
+
+  model->ToggleArchive(idx.row());
+}
+
 }
 

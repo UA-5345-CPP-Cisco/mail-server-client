@@ -14,7 +14,7 @@ class Statement;
 
 class MailMessageRepository
 {
-  public:
+public:
   explicit MailMessageRepository(Database& database);
 
   std::int64_t CreateMessage(const std::optional<std::int64_t>& sender_user_id,
@@ -39,9 +39,11 @@ class MailMessageRepository
 
   bool UpdateStarred(std::int64_t message_id, bool starred);
 
+  bool UpdateArchive(std::int64_t message_id, bool archive);
+
   bool DeleteMessage(std::int64_t message_id);
 
-  private:
+private:
   Database& m_database;
 
   MailMessageRecord ReadMessage(const Statement& statement) const;

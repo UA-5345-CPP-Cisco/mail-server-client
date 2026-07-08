@@ -13,6 +13,7 @@ ApplicationWindow {
     property alias authLoader: authLoader
     property int draftsCount: draftModel.totalEmailsCount
     property int inboxCount: inboxModel.totalEmailsCount
+    property int archiveCount: archiveModel.totalEmailsCount
     property var selectedEmail: null
     //properties
     property string selectedFolder: "inbox"
@@ -197,7 +198,7 @@ ApplicationWindow {
                 if (newMessageLoader.selectedItem != null)
                 {
                     draftModel.RemoveEmailData(parseInt(index));
-                    emailsModel.AddData(false, true, false, subject, CurrentUser.username, recipient, text, "");
+                    emailsModel.AddData(false, true, false, false, subject, CurrentUser.username, recipient, text, "");
                 }
 
                 newMessageLoader.selectedItem = null;
@@ -250,6 +251,12 @@ ApplicationWindow {
                     emailList.sourceModel = draftModel;
                     window.selectedEmail = null;
                     selectedFolder = "drafts";
+                }
+                onArchiveClicked: {
+                    emailList.isDraftMode = false;
+                    emailList.sourceModel = archiveModel;
+                    window.selectedEmail = null;
+                    selectedFolder = "archive";
                 }
                 onInboxClicked:
                 {
@@ -322,6 +329,10 @@ ApplicationWindow {
                         if (emailList.sourceModel)
                             emailList.sourceModel.RemoveEmailData(parseInt(letterIndex));
                         window.selectedEmail = null;
+                    }
+                    onArchiveClicked: {
+                        if (emailList.sourceModel)
+                            emailList.sourceModel.ToggleArchive(parseInt(letterIndex));
                     }
                     onStarClicked:
                     {
