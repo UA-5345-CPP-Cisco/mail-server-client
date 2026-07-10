@@ -36,8 +36,7 @@ TEST(SmtpResultTest, FailPreservesSmtpCode)
 
 TEST(SmtpResultTest, FailDefaultsCodeToZero)
 {
-  const Smtp::SmtpResult result =
-    Smtp::SmtpResult::Fail(Smtp::SmtpError::Timeout, "Timed out");
+  const Smtp::SmtpResult result = Smtp::SmtpResult::Fail(Smtp::SmtpError::Timeout, "Timed out");
 
   EXPECT_EQ(result.smtpCode, 0);
 }
