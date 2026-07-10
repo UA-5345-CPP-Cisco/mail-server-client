@@ -102,8 +102,8 @@ int main(int argumentCount, char* arguments[])
     auto result = client.SendMailMessage(mail);
     if (!result.ok())
     {
-      std::cerr << "Message sending failed: " << result.message
-                << " (SMTP " << result.smtpCode << ")\n";
+      std::cerr << "Message sending failed: " << result.message << " (SMTP " << result.smtpCode
+                << ")\n";
       return 1;
     }
 
