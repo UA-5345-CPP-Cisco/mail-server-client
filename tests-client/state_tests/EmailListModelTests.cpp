@@ -5,6 +5,7 @@
 #include <gtest/gtest.h>
 
 #include "headers/mail/EmailListModel.h"
+#include "database/DatabaseManager.h"
 
 using namespace ISXMail;
 
@@ -12,20 +13,21 @@ class EmailListModelTest : public ::testing::Test
 {
   protected:
   std::unique_ptr<EmailListModel> model;
+  std::unique_ptr<Storage::Database> db;
   const QString test_bd = "test_mail_database.sqlite";
 
   void SetUp() override
   {
+    ISXDatabaseManager::DatabaseManager::EnsureInitialized();
+    db = std::make_unique<Storage::Database>(ISXDatabaseManager::DatabaseManager::DatabasePath());
+    db->Execute("DELETE FROM mail_messages;");
     model = std::make_unique<EmailListModel>();
   }
 
   void TearDown() override
   {
     model.reset();
-    if (QFile::exists(test_bd))
-    {
-      QFile::remove(test_bd);
-    }
+    db.reset();
   }
 };
 

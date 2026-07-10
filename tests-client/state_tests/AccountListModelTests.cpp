@@ -129,8 +129,8 @@ TEST_F(AccountListModelTests, LoadFromDatabaseRestoresAlreadyActiveUser)
 {
   Storage::Database db(ISXDatabaseManager::DatabaseManager::DatabasePath());
   Storage::UserRepository repo(db);
-  std::int64_t id_alice = repo.CreateUser("Tom", "Tom", "Tom");
-  repo.UpdateStatus(id_alice, Storage::UserStatus::Disabled);
+  std::int64_t id_tom = repo.CreateUser("Tom", "Tom", "Tom");
+  repo.UpdateStatus(id_tom, Storage::UserStatus::Disabled);
   std::int64_t id_bob = repo.CreateUser("bob", "bob", "bob");
   repo.UpdateStatus(id_bob, Storage::UserStatus::Active);
   ISXMail::AccountListModel model;
