@@ -4,10 +4,7 @@
 
 namespace Smtp {
 
-SmtpClient::SmtpClient(
-  const std::string& server_address,
-  std::uint16_t port
-  ) :
+SmtpClient::SmtpClient(const std::string& server_address, std::uint16_t port) :
   m_server_address(server_address),
   m_port(port),
   m_socket(m_io_context)
@@ -32,10 +29,8 @@ std::string SmtpClient::ReadResponse()
   {
     boost::asio::streambuf buffer;
     boost::asio::read_until(m_socket, buffer, "\r\n");
-    const std::string line(
-      boost::asio::buffers_begin(buffer.data()),
-      boost::asio::buffers_end(buffer.data())
-    );
+    const std::string line(boost::asio::buffers_begin(buffer.data()),
+                           boost::asio::buffers_end(buffer.data()));
     last_line = line;
 
     if (line.size() >= 4 && line[3] == ' ')
@@ -73,10 +68,7 @@ bool SmtpClient::CheckConnection()
     m_socket = boost::asio::ip::tcp::socket(m_io_context);
 
     boost::asio::ip::tcp::resolver resolver(m_io_context);
-    const auto endpoints = resolver.resolve(
-      m_server_address,
-      std::to_string(m_port)
-    );
+    const auto endpoints = resolver.resolve(m_server_address, std::to_string(m_port));
 
     boost::asio::connect(m_socket, endpoints);
 
@@ -105,10 +97,7 @@ SmtpResult SmtpClient::SendMailMessage(const Mail& mail)
     m_socket = boost::asio::ip::tcp::socket(m_io_context);
 
     boost::asio::ip::tcp::resolver resolver(m_io_context);
-    const auto endpoints = resolver.resolve(
-      m_server_address,
-      std::to_string(m_port)
-    );
+    const auto endpoints = resolver.resolve(m_server_address, std::to_string(m_port));
 
     boost::asio::connect(m_socket, endpoints);
 
@@ -116,8 +105,8 @@ SmtpResult SmtpClient::SendMailMessage(const Mail& mail)
     if (reply.code != 220)
     {
       m_socket.close();
-      return SmtpResult::Fail(SmtpError::ConnectionFailed,
-                              "Server greeting failed: " + reply.text, reply.code);
+      return SmtpResult::Fail(
+        SmtpError::ConnectionFailed, "Server greeting failed: " + reply.text, reply.code);
     }
 
     SendCommand("EHLO client");
@@ -125,8 +114,7 @@ SmtpResult SmtpClient::SendMailMessage(const Mail& mail)
     if (reply.code != 250)
     {
       m_socket.close();
-      return SmtpResult::Fail(SmtpError::ServerError,
-                              "EHLO rejected: " + reply.text, reply.code);
+      return SmtpResult::Fail(SmtpError::ServerError, "EHLO rejected: " + reply.text, reply.code);
     }
 
     SendCommand("MAIL FROM:<" + mail.sender + ">");
@@ -134,8 +122,8 @@ SmtpResult SmtpClient::SendMailMessage(const Mail& mail)
     if (reply.code != 250)
     {
       m_socket.close();
-      return SmtpResult::Fail(SmtpError::ServerError,
-                              "MAIL FROM rejected: " + reply.text, reply.code);
+      return SmtpResult::Fail(
+        SmtpError::ServerError, "MAIL FROM rejected: " + reply.text, reply.code);
     }
 
     for (const std::string& recipient : mail.recipients)
@@ -156,24 +144,20 @@ SmtpResult SmtpClient::SendMailMessage(const Mail& mail)
     if (reply.code != 354)
     {
       m_socket.close();
-      return SmtpResult::Fail(SmtpError::ServerError,
-                              "DATA command rejected: " + reply.text, reply.code);
+      return SmtpResult::Fail(
+        SmtpError::ServerError, "DATA command rejected: " + reply.text, reply.code);
     }
 
-    const std::string message =
-      "From: " + mail.sender + "\r\n" +
-      "Subject: " + mail.subject + "\r\n" +
-      "\r\n" +
-      mail.body + "\r\n" +
-      ".";
+    const std::string message = "From: " + mail.sender + "\r\n" + "Subject: " + mail.subject +
+                                "\r\n" + "\r\n" + mail.body + "\r\n" + ".";
 
     SendCommand(message);
     reply = ReadReply();
     if (reply.code != 250)
     {
       m_socket.close();
-      return SmtpResult::Fail(SmtpError::ServerError,
-                              "Message not accepted: " + reply.text, reply.code);
+      return SmtpResult::Fail(
+        SmtpError::ServerError, "Message not accepted: " + reply.text, reply.code);
     }
 
     SendCommand("QUIT");
@@ -197,15 +181,15 @@ SmtpResult SmtpClient::SendMailMessage(const Mail& mail)
     if (e.code() == boost::asio::error::connection_refused)
     {
       return SmtpResult::Fail(SmtpError::ConnectionFailed,
-                              "Connection refused on " + m_server_address + ":"
-                                + std::to_string(m_port));
+                              "Connection refused on " + m_server_address + ":" +
+                                std::to_string(m_port));
     }
 
     if (e.code() == boost::asio::error::timed_out)
     {
       return SmtpResult::Fail(SmtpError::Timeout,
-                              "Connection timed out to " + m_server_address + ":"
-                                + std::to_string(m_port));
+                              "Connection timed out to " + m_server_address + ":" +
+                                std::to_string(m_port));
     }
 
     return SmtpResult::Fail(SmtpError::Unknown, e.what());
@@ -221,4 +205,4 @@ SmtpResult SmtpClient::SendMailMessage(const Mail& mail)
   }
 }
 
-}
+} // namespace Smtp

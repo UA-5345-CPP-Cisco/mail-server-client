@@ -4,7 +4,8 @@
 
 namespace Smtp {
 
-enum class SmtpError {
+enum class SmtpError
+{
   None,
   ConnectionFailed,
   DnsResolutionFailed,
@@ -15,17 +16,22 @@ enum class SmtpError {
   Unknown
 };
 
-struct SmtpReply {
+struct SmtpReply
+{
   int code = 0;
   std::string text;
 };
 
-struct SmtpResult {
+struct SmtpResult
+{
   SmtpError error = SmtpError::None;
   std::string message;
   int smtpCode = 0;
 
-  bool ok() const { return error == SmtpError::None; }
+  bool ok() const
+  {
+    return error == SmtpError::None;
+  }
 
   static SmtpResult Success()
   {
@@ -38,4 +44,4 @@ struct SmtpResult {
   }
 };
 
-}
+} // namespace Smtp

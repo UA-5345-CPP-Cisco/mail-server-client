@@ -32,4 +32,4 @@ class SmtpClient
   boost::asio::ip::tcp::socket m_socket;
 };
 
-}
+} // namespace Smtp
