@@ -14,7 +14,7 @@
 #include "headers/color/ColorProvider.h"
 #include "headers/users/CurrentUser.h"
 #include "headers/search/MessageSearchModel.h"
-#include "headers/database/RegistrationHandler.h"
+#include "headers/database/AuthHandler.h" 
 #include "headers/users/AccountListModel.h"
 #include "../../libs/mail-storage/include/mail_storage/UserRepository.h"
 #include "../../libs/logger/include/logger/Logger.h"
@@ -33,8 +33,8 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     (void)Logging::Logger::Instance();
-    RegistrationHandler regHandler(database);
-    engine.rootContext()->setContextProperty("regHandler", &regHandler);
+    AuthHandler authHandler(database);
+    engine.rootContext()->setContextProperty("authHandler", &authHandler);
 
     Storage::UserRepository repo(database);
     bool hasUsers = repo.HasUsers();

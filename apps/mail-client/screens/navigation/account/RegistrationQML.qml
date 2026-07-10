@@ -7,6 +7,10 @@ Item {
 
     signal backRequested
     signal registerSubmitted(string name, string email, string password)
+    property string nameError: ""
+    property string emailError: ""
+    property string passwordError: ""
+    property bool passwordVisible: false
 
     implicitHeight: 350
     implicitWidth: 400
@@ -41,10 +45,10 @@ Item {
             anchors.centerIn: parent
             fillMode: Image.PreserveAspectFit
             height: 15
+            width: 15
             source: "qrc:/pngs/assets/ic_button_back.svg"
             sourceSize.height: height * Screen.devicePixelRatio
             sourceSize.width: width * Screen.devicePixelRatio
-            width: 15
         }
         MouseArea {
             id: backClickArea
@@ -104,7 +108,8 @@ Item {
             background: Rectangle {
                 id: fullNameBackgroundRectangle
 
-                border.color: fullNameTextField.activeFocus ? Color.hover : Color.outline
+                //border.color: fullNameTextField.activeFocus ? Color.hover : Color.outline
+                border.color: rootItem.nameError !== "" ? "#fda29b" : (fullNameTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
                 border.width: fullNameTextField.activeFocus ? 2 : 1
                 color: Color.background
                 radius: 8
@@ -154,6 +159,17 @@ Item {
                     }
                 }
             }
+            onTextChanged: rootItem.nameError = ""
+        }
+
+        // Error message for name field
+        Text {
+            text: rootItem.nameError
+            color: "#f04438"
+            font.family: "Segoe UI"
+            font.pixelSize: 12
+            visible: nameError !== ""
+            topPadding: -14
         }
 
         // Email field for register screen
@@ -174,7 +190,8 @@ Item {
             background: Rectangle {
                 id: emailBackgroundRectangle
 
-                border.color: emailTextField.activeFocus ? Color.hover : Color.outline
+                //border.color: emailTextField.activeFocus ? Color.hover : Color.outline
+                 border.color: rootItem.emailError !== "" ? "#fda29b" : (emailTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
                 border.width: emailTextField.activeFocus ? 2 : 1
                 color: Color.background
                 radius: 8
@@ -224,6 +241,17 @@ Item {
                     }
                 }
             }
+            onTextChanged: rootItem.emailError = ""
+        }
+
+        // Error message for email field
+        Text {
+            text: rootItem.emailError
+            color: "#f04438"
+            font.family: "Segoe UI"
+            font.pixelSize: 12
+            visible: emailError !== ""
+            topPadding: -14
         }
 
         // Pasword field for register screen
@@ -231,8 +259,8 @@ Item {
             id: passwordTextField
 
             bottomPadding: 12
-            color: Color.background
-            echoMode: TextInput.Password
+            color: Color.primaryText
+            echoMode: passwordVisible ? TextInput.Normal : TextInput.Password
             font.family: "Segoe UI"
             font.pixelSize: 14
             leftPadding: 16
@@ -242,16 +270,38 @@ Item {
             topPadding: 12
             width: parent.width
 
+
+            Image {
+                id: eyeIcon
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: 12
+                source: passwordVisible ? "qrc:/pngs/assets/ic_eye_open.svg" : "qrc:/pngs/assets/ic_eye_closed.svg"
+                width: 20
+                height: 20
+                sourceSize.width: width * Screen.devicePixelRatio
+                sourceSize.height: height * Screen.devicePixelRatio
+                fillMode: Image.PreserveAspectFit
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: passwordVisible = !passwordVisible
+                }
+            }
+
+
+
             background: Rectangle {
                 id: passwordBackgroundRectangle
 
-                border.color: passwordTextField.activeFocus ? Color.hover : Color.outline
+                //border.color: passwordTextField.activeFocus ? Color.hover : Color.outline
+                border.color: rootItem.passwordError !== "" ? "#fda29b" : (passwordTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
                 border.width: passwordTextField.activeFocus ? 2 : 1
                 color: Color.background
                 radius: 8
             }
-            cursorDelegate: Item {
-            }
+            cursorDelegate: Item {}
 
             Rectangle {
                 id: passwordCustomCursorRectangle
@@ -295,6 +345,17 @@ Item {
                     }
                 }
             }
+            onTextChanged: rootItem.passwordError = ""
+        }
+
+        // Error message for password field
+        Text {
+            text: rootItem.passwordError
+            color: "#f04438"
+            font.family: "Segoe UI"
+            font.pixelSize: 12
+            visible: passwordError !== ""
+            topPadding: -14
         }
 
         // Basic register
@@ -345,7 +406,16 @@ Item {
                 hoverEnabled: true
 
                 onClicked: {
-                    rootItem.registerSubmitted(fullNameTextField.text, emailTextField.text, passwordTextField.text);
+                    var nameErr = rootWindow.getValidationError("name", fullNameTextField.text)
+                    var emailErr = rootWindow.getValidationError("email", emailTextField.text)
+                    var pwdErr = rootWindow.getValidationError("password", passwordTextField.text)
+                    emailError = emailErr
+                    passwordError = pwdErr
+                    nameError = nameErr
+                    if(nameError === "" && emailError === "" && passwordError === "")
+                    {
+                        rootItem.registerSubmitted(fullNameTextField.text, emailTextField.text, passwordTextField.text)
+                    }
                 }
             }
         }

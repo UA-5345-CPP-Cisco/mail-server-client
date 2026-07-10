@@ -10,6 +10,17 @@ set(WINDOWS_DEV_CONSOLE ON)
 find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
 #find_package(SQLite3 REQUIRED)
 
+include(FetchContent)
+# --- Crypto++ (cryptopp-modern) ---
+FetchContent_Declare(
+        cryptopp_modern
+        GIT_REPOSITORY https://github.com/cryptopp-modern/cryptopp-modern/
+        GIT_TAG 2026.3.0
+)
+set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
+set(CRYPTOPP_INSTALL OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(cryptopp_modern)
+
 if(NOT TARGET mail_storage)
 	add_subdirectory(
 			${CMAKE_CURRENT_SOURCE_DIR}/../../libs/mail-storage
@@ -72,7 +83,7 @@ qt_add_qml_module(appqtapptestmail
 		headers/search/MessageSearchModel.h
 		headers/users/CurrentUser.h
 		headers/users/UserCache.h
-		models/database/RegistrationHandler.cpp
+		headers/database/AuthHandler.h
 		models/database/CacheStore.cpp
 		models/database/DatabaseManager.cpp
 		models/mail/EmailCache.cpp
@@ -83,10 +94,9 @@ qt_add_qml_module(appqtapptestmail
 		models/search/MessageSearchModel.cpp
 		models/users/CurrentUser.cpp
 		models/users/UserCache.cpp
-		headers/database/RegistrationHandler.h
 		headers/users/AccountListModel.h
 		models/users/AccountListModel.cpp
-		models/database/RegistrationHandler.cpp
+		models/database/AuthHandler.cpp
 		models/color/ColorModel.cpp
 		headers/color/ColorModel.h
 		headers/color/ColorProvider.h
@@ -117,6 +127,7 @@ target_link_libraries(appqtapptestmail
 		Qt6::Quick
 		Qt6::Sql
 		Qt6::QuickControls2
+		cryptopp
 )
 
 target_include_directories(appqtapptestmail
