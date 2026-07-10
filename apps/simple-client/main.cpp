@@ -99,9 +99,11 @@ int main(int argumentCount, char* arguments[])
 
     std::cout << "Sending message from " << options.sender << " to " << options.recipient << '\n';
 
-    if (!client.SendMailMessage(mail))
+    auto result = client.SendMailMessage(mail);
+    if (!result.ok())
     {
-      std::cerr << "Message sending failed\n";
+      std::cerr << "Message sending failed: " << result.message
+                << " (SMTP " << result.smtpCode << ")\n";
       return 1;
     }
 
