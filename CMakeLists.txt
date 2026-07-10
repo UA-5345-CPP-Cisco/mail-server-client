@@ -37,13 +37,14 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Boost)
 
 # --- Crypto++ ---
-FetchContent_Declare(
-		cryptopp_cmake
-		GIT_REPOSITORY https://github.com/abdes/cryptopp-cmake/
-		GIT_TAG CRYPTOPP_8_9_0
-)
-set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(cryptopp_cmake)
+# Comented because it causes issues with Cmake
+# FetchContent_Declare(
+# 		cryptopp_cmake
+# 		GIT_REPOSITORY https://github.com/abdes/cryptopp-cmake/
+# 		GIT_TAG CRYPTOPP_8_9_0
+# )
+# set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
+# FetchContent_MakeAvailable(cryptopp_cmake)
 
 find_package(Threads REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)

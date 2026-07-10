@@ -9,6 +9,7 @@ Item {
 
     signal backRequested()
     signal registerSubmitted(string name, string email, string password)
+    property string nameError: ""
     property string emailError: ""
     property string passwordError: ""
     property bool passwordVisible: false
@@ -113,7 +114,7 @@ Item {
             {
                 id: fullNameBackgroundRectangle
                 radius: 8
-                border.color: fullNameTextField.activeFocus ? "#1a66ff" : "#e5e7eb"
+                border.color: rootItem.nameError !== "" ? "#fda29b" : (fullNameTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
                 border.width: fullNameTextField.activeFocus ? 2 : 1
                 color: "#ffffff"
             }
@@ -143,6 +144,17 @@ Item {
                     NumberAnimation { id: nameCursorFadeIn; to: 1; duration: 400; easing.type: Easing.InOutSine }
                 }
             }
+            onTextChanged: rootItem.nameError = ""
+        }
+
+        // Error message for name field
+        Text {
+            text: rootItem.nameError
+            color: "#f04438"
+            font.family: "Segoe UI"
+            font.pixelSize: 12
+            visible: nameError !== ""
+            topPadding: -14
         }
 
         // Email field for register screen
@@ -338,11 +350,13 @@ Item {
 
                 onClicked:
                 {
+                    var nameErr = rootWindow.getValidationError("name", fullNameTextField.text)
                     var emailErr = rootWindow.getValidationError("email", emailTextField.text)
                     var pwdErr = rootWindow.getValidationError("password", passwordTextField.text)
                     emailError = emailErr
                     passwordError = pwdErr
-                    if(emailError === "" && passwordError === "")
+                    nameError = nameErr
+                    if(nameError === "" && emailError === "" && passwordError === "")
                     {
                         rootItem.registerSubmitted(fullNameTextField.text, emailTextField.text, passwordTextField.text)
                     }

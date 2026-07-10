@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Shapes
 import QtQuick.Effects
-//import "scripts/validator.js" as Validator
 
 Rectangle
 {
@@ -24,6 +23,24 @@ Rectangle
             "zxcvbnm", 
             "1234567890"
         ];
+
+        if (type === "name") 
+        {
+            if (value.length === 0) 
+            {
+                return "Name cannot be empty"
+            }
+            if (value.split(/\s+/).length !== 2)
+            {
+                return "Please enter your first and last name"
+            }
+            if (!/^[A-Z][a-z]+ [A-Z][a-z]+$/.test(value))
+            {
+                return "Each name must start with a capital letter"
+            }
+
+            return ""
+        }
 
         if (type === "email") 
         {

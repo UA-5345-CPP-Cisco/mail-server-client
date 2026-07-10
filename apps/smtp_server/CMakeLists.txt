@@ -34,7 +34,7 @@ target_link_libraries(smtp_server_core
         mail_thread_pool
         PRIVATE
         Boost::property_tree
-        cryptopp::cryptopp
+        #cryptopp::cryptopp
 )
 
 target_compile_features(smtp_server_core
