@@ -7,6 +7,9 @@ Item {
 
     signal backRequested
     signal loginSubmitted(string email, string password)
+    property string emailError: ""
+    property string passwordError: ""
+    property bool passwordVisible: false
 
     implicitHeight: 350
     implicitWidth: 400
@@ -104,7 +107,7 @@ Item {
             background: Rectangle {
                 id: emailBackgroundRectangle
 
-                border.color: emailTextField.activeFocus ? Color.hover : Color.outline
+                border.color: rootItem.emailError !== "" ? "#fda29b" : (emailTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
                 border.width: emailTextField.activeFocus ? 2 : 1
                 color: Color.background
                 radius: 8
@@ -154,15 +157,26 @@ Item {
                     }
                 }
             }
+            onTextChanged: rootItem.emailError = ""
         }
 
-        // Pasword field for login screen
+        // Error message for email field
+        Text {
+            text: rootItem.emailError
+            color: "#f04438"
+            font.family: "Segoe UI"
+            font.pixelSize: 12
+            visible: emailError !== ""
+            topPadding: -14
+        }
+
+        // Password field for login screen
         TextField {
             id: passwordTextField
 
             bottomPadding: 12
             color: Color.primaryText
-            echoMode: TextInput.Password
+            echoMode: passwordVisible ? TextInput.Normal : TextInput.Password
             font.family: "Segoe UI"
             font.pixelSize: 14
             leftPadding: 16
@@ -172,16 +186,33 @@ Item {
             topPadding: 12
             width: parent.width
 
+            Image { 
+                id: eyeIcon
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: 12
+                source: passwordVisible ? "qrc:/pngs/assets/ic_eye_open.svg" : "qrc:/pngs/assets/ic_eye_closed.svg"
+                width: 20
+                height: 20
+                sourceSize.width: width * Screen.devicePixelRatio
+                sourceSize.height: height * Screen.devicePixelRatio
+                fillMode: Image.PreserveAspectFit
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: passwordVisible = !passwordVisible
+                }
+            }
+
             background: Rectangle {
                 id: passwordBackgroundRectangle
-
-                border.color: passwordTextField.activeFocus ? Color.hover : Color.outline
+                border.color: rootItem.passwordError !== "" ? "#fda29b" : (passwordTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
                 border.width: passwordTextField.activeFocus ? 2 : 1
                 color: Color.background
                 radius: 8
             }
-            cursorDelegate: Item {
-            }
+            cursorDelegate: Item {}
 
             Rectangle {
                 id: passwordCustomCursorRectangle
@@ -217,7 +248,8 @@ Item {
                 Behavior on x {
                     id: passwordCursorXBehavior
 
-                    NumberAnimation {
+                    NumberAnimation 
+                    {
                         id: passwordCursorXAnimation
 
                         duration: 80
@@ -225,6 +257,17 @@ Item {
                     }
                 }
             }
+            onTextChanged: rootItem.passwordError = ""
+        }
+
+        // Error message for password field
+        Text {
+            text: rootItem.passwordError
+            color: "#f04438"
+            font.family: "Segoe UI"
+            font.pixelSize: 12
+            visible: passwordError !== ""
+            topPadding: -14
         }
 
         // Button to login
@@ -266,7 +309,11 @@ Item {
                 hoverEnabled: true
 
                 onClicked: {
-                    rootItem.loginSubmitted(emailTextField.text, passwordTextField.text);
+                    var emailErr = rootWindow.getValidationError("email", emailTextField.text)
+                    var pwdErr = rootWindow.getValidationError("password", passwordTextField.text)
+                    emailError = emailErr
+                    passwordError = pwdErr
+                    //rootItem.loginSubmitted(emailTextField.text, passwordTextField.text);
                 }
             }
         }
