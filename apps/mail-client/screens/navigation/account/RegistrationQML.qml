@@ -426,7 +426,7 @@ Item {
 
             border.color: Color.outline
             border.width: 1
-            color: googleClickArea.containsMouse ? Color.button : Color.hover
+            color: googleClickArea.containsMouse ? Color.button : Color.highlight
             height: 44
             radius: 8
             scale: googleClickArea.containsMouse ? 1.03 : 1.0
