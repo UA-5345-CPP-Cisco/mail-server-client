@@ -63,7 +63,7 @@ void CurrentUser::Authorize(
 	}
 	else
 	{
-        m_avatar_path = "";
+	  m_avatar_path = "";
 		emit profileChanged();
 	}
 
@@ -79,7 +79,7 @@ void CurrentUser::Logout()
 
 	m_username.clear();
 	m_email.clear();
-    m_avatar_path.clear();
+  m_avatar_path.clear();
 	m_is_authorized = false;
 
 	emit profileChanged();
