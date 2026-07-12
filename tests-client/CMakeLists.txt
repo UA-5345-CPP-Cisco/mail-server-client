@@ -5,12 +5,13 @@ set(CMAKE_AUTOMOC ON)
 find_package(Qt6 COMPONENTS Core Gui Sql REQUIRED)
 
 add_executable(state_tests
-		../tests-client/state_tests/CurrentUserTests.cpp
-		../tests-client/state_tests/AccountListModelTests.cpp
-		../tests-client/state_tests/EmailCacheTests.cpp
-		../tests-client/state_tests/UserCacheTests.cpp
-		../tests-client/state_tests/EmailFilterProxyTests.cpp
-		../tests-client/state_tests/EmailListModelTests.cpp
+		state_tests/CurrentUserTests.cpp
+		state_tests/AccountListModelTests.cpp
+		state_tests/EmailCacheTests.cpp
+		state_tests/UserCacheTests.cpp
+		state_tests/EmailFilterProxyTests.cpp
+		state_tests/EmailListModelTests.cpp
+		state_tests/main.cpp
 		../apps/mail-client/models/users/CurrentUser.cpp
 		../apps/mail-client/models/users/UserCache.cpp
 		../apps/mail-client/models/mail/EmailCache.cpp
@@ -29,7 +30,6 @@ add_executable(state_tests
 		../apps/mail-client/headers/users/AccountListModel.h
 		../apps/mail-client/headers/database/CacheStore.h
 		../apps/mail-client/headers/database/DatabaseManager.h
-		state_tests/main.cpp
 )
 
 target_include_directories(state_tests
