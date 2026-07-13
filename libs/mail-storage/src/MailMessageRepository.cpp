@@ -35,9 +35,10 @@ MailMessageRepository::CreateMessage(const std::optional<std::int64_t>& sender_u
 				is_starred,
 				is_draft,
         is_archive,
-				status
+				status,
+				archived_at
 			)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CASE WHEN ? = 1 THEN CURRENT_TIMESTAMP ELSE NULL END);
 		)SQL");
 
   if (sender_user_id.has_value())
@@ -76,6 +77,7 @@ MailMessageRepository::CreateMessage(const std::optional<std::int64_t>& sender_u
   statement.BindInt(8, status == MailMessageStatus::Draft ? 1 : 0);
   statement.BindInt(9, status == MailMessageStatus::Archive ? 1 : 0);
   statement.BindText(10, StatusToString(status));
+  statement.BindInt(11, status == MailMessageStatus::Archive ? 1 : 0);
   statement.Step();
 
   return statement.LastInsertRowId();
@@ -227,8 +229,13 @@ bool MailMessageRepository::UpdateArchive(std::int64_t message_id, bool archive)
   Statement statement(m_database,
                       R"SQL(
 			UPDATE mail_messages
-			SET is_archive = ?
-			WHERE id = ?;
+			SET
+				is_archive = ?1,
+				archived_at = CASE
+					WHEN ?1 = 1 THEN COALESCE(archived_at, CURRENT_TIMESTAMP)
+					ELSE NULL
+				END
+			WHERE id = ?2;
 		)SQL");
 
   statement.BindInt(1, archive ? 1 : 0);
@@ -236,6 +243,29 @@ bool MailMessageRepository::UpdateArchive(std::int64_t message_id, bool archive)
   statement.Step();
 
   return statement.ChangedRowCount() > 0;
+}
+
+int MailMessageRepository::DeleteArchivedOlderThanDays(int days)
+{
+  if (days <= 0)
+  {
+    return 0;
+  }
+
+  Statement statement(m_database,
+                      R"SQL(
+			DELETE FROM mail_messages
+			WHERE
+				is_archive = 1
+				AND archived_at IS NOT NULL
+				AND archived_at < datetime('now', ?);
+		)SQL");
+
+  const std::string modifier = "-" + std::to_string(days) + " days";
+  statement.BindText(1, modifier);
+  statement.Step();
+
+  return statement.ChangedRowCount();
 }
 
 bool MailMessageRepository::DeleteMessage(std::int64_t message_id)
