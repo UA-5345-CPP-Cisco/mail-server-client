@@ -182,7 +182,7 @@ void EmailPageProxy::RemoveEmailData(int proxyRow)
     model->RemoveData(idx.row());
 }
 
-void EmailPageProxy::ToggleArchive(int row)
+bool EmailPageProxy::ToggleArchive(int row)
 {
   QModelIndex idx = index(row, 0);
 
@@ -198,10 +198,10 @@ void EmailPageProxy::ToggleArchive(int row)
 
   if (!model || !idx.isValid())
   {
-    return;
+    return false;
   }
 
-  model->ToggleArchive(idx.row());
+  return model->ToggleArchive(idx.row());
 }
 
 }

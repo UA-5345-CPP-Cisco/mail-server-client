@@ -70,7 +70,7 @@ public:
                              const QString& send_to, const QString& content, const QString& time,
                              bool is_inbox = false);
     Q_INVOKABLE bool SetStarred(int row, bool starred);
-    void ToggleArchive(int row);
+    bool ToggleArchive(int row);
     void AddData(const EmailData& item);
 
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;

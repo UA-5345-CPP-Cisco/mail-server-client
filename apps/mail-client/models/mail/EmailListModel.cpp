@@ -327,17 +327,17 @@ bool EmailListModel::setData(const QModelIndex& index, const QVariant& value, in
     return true;
 }
 
-void EmailListModel::ToggleArchive(int row)
+bool EmailListModel::ToggleArchive(int row)
 {
   if (row < 0 || row >= static_cast<int>(m_data.size()))
   {
-    return;
+    return false;
   }
 
   const std::int64_t message_id = m_data[row].id;
   if (message_id >= 0 && !m_message_repository.UpdateArchive(message_id, !m_data[row].is_archive))
   {
-    return;
+    return false;
   }
 
   m_data[row].is_archive = !m_data[row].is_archive;
@@ -348,6 +348,8 @@ void EmailListModel::ToggleArchive(int row)
     .arg(row)
     .arg(GetEnumString(ArchiveRole))
     .arg(m_data[row].is_archive ? "true" : "false")));
+
+  return m_data[row].is_archive;
 }
 
 Qt::ItemFlags EmailListModel::flags(const QModelIndex& index) const
