@@ -13,8 +13,8 @@ target_compile_features(mail_server
         cxx_std_17
 )
 
-if(MSVC)
+if (MSVC)
     target_compile_options(mail_server PRIVATE /W4)
-else()
+else ()
     target_compile_options(mail_server PRIVATE -Wall -Wextra -Wpedantic)
-endif()
+endif ()

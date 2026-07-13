@@ -2,8 +2,7 @@ import QtQuick
 import QtQuick.Shapes
 import QtQuick.Controls
 
-Rectangle
-{
+Rectangle {
     id: contentPageLetterQML
 
     color: "#ffffff"
@@ -16,11 +15,11 @@ Rectangle
     property bool letterStarred: false
 
     signal deleteClicked()
+
     signal starClicked(bool starred)
 
     // Header
-    Rectangle
-    {
+    Rectangle {
         id: header
 
         anchors.left: parent.left
@@ -31,8 +30,7 @@ Rectangle
         color: "#ffffff"
 
         // Bottom border
-        Rectangle
-        {
+        Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
@@ -40,12 +38,10 @@ Rectangle
             color: "#e5e7eb"
         }
 
-        Rectangle
-        {
+        Rectangle {
             id: container_1
 
-            anchors
-            {
+            anchors {
                 left: parent.left
                 right: parent.right
                 top: parent.top
@@ -56,8 +52,7 @@ Rectangle
             color: "transparent"
 
             // Content: theme and sender
-            Rectangle
-            {
+            Rectangle {
                 id: container_2
 
                 anchors.left: parent.left
@@ -67,8 +62,7 @@ Rectangle
                 color: "transparent"
 
                 // Theme
-                Rectangle
-                {
+                Rectangle {
                     id: themeHolder
 
                     anchors.left: parent.left
@@ -76,8 +70,7 @@ Rectangle
                     height: 28
                     color: "transparent"
 
-                    Text
-                    {
+                    Text {
                         id: themeHolder_1
 
                         height: 28
@@ -100,8 +93,7 @@ Rectangle
                 }
 
                 // Sender
-                Rectangle
-                {
+                Rectangle {
                     id: container_3
 
                     anchors.left: parent.left
@@ -112,8 +104,7 @@ Rectangle
                     color: "transparent"
 
                     // Icon
-                    Rectangle
-                    {
+                    Rectangle {
                         id: background
 
                         height: 36
@@ -123,8 +114,7 @@ Rectangle
                         color: "#2b7fff"
                         radius: 18
 
-                        Text
-                        {
+                        Text {
                             id: s
 
                             anchors.centerIn: parent
@@ -145,8 +135,7 @@ Rectangle
                     }
 
                     // Name To
-                    Rectangle
-                    {
+                    Rectangle {
                         id: container_4
 
                         anchors.left: background.right
@@ -155,8 +144,7 @@ Rectangle
                         width: 160
                         color: "transparent"
 
-                        Rectangle
-                        {
+                        Rectangle {
                             id: nameHolder
 
                             anchors.left: parent.left
@@ -164,8 +152,7 @@ Rectangle
                             height: 20
                             color: "transparent"
 
-                            Text
-                            {
+                            Text {
                                 id: nameHolder_1
 
                                 height: 20
@@ -184,8 +171,7 @@ Rectangle
                             }
                         }
 
-                        Rectangle
-                        {
+                        Rectangle {
                             id: container_5
 
                             anchors.left: parent.left
@@ -194,8 +180,7 @@ Rectangle
                             height: 16
                             color: "transparent"
 
-                            Text
-                            {
+                            Text {
                                 id: to_me
 
                                 height: 16
@@ -218,8 +203,7 @@ Rectangle
             }
 
             // Right part
-            Rectangle
-            {
+            Rectangle {
                 id: container_6
 
                 anchors.right: parent.right
@@ -230,8 +214,7 @@ Rectangle
                 color: "transparent"
 
                 // Time
-                Rectangle
-                {
+                Rectangle {
                     id: timeHolder
 
                     // Прибиваємо до правого краю батьківського елемента (картки листа)
@@ -245,8 +228,7 @@ Rectangle
                     height: 16
                     color: "transparent"
 
-                    Text
-                    {
+                    Text {
                         id: timeText
 
                         // Замість anchors.fill розтягуємо тільки по ширині, щоб не ламати висоту
@@ -270,8 +252,7 @@ Rectangle
                 }
 
                 // Star
-                Rectangle
-                {
+                Rectangle {
                     id: buttonToFavourite
 
                     anchors.right: button.left
@@ -281,8 +262,7 @@ Rectangle
                     color: "transparent"
                     radius: 10
 
-                    Rectangle
-                    {
+                    Rectangle {
                         id: sVG
 
                         x: 8;
@@ -291,33 +271,28 @@ Rectangle
                         width: 18
                         clip: true;
                         color: "transparent"
-                        MouseArea
-                        {
+                        MouseArea {
                             id: clickAreaFavourite
                             anchors.fill: parent
 
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
 
-                            onClicked:
-                            {
+                            onClicked: {
                                 contentPageLetterQML.letterStarred = !contentPageLetterQML.letterStarred
                                 starClicked(contentPageLetterQML.letterStarred)
                             }
                         }
                         scale: clickAreaFavourite.containsMouse ? 1.3 : 1.0
 
-                        Behavior on scale
-                        {
-                            NumberAnimation
-                            {
+                        Behavior on scale {
+                            NumberAnimation {
                                 duration: 150
                                 easing.type: Easing.InOutQuad
                             }
                         }
 
-                        Image
-                        {
+                        Image {
                             source: contentPageLetterQML.letterStarred ? "qrc:/pngs/assets/ic_star_active.svg" : "qrc:/pngs/assets/ic_star.svg"
                             width: 18
                             height: 18
@@ -330,8 +305,7 @@ Rectangle
                 }
 
                 // Other button
-                Rectangle
-                {
+                Rectangle {
                     id: button
 
                     anchors.right: parent.right
@@ -339,22 +313,19 @@ Rectangle
                     width: 34
                     color: "transparent"
                     radius: 10
-                    MouseArea
-                    {
+                    MouseArea {
                         id: clickAreaThreeDots
                         anchors.fill: parent
 
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
 
-                        onClicked:
-                        {
+                        onClicked: {
                             // ContextMenu
                         }
                     }
 
-                    Rectangle
-                    {
+                    Rectangle {
                         id: sVG_1
 
                         x: 8;
@@ -365,17 +336,14 @@ Rectangle
                         color: "transparent"
                         scale: clickAreaThreeDots.containsMouse ? 1.5 : 1.0
 
-                        Behavior on scale
-                        {
-                            NumberAnimation
-                            {
+                        Behavior on scale {
+                            NumberAnimation {
                                 duration: 150
                                 easing.type: Easing.InOutQuad
                             }
                         }
 
-                        Image
-                        {
+                        Image {
                             source: "qrc:/pngs/assets/ic_three_dots.svg"
                             width: 18
                             height: 18
@@ -391,8 +359,7 @@ Rectangle
     }
 
     // Main content
-    Rectangle
-    {
+    Rectangle {
         id: container_7
 
         anchors.left: parent.left
@@ -403,8 +370,7 @@ Rectangle
         clip: true
         color: "transparent"
 
-        Flickable
-        {
+        Flickable {
             id: contentHolder
 
             anchors.left: parent.left
@@ -420,8 +386,7 @@ Rectangle
             contentHeight: Math.max(height, letterBody.implicitHeight)
             boundsBehavior: Flickable.StopAtBounds
 
-            Text
-            {
+            Text {
                 id: letterBody
 
                 width: contentHolder.width - 14
@@ -438,21 +403,18 @@ Rectangle
                 wrapMode: Text.Wrap
             }
 
-            ScrollBar.vertical: ScrollBar
-            {
+            ScrollBar.vertical: ScrollBar {
                 id: letterScrollBar
 
                 policy: contentHolder.contentHeight > contentHolder.height ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff
                 active: hovered || pressed || contentHolder.moving
                 width: 6
 
-                background: Rectangle
-                {
+                background: Rectangle {
                     color: "transparent"
                 }
 
-                contentItem: Rectangle
-                {
+                contentItem: Rectangle {
                     implicitWidth: 2
                     radius: 2
                     color: letterScrollBar.pressed ? "#4a5565" : "#9ca3af"
@@ -463,8 +425,7 @@ Rectangle
     }
 
     // Footer
-    Rectangle
-    {
+    Rectangle {
         id: header_1
 
         anchors.left: parent.left
@@ -475,8 +436,7 @@ Rectangle
         color: "#ffffff"
 
         // Top border
-        Rectangle
-        {
+        Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
@@ -485,8 +445,7 @@ Rectangle
         }
 
         // Reply button
-        Rectangle
-        {
+        Rectangle {
             id: buttonToReply
 
             anchors.left: parent.left
@@ -499,32 +458,27 @@ Rectangle
             color: "#155dfc"
             radius: 10
 
-            MouseArea
-            {
-                id:clickAreaReply
+            MouseArea {
+                id: clickAreaReply
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
 
-                onClicked:
-                {
+                onClicked: {
                     console.log("Reply clicked")
                     // add reply logic here
                 }
             }
             scale: clickAreaReply.containsMouse ? 1.1 : 1.0
 
-            Behavior on scale
-            {
-                NumberAnimation
-                {
+            Behavior on scale {
+                NumberAnimation {
                     duration: 150
                     easing.type: Easing.InOutQuad
                 }
             }
 
-            Text
-            {
+            Text {
                 id: reply
 
                 anchors.centerIn: parent
@@ -545,8 +499,7 @@ Rectangle
         }
 
         // Forward button
-        Rectangle
-        {
+        Rectangle {
             id: buttonToForward
 
             anchors.left: buttonToReply.right
@@ -561,33 +514,28 @@ Rectangle
             color: "transparent"
             radius: 10
 
-            MouseArea
-            {
-                id:clickAreaForward
+            MouseArea {
+                id: clickAreaForward
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
 
-                onClicked:
-                {
+                onClicked: {
                     console.log("Forward clicked")
                     // add forward logic here
                 }
             }
             scale: clickAreaForward.containsMouse ? 1.1 : 1.0
 
-            Behavior on scale
-            {
-                NumberAnimation
-                {
+            Behavior on scale {
+                NumberAnimation {
                     duration: 150
                     easing.type: Easing.InOutQuad
                 }
             }
 
 
-            Text
-            {
+            Text {
                 id: forward
 
                 anchors.centerIn: parent
@@ -608,8 +556,7 @@ Rectangle
         }
 
         // Archive and Delete button
-        Rectangle
-        {
+        Rectangle {
             id: container_8
             x: 568
 
@@ -623,8 +570,7 @@ Rectangle
             color: "transparent"
 
             // Archive
-            Rectangle
-            {
+            Rectangle {
                 id: buttonToArchiveEmail
 
                 anchors.left: parent.left
@@ -632,33 +578,28 @@ Rectangle
                 width: 18
                 color: "transparent"
                 radius: 10
-                MouseArea
-                {
+                MouseArea {
                     id: clickAreaArchive
                     anchors.fill: parent
 
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
 
-                    onClicked:
-                    {
+                    onClicked: {
                         // MinimizeWindow
                     }
                 }
-                scale: clickAreaArchive.containsMouse ? 1.3: 1.0
+                scale: clickAreaArchive.containsMouse ? 1.3 : 1.0
 
-                Behavior on scale
-                {
-                    NumberAnimation
-                    {
+                Behavior on scale {
+                    NumberAnimation {
                         duration: 150
                         easing.type: Easing.InOutQuad
                     }
                 }
 
 
-                Image
-                {
+                Image {
                     source: "qrc:/pngs/assets/ic_archive.svg"
                     width: 18
                     height: 18
@@ -670,8 +611,7 @@ Rectangle
             }
 
             // Delete
-            Rectangle
-            {
+            Rectangle {
                 id: buttonToDeleteEmail
 
                 anchors.right: parent.right
@@ -680,33 +620,28 @@ Rectangle
                 color: "transparent"
                 radius: 10
 
-                MouseArea
-                {
+                MouseArea {
                     id: clickAreaDelete
                     anchors.fill: parent
 
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
 
-                    onClicked:
-                    {
+                    onClicked: {
                         console.log("INDEX: " + letterIndex)
                         deleteClicked()
                     }
                 }
                 scale: clickAreaDelete.containsMouse ? 1.3 : 1.0
 
-                Behavior on scale
-                {
-                    NumberAnimation
-                    {
+                Behavior on scale {
+                    NumberAnimation {
                         duration: 150
                         easing.type: Easing.InOutQuad
                     }
                 }
                 // TEMP ICON
-                Image
-                {
+                Image {
                     source: "qrc:/pngs/assets/ic_bin.svg"
                     width: 18
                     height: 18

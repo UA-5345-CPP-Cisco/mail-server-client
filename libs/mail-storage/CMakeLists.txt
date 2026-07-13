@@ -16,11 +16,11 @@ add_library(mail_storage
         include/mail_storage/UserRepository.h
 )
 
-if(NOT TARGET SQLite3::SQLite3 AND NOT TARGET SQLite::SQLite3)
+if (NOT TARGET SQLite3::SQLite3 AND NOT TARGET SQLite::SQLite3)
     find_package(SQLite3 QUIET)
-endif()
+endif ()
 
-if(NOT TARGET SQLite3::SQLite3 AND NOT TARGET SQLite::SQLite3)
+if (NOT TARGET SQLite3::SQLite3 AND NOT TARGET SQLite::SQLite3)
     include(FetchContent)
 
     FetchContent_Declare(
@@ -29,28 +29,28 @@ if(NOT TARGET SQLite3::SQLite3 AND NOT TARGET SQLite::SQLite3)
             GIT_TAG v3.49.1
     )
     FetchContent_MakeAvailable(sqlite3)
-endif()
+endif ()
 
 target_include_directories(mail_storage
-    PUBLIC
+        PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-if(TARGET SQLite3::SQLite3)
+if (TARGET SQLite3::SQLite3)
     target_link_libraries(mail_storage
-        PUBLIC
+            PUBLIC
             SQLite3::SQLite3
     )
-elseif(TARGET SQLite::SQLite3)
+elseif (TARGET SQLite::SQLite3)
     target_link_libraries(mail_storage
-        PUBLIC
+            PUBLIC
             SQLite::SQLite3
     )
-else()
+else ()
     message(FATAL_ERROR "SQLite target was not found")
-endif()
+endif ()
 
 target_compile_features(mail_storage
-    PUBLIC
+        PUBLIC
         cxx_std_17
 )

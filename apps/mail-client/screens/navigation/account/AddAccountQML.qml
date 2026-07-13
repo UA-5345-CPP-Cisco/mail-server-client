@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Shapes
 import QtQuick.Effects
 
-Rectangle
-{
+Rectangle {
     id: rootWindow
     implicitWidth: 640
     implicitHeight: 460
@@ -13,8 +12,7 @@ Rectangle
     radius: 14
 
 
-    Rectangle
-    {
+    Rectangle {
         id: backgroundRectangle
         anchors.fill: parent
         color: "#ffffff"
@@ -23,8 +21,7 @@ Rectangle
         border.width: 1
     }
 
-    Rectangle
-    {
+    Rectangle {
         id: closeButtonRectangle
         width: 40
         height: 40
@@ -36,8 +33,7 @@ Rectangle
         color: "transparent"
         z: 10
 
-        Image
-        {
+        Image {
             id: closeIcon
             anchors.centerIn: parent
             source: "qrc:/pngs/assets/ic_close_window_black.svg"
@@ -50,97 +46,81 @@ Rectangle
 
         scale: closeClickArea.containsMouse ? 1.3 : 1.0
 
-        Behavior on scale
-        {
+        Behavior on scale {
             id: closeScaleBehavior
 
-            NumberAnimation
-            {
+            NumberAnimation {
                 id: closeScaleAnimation
                 duration: 150
                 easing.type: Easing.InOutQuad
             }
         }
 
-        MouseArea
-        {
+        MouseArea {
             id: closeClickArea
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
 
-            onClicked:
-            {
+            onClicked: {
                 closeAuthWindow()
             }
         }
     }
 
     // Dynamic screen loader for changing screens
-    Loader
-    {
+    Loader {
         id: contentLoader
         anchors.fill: parent
         sourceComponent: choiceScreenComponent
     }
 
     // Event routing from loaded screens
-    Connections
-    {
+    Connections {
         id: loaderConnections
         target: contentLoader.item
         ignoreUnknownSignals: true
 
         // Handle back navigation
-        function onBackRequested()
-        {
+        function onBackRequested() {
             contentLoader.sourceComponent = choiceScreenComponent
         }
 
         // Handle login submit
-        function onLoginSubmitted(email, password)
-        {
+        function onLoginSubmitted(email, password) {
             //rootWindow.close()
         }
 
         // Handle registration submit
-        function onRegisterSubmitted(name, email, password)
-        {
+        function onRegisterSubmitted(name, email, password) {
             var success = regHandler.registerUser(name, email, password);
 
-            if (success)
-            {
+            if (success) {
                 var firstLetter = avatarInitial(name)
 
                 accountModel.AddAccount(name, email, "", "#3b82f6", firstLetter, true)
                 CurrentUser.Authorize(name, email, "")
 
                 closeAuthWindow()
-            }
-            else
-            {
+            } else {
                 return -1;
             }
         }
     }
 
-    Component
-    {
+    Component {
         id: choiceScreenComponent
 
-        Item
-        {
+        Item {
             id: choiceScreenRootItem
             anchors.fill: parent
 
-            Column
-            {
+            Column {
                 id: mainLayoutColumn
                 anchors.centerIn: parent
                 spacing: 30
 
-                Text
-                {
+                Text {
                     id: mainTitleText
                     text: "Add an Account"
                     font.family: "Segoe UI"
@@ -150,15 +130,13 @@ Rectangle
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
 
-                Row
-                {
+                Row {
                     id: optionsRow
                     spacing: 24
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     // Login selection
-                    Rectangle
-                    {
+                    Rectangle {
                         id: loginSelectionBlock
                         width: 260
                         height: 300
@@ -167,15 +145,13 @@ Rectangle
                         border.width: 1
                         color: "transparent"
 
-                        Column
-                        {
+                        Column {
                             id: loginContentColumn
                             anchors.centerIn: parent
                             spacing: 16
                             width: parent.width - 32
 
-                            Image
-                            {
+                            Image {
                                 id: loginIcon
                                 source: "qrc:/pngs/assets/ic_login.svg"
                                 width: 80
@@ -186,8 +162,7 @@ Rectangle
                                 anchors.horizontalCenter: parent.horizontalCenter
                             }
 
-                            Text
-                            {
+                            Text {
                                 id: loginTitleText
                                 text: "Existing User?"
                                 font.family: "Segoe UI"
@@ -197,8 +172,7 @@ Rectangle
                                 anchors.horizontalCenter: parent.horizontalCenter
                             }
 
-                            Rectangle
-                            {
+                            Rectangle {
                                 id: loginButton
                                 width: 160
                                 height: 44
@@ -206,8 +180,7 @@ Rectangle
                                 color: loginClickArea.containsMouse ? "#0052cc" : "#1a66ff"
                                 anchors.horizontalCenter: parent.horizontalCenter
 
-                                Text
-                                {
+                                Text {
                                     id: loginButtonText
                                     anchors.centerIn: parent
                                     text: "Log In"
@@ -219,34 +192,29 @@ Rectangle
 
                                 scale: loginClickArea.containsMouse ? 1.05 : 1.0
 
-                                Behavior on scale
-                                {
+                                Behavior on scale {
                                     id: loginScaleBehavior
 
-                                    NumberAnimation
-                                    {
+                                    NumberAnimation {
                                         id: loginScaleAnimation
                                         duration: 150
                                         easing.type: Easing.InOutQuad
                                     }
                                 }
 
-                                MouseArea
-                                {
+                                MouseArea {
                                     id: loginClickArea
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
 
-                                    onClicked:
-                                    {
+                                    onClicked: {
                                         contentLoader.source = "LoginQML.qml"
                                     }
                                 }
                             }
 
-                            Text
-                            {
+                            Text {
                                 id: loginDescriptionText
                                 text: "Access your personal \n or work profile"
                                 font.family: "Segoe UI"
@@ -259,8 +227,7 @@ Rectangle
                     }
 
                     // Redister selection
-                    Rectangle
-                    {
+                    Rectangle {
                         id: registerSelectionBlock
                         width: 260
                         height: 300
@@ -269,16 +236,14 @@ Rectangle
                         border.width: 1
                         color: "transparent"
 
-                        Column
-                        {
+                        Column {
                             id: registerContentColumn
                             anchors.centerIn: parent
                             anchors.verticalCenterOffset: -2
                             spacing: 16
                             width: parent.width - 32
 
-                            Image
-                            {
+                            Image {
                                 id: registerIcon
                                 source: "qrc:/pngs/assets/ic_add_account.svg"
                                 width: 64
@@ -289,8 +254,7 @@ Rectangle
                                 anchors.horizontalCenter: parent.horizontalCenter
                             }
 
-                            Text
-                            {
+                            Text {
                                 id: registerTitleText
                                 text: "New User?"
                                 font.family: "Segoe UI"
@@ -300,8 +264,7 @@ Rectangle
                                 anchors.horizontalCenter: parent.horizontalCenter
                             }
 
-                            Rectangle
-                            {
+                            Rectangle {
                                 id: registerButton
                                 width: 160
                                 height: 44
@@ -309,8 +272,7 @@ Rectangle
                                 color: registerClickArea.containsMouse ? "#0052cc" : "#1a66ff"
                                 anchors.horizontalCenter: parent.horizontalCenter
 
-                                Text
-                                {
+                                Text {
                                     id: registerButtonText
                                     anchors.centerIn: parent
                                     text: "Register"
@@ -322,34 +284,29 @@ Rectangle
 
                                 scale: registerClickArea.containsMouse ? 1.05 : 1.0
 
-                                Behavior on scale
-                                {
+                                Behavior on scale {
                                     id: registerScaleBehavior
 
-                                    NumberAnimation
-                                    {
+                                    NumberAnimation {
                                         id: registerScaleAnimation
                                         duration: 150
                                         easing.type: Easing.InOutQuad
                                     }
                                 }
 
-                                MouseArea
-                                {
+                                MouseArea {
                                     id: registerClickArea
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
 
-                                    onClicked:
-                                    {
+                                    onClicked: {
                                         contentLoader.source = "RegistrationQML.qml"
                                     }
                                 }
                             }
 
-                            Text
-                            {
+                            Text {
                                 id: registerDescriptionText
                                 text: "Create a new account"
                                 font.family: "Segoe UI"

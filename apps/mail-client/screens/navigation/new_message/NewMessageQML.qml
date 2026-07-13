@@ -2,8 +2,7 @@ import QtQuick
 import QtQuick.Shapes
 import QtQuick.Controls
 
-Rectangle
-{
+Rectangle {
     id: newMessageQml
     implicitHeight: 398
     implicitWidth: 420
@@ -17,17 +16,16 @@ Rectangle
     property string newText: ""
 
     signal draftFinished(string index, string subject, string recipient, string text)
+
     signal draftChanged(string index, string subject, string recipient, string text)
 
     clip: true
     color: "#fcf3e6"
     radius: 14
 
-    MouseArea
-    {
+    MouseArea {
         anchors.fill: parent
-        onClicked:
-        {
+        onClicked: {
             newMessageQml.forceActiveFocus()
         }
     }
@@ -214,8 +212,7 @@ Rectangle
                 }
 
                 //button to close window
-                Rectangle
-                {
+                Rectangle {
                     id: buttonToCloseWindow
                     height: 22
                     width: 22
@@ -223,42 +220,35 @@ Rectangle
 
                     color: closeMessageBoxClickArea.pressed ? "#ffdede" : "transparent"
 
-                    MouseArea
-                    {
+                    MouseArea {
                         id: closeMessageBoxClickArea
                         anchors.fill: parent
 
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
 
-                        onClicked:
-                        {
-                            if (subjectTextField.text.trim() === "" && recipientTextField.text.trim() === "" && messageBodyTextField.text.trim() === "")
-                            {
+                        onClicked: {
+                            if (subjectTextField.text.trim() === "" && recipientTextField.text.trim() === "" && messageBodyTextField.text.trim() === "") {
                                 closeMessageWindow()
-                            }
-                            else
-                            {
+                            } else {
                                 let subject_text = subjectTextField.text.trim()
                                 let recipient_text = recipientTextField.text.trim()
                                 let message_text = messageBodyTextField.text.trim()
 
-                            MessageComposer.SaveDraft(
-                                CurrentUser.username,
-                                CurrentUser.email,
+                                MessageComposer.SaveDraft(
+                                    CurrentUser.username,
+                                    CurrentUser.email,
                                     recipient_text,
                                     subject_text,
                                     message_text
                                 )
 
-                                if (isDraft)
-                                {
+                                if (isDraft) {
                                     draftChanged(newIndex, subject_text, recipient_text, message_text)
-                                } else
-                                {
+                                } else {
                                     emailsModel.AddData(
                                         false, false, true,
-                                    subject_text, CurrentUser.username,
+                                        subject_text, CurrentUser.username,
                                         recipient_text, message_text, ""
                                     )
                                 }
@@ -267,8 +257,7 @@ Rectangle
                         }
                     }
 
-                    Rectangle
-                    {
+                    Rectangle {
                         id: closeMessageBoxIcon
 
                         anchors.centerIn: parent
@@ -281,17 +270,14 @@ Rectangle
 
                         scale: closeMessageBoxClickArea.containsMouse ? 1.5 : 1.0
 
-                        Behavior on scale
-                        {
-                            NumberAnimation
-                            {
+                        Behavior on scale {
+                            NumberAnimation {
                                 duration: 150
                                 easing.type: Easing.InOutQuad
                             }
                         }
 
-                        Image
-                        {
+                        Image {
                             source: "qrc:/pngs/assets/ic_close_window.svg"
                             width: 14
                             height: 14
@@ -307,8 +293,7 @@ Rectangle
     }
 
     //recipient
-    Rectangle
-    {
+    Rectangle {
         id: recipientWrapper
         y: 38
         width: parent.width
@@ -318,8 +303,7 @@ Rectangle
         border.color: "#e5e7eb"
         border.width: 1
 
-        Rectangle
-        {
+        Rectangle {
             id: recipientContainer
             anchors.left: parent.left
             anchors.right: parent.right
@@ -329,8 +313,7 @@ Rectangle
             height: 19
             color: "transparent"
 
-            TextField
-            {
+            TextField {
                 id: recipientTextField
                 anchors.fill: parent
                 color: "#1f2937"
@@ -338,15 +321,16 @@ Rectangle
                 font.family: "Segoe UI"
                 placeholderText: "To"
                 placeholderTextColor: "#99a1af"
-                background: Item {}
+                background: Item {
+                }
                 leftPadding: 0
                 topPadding: 0
                 bottomPadding: 0
                 text: newRecipient
-                cursorDelegate: Item {}
+                cursorDelegate: Item {
+                }
 
-                Rectangle
-                {
+                Rectangle {
                     id: customCursorRecipient
                     width: 1
                     color: "#1f2937"
@@ -355,16 +339,20 @@ Rectangle
                     x: parent.cursorRectangle.x
                     visible: parent.activeFocus
 
-                    Behavior on x
-                    {
-                        NumberAnimation { duration: 80; easing.type: Easing.OutCubic }
+                    Behavior on x {
+                        NumberAnimation {
+                            duration: 80; easing.type: Easing.OutCubic
+                        }
                     }
-                    SequentialAnimation on opacity
-                    {
+                    SequentialAnimation on opacity {
                         running: parent.activeFocus
                         loops: Animation.Infinite
-                        NumberAnimation { to: 0; duration: 400; easing.type: Easing.InOutSine }
-                        NumberAnimation { to: 1; duration: 400; easing.type: Easing.InOutSine }
+                        NumberAnimation {
+                            to: 0; duration: 400; easing.type: Easing.InOutSine
+                        }
+                        NumberAnimation {
+                            to: 1; duration: 400; easing.type: Easing.InOutSine
+                        }
                     }
                 }
             }
@@ -372,8 +360,7 @@ Rectangle
     }
 
     //subject field
-    Rectangle
-    {
+    Rectangle {
         id: subjectWrapper
         y: 72
         width: parent.width
@@ -383,8 +370,7 @@ Rectangle
         border.color: "#e5e7eb"
         border.width: 1
 
-        Rectangle
-        {
+        Rectangle {
             id: subjectContainer
             anchors.left: parent.left
             anchors.right: parent.right
@@ -394,8 +380,7 @@ Rectangle
             height: 19
             color: "transparent"
 
-            TextField
-            {
+            TextField {
                 id: subjectTextField
                 anchors.fill: parent
                 color: "#1f2937"
@@ -404,15 +389,16 @@ Rectangle
                 font.weight: Font.Normal
                 placeholderText: "Subject"
                 placeholderTextColor: "#99a1af"
-                background: Item {}
+                background: Item {
+                }
                 text: newSubject
                 leftPadding: 0
                 topPadding: 0
                 bottomPadding: 0
-                cursorDelegate: Item {}
+                cursorDelegate: Item {
+                }
 
-                Rectangle
-                {
+                Rectangle {
                     id: custonCursorSubject
                     width: 1
                     color: "#1f2937"
@@ -421,16 +407,20 @@ Rectangle
                     x: parent.cursorRectangle.x
                     visible: parent.activeFocus
 
-                    Behavior on x
-                    {
-                        NumberAnimation { duration: 80; easing.type: Easing.OutCubic }
+                    Behavior on x {
+                        NumberAnimation {
+                            duration: 80; easing.type: Easing.OutCubic
+                        }
                     }
-                    SequentialAnimation on opacity
-                    {
+                    SequentialAnimation on opacity {
                         running: parent.activeFocus
                         loops: Animation.Infinite
-                        NumberAnimation { to: 0; duration: 500; easing.type: Easing.InOutSine }
-                        NumberAnimation { to: 1; duration: 500; easing.type: Easing.InOutSine }
+                        NumberAnimation {
+                            to: 0; duration: 500; easing.type: Easing.InOutSine
+                        }
+                        NumberAnimation {
+                            to: 1; duration: 500; easing.type: Easing.InOutSine
+                        }
                     }
                 }
             }
@@ -438,8 +428,7 @@ Rectangle
     }
 
     //message body field
-    Rectangle
-    {
+    Rectangle {
         id: messageBodyWrapper
         y: 107
         height: 233
@@ -449,15 +438,13 @@ Rectangle
         border.color: "#e5e7eb"
         border.width: 1
 
-        Rectangle
-        {
+        Rectangle {
             id: messageBodyContainer
             anchors.fill: parent
             anchors.margins: 12
             color: "transparent"
 
-            TextArea
-            {
+            TextArea {
                 id: messageBodyTextField
                 anchors.fill: parent
                 color: "#1f2937"
@@ -466,15 +453,16 @@ Rectangle
                 placeholderTextColor: "#99a1af"
                 wrapMode: Text.Wrap
                 font.pixelSize: 14
-                background: Item {}
+                background: Item {
+                }
                 leftPadding: 0
                 topPadding: 0
                 bottomPadding: 0
                 text: newText
-                cursorDelegate: Item {}
+                cursorDelegate: Item {
+                }
 
-                Rectangle
-                {
+                Rectangle {
                     id: customCursorMessageBody
                     width: 1
                     color: "#1f2937"
@@ -483,28 +471,32 @@ Rectangle
                     y: messageBodyTextField.cursorRectangle.y
                     visible: messageBodyTextField.activeFocus
 
-                    Behavior on x
-                    {
-                        NumberAnimation { duration: 80; easing.type: Easing.OutCubic }
+                    Behavior on x {
+                        NumberAnimation {
+                            duration: 80; easing.type: Easing.OutCubic
+                        }
                     }
-                    Behavior on y
-                    {
-                        NumberAnimation { duration: 80; easing.type: Easing.OutCubic }
+                    Behavior on y {
+                        NumberAnimation {
+                            duration: 80; easing.type: Easing.OutCubic
+                        }
                     }
-                    SequentialAnimation on opacity
-                    {
+                    SequentialAnimation on opacity {
                         running: parent.activeFocus
                         loops: Animation.Infinite
-                        NumberAnimation { to: 0; duration: 500; easing.type: Easing.InOutSine }
-                        NumberAnimation { to: 1; duration: 500; easing.type: Easing.InOutSine }
+                        NumberAnimation {
+                            to: 0; duration: 500; easing.type: Easing.InOutSine
+                        }
+                        NumberAnimation {
+                            to: 1; duration: 500; easing.type: Easing.InOutSine
+                        }
                     }
                 }
             }
         }
     }
     //footer
-    Rectangle
-    {
+    Rectangle {
         id: footerNavigation
         y: 340
         width: parent.width
@@ -512,8 +504,7 @@ Rectangle
         color: "transparent"
 
         // Send
-        Rectangle
-        {
+        Rectangle {
             id: buttonToSentMessage
             x: 12
             anchors.verticalCenter: parent.verticalCenter
@@ -523,63 +514,53 @@ Rectangle
             radius: 14
             scale: sentClickArea.containsMouse ? 1.05 : 1.0
 
-            Behavior on scale
-            {
-                NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+            Behavior on scale {
+                NumberAnimation {
+                    duration: 150; easing.type: Easing.InOutQuad
+                }
             }
 
 
-            MouseArea
-            {
+            MouseArea {
                 id: sentClickArea
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onClicked:
-                {
-                    if (recipientTextField.text === "")
-                    {
+                onClicked: {
+                    if (recipientTextField.text === "") {
                         recipientTextField.text = "Enter Recipient!"
-                    }
-                    else
-                    {
+                    } else {
                         let recipient_text = recipientTextField.text.trim() === "" ? "empty" : recipientTextField.text
-                        let subject_text   = subjectTextField.text.trim()   === "" ? "empty" : subjectTextField.text
-                        let message_text   = messageBodyTextField.text.trim()   === "" ? "empty" : messageBodyTextField.text
+                        let subject_text = subjectTextField.text.trim() === "" ? "empty" : subjectTextField.text
+                        let message_text = messageBodyTextField.text.trim() === "" ? "empty" : messageBodyTextField.text
 
-                        if(recipient_text === "inboxtest")
-                        {
+                        if (recipient_text === "inboxtest") {
                             if (!isDraft && MessageComposer.SendMessage(
-                                        CurrentUser.username,
-                                        CurrentUser.email,
-                                        recipientTextField.text.trim(),
-                                        subject_text,
-                                        message_text,
-                                        true))
-                            {
+                                CurrentUser.username,
+                                CurrentUser.email,
+                                recipientTextField.text.trim(),
+                                subject_text,
+                                message_text,
+                                true)) {
                                 emailsModel.AddData(
                                     true, false, false,
                                     subject_text, CurrentUser.username,
                                     recipient_text, message_text, ""
                                 )
                             }
-                        }
-                        else if (!isDraft && MessageComposer.SendMessage(
-                                    CurrentUser.username,
-                                    CurrentUser.email,
-                                    recipientTextField.text.trim(),
-                                    subject_text,
-                                    message_text,
-                                    false))
-                        {
+                        } else if (!isDraft && MessageComposer.SendMessage(
+                            CurrentUser.username,
+                            CurrentUser.email,
+                            recipientTextField.text.trim(),
+                            subject_text,
+                            message_text,
+                            false)) {
                             emailsModel.AddData(
                                 false, true, false,
                                 subject_text, CurrentUser.username,
                                 recipient_text, message_text, ""
                             )
-                        }
-                        else
-                        {
+                        } else {
                             draftFinished(newIndex, subject_text, recipient_text, message_text)
                         }
                         messageBodyTextField.clear()
@@ -589,8 +570,7 @@ Rectangle
                 }
             }
 
-            Text
-            {
+            Text {
                 id: sentButtonText
                 anchors.centerIn: parent
                 color: "#ffffff"
@@ -603,8 +583,7 @@ Rectangle
         }
 
         // Delete
-        Rectangle
-        {
+        Rectangle {
             id: buttonToDelete
             x: 85
             anchors.verticalCenter: parent.verticalCenter
@@ -614,27 +593,25 @@ Rectangle
             radius: 4
             scale: deleteClickArea.containsMouse ? 1.2 : 1.0
 
-            Behavior on scale
-            {
-                NumberAnimation { duration: 150; easing.type: Easing.InOutQuad }
+            Behavior on scale {
+                NumberAnimation {
+                    duration: 150; easing.type: Easing.InOutQuad
+                }
             }
 
-            MouseArea
-            {
+            MouseArea {
                 id: deleteClickArea
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onClicked:
-                {
+                onClicked: {
                     messageBodyTextField.clear()
                     recipientTextField.clear()
                     subjectTextField.clear()
                 }
             }
 
-            Rectangle
-            {
+            Rectangle {
                 id: deleteButtonIcon
                 anchors.centerIn: parent
                 height: 16
@@ -642,8 +619,7 @@ Rectangle
                 clip: true
                 color: "transparent"
 
-                Image
-                {
+                Image {
                     source: "qrc:/pngs/assets/ic_bin.svg"
                     width: 16
                     height: 16

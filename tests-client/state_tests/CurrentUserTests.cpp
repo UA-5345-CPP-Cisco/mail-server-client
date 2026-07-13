@@ -56,8 +56,7 @@ TEST_F(CurrentUserTest, NormalAvatarPath)
   ASSERT_TRUE(temp_file.open());
   QString avatar_path = temp_file.fileName();
   user.UpdateAvatarPath(avatar_path);
-  EXPECT_TRUE(
-    user.avatar_path().endsWith("current_user_avatar.png"));
+  EXPECT_TRUE(user.avatar_path().endsWith("current_user_avatar.png"));
 }
 
 TEST_F(CurrentUserTest, StripsFilePrefixFromAvatarPath)

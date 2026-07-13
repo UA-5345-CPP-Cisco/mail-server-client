@@ -8,11 +8,11 @@ Item {
     implicitHeight: 350
 
     signal backRequested()
+
     signal registerSubmitted(string name, string email, string password)
 
     // Button to go back to previous screen
-    Rectangle
-    {
+    Rectangle {
         id: backButtonRectangle
         width: 40
         height: 40
@@ -22,8 +22,7 @@ Item {
         color: "transparent"
         z: 10
 
-        Image
-        {
+        Image {
             id: backIconImage
             anchors.centerIn: parent
             source: "qrc:/pngs/assets/ic_button_back.svg"
@@ -36,41 +35,35 @@ Item {
 
         scale: backClickArea.containsMouse ? 1.3 : 1.0
 
-        Behavior on scale
-        {
+        Behavior on scale {
             id: backScaleBehavior
 
-            NumberAnimation
-            {
+            NumberAnimation {
                 id: backScaleAnimation
                 duration: 150
                 easing.type: Easing.InOutQuad
             }
         }
 
-        MouseArea
-        {
+        MouseArea {
             id: backClickArea
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
 
-            onClicked:
-            {
+            onClicked: {
                 rootItem.backRequested()
             }
         }
     }
 
-    Column
-    {
+    Column {
         id: mainContentColumn
         anchors.centerIn: parent
         spacing: 20
         width: 320
 
-        Text
-        {
+        Text {
             id: titleText
             text: "Register"
             font.family: "Segoe UI"
@@ -80,8 +73,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
-        Text
-        {
+        Text {
             id: descriptionText
             text: "Please enter your details to create a new account"
             font.family: "Segoe UI"
@@ -92,8 +84,7 @@ Item {
         }
 
         // Name field for register screen
-        TextField
-        {
+        TextField {
             id: fullNameTextField
             width: parent.width
             placeholderText: "Full name"
@@ -104,10 +95,10 @@ Item {
             rightPadding: 16
             topPadding: 12
             bottomPadding: 12
-            cursorDelegate: Item {}
+            cursorDelegate: Item {
+            }
 
-            background: Rectangle
-            {
+            background: Rectangle {
                 id: fullNameBackgroundRectangle
                 radius: 8
                 border.color: fullNameTextField.activeFocus ? "#1a66ff" : "#e5e7eb"
@@ -115,8 +106,7 @@ Item {
                 color: "#ffffff"
             }
 
-            Rectangle
-            {
+            Rectangle {
                 id: nameCustomCursorRectangle
                 width: 1.5
                 color: "#1f2937"
@@ -125,26 +115,29 @@ Item {
                 x: parent.length > 0 ? parent.cursorRectangle.x : 14
                 visible: parent.activeFocus
 
-                Behavior on x
-                {
+                Behavior on x {
                     id: nameCursorXBehavior
-                    NumberAnimation { id: nameCursorXAnimation; duration: 80; easing.type: Easing.OutCubic }
+                    NumberAnimation {
+                        id: nameCursorXAnimation; duration: 80; easing.type: Easing.OutCubic
+                    }
                 }
 
-                SequentialAnimation on opacity
-                {
+                SequentialAnimation on opacity {
                     id: nameCursorOpacityAnimation
                     running: parent.activeFocus
                     loops: Animation.Infinite
-                    NumberAnimation { id: nameCursorFadeOut; to: 0; duration: 400; easing.type: Easing.InOutSine }
-                    NumberAnimation { id: nameCursorFadeIn; to: 1; duration: 400; easing.type: Easing.InOutSine }
+                    NumberAnimation {
+                        id: nameCursorFadeOut; to: 0; duration: 400; easing.type: Easing.InOutSine
+                    }
+                    NumberAnimation {
+                        id: nameCursorFadeIn; to: 1; duration: 400; easing.type: Easing.InOutSine
+                    }
                 }
             }
         }
 
         // Email field for register screen
-        TextField
-        {
+        TextField {
             id: emailTextField
             width: parent.width
             placeholderText: "Email address"
@@ -155,10 +148,10 @@ Item {
             rightPadding: 16
             topPadding: 12
             bottomPadding: 12
-            cursorDelegate: Item {}
+            cursorDelegate: Item {
+            }
 
-            background: Rectangle
-            {
+            background: Rectangle {
                 id: emailBackgroundRectangle
                 radius: 8
                 border.color: emailTextField.activeFocus ? "#1a66ff" : "#e5e7eb"
@@ -166,8 +159,7 @@ Item {
                 color: "#ffffff"
             }
 
-            Rectangle
-            {
+            Rectangle {
                 id: emailCustomCursorRectangle
                 width: 1.5
                 color: "#1f2937"
@@ -176,26 +168,29 @@ Item {
                 x: parent.length > 0 ? parent.cursorRectangle.x : 14
                 visible: parent.activeFocus
 
-                Behavior on x
-                {
+                Behavior on x {
                     id: emailCursorXBehavior
-                    NumberAnimation { id: emailCursorXAnimation; duration: 80; easing.type: Easing.OutCubic }
+                    NumberAnimation {
+                        id: emailCursorXAnimation; duration: 80; easing.type: Easing.OutCubic
+                    }
                 }
 
-                SequentialAnimation on opacity
-                {
+                SequentialAnimation on opacity {
                     id: emailCursorOpacityAnimation
                     running: parent.activeFocus
                     loops: Animation.Infinite
-                    NumberAnimation { id: emailCursorFadeOut; to: 0; duration: 400; easing.type: Easing.InOutSine }
-                    NumberAnimation { id: emailCursorFadeIn; to: 1; duration: 400; easing.type: Easing.InOutSine }
+                    NumberAnimation {
+                        id: emailCursorFadeOut; to: 0; duration: 400; easing.type: Easing.InOutSine
+                    }
+                    NumberAnimation {
+                        id: emailCursorFadeIn; to: 1; duration: 400; easing.type: Easing.InOutSine
+                    }
                 }
             }
         }
 
         // Pasword field for register screen
-        TextField
-        {
+        TextField {
             id: passwordTextField
             width: parent.width
             placeholderText: "Password"
@@ -207,10 +202,10 @@ Item {
             rightPadding: 16
             topPadding: 12
             bottomPadding: 12
-            cursorDelegate: Item {}
+            cursorDelegate: Item {
+            }
 
-            background: Rectangle
-            {
+            background: Rectangle {
                 id: passwordBackgroundRectangle
                 radius: 8
                 border.color: passwordTextField.activeFocus ? "#1a66ff" : "#e5e7eb"
@@ -218,8 +213,7 @@ Item {
                 color: "#ffffff"
             }
 
-            Rectangle
-            {
+            Rectangle {
                 id: passwordCustomCursorRectangle
                 width: 1.5
                 color: "#1f2937"
@@ -228,26 +222,29 @@ Item {
                 x: parent.length > 0 ? parent.cursorRectangle.x : 14
                 visible: parent.activeFocus
 
-                Behavior on x
-                {
+                Behavior on x {
                     id: passwordCursorXBehavior
-                    NumberAnimation { id: passwordCursorXAnimation; duration: 80; easing.type: Easing.OutCubic }
+                    NumberAnimation {
+                        id: passwordCursorXAnimation; duration: 80; easing.type: Easing.OutCubic
+                    }
                 }
 
-                SequentialAnimation on opacity
-                {
+                SequentialAnimation on opacity {
                     id: passwordCursorOpacityAnimation
                     running: parent.activeFocus
                     loops: Animation.Infinite
-                    NumberAnimation { id: passwordCursorFadeOut; to: 0; duration: 400; easing.type: Easing.InOutSine }
-                    NumberAnimation { id: passwordCursorFadeIn; to: 1; duration: 400; easing.type: Easing.InOutSine }
+                    NumberAnimation {
+                        id: passwordCursorFadeOut; to: 0; duration: 400; easing.type: Easing.InOutSine
+                    }
+                    NumberAnimation {
+                        id: passwordCursorFadeIn; to: 1; duration: 400; easing.type: Easing.InOutSine
+                    }
                 }
             }
         }
 
         // Basic register
-        Rectangle
-        {
+        Rectangle {
             id: registerButtonRectangle
             width: parent.width
             height: 44
@@ -256,20 +253,21 @@ Item {
 
             scale: registerClickArea.containsMouse ? 1.03 : 1.0
 
-            Behavior on scale
-            {
+            Behavior on scale {
                 id: registerScaleBehavior
-                NumberAnimation { id: registerScaleAnimation; duration: 150; easing.type: Easing.InOutQuad }
+                NumberAnimation {
+                    id: registerScaleAnimation; duration: 150; easing.type: Easing.InOutQuad
+                }
             }
 
-            Behavior on color
-            {
+            Behavior on color {
                 id: registerColorBehavior
-                ColorAnimation { id: registerColorAnimation; duration: 150 }
+                ColorAnimation {
+                    id: registerColorAnimation; duration: 150
+                }
             }
 
-            Text
-            {
+            Text {
                 id: registerButtonText
                 anchors.centerIn: parent
                 text: "Register"
@@ -279,23 +277,20 @@ Item {
                 font.weight: Font.Bold
             }
 
-            MouseArea
-            {
+            MouseArea {
                 id: registerClickArea
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
 
-                onClicked:
-                {
+                onClicked: {
                     rootItem.registerSubmitted(fullNameTextField.text, emailTextField.text, passwordTextField.text)
                 }
             }
         }
 
         // Button for registration through Google
-        Rectangle
-        {
+        Rectangle {
             id: googleRegisterButtonRectangle
             width: parent.width
             height: 44
@@ -306,26 +301,26 @@ Item {
 
             scale: googleClickArea.containsMouse ? 1.03 : 1.0
 
-            Behavior on scale
-            {
+            Behavior on scale {
                 id: googleScaleBehavior
-                NumberAnimation { id: googleScaleAnimation; duration: 150; easing.type: Easing.InOutQuad }
+                NumberAnimation {
+                    id: googleScaleAnimation; duration: 150; easing.type: Easing.InOutQuad
+                }
             }
 
-            Behavior on color
-            {
+            Behavior on color {
                 id: googleColorBehavior
-                ColorAnimation { id: googleColorAnimation; duration: 150 }
+                ColorAnimation {
+                    id: googleColorAnimation; duration: 150
+                }
             }
 
-            Row
-            {
+            Row {
                 id: googleContentRow
                 anchors.centerIn: parent
                 spacing: 10
 
-                Image
-                {
+                Image {
                     id: googleIconImage
                     width: 20
                     height: 20
@@ -335,8 +330,7 @@ Item {
                     fillMode: Image.PreserveAspectFit
                 }
 
-                Text
-                {
+                Text {
                     id: googleButtonText
                     anchors.verticalCenter: parent.verticalCenter
                     text: "Register with Google"
@@ -347,15 +341,13 @@ Item {
                 }
             }
 
-            MouseArea
-            {
+            MouseArea {
                 id: googleClickArea
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
 
-                onClicked:
-                {
+                onClicked: {
                     // method
                 }
             }

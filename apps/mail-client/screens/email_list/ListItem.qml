@@ -3,8 +3,7 @@ import QtQuick.Effects
 import QtQuick.Shapes
 import QtQuick.Controls
 
-Rectangle
-{
+Rectangle {
     id: root
     height: 92
 
@@ -18,21 +17,21 @@ Rectangle
     property var searchModel: null
 
     signal openRequested(string theme, string name, string sendTo, string content, string time, bool starred)
-        signal starredClicked
-        signal deleteClicked
+
+        signal
+    starredClicked
+        signal
+    deleteClicked
 
     color: "#ffffff"
 
-    Behavior on color
-    {
-        ColorAnimation
-        {
+    Behavior on color {
+        ColorAnimation {
             duration: 150
             easing.type: Easing.OutCubic
         }
     }
-    MouseArea
-    {
+    MouseArea {
         anchors.fill: parent
         hoverEnabled: true
         propagateComposedEvents: true
@@ -42,41 +41,35 @@ Rectangle
         onExited: root.color = "#ffffff"
         onPressed: root.color = "#f3f4f6"
         onClicked: mouse => {
-            if (mouse.button === Qt.LeftButton)
-            {
+            if (mouse.button === Qt.LeftButton) {
                 root.color = containsMouse ? "#f9fafb" : "#ffffff"
                 var starPos = favouriteButtonContainer.mapToItem(root, 0, 0)
                 var inStarZone = (mouse.x >= starPos.x - 8
                     && mouse.x <= starPos.x + favouriteButtonContainer.width + 8
                     && mouse.y >= starPos.y - 8 && mouse.y
                     <= starPos.y + favouriteButtonContainer.height + 8)
-                if (!inStarZone)
-                {
+                if (!inStarZone) {
                     root.openRequested(root.theme, root.name,
                         root.sendTo, root.content,
                         root.time, root.starred)
                 }
-            } else if (mouse.button === Qt.RightButton)
-            {
+            } else if (mouse.button === Qt.RightButton) {
                 contextMenu.popup()
             }
         }
         onCanceled: root.color = "#ffffff"
     }
-    Menu
-    {
+    Menu {
         id: contextMenu
 
-        palette
-        {
+        palette {
             base: "#ffffff"
             text: "#1f2937"
             highlight: "#f3f4f6"
             highlightedText: "#1f2937"
         }
 
-        background: Rectangle
-        {
+        background: Rectangle {
             implicitWidth: 200
             implicitHeight: 40
             color: "#ffffff"
@@ -85,15 +78,13 @@ Rectangle
             border.width: 1
         }
 
-        delegate: MenuItem
-        {
+        delegate: MenuItem {
             id: menuItem
             implicitWidth: 200
             implicitHeight: 36
             padding: 0
 
-            contentItem: Text
-            {
+            contentItem: Text {
                 text: menuItem.text
                 color: menuItem.hovered ? "#1f2937" : "#6b7280"
                 font.pixelSize: 13
@@ -101,44 +92,37 @@ Rectangle
                 verticalAlignment: Text.AlignVCenter
             }
 
-            background: Rectangle
-            {
+            background: Rectangle {
                 color: menuItem.hovered ? "#f3f4f6" : "transparent"
                 radius: 4
                 anchors.margins: 4
             }
         }
 
-        MenuItem
-        {
+        MenuItem {
             text: "Copy"
-            onTriggered:
-            {
+            onTriggered: {
 
             }
         }
 
-        MenuSeparator
-        {
+        MenuSeparator {
             padding: 4
-            contentItem: Rectangle
-            {
+            contentItem: Rectangle {
                 implicitWidth: 200
                 implicitHeight: 1
                 color: "#e5e7eb"
             }
         }
 
-        MenuItem
-        {
+        MenuItem {
             text: "Delete"
             onClicked: root.deleteClicked()
         }
     }
 
     // Bottom border
-    Rectangle
-    {
+    Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
@@ -148,8 +132,7 @@ Rectangle
 
     Rectangle {
         id: itemContainer
-        anchors
-        {
+        anchors {
             left: parent.left
             right: parent.right
             top: parent.top
@@ -159,8 +142,7 @@ Rectangle
         color: "transparent"
 
         // Star icon
-        Rectangle
-        {
+        Rectangle {
             id: favouriteButtonContainer
             height: 17
             width: 15
@@ -173,25 +155,21 @@ Rectangle
                 cursorShape: Qt.PointingHandCursor
 
                 z: 10
-                onClicked:
-                {
+                onClicked: {
                     root.starred = !root.starred
                     root.starredClicked()
                 }
             }
             scale: favouriteButtonClickArea.containsMouse ? 1.1 : 1.0
 
-            Behavior on scale
-            {
-                NumberAnimation
-                {
+            Behavior on scale {
+                NumberAnimation {
                     duration: 150
                     easing.type: Easing.InOutQuad
                 }
             }
 
-            Rectangle
-            {
+            Rectangle {
                 id: favouriteButton
                 y: 2
                 height: 18
@@ -199,8 +177,7 @@ Rectangle
                 clip: true
                 color: "transparent"
 
-                Image
-                {
+                Image {
                     source: starred ? "qrc:/pngs/assets/ic_star_active.svg" : "qrc:/pngs/assets/ic_star.svg"
                     width: 18
                     height: 18
@@ -213,8 +190,7 @@ Rectangle
         }
 
         // Content
-        Rectangle
-        {
+        Rectangle {
             id: contentContainer
             anchors.left: favouriteButtonContainer.right
             anchors.leftMargin: 8
@@ -222,8 +198,7 @@ Rectangle
             height: 60
             color: "transparent"
 
-            Rectangle
-            {
+            Rectangle {
                 id: headerContainer
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -231,8 +206,7 @@ Rectangle
                 clip: true
                 color: "transparent"
 
-                Rectangle
-                {
+                Rectangle {
                     id: nameContainer
                     anchors.left: parent.left
                     anchors.right: timeContainer.left
@@ -240,8 +214,7 @@ Rectangle
                     clip: true
                     color: "transparent"
 
-                    Text
-                    {
+                    Text {
                         id: nameText
                         height: 20
                         width: parent.width
@@ -262,13 +235,11 @@ Rectangle
                         maximumLineCount: 1
                     }
 
-                    HoverHandler
-                    {
+                    HoverHandler {
                         id: nameHover
                     }
 
-                    EmailToolTip
-                    {
+                    EmailToolTip {
                         visible: nameHover.hovered && (nameText.contentWidth > nameText.width)
                         text: name
                         x: 0
@@ -276,8 +247,7 @@ Rectangle
                     }
                 }
 
-                Rectangle
-                {
+                Rectangle {
                     id: timeContainer
                     anchors.right: parent.right
                     anchors.rightMargin: 0
@@ -286,8 +256,7 @@ Rectangle
                     width: timeText.implicitWidth
                     color: "transparent"
 
-                    Text
-                    {
+                    Text {
                         id: timeText
                         anchors.fill: parent
                         color: "#6a7282"
@@ -302,8 +271,7 @@ Rectangle
                 }
             }
 
-            Rectangle
-            {
+            Rectangle {
                 id: themeContainer
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -312,8 +280,7 @@ Rectangle
                 clip: true
                 color: "transparent"
 
-                Text
-                {
+                Text {
                     id: themeText
                     height: 20
                     width: parent.width
@@ -334,13 +301,11 @@ Rectangle
                     maximumLineCount: 1
                 }
 
-                HoverHandler
-                {
+                HoverHandler {
                     id: themeHover
                 }
 
-                EmailToolTip
-                {
+                EmailToolTip {
                     visible: themeHover.hovered
                         && (themeText.contentWidth > themeText.width)
                     text: theme
@@ -349,8 +314,7 @@ Rectangle
                 }
             }
 
-            Rectangle
-            {
+            Rectangle {
                 id: previewContainer
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -359,8 +323,7 @@ Rectangle
                 clip: true
                 color: "transparent"
 
-                Text
-                {
+                Text {
                     id: previewText
                     height: 16
                     width: parent.width
@@ -381,13 +344,11 @@ Rectangle
                     maximumLineCount: 1
                 }
 
-                HoverHandler
-                {
+                HoverHandler {
                     id: previewHover
                 }
 
-                EmailToolTip
-                {
+                EmailToolTip {
                     visible: previewHover.hovered
                     text: content
                     x: 0

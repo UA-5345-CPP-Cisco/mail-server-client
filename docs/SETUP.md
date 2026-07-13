@@ -4,7 +4,7 @@ This guide provides a step-by-step instruction for preparing your environment fo
 
 In case of errors or specific moments please open an issue with description of problem.
 
-## Prerequisites 
+## Prerequisites
 
 - C++17
 - CMake >= 3.20

@@ -8,11 +8,11 @@ Item {
     implicitHeight: 350
 
     signal backRequested()
+
     signal loginSubmitted(string email, string password)
 
     // Button to go back to previous screen
-    Rectangle
-    {
+    Rectangle {
         id: backButtonRectangle
         width: 40
         height: 40
@@ -22,8 +22,7 @@ Item {
         color: "transparent"
         z: 10
 
-        Image
-        {
+        Image {
             id: backIconImage
             anchors.centerIn: parent
             source: "qrc:/pngs/assets/ic_button_back.svg"
@@ -36,41 +35,35 @@ Item {
 
         scale: backClickArea.containsMouse ? 1.3 : 1.0
 
-        Behavior on scale
-        {
+        Behavior on scale {
             id: backScaleBehavior
 
-            NumberAnimation
-            {
+            NumberAnimation {
                 id: backScaleAnimation
                 duration: 150
                 easing.type: Easing.InOutQuad
             }
         }
 
-        MouseArea
-        {
+        MouseArea {
             id: backClickArea
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
 
-            onClicked:
-            {
+            onClicked: {
                 rootItem.backRequested()
             }
         }
     }
 
-    Column
-    {
+    Column {
         id: mainContentColumn
         anchors.centerIn: parent
         spacing: 20
         width: 320
 
-        Text
-        {
+        Text {
             id: titleText
             text: "Log In"
             font.family: "Segoe UI"
@@ -80,8 +73,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
-        Text
-        {
+        Text {
             id: descriptionText
             text: "Please enter your details to sign in"
             font.family: "Segoe UI"
@@ -92,8 +84,7 @@ Item {
         }
 
         // Email field for login screen
-        TextField
-        {
+        TextField {
             id: emailTextField
             width: parent.width
             placeholderText: "Email address"
@@ -104,10 +95,10 @@ Item {
             rightPadding: 16
             topPadding: 12
             bottomPadding: 12
-            cursorDelegate: Item {}
+            cursorDelegate: Item {
+            }
 
-            background: Rectangle
-            {
+            background: Rectangle {
                 id: emailBackgroundRectangle
                 radius: 8
                 border.color: emailTextField.activeFocus ? "#1a66ff" : "#e5e7eb"
@@ -115,8 +106,7 @@ Item {
                 color: "#ffffff"
             }
 
-            Rectangle
-            {
+            Rectangle {
                 id: emailCustomCursorRectangle
                 width: 1.5
                 color: "#1f2937"
@@ -125,26 +115,29 @@ Item {
                 x: parent.length > 0 ? parent.cursorRectangle.x : 14
                 visible: parent.activeFocus
 
-                Behavior on x
-                {
+                Behavior on x {
                     id: emailCursorXBehavior
-                    NumberAnimation { id: emailCursorXAnimation; duration: 80; easing.type: Easing.OutCubic }
+                    NumberAnimation {
+                        id: emailCursorXAnimation; duration: 80; easing.type: Easing.OutCubic
+                    }
                 }
 
-                SequentialAnimation on opacity
-                {
+                SequentialAnimation on opacity {
                     id: emailCursorOpacityAnimation
                     running: parent.activeFocus
                     loops: Animation.Infinite
-                    NumberAnimation { id: emailCursorFadeOut; to: 0; duration: 400; easing.type: Easing.InOutSine }
-                    NumberAnimation { id: emailCursorFadeIn; to: 1; duration: 400; easing.type: Easing.InOutSine }
+                    NumberAnimation {
+                        id: emailCursorFadeOut; to: 0; duration: 400; easing.type: Easing.InOutSine
+                    }
+                    NumberAnimation {
+                        id: emailCursorFadeIn; to: 1; duration: 400; easing.type: Easing.InOutSine
+                    }
                 }
             }
         }
 
         // Pasword field for login screen
-        TextField
-        {
+        TextField {
             id: passwordTextField
             width: parent.width
             placeholderText: "Password"
@@ -156,10 +149,10 @@ Item {
             rightPadding: 16
             topPadding: 12
             bottomPadding: 12
-            cursorDelegate: Item {}
+            cursorDelegate: Item {
+            }
 
-            background: Rectangle
-            {
+            background: Rectangle {
                 id: passwordBackgroundRectangle
                 radius: 8
                 border.color: passwordTextField.activeFocus ? "#1a66ff" : "#e5e7eb"
@@ -167,8 +160,7 @@ Item {
                 color: "#ffffff"
             }
 
-            Rectangle
-            {
+            Rectangle {
                 id: passwordCustomCursorRectangle
                 width: 1.5
                 color: "#1f2937"
@@ -177,26 +169,29 @@ Item {
                 x: parent.length > 0 ? parent.cursorRectangle.x : 14
                 visible: parent.activeFocus
 
-                Behavior on x
-                {
+                Behavior on x {
                     id: passwordCursorXBehavior
-                    NumberAnimation { id: passwordCursorXAnimation; duration: 80; easing.type: Easing.OutCubic }
+                    NumberAnimation {
+                        id: passwordCursorXAnimation; duration: 80; easing.type: Easing.OutCubic
+                    }
                 }
 
-                SequentialAnimation on opacity
-                {
+                SequentialAnimation on opacity {
                     id: passwordCursorOpacityAnimation
                     running: parent.activeFocus
                     loops: Animation.Infinite
-                    NumberAnimation { id: passwordCursorFadeOut; to: 0; duration: 400; easing.type: Easing.InOutSine }
-                    NumberAnimation { id: passwordCursorFadeIn; to: 1; duration: 400; easing.type: Easing.InOutSine }
+                    NumberAnimation {
+                        id: passwordCursorFadeOut; to: 0; duration: 400; easing.type: Easing.InOutSine
+                    }
+                    NumberAnimation {
+                        id: passwordCursorFadeIn; to: 1; duration: 400; easing.type: Easing.InOutSine
+                    }
                 }
             }
         }
 
         // Button to login
-        Rectangle
-        {
+        Rectangle {
             id: loginButtonRectangle
             width: parent.width
             height: 44
@@ -205,20 +200,17 @@ Item {
 
             scale: loginClickArea.containsMouse ? 1.03 : 1.0
 
-            Behavior on scale
-            {
+            Behavior on scale {
                 id: loginScaleBehavior
 
-                NumberAnimation
-                {
+                NumberAnimation {
                     id: loginScaleAnimation
                     duration: 150
                     easing.type: Easing.InOutQuad
                 }
             }
 
-            Text
-            {
+            Text {
                 id: loginButtonText
                 anchors.centerIn: parent
                 text: "Sign In"
@@ -228,15 +220,13 @@ Item {
                 font.weight: Font.Bold
             }
 
-            MouseArea
-            {
+            MouseArea {
                 id: loginClickArea
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
 
-                onClicked:
-                {
+                onClicked: {
                     rootItem.loginSubmitted(emailTextField.text, passwordTextField.text)
                 }
             }

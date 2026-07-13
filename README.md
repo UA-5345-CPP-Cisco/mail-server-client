@@ -9,6 +9,7 @@ For initial setup, use guide in the `docs/SETUP.md`
 Most of the support commands are placed into `scripts` directory.
 
 Description:
+
 - `build-and-run-qt-mail-client.sh` : script for building and running Qt Mail Client
 - `clang-check-format.sh` : script for running c++ linter checks
 - `clang-force-format.sh` : script for run c++ linter force cleanup
