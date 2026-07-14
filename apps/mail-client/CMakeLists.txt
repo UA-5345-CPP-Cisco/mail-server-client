@@ -70,6 +70,7 @@ qt_add_qml_module(appqtapptestmail
 		screens/navigation/account/LoginQML.qml
 		screens/navigation/account/AccountItem.qml
 		screens/email_list/EmailToolTip.qml
+		screens/email_list/StatePopup.qml
 		RESOURCES
 		resources.qrc
 		SOURCES
