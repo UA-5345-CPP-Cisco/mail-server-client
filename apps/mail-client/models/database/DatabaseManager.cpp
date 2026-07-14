@@ -1,12 +1,14 @@
 #include "headers/database/DatabaseManager.h"
 
 #include <cstdlib>
+#include <string>
 #include <QCoreApplication>
 #include <QDir>
 #include <QStandardPaths>
 
 #include "mail_storage/Database.h"
 #include "logger/Logger.h"
+#include "mail_storage/MailMessageRepository.h"
 #include "mail_storage/MigrationRunner.h"
 
 namespace {
@@ -24,6 +26,10 @@ void DatabaseManager::EnsureInitialized()
 	Storage::MigrationRunner runner(database, MigrationsPath());
 	runner.Run();
 	Logging::Logger::Instance().Log(Logging::LogLevel::Info, "DatabaseManager::EnsureInitialized: migrations applied");
+
+	Storage::MailMessageRepository message_repository(database);
+	const int deleted_count = message_repository.DeleteArchivedOlderThanDays(30);
+	Logging::Logger::Instance().Log(Logging::LogLevel::Info, std::string("DatabaseManager::EnsureInitialized: deleted archived messages older than 30 days=") + std::to_string(deleted_count));
 }
 
 std::filesystem::path DatabaseManager::DatabasePath()
