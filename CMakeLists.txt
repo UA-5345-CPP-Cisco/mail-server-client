@@ -24,7 +24,7 @@ include(FetchContent)
 find_package(Threads REQUIRED)
 
 # --- Boost ---
-set(BOOST_INCLUDE_LIBRARIES asio property_tree system)
+set(BOOST_INCLUDE_LIBRARIES asio beast json property_tree system)
 set(BOOST_ENABLE_MPI OFF)
 set(BOOST_ENABLE_PYTHON OFF)
 set(BUILD_TESTING OFF)
@@ -86,7 +86,7 @@ add_subdirectory(libs/mail-server-sdk)
 # ──────────────────────────────────────────
 add_subdirectory(apps/smtp-server)
 add_subdirectory(apps/simple-client)
-add_subdirectory(apps/mail-server)
+add_subdirectory(apps/mail-server-neo)
 
 if(MAIL_BUILD_QT_CLIENT)
 	add_subdirectory(apps/mail-client)
