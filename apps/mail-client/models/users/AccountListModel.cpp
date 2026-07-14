@@ -189,13 +189,12 @@ void AccountListModel::LoadFromDatabase()
         account.avatar_color = "#3b82f6";
 
         account.avatar_initial = account.account_name.isEmpty() ? '?' : account.account_name.at(0).toUpper();
-        account.is_active = (user.status == Storage::UserStatus::Active);
+        account.is_active = false;
 
-        if (account.is_active)
+        if (user.status == Storage::UserStatus::Active)
         {
             saved_active_row = static_cast<int>(loaded_accounts.size());
         }
-        account.is_active = false;
         loaded_accounts.push_back(account);
     }
 
