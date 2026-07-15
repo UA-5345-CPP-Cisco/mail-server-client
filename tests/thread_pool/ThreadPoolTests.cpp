@@ -82,9 +82,8 @@ TEST(ThreadPoolTest, SingleWorkerExecutesTasksInSubmissionOrder)
 
   for (int taskIndex = 0; taskIndex < 5; ++taskIndex)
   {
-    results.push_back(threadPool.Enqueue([&executionOrder, taskIndex] {
-      executionOrder.push_back(taskIndex);
-    }));
+    results.push_back(
+      threadPool.Enqueue([&executionOrder, taskIndex] { executionOrder.push_back(taskIndex); }));
   }
 
   for (auto& result : results)
@@ -104,11 +103,13 @@ TEST(ThreadPoolTest, DestructorWaitsForQueuedTasksToFinish)
 
   {
     Concurrency::ThreadPool threadPool(1);
-    threadPool.Enqueue([&taskFinished, &taskStarted] {
-      taskStarted.set_value();
-      std::this_thread::sleep_for(std::chrono::milliseconds(25));
-      taskFinished = true;
-    });
+    threadPool.Enqueue(
+      [&taskFinished, &taskStarted]
+      {
+        taskStarted.set_value();
+        std::this_thread::sleep_for(std::chrono::milliseconds(25));
+        taskFinished = true;
+      });
 
     ASSERT_EQ(taskStartedResult.wait_for(TestTimeout), std::future_status::ready);
   }
@@ -124,7 +125,8 @@ TEST(ThreadPoolTest, RunsTasksConcurrentlyWhenMultipleWorkersAreAvailable)
   int startedTasks = 0;
   bool canFinish = false;
 
-  auto blockingTask = [&] {
+  auto blockingTask = [&]
+  {
     std::unique_lock<std::mutex> lock(mutex);
     ++startedTasks;
     condition.notify_all();
@@ -136,9 +138,8 @@ TEST(ThreadPoolTest, RunsTasksConcurrentlyWhenMultipleWorkersAreAvailable)
 
   {
     std::unique_lock<std::mutex> lock(mutex);
-    EXPECT_TRUE(condition.wait_for(lock, TestTimeout, [&startedTasks] {
-      return startedTasks == 2;
-    }));
+    EXPECT_TRUE(
+      condition.wait_for(lock, TestTimeout, [&startedTasks] { return startedTasks == 2; }));
     canFinish = true;
   }
 
