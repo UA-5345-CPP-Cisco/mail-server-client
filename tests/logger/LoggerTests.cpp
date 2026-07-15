@@ -2,10 +2,10 @@
 #include <fstream>
 #include <regex>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <thread>
 #include <vector>
-#include <stdexcept>
 
 #include <gtest/gtest.h>
 
@@ -173,14 +173,16 @@ TEST_F(LoggerTest, WritesCompleteLinesFromMultipleThreads)
 
     for (int threadIndex = 0; threadIndex < ThreadCount; ++threadIndex)
     {
-      threads.emplace_back([&logger, threadIndex] {
-        for (int messageIndex = 0; messageIndex < MessagesPerThread; ++messageIndex)
+      threads.emplace_back(
+        [&logger, threadIndex]
         {
-          logger.Log(Logging::LogLevel::Info,
-                     "thread " + std::to_string(threadIndex) + " message " +
-                       std::to_string(messageIndex));
-        }
-      });
+          for (int messageIndex = 0; messageIndex < MessagesPerThread; ++messageIndex)
+          {
+            logger.Log(Logging::LogLevel::Info,
+                       "thread " + std::to_string(threadIndex) + " message " +
+                         std::to_string(messageIndex));
+          }
+        });
     }
 
     for (std::thread& thread : threads)
