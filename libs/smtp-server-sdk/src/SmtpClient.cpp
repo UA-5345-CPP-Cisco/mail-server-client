@@ -47,10 +47,18 @@ void SmtpClient::SendCommand(const std::string& command)
   boost::asio::write(m_socket, boost::asio::buffer(command + "\r\n"));
 }
 
-bool SmtpClient::ExpectCode(const std::string& expected_code)
+SmtpReply SmtpClient::ReadReply()
 {
-  const std::string response = ReadResponse();
-  return response.substr(0, expected_code.size()) == expected_code;
+  const std::string line = ReadResponse();
+  SmtpReply reply;
+
+  if (line.size() >= 3)
+  {
+    reply.code = std::stoi(line.substr(0, 3));
+    reply.text = (line.size() > 4) ? line.substr(4) : "";
+  }
+
+  return reply;
 }
 
 bool SmtpClient::CheckConnection()
@@ -64,12 +72,12 @@ bool SmtpClient::CheckConnection()
 
     boost::asio::connect(m_socket, endpoints);
 
-    const bool greeting_ok = ExpectCode("220");
+    const auto reply = ReadReply();
 
     SendCommand("QUIT");
     m_socket.close();
 
-    return greeting_ok;
+    return reply.code == 220;
   }
   catch (const std::exception&)
   {
@@ -82,7 +90,7 @@ bool SmtpClient::CheckConnection()
   }
 }
 
-bool SmtpClient::SendMailMessage(const Mail& mail)
+SmtpResult SmtpClient::SendMailMessage(const Mail& mail)
 {
   try
   {
@@ -93,66 +101,107 @@ bool SmtpClient::SendMailMessage(const Mail& mail)
 
     boost::asio::connect(m_socket, endpoints);
 
-    if (!ExpectCode("220"))
+    auto reply = ReadReply();
+    if (reply.code != 220)
     {
       m_socket.close();
-      return false;
+      return SmtpResult::Fail(
+        SmtpError::ConnectionFailed, "Server greeting failed: " + reply.text, reply.code);
     }
 
     SendCommand("EHLO client");
-    if (!ExpectCode("250"))
+    reply = ReadReply();
+    if (reply.code != 250)
     {
       m_socket.close();
-      return false;
+      return SmtpResult::Fail(SmtpError::ServerError, "EHLO rejected: " + reply.text, reply.code);
     }
 
     SendCommand("MAIL FROM:<" + mail.sender + ">");
-    if (!ExpectCode("250"))
+    reply = ReadReply();
+    if (reply.code != 250)
     {
       m_socket.close();
-      return false;
+      return SmtpResult::Fail(
+        SmtpError::ServerError, "MAIL FROM rejected: " + reply.text, reply.code);
     }
 
     for (const std::string& recipient : mail.recipients)
     {
       SendCommand("RCPT TO:<" + recipient + ">");
-      if (!ExpectCode("250"))
+      reply = ReadReply();
+      if (reply.code != 250)
       {
         m_socket.close();
-        return false;
+        return SmtpResult::Fail(SmtpError::RecipientRejected,
+                                "Recipient <" + recipient + "> rejected: " + reply.text,
+                                reply.code);
       }
     }
 
     SendCommand("DATA");
-    if (!ExpectCode("354"))
+    reply = ReadReply();
+    if (reply.code != 354)
     {
       m_socket.close();
-      return false;
+      return SmtpResult::Fail(
+        SmtpError::ServerError, "DATA command rejected: " + reply.text, reply.code);
     }
 
     const std::string message = "From: " + mail.sender + "\r\n" + "Subject: " + mail.subject +
                                 "\r\n" + "\r\n" + mail.body + "\r\n" + ".";
 
     SendCommand(message);
-    if (!ExpectCode("250"))
+    reply = ReadReply();
+    if (reply.code != 250)
     {
       m_socket.close();
-      return false;
+      return SmtpResult::Fail(
+        SmtpError::ServerError, "Message not accepted: " + reply.text, reply.code);
     }
 
     SendCommand("QUIT");
     m_socket.close();
 
-    return true;
+    return SmtpResult::Success();
   }
-  catch (const std::exception&)
+  catch (const boost::system::system_error& e)
   {
     if (m_socket.is_open())
     {
       m_socket.close();
     }
 
-    return false;
+    if (e.code() == boost::asio::error::host_not_found)
+    {
+      return SmtpResult::Fail(SmtpError::DnsResolutionFailed,
+                              "Host not found: " + m_server_address);
+    }
+
+    if (e.code() == boost::asio::error::connection_refused)
+    {
+      return SmtpResult::Fail(SmtpError::ConnectionFailed,
+                              "Connection refused on " + m_server_address + ":" +
+                                std::to_string(m_port));
+    }
+
+    if (e.code() == boost::asio::error::timed_out)
+    {
+      return SmtpResult::Fail(SmtpError::Timeout,
+                              "Connection timed out to " + m_server_address + ":" +
+                                std::to_string(m_port));
+    }
+
+    return SmtpResult::Fail(SmtpError::Unknown, e.what());
+  }
+  catch (const std::exception& e)
+  {
+    if (m_socket.is_open())
+    {
+      m_socket.close();
+    }
+
+    return SmtpResult::Fail(SmtpError::Unknown, e.what());
   }
 }
 

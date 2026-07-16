@@ -16,6 +16,10 @@
 #include "headers/search/MessageSearchModel.h"
 #include "headers/database/AuthHandler.h" 
 #include "headers/users/AccountListModel.h"
+#include "headers/client_logger/ClientConfigReader.h"
+#include "headers/client_logger/ClientProxyLogger.h"
+#include "headers/service/Service.h"
+
 #include "mail_storage/UserRepository.h"
 #include "logger/Logger.h"
 
@@ -26,6 +30,20 @@ int main(int argc, char *argv[])
     QQuickStyle::setStyle(QStringLiteral("Fusion"));
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/pngs/assets/Icon.png"));
+
+    ISXConfig::ClientConfigReader reader;
+    auto config = reader.ReadConfig(ISXConfig::ClientConfigReader::ConfigPath());
+
+    if (!config)
+    {
+      qDebug() << "File is failed to read!";
+      return -1;
+    }
+
+    ISXClientLogger::ClientLoggerProvider logger_provider(config.value());
+    ISXClientLogger::ClientLogger logger(Logging::Logger::Instance(), logger_provider);
+
+    ISXService::Service::Initialize(logger);
 
     ISXDatabaseManager::DatabaseManager::EnsureInitialized();
     auto dbPath = ISXDatabaseManager::DatabaseManager::DatabasePath();

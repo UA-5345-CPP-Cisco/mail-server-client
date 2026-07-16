@@ -110,6 +110,10 @@ set_target_properties(appqtapptestmail PROPERTIES
 		MACOSX_BUNDLE TRUE
 )
 
+target_compile_definitions(appqtapptestmail PRIVATE
+		CONFIG_DIR="${CMAKE_SOURCE_DIR}/config"
+)
+
 if(WINDOWS_DEV_CONSOLE)
 	set_target_properties(appqtapptestmail PROPERTIES
 			WIN32_EXECUTABLE FALSE

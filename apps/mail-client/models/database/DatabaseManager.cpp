@@ -7,35 +7,26 @@
 #include <QStandardPaths>
 
 #include "mail_storage/Database.h"
-#include "logger/Logger.h"
-#include "mail_storage/MailMessageRepository.h"
+#include "headers/service/Service.h"
 #include "mail_storage/MigrationRunner.h"
-
-namespace {
-
-}
 
 namespace ISXDatabaseManager
 {
 
 void DatabaseManager::EnsureInitialized()
 {
-	Logging::Logger::Instance().Log(Logging::LogLevel::Info, std::string("DatabaseManager::EnsureInitialized: database_path=") + DatabasePath().string());
+	 ISXService::Service::Logger().Log(Logging::LogLevel::Info, std::string("DatabaseManager::EnsureInitialized: database_path=") + DatabasePath().string());
 	Storage::Database database(DatabasePath());
-	Logging::Logger::Instance().Log(Logging::LogLevel::Info, std::string("DatabaseManager::EnsureInitialized: migrations_path=") + MigrationsPath().string());
+	 ISXService::Service::Logger().Log(Logging::LogLevel::Info, std::string("DatabaseManager::EnsureInitialized: migrations_path=") + MigrationsPath().string());
 	Storage::MigrationRunner runner(database, MigrationsPath());
 	runner.Run();
-	Logging::Logger::Instance().Log(Logging::LogLevel::Info, "DatabaseManager::EnsureInitialized: migrations applied");
-
-	Storage::MailMessageRepository message_repository(database);
-	const int deleted_count = message_repository.DeleteArchivedOlderThanDays(30);
-	Logging::Logger::Instance().Log(Logging::LogLevel::Info, std::string("DatabaseManager::EnsureInitialized: deleted archived messages older than 30 days=") + std::to_string(deleted_count));
+	 ISXService::Service::Logger().Log(Logging::LogLevel::Info, "DatabaseManager::EnsureInitialized: migrations applied");
 }
 
 std::filesystem::path DatabaseManager::DatabasePath()
 {
 	auto path = ResolveAppDataDirectory() / "qtapptestmail.sqlite";
-	Logging::Logger::Instance().Log(Logging::LogLevel::Debug, std::string("DatabaseManager::DatabasePath: ") + path.string());
+	 ISXService::Service::Logger().Log(Logging::LogLevel::Debug, std::string("DatabaseManager::DatabasePath: ") + path.string());
 	return path;
 }
 
@@ -46,7 +37,7 @@ std::filesystem::path DatabaseManager::MigrationsPath()
 
 	if (std::filesystem::exists(current_path))
 	{
-		Logging::Logger::Instance().Log(Logging::LogLevel::Debug, (std::string("DatabaseManager::MigrationsPath: using current_path=") + current_path.string()));
+		 ISXService::Service::Logger().Log(Logging::LogLevel::Debug, (std::string("DatabaseManager::MigrationsPath: using current_path=") + current_path.string()));
 		return current_path;
 	}
 
@@ -55,10 +46,10 @@ std::filesystem::path DatabaseManager::MigrationsPath()
 	for (int depth = 0; depth < 6; ++depth)
 	{
 		const std::filesystem::path candidate = probe / relative_path;
-		Logging::Logger::Instance().Log(Logging::LogLevel::Debug, (std::string("DatabaseManager::MigrationsPath: probing candidate=") + candidate.string()));
+		 ISXService::Service::Logger().Log(Logging::LogLevel::Debug, (std::string("DatabaseManager::MigrationsPath: probing candidate=") + candidate.string()));
 		if (std::filesystem::exists(candidate))
 		{
-			Logging::Logger::Instance().Log(Logging::LogLevel::Debug, (std::string("DatabaseManager::MigrationsPath: found candidate=") + candidate.string()));
+			 ISXService::Service::Logger().Log(Logging::LogLevel::Debug, (std::string("DatabaseManager::MigrationsPath: found candidate=") + candidate.string()));
 			return candidate;
 		}
 
@@ -70,7 +61,7 @@ std::filesystem::path DatabaseManager::MigrationsPath()
 		probe = probe.parent_path();
 	}
 
-	Logging::Logger::Instance().Log(Logging::LogLevel::Warning, (std::string("DatabaseManager::MigrationsPath: falling back to current_path=") + current_path.string()));
+	 ISXService::Service::Logger().Log(Logging::LogLevel::Warning, (std::string("DatabaseManager::MigrationsPath: falling back to current_path=") + current_path.string()));
 	return current_path;
 }
 
@@ -81,18 +72,18 @@ std::filesystem::path DatabaseManager::ResolveAppDataDirectory()
 	if (app_data_dir.isEmpty())
 	{
 		app_data_dir = QCoreApplication::applicationDirPath() + "/qtapptestmail";
-		Logging::Logger::Instance().Log(Logging::LogLevel::Warning, std::string("DatabaseManager::ResolveAppDataDirectory: writableLocation was empty, using ") + app_data_dir.toStdString());
+		 ISXService::Service::Logger().Log(Logging::LogLevel::Warning, std::string("DatabaseManager::ResolveAppDataDirectory: writableLocation was empty, using ") + app_data_dir.toStdString());
 	}
 	else
 	{
-		Logging::Logger::Instance().Log(Logging::LogLevel::Debug, std::string("DatabaseManager::ResolveAppDataDirectory: using ") + app_data_dir.toStdString());
+		 ISXService::Service::Logger().Log(Logging::LogLevel::Debug, std::string("DatabaseManager::ResolveAppDataDirectory: using ") + app_data_dir.toStdString());
 	}
 
 	QDir dir;
 	if (!dir.exists(app_data_dir))
 	{
 		dir.mkpath(app_data_dir);
-		Logging::Logger::Instance().Log(Logging::LogLevel::Info, std::string("DatabaseManager::ResolveAppDataDirectory: created directory ") + app_data_dir.toStdString());
+		 ISXService::Service::Logger().Log(Logging::LogLevel::Info, std::string("DatabaseManager::ResolveAppDataDirectory: created directory ") + app_data_dir.toStdString());
 	}
 
 	return std::filesystem::path(app_data_dir.toStdString());
