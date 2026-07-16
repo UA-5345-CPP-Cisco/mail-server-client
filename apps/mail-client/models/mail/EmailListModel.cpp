@@ -4,7 +4,6 @@
 
 #include "headers/database/DatabaseManager.h"
 #include "headers/service/Service.h"
-#include "headers/service/Service.h"
 
 namespace ISXMail
 {
@@ -160,7 +159,7 @@ bool EmailListModel::DeleteEmail(int row)
     beginRemoveRows(QModelIndex(), row, row);
     m_data.erase(m_data.begin() + row);
     endRemoveRows();
-	 ISXService::Service::Logger().Log(Logging::LogLevel::Debug, GetStdString(QString("EmailListModel::RemoveData: data was removed at %1").arg(QString::number(row))));
+	 ISXService::Service::Logger().Log(Logging::LogLevel::Debug, GetStdString(QString("EmailListModel::DeleteEmail: data was removed at %1").arg(QString::number(row))));
     return true;
     
 }
