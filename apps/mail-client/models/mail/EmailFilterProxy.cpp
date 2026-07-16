@@ -3,12 +3,6 @@
 #include "headers/service/Service.h"
 
 namespace ISXMail{
-
-    namespace
-    {
-
-    }
-
     EmailFilterProxy::EmailFilterProxy(FolderType type, QObject *parent)
         : QSortFilterProxyModel(parent), m_type(type)
     {
