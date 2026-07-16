@@ -7,18 +7,12 @@ Response hello_handler(Request const& request)
 
   if (error)
   {
-    return make_error(
-      request,
-      http::status::bad_request,
-      "Invalid JSON");
+    return make_error(request, http::status::bad_request, "Invalid JSON");
   }
 
   if (!input.is_object())
   {
-    return make_error(
-      request,
-      http::status::bad_request,
-      "Expected a JSON object");
+    return make_error(request, http::status::bad_request, "Expected a JSON object");
   }
 
   auto const& object = input.as_object();
@@ -27,18 +21,11 @@ Response hello_handler(Request const& request)
 
   if (name_value == nullptr || !name_value->is_string())
   {
-    return make_error(
-      request,
-      http::status::bad_request,
-      "\"name\" must be a string");
+    return make_error(request, http::status::bad_request, "\"name\" must be a string");
   }
 
   const std::string name = name_value->as_string().c_str();
 
   return make_json_response(
-    request,
-    http::status::ok,
-    json::object{
-      {"message", "Hello, " + name + "!"}
-    });
+    request, http::status::ok, json::object{{"message", "Hello, " + name + "!"}});
 }

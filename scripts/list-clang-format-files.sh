@@ -3,6 +3,7 @@ set -euo pipefail
 
 source_dirs=(
   "apps/mail-server"
+  "apps/mail-server-neo"
   "apps/smtp-server"
   "apps/simple-client"
   "libs"

@@ -5,22 +5,17 @@
 
 class Session : public std::enable_shared_from_this<Session>
 {
-public:
-  Session(
-    tcp::socket socket,
-    std::shared_ptr<Router const> router);
+  public:
+  Session(tcp::socket socket, std::shared_ptr<Router const> router);
 
   void run();
 
-private:
+  private:
   void do_read();
   void on_read(beast::error_code error, std::size_t bytes_transferred);
 
   void do_write(Response response);
-  void on_write(
-    bool close,
-    beast::error_code error,
-    std::size_t bytes_transferred);
+  void on_write(bool close, beast::error_code error, std::size_t bytes_transferred);
 
   void do_close();
 

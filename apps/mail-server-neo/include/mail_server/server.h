@@ -5,16 +5,12 @@
 
 class Server
 {
-public:
-  Server(
-    net::io_context& io_context,
-    tcp::endpoint endpoint,
-    std::shared_ptr<Router const> router
-    );
-
+  public:
+  Server(net::io_context& io_context, tcp::endpoint endpoint, std::shared_ptr<Router const> router);
 
   void run();
-private:
+
+  private:
   void do_accept();
 
   tcp::acceptor m_acceptor;

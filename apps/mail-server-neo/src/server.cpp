@@ -5,11 +5,11 @@
 #include <mail_server/server.h>
 #include <mail_server/session.h>
 
-Server::Server(
-  net::io_context& io_context,
-  tcp::endpoint endpoint,
-  std::shared_ptr<Router const> router
-) : m_acceptor(io_context), m_router(std::move(router))
+Server::Server(net::io_context& io_context,
+               tcp::endpoint endpoint,
+               std::shared_ptr<Router const> router) :
+  m_acceptor(io_context),
+  m_router(std::move(router))
 {
   beast::error_code error;
 
@@ -50,10 +50,7 @@ void Server::do_accept()
     {
       if (!error)
       {
-        std::make_shared<Session>(
-          std::move(socket),
-          m_router
-          )->run();
+        std::make_shared<Session>(std::move(socket), m_router)->run();
       }
 
       do_accept();
