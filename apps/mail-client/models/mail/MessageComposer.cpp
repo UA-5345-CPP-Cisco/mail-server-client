@@ -3,14 +3,13 @@
 #include <optional>
 
 #include "headers/database/DatabaseManager.h"
-#include "logger/Logger.h"
+#include "headers/service/Service.h"
 
 namespace ISXMail
 {
 
 namespace
 {
-
 
 std::optional<std::string> ToOptionalString(const QString& text)
 {
@@ -23,6 +22,7 @@ std::optional<std::string> ToOptionalString(const QString& text)
 
 	return trimmed.toStdString();
 }
+
 }
 
 MessageComposer::MessageComposer(QObject* parent) :
@@ -31,7 +31,7 @@ MessageComposer::MessageComposer(QObject* parent) :
 	m_repository(m_database),
 	m_recipient_repository(m_database)
 {
-	Logging::Logger::Instance().Log(Logging::LogLevel::Info, std::string("MessageComposer: opened DB at ") + ISXDatabaseManager::DatabaseManager::DatabasePath().string());
+	 ISXService::Service::Logger().Log(Logging::LogLevel::Info, std::string("MessageComposer: opened DB at ") + ISXDatabaseManager::DatabaseManager::DatabasePath().string());
 }
 
 bool MessageComposer::SendMessage(
@@ -47,11 +47,11 @@ bool MessageComposer::SendMessage(
 
 	if (recipient_email.trimmed().isEmpty() || body.trimmed().isEmpty())
 	{
-			Logging::Logger::Instance().Log(Logging::LogLevel::Warning, "MessageComposer::SendMessage: validation failed - recipient or body empty");
+			 ISXService::Service::Logger().Log(Logging::LogLevel::Warning, "MessageComposer::SendMessage: validation failed - recipient or body empty");
 			return false;
 		}
 
-		Logging::Logger::Instance().Log(Logging::LogLevel::Info, (std::string("MessageComposer::SendMessage: sending to ") + recipient_email.toStdString() + " subject_len=" + std::to_string(subject.size())));
+		 ISXService::Service::Logger().Log(Logging::LogLevel::Info, (std::string("MessageComposer::SendMessage: sending to ") + recipient_email.toStdString() + " subject_len=" + std::to_string(subject.size())));
 		m_database.Execute("BEGIN IMMEDIATE;");
 
 	try
@@ -74,20 +74,20 @@ bool MessageComposer::SendMessage(
 		);
 
 		m_database.Execute("COMMIT;");
-		Logging::Logger::Instance().Log(Logging::LogLevel::Info, (std::string("MessageComposer::SendMessage: committed message_id=") + std::to_string(message_id)));
+		 ISXService::Service::Logger().Log(Logging::LogLevel::Info, (std::string("MessageComposer::SendMessage: committed message_id=") + std::to_string(message_id)));
 		return true;
 	}
 	catch (...)
 	{
-		Logging::Logger::Instance().Log(Logging::LogLevel::Error, "MessageComposer::SendMessage: exception occurred, attempting ROLLBACK");
+		 ISXService::Service::Logger().Log(Logging::LogLevel::Error, "MessageComposer::SendMessage: exception occurred, attempting ROLLBACK");
 		try
 		{
 			m_database.Execute("ROLLBACK;");
-			Logging::Logger::Instance().Log(Logging::LogLevel::Info, "MessageComposer::SendMessage: rollback succeeded");
+			 ISXService::Service::Logger().Log(Logging::LogLevel::Info, "MessageComposer::SendMessage: rollback succeeded");
 		}
 		catch (...)
 		{
-			Logging::Logger::Instance().Log(Logging::LogLevel::Error, "MessageComposer::SendMessage: rollback failed");
+			 ISXService::Service::Logger().Log(Logging::LogLevel::Error, "MessageComposer::SendMessage: rollback failed");
 		}
 
 		throw;
@@ -137,15 +137,15 @@ bool MessageComposer::SaveDraft(
 	}
 	catch (...)
 	{
-		Logging::Logger::Instance().Log(Logging::LogLevel::Error, "MessageComposer::SaveDraft: exception occurred, attempting ROLLBACK");
+		 ISXService::Service::Logger().Log(Logging::LogLevel::Error, "MessageComposer::SaveDraft: exception occurred, attempting ROLLBACK");
 		try
 		{
 			m_database.Execute("ROLLBACK;");
-			Logging::Logger::Instance().Log(Logging::LogLevel::Info, "MessageComposer::SaveDraft: rollback succeeded");
+			 ISXService::Service::Logger().Log(Logging::LogLevel::Info, "MessageComposer::SaveDraft: rollback succeeded");
 		}
 		catch (...)
 		{
-			Logging::Logger::Instance().Log(Logging::LogLevel::Error, "MessageComposer::SaveDraft: rollback failed");
+			 ISXService::Service::Logger().Log(Logging::LogLevel::Error, "MessageComposer::SaveDraft: rollback failed");
 		}
 
 		throw;
