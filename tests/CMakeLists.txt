@@ -49,8 +49,9 @@ add_executable(logger_tests
 )
 
 target_link_libraries(logger_tests
-        PRIVATE
+        PUBLIC
         mail_logger
+        PRIVATE
         gtest_main
 )
 

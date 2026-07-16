@@ -1,11 +1,12 @@
-#ifndef AccountListModel_H
-#define AccountListModel_H
 #pragma once
+
 #include <QObject>
 #include <QAbstractListModel>
 #include <QString>
+
 #include <vector>
-#include "../../../../libs/mail-storage/include/mail_storage/Database.h"
+
+#include "mail_storage/Database.h"
 
 namespace ISXMail
 {
@@ -66,4 +67,3 @@ private:
 };
 
 } // namespace ISXMail
-#endif // AccountListModel_H

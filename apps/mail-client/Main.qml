@@ -4,112 +4,59 @@ import QtQuick.Layouts
 import QtQuick.Effects
 import ISXMail 1.0
 
-ApplicationWindow
-{
+ApplicationWindow {
+
+    //blocks
+    id: window
+
+    property string amountText: emailList.sourceModel ? emailList.sourceModel.pageAmountText : "0-0 of 0"
+    property alias authLoader: authLoader
+    property int draftsCount: draftModel.totalEmailsCount
+    property int inboxCount: inboxModel.totalEmailsCount
+    property var selectedEmail: null
     //properties
     property string selectedFolder: "inbox"
-    property int inboxCount: inboxModel.totalEmailsCount
-    property int starredCount: starredModel.totalEmailsCount
     property int sentCount: sentModel.totalEmailsCount
-    property int draftsCount: draftModel.totalEmailsCount
-    property string amountText: emailList.sourceModel ? emailList.sourceModel.pageAmountText : "0-0 of 0"
-    property var selectedEmail: null
-
-    property alias authLoader: authLoader
+    property int starredCount: starredModel.totalEmailsCount
 
     // for adding avatar
-    function avatarInitial(name)
-    {
-        var trimmedName = String(name).trim()
-        return trimmedName.length > 0 ? trimmedName.charAt(0).toUpperCase() : "?"
+    function avatarInitial(name) {
+        var trimmedName = String(name).trim();
+        return trimmedName.length > 0 ? trimmedName.charAt(0).toUpperCase() : "?";
+    }
+    function closeAuthWindow() {
+        authLoader.active = false;
+        authLoader.source = "";
     }
 
     //FunctionSorter
-    function closeMessageWindow()
-    {
-        newMessageLoader.active = false
-        newMessageLoader.source = ""
+    function closeMessageWindow() {
+        newMessageLoader.active = false;
+        newMessageLoader.source = "";
     }
-
-    function closeSettingsWindow()
-    {
-        settingsLoader.active = false
-        settingsLoader.source = ""
+    function closeSettingsWindow() {
+        settingsLoader.active = false;
+        settingsLoader.source = "";
     }
-
-    function closeAuthWindow()
-    {
-        authLoader.active = false
-        authLoader.source = ""
-    }
-
-    function parseDatabaseTimestamp(input_time)
-    {
-        if (!input_time)
-        {
-            return null
-        }
-
-        if (input_time instanceof Date)
-        {
-            return input_time
-        }
-
-        let raw = String(input_time).trim()
-        if (raw === "")
-        {
-            return null
-        }
-
-        // SQLite CURRENT_TIMESTAMP is stored as UTC text: "YYYY-MM-DD HH:MM:SS".
-        let utcMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})(?:\.\d+)?$/)
-        if (utcMatch)
-        {
-            return new Date(Date.UTC(
-                parseInt(utcMatch[1]),
-                parseInt(utcMatch[2]) - 1,
-                parseInt(utcMatch[3]),
-                parseInt(utcMatch[4]),
-                parseInt(utcMatch[5]),
-                parseInt(utcMatch[6])
-            ))
-        }
-
-        let parsed = new Date(raw)
-        if (!isNaN(parsed.getTime()))
-        {
-            return parsed
-        }
-
-        return null
-    }
-
-    function formatEmailTime(input_time)
-    {
-        let message_date = parseDatabaseTimestamp(input_time)
+    function formatEmailTime(input_time) {
+        let message_date = parseDatabaseTimestamp(input_time);
         if (!message_date)
-            return String(input_time)
+            return String(input_time);
 
         let current_date = new Date();
 
-        let is_same_day = (message_date.getDate() === current_date.getDate() &&
-            message_date.getMonth() === current_date.getMonth() &&
-            message_date.getFullYear() === current_date.getFullYear());
+        let is_same_day = (message_date.getDate() === current_date.getDate() && message_date.getMonth() === current_date.getMonth() && message_date.getFullYear() === current_date.getFullYear());
 
-        if (is_same_day)
-        {
+        if (is_same_day) {
             return Qt.formatDateTime(message_date, "hh:mm");
-        } else
-        {
+        } else {
             return Qt.formatDateTime(message_date, "MMMM dd").toLowerCase();
         }
     }
-
-    function formatEmailTimeFull(input_time)
-    {
-        let message_date = parseDatabaseTimestamp(input_time)
+    function formatEmailTimeFull(input_time) {
+        let message_date = parseDatabaseTimestamp(input_time);
         if (!message_date)
-            return String(input_time)
+            return String(input_time);
 
         let time_formatted = Qt.formatDateTime(message_date, "hh:mm");
 
@@ -117,222 +64,228 @@ ApplicationWindow
 
         return time_formatted + ", " + date_formatted;
     }
+    function parseDatabaseTimestamp(input_time) {
+        if (!input_time) {
+            return null;
+        }
 
-    //blocks
-    id: window
-    visible: true
-    width: 1024
+        if (input_time instanceof Date) {
+            return input_time;
+        }
+
+        let raw = String(input_time).trim();
+        if (raw === "") {
+            return null;
+        }
+
+        // SQLite CURRENT_TIMESTAMP is stored as UTC text: "YYYY-MM-DD HH:MM:SS".
+        let utcMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})(?:\.\d+)?$/);
+        if (utcMatch) {
+            return new Date(Date.UTC(parseInt(utcMatch[1]), parseInt(utcMatch[2]) - 1, parseInt(utcMatch[3]), parseInt(utcMatch[4]), parseInt(utcMatch[5]), parseInt(utcMatch[6])));
+        }
+
+        let parsed = new Date(raw);
+        if (!isNaN(parsed.getTime())) {
+            return parsed;
+        }
+
+        return null;
+    }
+
     height: 768
     minimumHeight: 500
     minimumWidth: 750
     title: "Mail Client Interface"
+    visible: true
+    width: 1024
 
-    MouseArea
-    {
+    MouseArea {
         anchors.fill: parent
-        onClicked:
-        {
-            window.contentItem.forceActiveFocus()
+
+        onClicked: {
+            window.contentItem.forceActiveFocus();
         }
     }
 
     //new message loader
-    Loader
-    {
+    Loader {
         id: newMessageLoader
-        active: false
-        z: 999
-        anchors.rightMargin: 10
-        anchors.bottomMargin: 10
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
 
-        width: item ? item.implicitWidth : 0
-        height: item ? item.implicitHeight : 0
-
-        source: ""
         property var selectedItem: null
-        Behavior on opacity
-        {
-            NumberAnimation
-            {
+
+        active: false
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 10
+        height: item ? item.implicitHeight : 0
+        opacity: status === Loader.Ready ? 1 : 0
+        source: ""
+        width: item ? item.implicitWidth : 0
+        z: 999
+
+        Behavior on opacity {
+            NumberAnimation {
                 duration: 200
             }
         }
 
-        onLoaded:
-        {
-            connections.target = item
-            if (item && selectedItem)
-            {
-                item.newRecipient = selectedItem.sendTo
-                item.newSubject = selectedItem.subject
-                item.newText = selectedItem.content
-                item.newIndex = selectedItem.index
-                item.isDraft = selectedItem.isDraft === true
-                item.newTitle = item.isDraft ? "Draft" : "New Message"
-            } else
-            {
-                item.newRecipient = ""
-                item.newSubject = ""
-                item.newText = ""
-                item.newIndex = ""
-                item.isDraft = false
-                item.newTitle = "New Message"
+        onLoaded: {
+            connections.target = item;
+            if (item && selectedItem) {
+                item.newRecipient = selectedItem.sendTo;
+                item.newSubject = selectedItem.subject;
+                item.newText = selectedItem.content;
+                item.newIndex = selectedItem.index;
+
+                item.isDraft = selectedItem.isDraft === true || selectedItem.IsDraft === true;
+                item.isReply = selectedItem.isReply === true || selectedItem.IsReply === true;
+                item.isForward = selectedItem.isForward === true || selectedItem.IsForward === true;
+
+                item.newTitle = selectedItem.newTitle !== undefined ? selectedItem.newTitle : selectedItem.title;
+            } else {
+                item.newRecipient = "";
+                item.newSubject = "";
+                item.newText = "";
+                item.newIndex = "";
+                item.isDraft = false;
+                item.isReply = false;
+                item.isForward = false;
+                item.newTitle = "New Message";
             }
         }
 
-        Connections
-        {
+        Connections {
             id: connections
+
+            function onDraftChanged(index, subject, recipient, text) {
+                if (newMessageLoader.selectedItem != null) {
+                    draftModel.SetEmailData(parseInt(index), recipient, parseInt(EmailRole.SendToRole));
+                    draftModel.SetEmailData(parseInt(index), subject, parseInt(EmailRole.ThemeRole));
+                    draftModel.SetEmailData(parseInt(index), text, parseInt(EmailRole.ContentRole));
+                    draftModel.SetEmailData(parseInt(index), text, parseInt(EmailRole.PreviewRole));
+                }
+
+                newMessageLoader.selectedItem = null;
+            }
+            function onDraftFinished(index, subject, recipient, text) {
+                if (newMessageLoader.selectedItem != null) {
+                    draftModel.RemoveEmailData(parseInt(index));
+                    emailsModel.AddData(false, true, false, subject, CurrentUser.username, recipient, text, "");
+                }
+
+                newMessageLoader.selectedItem = null;
+            }
+
             target: null
-
-            function onDraftChanged(index, subject, recipient, text)
-            {
-                if (newMessageLoader.selectedItem != null)
-                {
-                    draftModel.SetEmailData(parseInt(index), recipient, parseInt(EmailRole.SendToRole))
-                    draftModel.SetEmailData(parseInt(index), subject, parseInt(EmailRole.ThemeRole))
-                    draftModel.SetEmailData(parseInt(index), text, parseInt(EmailRole.ContentRole))
-                    draftModel.SetEmailData(parseInt(index), text, parseInt(EmailRole.PreviewRole))
-                }
-
-                newMessageLoader.selectedItem = null
-            }
-
-            function onDraftFinished(index, subject, recipient, text)
-            {
-                if (newMessageLoader.selectedItem != null)
-                {
-                    draftModel.RemoveEmailData(parseInt(index))
-                    emailsModel.AddData(false, true, false, subject, CurrentUser.username, recipient, text, "")
-                }
-
-                newMessageLoader.selectedItem = null
-            }
         }
-
-        opacity: status === Loader.Ready ? 1 : 0
     }
-
-
-    RowLayout
-    {
+    RowLayout {
         anchors.fill: parent
         spacing: 0
 
-        SplitView
-        {
+        SplitView {
             id: splitView
-            Layout.fillWidth: true
+
             Layout.fillHeight: true
+            Layout.fillWidth: true
             orientation: Qt.Horizontal
 
-            handle: Rectangle
-            {
+            handle: Rectangle {
                 id: handleDelegate
+
                 color: "transparent"
-                containmentMask: Item
-                {
-                    x: (handleDelegate.width - width) / 2
-                    width: 5
+
+                containmentMask: Item {
                     height: splitView.height
+                    width: 5
+                    x: (handleDelegate.width - width) / 2
                 }
             }
 
-
-            NavigationQML
-            {
+            NavigationQML {
                 id: navMenu
 
-                Layout.preferredWidth: 250
                 Layout.fillHeight: true
-                SplitView.preferredWidth: 250
-                SplitView.minimumWidth: 180
+                Layout.preferredWidth: 250
+                SplitView.fillHeight: true
                 SplitView.maximumWidth: 350
-                SplitView.fillHeight: true
+                SplitView.minimumWidth: 180
+                SplitView.preferredWidth: 250
 
-                onInboxClicked:
-                {
-                    emailList.isDraftMode = false
-                    emailList.sourceModel = inboxModel
-                    window.selectedEmail = null
-                    selectedFolder = "inbox"
+                onDraftClicked: {
+                    emailList.isDraftMode = true;
+                    emailList.sourceModel = draftModel;
+                    window.selectedEmail = null;
+                    selectedFolder = "drafts";
                 }
-                onStarredClicked:
-                {
-                    emailList.isDraftMode = false
-                    emailList.sourceModel = starredModel
-                    window.selectedEmail = null
-                    selectedFolder = "starred"
+                onInboxClicked: {
+                    emailList.isDraftMode = false;
+                    emailList.sourceModel = inboxModel;
+                    window.selectedEmail = null;
+                    selectedFolder = "inbox";
                 }
-                onSentClicked:
-                {
-                    emailList.isDraftMode = false
-                    emailList.sourceModel = sentModel
-                    window.selectedEmail = null
-                    selectedFolder = "sent"
+                onSentClicked: {
+                    emailList.isDraftMode = false;
+                    emailList.sourceModel = sentModel;
+                    window.selectedEmail = null;
+                    selectedFolder = "sent";
                 }
-                onDraftClicked:
-                {
-                    emailList.isDraftMode = true
-                    emailList.sourceModel = draftModel
-                    window.selectedEmail = null
-                    selectedFolder = "drafts"
+                onStarredClicked: {
+                    emailList.isDraftMode = false;
+                    emailList.sourceModel = starredModel;
+                    window.selectedEmail = null;
+                    selectedFolder = "starred";
                 }
             }
-            EmailsListQML
-            {
+            EmailsListQML {
                 id: emailList
+
+                SplitView.fillHeight: true
+                SplitView.minimumWidth: 250
                 SplitView.preferredWidth: 350
-                SplitView.minimumWidth: 250
-                SplitView.fillHeight: true
-                onEmailOpenRequested: function (index, theme, name, sendTo, content, time, starred)
-                    {
-                        window.selectedEmail =
-                            {
-                                "index": index,
-                                "theme": theme,
-                                "name": name,
-                                "sendTo": sendTo,
-                                "content": content,
-                                "time": time,
-                                "starred": starred
-                            }
-                    }
+
+                onEmailOpenRequested: function (index, theme, name, sendTo, content, time, starred) {
+                    window.selectedEmail = {
+                        "index": index,
+                        "theme": theme,
+                        "name": name,
+                        "sendTo": sendTo,
+                        "content": content,
+                        "time": time,
+                        "starred": starred
+                    };
+                }
             }
-
-            Item
-            {
-                SplitView.fillWidth: true
+            Item {
                 SplitView.fillHeight: true
+                SplitView.fillWidth: true
                 SplitView.minimumWidth: 250
 
-                ContentBlankPageQML
-                {
+                ContentBlankPageQML {
                     anchors.fill: parent
                     visible: window.selectedEmail === null
                 }
-
-                ContentPageLetterQML
-                {
+                ContentPageLetterQML {
                     anchors.fill: parent
-                    visible: window.selectedEmail !== null
-
+                    letterContent: window.selectedEmail ? window.selectedEmail.content : ""
                     letterIndex: window.selectedEmail ? window.selectedEmail.index : ""
-                    letterTheme: window.selectedEmail ? window.selectedEmail.theme : ""
                     letterName: window.selectedEmail ? window.selectedEmail.name : ""
                     letterSendTo: window.selectedEmail ? window.selectedEmail.sendTo : ""
-                    letterContent: window.selectedEmail ? window.selectedEmail.content : ""
-                    letterTime: window.selectedEmail ? window.selectedEmail.time : ""
                     letterStarred: window.selectedEmail ? window.selectedEmail.starred : false
+                    letterTheme: window.selectedEmail ? window.selectedEmail.theme : ""
+                    letterTime: window.selectedEmail ? window.selectedEmail.time : ""
+                    visible: window.selectedEmail !== null
 
-                    onStarClicked:
-                    {
+                    onDeleteClicked: {
                         if (emailList.sourceModel)
-                            emailList.sourceModel.SetStarred(parseInt(letterIndex), starred)
-                        if (window.selectedEmail)
-                        {
+                            emailList.sourceModel.RemoveEmailData(parseInt(letterIndex));
+                        window.selectedEmail = null;
+                    }
+                    onStarClicked: {
+                        if (emailList.sourceModel)
+                            emailList.sourceModel.SetStarred(parseInt(letterIndex), starred);
+                        if (window.selectedEmail) {
                             window.selectedEmail = {
                                 "index": window.selectedEmail.index,
                                 "theme": window.selectedEmail.theme,
@@ -341,127 +294,114 @@ ApplicationWindow
                                 "content": window.selectedEmail.content,
                                 "time": window.selectedEmail.time,
                                 "starred": starred
-                            }
+                            };
                         }
-                    }
-
-                    onDeleteClicked:
-                    {
-                        if (emailList.sourceModel)
-                            emailList.sourceModel.RemoveEmailData(parseInt(letterIndex))
-                        window.selectedEmail = null
                     }
                 }
             }
         }
     }
 
-
     //blocker
-    Rectangle
-    {
+    Rectangle {
         anchors.fill: parent
         color: "#000000"
         opacity: settingsLoader.opacity * 0.4
         visible: settingsLoader.active
         z: 998
-        MouseArea
-        {
+
+        MouseArea {
+            anchors.fill: parent
+            enabled: parent.visible
             hoverEnabled: true
             preventStealing: true
-            enabled: parent.visible
 
-            anchors.fill: parent
-            onPressed: (mouse) => mouse.accepted = true
-            onReleased: (mouse) => mouse.accepted = true
-            onClicked: (mouse) => mouse.accepted = true
-            onDoubleClicked: (mouse) => mouse.accepted = true
-            onPositionChanged: (mouse) => mouse.accepted = true
-
-
-            onWheel: (wheel) =>
-                {
-                    wheel.accepted = true
-                }
+            onClicked: mouse => mouse.accepted = true
+            onDoubleClicked: mouse => mouse.accepted = true
+            onPositionChanged: mouse => mouse.accepted = true
+            onPressed: mouse => mouse.accepted = true
+            onReleased: mouse => mouse.accepted = true
+            onWheel: wheel => {
+                wheel.accepted = true;
+            }
         }
     }
-    Rectangle
-    {
+    Rectangle {
         anchors.fill: parent
         color: "#000000"
         opacity: authLoader.opacity * 0.4
         visible: authLoader.active
         z: 998
-        MouseArea
-        {
+
+        MouseArea {
+            anchors.fill: parent
+            enabled: parent.visible
             hoverEnabled: true
             preventStealing: true
-            enabled: parent.visible
-            anchors.fill: parent
-            onPressed: (mouse) => mouse.accepted = true
-            onReleased: (mouse) => mouse.accepted = true
-            onClicked: (mouse) => mouse.accepted = true
-            onDoubleClicked: (mouse) => mouse.accepted = true
-            onPositionChanged: (mouse) => mouse.accepted = true
-            onWheel: (wheel) => { wheel.accepted = true }
+
+            onClicked: mouse => mouse.accepted = true
+            onDoubleClicked: mouse => mouse.accepted = true
+            onPositionChanged: mouse => mouse.accepted = true
+            onPressed: mouse => mouse.accepted = true
+            onReleased: mouse => mouse.accepted = true
+            onWheel: wheel => {
+                wheel.accepted = true;
+            }
         }
     }
 
     //settings loader
-    Loader
-    {
+    Loader {
         id: settingsLoader
+
         active: false
-        z: 1000
         anchors.centerIn: parent
-        width: item ? item.implicitWidth : 0
         height: item ? item.implicitHeight : 0
-        Shortcut
-        {
-            sequence: "Escape"
-            enabled: settingsLoader.active
-            onActivated:
-            {
-                closeSettingsWindow()
-            }
-        }
-        Behavior on opacity
-        {
-            NumberAnimation
-            {
+        opacity: status === Loader.Ready ? 1 : 0
+        width: item ? item.implicitWidth : 0
+        z: 1000
+
+        Behavior on opacity {
+            NumberAnimation {
                 duration: 200
             }
         }
-        opacity: status === Loader.Ready ? 1 : 0
+
+        Shortcut {
+            enabled: settingsLoader.active
+            sequence: "Escape"
+
+            onActivated: {
+                closeSettingsWindow();
+            }
+        }
     }
 
     // Loader for account change
-    Loader
-    {
+    Loader {
         id: authLoader
+
         active: initialSetupRequired
-        source: initialSetupRequired ? "screens/navigation/account/AddAccountQML.qml" : ""
-        z: 1000
         anchors.centerIn: parent
-        width: item ? item.implicitWidth : 0
         height: item ? item.implicitHeight : 0
-        Shortcut
-        {
-            sequence: "Escape"
-            enabled: authLoader.active
-            onActivated:
-            {
-                closeAuthWindow()
-            }
-        }
-        Behavior on opacity
-        {
-            NumberAnimation
-            {
+        opacity: status === Loader.Ready ? 1 : 0
+        source: initialSetupRequired ? "screens/navigation/account/AddAccountQML.qml" : ""
+        width: item ? item.implicitWidth : 0
+        z: 1000
+
+        Behavior on opacity {
+            NumberAnimation {
                 duration: 200
             }
         }
-        opacity: status === Loader.Ready ? 1 : 0
+
+        Shortcut {
+            enabled: authLoader.active
+            sequence: "Escape"
+
+            onActivated: {
+                closeAuthWindow();
+            }
+        }
     }
 }
-

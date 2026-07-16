@@ -1,6 +1,9 @@
 #pragma once
+
 #include <QSortFilterProxyModel>
+
 #include "EmailListModel.h"
+
 namespace ISXMail{
 
     class EmailFilterProxy : public QSortFilterProxyModel

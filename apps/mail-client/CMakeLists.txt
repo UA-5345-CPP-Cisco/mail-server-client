@@ -5,6 +5,7 @@ project(qtapptestmail VERSION 0.1 LANGUAGES CXX C)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
+set(WINDOWS_DEV_CONSOLE ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
 #find_package(SQLite3 REQUIRED)
@@ -16,11 +17,23 @@ if(NOT TARGET mail_storage)
 	)
 endif()
 
+if(NOT TARGET mail_logger)
+	add_subdirectory(
+			${CMAKE_CURRENT_SOURCE_DIR}/../../libs/logger
+			${CMAKE_CURRENT_BINARY_DIR}/libs/logger
+	)
+endif()
+
+if(NOT TARGET Threads::Threads)
+	find_package(Threads REQUIRED)
+endif()
+
 qt_standard_project_setup(REQUIRES 6.10)
 
 qt_add_executable(appqtapptestmail
 		main.cpp
 )
+
 
 file(GLOB ASSET_FILES "assets/*")
 foreach(asset_file ${ASSET_FILES})
@@ -74,17 +87,38 @@ qt_add_qml_module(appqtapptestmail
 		headers/users/AccountListModel.h
 		models/users/AccountListModel.cpp
 		models/database/RegistrationHandler.cpp
+
+		headers/service/Service.h
+		headers/client_logger/ClientProxyLogger.h
+		headers/client_logger/ClientConfigReader.h
+		models/service/Service.cpp
+		models/client_logger/ClientProxyLogger.cpp
+		models/client_logger/ClientConfigReader.cpp
 )
 
 set_target_properties(appqtapptestmail PROPERTIES
 		MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
 		MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
 		MACOSX_BUNDLE TRUE
-		WIN32_EXECUTABLE TRUE
 )
+
+target_compile_definitions(appqtapptestmail PRIVATE
+		CONFIG_DIR="${CMAKE_SOURCE_DIR}/config"
+)
+
+if(WINDOWS_DEV_CONSOLE)
+	set_target_properties(appqtapptestmail PROPERTIES
+			WIN32_EXECUTABLE FALSE
+	)
+else()
+	set_target_properties(appqtapptestmail PROPERTIES
+			WIN32_EXECUTABLE TRUE
+	)
+endif()
 
 target_link_libraries(appqtapptestmail
 	PUBLIC
+		mail_logger
 		mail_storage
 	PRIVATE
 		Qt6::Quick
@@ -95,6 +129,7 @@ target_link_libraries(appqtapptestmail
 target_include_directories(appqtapptestmail
 		PRIVATE
 		${CMAKE_CURRENT_SOURCE_DIR}
+		${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 install(TARGETS appqtapptestmail

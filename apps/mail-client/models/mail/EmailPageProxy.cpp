@@ -1,10 +1,16 @@
 #include "headers/mail/EmailPageProxy.h"
+
+#include "headers/service/Service.h"
+
 namespace ISXMail{
 
 EmailPageProxy::EmailPageProxy(QObject* parent) :
     QSortFilterProxyModel(parent)
 {
+
+   ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailPageProxy: constructed");
 }
+
 void EmailPageProxy::NextPage()
 {
     if (m_current_page < m_page_count - 1)
@@ -15,6 +21,8 @@ void EmailPageProxy::NextPage()
         emit currentPageChanged();
         emit pageAmountTextChanged();
     }
+
+   ISXService::Service::Logger().Log(Logging::LogLevel::Debug, QString("EmailPageProxy::NextPage: current page - " + QString::number(m_current_page)).toStdString());
 }
 
 void EmailPageProxy::PrevPage()
@@ -27,7 +35,10 @@ void EmailPageProxy::PrevPage()
         emit currentPageChanged();
         emit pageAmountTextChanged();
     }
+
+   ISXService::Service::Logger().Log(Logging::LogLevel::Debug, QString("EmailPageProxy::PrevPage: current page - " + QString::number(m_current_page)).toStdString());
 }
+
 int EmailPageProxy::CurrentPage() const
 {
     return m_current_page;
@@ -63,6 +74,7 @@ void EmailPageProxy::setSourceModel(QAbstractItemModel *source_model)
                 this,
                 &EmailPageProxy::RecalcValues);
     }
+     ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailPageProxy::setSourceModel: source model was assigned successfully");
     RecalcValues();
 }
 
@@ -110,6 +122,7 @@ void EmailPageProxy::RecalcValues()
 
     endFilterChange();
 }
+
 int EmailPageProxy::TotalEmailsCount() const
 {
     return m_emails_count;
@@ -124,6 +137,7 @@ QString EmailPageProxy::PageAmountText() const
     int end_idx   = qMin(m_emails_count, (m_current_page + 1) * s_per_page);
     return QStringLiteral("%1-%2 of %3").arg(start_idx).arg(end_idx).arg(m_emails_count);
 }
+
 bool EmailPageProxy::SetEmailData(int proxyRow, const QVariant& value, int role)
 {
     QModelIndex proxyIndex = index(proxyRow, 0);
@@ -145,6 +159,7 @@ bool EmailPageProxy::SetStarred(int proxyRow, bool starred)
 
 void EmailPageProxy::RemoveEmailData(int proxyRow)
 {
+     ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailPageProxy::RemoveEmailData: source model was assigned successfully");
     QModelIndex idx = index(proxyRow, 0);
 
     while (auto* proxy =

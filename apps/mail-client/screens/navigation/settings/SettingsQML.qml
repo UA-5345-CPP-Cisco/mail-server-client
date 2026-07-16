@@ -48,8 +48,8 @@ Rectangle
         {
             id: closeButtonWrapper
 
-            x: 348.40
-            y: 19
+            x: 330
+            y: 6
             height: 18
             width: 18
             color: "transparent"
@@ -90,9 +90,9 @@ Rectangle
 
                 Image
                 {
-                    source: "qrc:/pngs/assets/ic_close_window.svg"
-                    width: 14
-                    height: 14
+                    source: "qrc:/pngs/assets/ic_close_window_black.svg"
+                    width: 16
+                    height: 16
                     sourceSize.width: 120
                     sourceSize.height: 120
                     fillMode: Image.PreserveAspectFit
@@ -129,7 +129,7 @@ Rectangle
             horizontalAlignment: Text.AlignHCenter
             lineHeight: 16
             lineHeightMode: Text.FixedHeight
-            text: "Mail App v1.0"
+            text: "Mail App v4.2"
             textFormat: Text.PlainText
             verticalAlignment: Text.AlignVCenter
         }
