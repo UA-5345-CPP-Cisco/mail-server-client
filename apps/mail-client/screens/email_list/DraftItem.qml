@@ -265,7 +265,7 @@ Rectangle {
             base: Color.background
             highlight: Color.highlight
             highlightedText: Color.hover
-            text: Color.hover
+            text: Color.secondaryText
         }
         MenuItem {
             text: "Copy"
