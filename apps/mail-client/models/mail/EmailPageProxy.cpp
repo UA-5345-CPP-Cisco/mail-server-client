@@ -4,10 +4,6 @@
 
 namespace ISXMail{
 
-namespace
-{
-}
-
 EmailPageProxy::EmailPageProxy(QObject* parent) :
     QSortFilterProxyModel(parent)
 {

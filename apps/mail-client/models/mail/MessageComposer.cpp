@@ -11,7 +11,6 @@ namespace ISXMail
 namespace
 {
 
-
 std::optional<std::string> ToOptionalString(const QString& text)
 {
 	const QString trimmed = text.trimmed();
@@ -23,6 +22,7 @@ std::optional<std::string> ToOptionalString(const QString& text)
 
 	return trimmed.toStdString();
 }
+
 }
 
 MessageComposer::MessageComposer(QObject* parent) :

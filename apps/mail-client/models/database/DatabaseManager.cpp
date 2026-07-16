@@ -9,10 +9,6 @@
 #include "headers/service/Service.h"
 #include "mail_storage/MigrationRunner.h"
 
-namespace {
-
-}
-
 namespace ISXDatabaseManager
 {
 
