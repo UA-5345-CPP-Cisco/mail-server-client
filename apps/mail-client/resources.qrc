@@ -28,9 +28,8 @@
         <file>assets/ic_close_window_black.svg</file>
         <file>assets/ic_google_logo.svg</file>
         <file>assets/ic_checkmark.svg</file>
-        <file>assets/DarkColorScheme.json</file>
-        <file>assets/LightColorScheme.json</file>
-        <file>assets/theme.json</file>
+        <file>assets/theme/DarkColorScheme.json</file>
+        <file>assets/theme/LightColorScheme.json</file>
         <file>assets/ic_eye_closed.svg</file>
         <file>assets/ic_eye_open.svg</file>
     </qresource>

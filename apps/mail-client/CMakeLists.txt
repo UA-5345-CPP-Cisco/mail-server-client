@@ -102,6 +102,13 @@ qt_add_qml_module(appqtapptestmail
 		headers/color/ColorModel.h
 		headers/color/ColorProvider.h
 		models/color/ColorProvider.cpp
+
+		headers/service/Service.h
+		headers/client_logger/ClientProxyLogger.h
+		headers/client_logger/ClientConfigReader.h
+		models/service/Service.cpp
+		models/client_logger/ClientProxyLogger.cpp
+		models/client_logger/ClientConfigReader.cpp
 )
 
 set_target_properties(appqtapptestmail PROPERTIES

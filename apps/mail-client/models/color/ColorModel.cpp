@@ -1,5 +1,5 @@
 #include "headers/color/ColorModel.h"
-#include "logger/Logger.h"
+#include "headers/service/Service.h"
 
 #include <QFile>
 #include <QJsonDocument>
@@ -17,7 +17,7 @@ bool ColorModel::LoadFromFile(const QString& path)
 	QFile file(path);
 	if (!file.open(QIODevice::ReadOnly))
 	{
-		Logging::Logger::Instance().Log(Logging::LogLevel::Info, "ColorModel::LoadFromFile: Failed to open theme JSON file: " + path.toStdString());
+		ISXService::Service::Logger().Log(Logging::LogLevel::Info, "ColorModel::LoadFromFile: Failed to open theme JSON file: " + path.toStdString());
 		return false;
 	}
 
@@ -40,7 +40,7 @@ bool ColorModel::LoadFromJson(const QJsonObject& obj)
 
 		if (role == Role::Unknown || !it.value().isString())
 		{
-			Logging::Logger::Instance().Log(Logging::LogLevel::Info, "ColorModel::LoadFromJson: UnknownRole");
+			ISXService::Service::Logger().Log(Logging::LogLevel::Debug, std::string("ColorModel::LoadFromJson: UnknownRole"));
 			continue;
 		}
 
@@ -48,7 +48,7 @@ bool ColorModel::LoadFromJson(const QJsonObject& obj)
 
 		if (!color.isValid())
 		{
-			Logging::Logger::Instance().Log(Logging::LogLevel::Info, "ColorModel::LoadFromJson: InvalidColor");
+			ISXService::Service::Logger().Log(Logging::LogLevel::Info, "ColorModel::LoadFromJson: InvalidColor");
 			continue;
 		}
 
