@@ -87,12 +87,23 @@ qt_add_qml_module(appqtapptestmail
 		headers/users/AccountListModel.h
 		models/users/AccountListModel.cpp
 		models/database/RegistrationHandler.cpp
+
+		headers/service/Service.h
+		headers/client_logger/ClientProxyLogger.h
+		headers/client_logger/ClientConfigReader.h
+		models/service/Service.cpp
+		models/client_logger/ClientProxyLogger.cpp
+		models/client_logger/ClientConfigReader.cpp
 )
 
 set_target_properties(appqtapptestmail PROPERTIES
 		MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
 		MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
 		MACOSX_BUNDLE TRUE
+)
+
+target_compile_definitions(appqtapptestmail PRIVATE
+		CONFIG_DIR="${CMAKE_SOURCE_DIR}/config"
 )
 
 if(WINDOWS_DEV_CONSOLE)
