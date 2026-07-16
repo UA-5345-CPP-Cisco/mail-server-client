@@ -52,4 +52,61 @@ target_compile_features(state_tests
 		cxx_std_17
 )
 
-gtest_discover_tests(state_tests)
+#gtest_discover_tests(state_tests)
+
+gtest_add_tests(TARGET state_tests SOURCES
+		state_tests/CurrentUserTests.cpp
+		state_tests/AccountListModelTests.cpp
+		state_tests/EmailCacheTests.cpp
+		state_tests/UserCacheTests.cpp
+		state_tests/EmailFilterProxyTests.cpp
+		state_tests/EmailListModelTests.cpp
+)
+
+add_executable(model_tests
+		model_tests/DatabaseManagerTests.cpp
+		model_tests/MessageComposerTests.cpp
+		model_tests/MessageSearchModelTests.cpp
+		model_tests/RegistrationHandlerTests.cpp
+
+		state_tests/main.cpp
+
+		../apps/mail-client/models/mail/MessageComposer.cpp
+		../apps/mail-client/models/search/MessageSearchModel.cpp
+		../apps/mail-client/models/database/RegistrationHandler.cpp
+		../apps/mail-client/models/database/DatabaseManager.cpp
+
+		../apps/mail-client/headers/mail/MessageComposer.h
+		../apps/mail-client/headers/search/MessageSearchModel.h
+		../apps/mail-client/headers/database/RegistrationHandler.h
+		../apps/mail-client/headers/database/DatabaseManager.h
+)
+
+target_include_directories(model_tests
+		PRIVATE
+		../apps/mail-client
+		../apps/mail-client/headers
+)
+
+target_link_libraries(model_tests
+		PRIVATE
+		gtest
+		Qt6::Core
+		Qt6::Sql
+		Qt6::Gui
+		mail_storage
+)
+
+target_compile_features(model_tests
+		PRIVATE
+		cxx_std_17
+)
+
+#gtest_discover_tests(model_tests)
+
+gtest_add_tests(TARGET model_tests SOURCES
+		model_tests/DatabaseManagerTests.cpp
+		model_tests/MessageComposerTests.cpp
+		model_tests/MessageSearchModelTests.cpp
+		model_tests/RegistrationHandlerTests.cpp
+)
