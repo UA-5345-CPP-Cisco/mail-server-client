@@ -5,7 +5,7 @@
 #include <optional>
 #include <string>
 
-#include "../../../../libs/mail-storage/include/mail_storage/Database.h"
+#include "mail_storage/Database.h"
 
 namespace Storage {
 

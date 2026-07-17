@@ -48,9 +48,9 @@ fi
 
 export PATH="${qt_prefix}/bin:${cmake_bin}:${mingw_bin}:${ninja_dir}:${PATH}"
 
-qt_mail_client_require_tool gcc
-qt_mail_client_require_tool g++
-qt_mail_client_configure_and_build
+mail_client_require_tool gcc
+mail_client_require_tool g++
+mail_client_configure_and_build
 
 executable="${build_dir}/appqtapptestmail.exe"
 
@@ -68,4 +68,4 @@ if [[ "${mode}" == "build" ]]; then
   exit 0
 fi
 
-qt_mail_client_run_executable "${executable}"
+mail_client_run_executable "${executable}"

@@ -28,6 +28,7 @@ gtest_discover_tests(mail_storage_tests)
 
 add_executable(smtp_server_sdk_tests
         smtp_server_sdk/MailBuilderTests.cpp
+        smtp_server_sdk/SmtpResultTests.cpp
 )
 
 target_link_libraries(smtp_server_sdk_tests
@@ -48,8 +49,9 @@ add_executable(logger_tests
 )
 
 target_link_libraries(logger_tests
-        PRIVATE
+        PUBLIC
         mail_logger
+        PRIVATE
         gtest_main
 )
 
