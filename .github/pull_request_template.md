@@ -1,10 +1,10 @@
 ## What type of PR is this?
 
-- [] Defect Resolution
-- [] Feature
-- [] Documentation
-- [] Test Failure
-- [] Other
+- Defect Resolution
+- Feature
+- Documentation
+- Test Failure
+- Other
   - If "Other", please describe here:
 
 ## Which CDETS/Jira Item does this PR address?
