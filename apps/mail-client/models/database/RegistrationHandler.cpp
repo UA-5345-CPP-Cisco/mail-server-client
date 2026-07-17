@@ -1,5 +1,5 @@
 #include "headers/database/RegistrationHandler.h"
-#include "../../../../libs/mail-storage/include/mail_storage/UserRepository.h"
+#include "mail_storage/UserRepository.h"
 
 RegistrationHandler::RegistrationHandler(Storage::Database& db, QObject* parent) : QObject(parent), m_db(db) {}
 

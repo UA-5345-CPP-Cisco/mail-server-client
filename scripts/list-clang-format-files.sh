@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+project_root="$(cd "${script_dir}/.." && pwd)"
+
 source_dirs=(
-  "apps/mail-server"
-  "apps/smtp-server"
-  "apps/simple-client"
-  "libs"
-  "tests"
+  "${project_root}/apps/mail-server"
+  "${project_root}/apps/smtp-server"
+  "${project_root}/apps/simple-client"
+  "${project_root}/libs"
+  "${project_root}/tests"
 )
 
 sources=()

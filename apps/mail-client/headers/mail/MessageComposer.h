@@ -3,9 +3,9 @@
 #include <QObject>
 #include <QString>
 
-#include "../../../../libs/mail-storage/include/mail_storage/Database.h"
-#include "../../../../libs/mail-storage/include/mail_storage/MailMessageRepository.h"
-#include "../../../../libs/mail-storage/include/mail_storage/MessageRecipientRepository.h"
+#include "mail_storage/Database.h"
+#include "mail_storage/MailMessageRepository.h"
+#include "mail_storage/MessageRecipientRepository.h"
 
 namespace ISXMail
 {

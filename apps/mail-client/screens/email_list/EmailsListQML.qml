@@ -2,254 +2,247 @@ import QtQuick
 import QtQuick.Shapes
 import QtQuick.Controls
 
-Rectangle
-{
+Rectangle {
     id: emailsListQML
-    color: "#ffffff"
 
     property bool isDraftMode: false
     property var sourceModel: inboxModel
+
     signal emailOpenRequested(int index, string theme, string name, string sendTo, string content, string time, bool starred)
 
-    function activeSearchModel()
-    {
+    function activeSearchModel() {
         if (sourceModel === inboxModel)
-            return inboxSearchModel
+            return inboxSearchModel;
         if (sourceModel === sentModel)
-            return sentSearchModel
+            return sentSearchModel;
         if (sourceModel === starredModel)
-            return starredSearchModel
+            return starredSearchModel;
         if (sourceModel === draftModel)
-            return draftSearchModel
-        return inboxSearchModel
+            return draftSearchModel;
+        return inboxSearchModel;
     }
 
-    onSourceModelChanged:
-    {
-        var searchProxy = activeSearchModel()
+    color: "#ffffff"
+
+    onSourceModelChanged: {
+        var searchProxy = activeSearchModel();
         if (searchProxy && searchTextField.text !== searchProxy.SearchedText)
-            searchTextField.text = searchProxy.SearchedText
+            searchTextField.text = searchProxy.SearchedText;
     }
 
     Component {
         id: draftDelegate
 
         DraftItem {
-            width: parent.width
-
-            theme: parent.pTheme
+            content: parent.pContent
             name: parent.pName
             preview: parent.pPreview
-            content: parent.pContent
-            sendTo: parent.pSendTo
-            time: parent.pTime
             searchModel: parent.pSearchModel
-            onOpenRequested: function(theme, name, sendTo, content, time)
-            {
-                emailsListQML.emailOpenRequested(parent.pIndex, theme, name, sendTo, content, time, false)
-            }
-            onClicked:
-            {
-                newMessageLoader.selectedItem =
-                    {
-                        "index": parent.pIndex,
-                        "subject": theme,
-                        "sendTo": sendTo,
-                        "content": content,
-                        "isDraft": true
-                    }
+            sendTo: parent.pSendTo
+            theme: parent.pTheme
+            time: parent.pTime
+            width: parent.width
 
-                newMessageLoader.source = ""
-                newMessageLoader.active = false
+            onClicked: {
+                newMessageLoader.selectedItem = {
+                    "index": parent.pIndex,
+                    "subject": theme,
+                    "sendTo": sendTo,
+                    "content": content,
+                    "isDraft": true,
+                    "IsForward": false,
+                    "isReply": false,
+                    "title": "Draft",
+                    "newTitle": "Draft"
+                };
 
-                newMessageLoader.active = true
-                newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml"
+                newMessageLoader.source = "";
+                newMessageLoader.active = false;
+
+                newMessageLoader.active = true;
+                newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml";
             }
-            onDeleteClicked:
-            {
+            onDeleteClicked: {
                 if (sourceModel)
-                    sourceModel.RemoveEmailData(parent.pIndex)
+                    sourceModel.RemoveEmailData(parent.pIndex);
+            }
+            onOpenRequested: function (theme, name, sendTo, content, time) {
+                emailsListQML.emailOpenRequested(parent.pIndex, theme, name, sendTo, content, time, false);
             }
         }
     }
-
-    Component
-    {
+    Component {
         id: emailsDelegate
 
-        ListItem
-        {
-            width: parent.width
-
-            theme: parent.pTheme
+        ListItem {
+            content: parent.pContent
             name: parent.pName
             preview: parent.pPreview
-            content: parent.pContent
-            sendTo: parent.pSendTo
-            time: formatEmailTime(parent.pTime)
-            starred: parent.pStarred
             searchModel: parent.pSearchModel
-            onOpenRequested: function(theme, name, sendTo, content, time, starred) {
-                emailsListQML.emailOpenRequested(parent.pIndex, theme, name, sendTo, content, parent.pTime, starred)
-            }
-            onStarredClicked:
-            {
-                sourceModel.SetStarred(parent.pIndex, starred)
-            }
-            onDeleteClicked:
-            {
+            sendTo: parent.pSendTo
+            starred: parent.pStarred
+            theme: parent.pTheme
+            time: formatEmailTime(parent.pTime)
+            width: parent.width
+
+            onDeleteClicked: {
                 if (sourceModel)
-                    sourceModel.RemoveEmailData(parent.pIndex)
+                    sourceModel.RemoveEmailData(parent.pIndex);
+            }
+            onOpenRequested: function (theme, name, sendTo, content, time, starred) {
+                emailsListQML.emailOpenRequested(parent.pIndex, theme, name, sendTo, content, parent.pTime, starred);
+            }
+            onStarredClicked: {
+                sourceModel.SetStarred(parent.pIndex, starred);
             }
         }
     }
 
     // Right border (handle of SplitView)
-    Rectangle
-    {
-        anchors.top: parent.top
+    Rectangle {
         anchors.bottom: parent.bottom
         anchors.right: parent.right
-        width: 1
+        anchors.top: parent.top
         color: "#e5e7eb"
+        width: 1
         z: 1
     }
 
     // Left border
-    Rectangle
-    {
-        anchors.top: parent.top
+    Rectangle {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        width: 1
+        anchors.top: parent.top
         color: "#e5e7eb"
-        z:1
+        width: 1
+        z: 1
     }
 
-
     // Search section
-    Rectangle
-    {
+    Rectangle {
         id: searchSection
 
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-
-        height: 70
         color: "#ffffff"
+        height: 70
 
-        Rectangle
-        {
+        Rectangle {
             id: searchLine
 
-            anchors
-            {
-                top: parent.top
+            color: "transparent"
+            height: 38
+
+            anchors {
                 left: parent.left
-                right: parent.right
                 margins: 16
+                right: parent.right
+                top: parent.top
             }
 
-            height: 38
-            color: "transparent"
-
             // Search line
-            Rectangle
-            {
+            Rectangle {
                 id: inputLine
 
                 anchors.left: parent.left
                 anchors.right: parent.right
-                height: 38
-
                 border.color: "#d1d5dc"
                 border.width: 1
                 clip: true
                 color: "#ffffff"
+                height: 38
                 radius: 10
 
-                Item
-                {
+                Item {
                     id: searchIcon
+
+                    height: 16
+                    width: 16
                     x: 12
                     y: 11
-                    width: 16
-                    height: 16
-                    Image
-                    {
-                        source: "qrc:/pngs/assets/ic_search.svg"
-                        width: 15
-                        height: 15
-                        sourceSize.width: 120
-                        sourceSize.height: 120
-                        fillMode: Image.PreserveAspectFit
+
+                    Image {
                         anchors.centerIn: parent
+                        fillMode: Image.PreserveAspectFit
+                        height: 15
+                        source: "qrc:/pngs/assets/ic_search.svg"
+                        sourceSize.height: 120
+                        sourceSize.width: 120
+                        width: 15
                     }
                 }
-
-                Rectangle
-                {
+                Rectangle {
                     id: searchContainer
+
                     anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
                     anchors.leftMargin: 36.80
+                    anchors.right: parent.right
                     anchors.rightMargin: 8
-                    height: 19
+                    anchors.verticalCenter: parent.verticalCenter
                     clip: true
                     color: "transparent"
+                    height: 19
 
-                    TextField
-                    {
+                    TextField {
                         id: searchTextField
+
                         anchors.fill: parent
+                        bottomPadding: 0
                         color: "#1f2937"
                         font.family: "Segoe UI"
                         font.pixelSize: 14
                         font.weight: Font.Normal
                         horizontalAlignment: Text.AlignLeft
+                        leftPadding: 0
                         placeholderText: "Search mail"
                         placeholderTextColor: "#99a1af"
+                        topPadding: 0
 
-                        onTextChanged: {
-                            var searchProxy = emailsListQML.activeSearchModel()
-                            if (searchProxy)
-                                searchProxy.SearchedText = text
+                        background: Rectangle {
+                            color: "transparent"
+                        }
+                        cursorDelegate: Item {
                         }
 
-                        background: Rectangle { color: "transparent" }
+                        onTextChanged: {
+                            var searchProxy = emailsListQML.activeSearchModel();
+                            if (searchProxy)
+                                searchProxy.SearchedText = text;
+                        }
 
-                        leftPadding: 0
-                        topPadding: 0
-                        bottomPadding: 0
-                        cursorDelegate: Item {}
-                        Rectangle
-                        {
+                        Rectangle {
                             id: customCursorContainer
-                            width: 1
+
+                            anchors.verticalCenter: parent.verticalCenter
                             color: "#1f2937"
                             height: parent.font.pixelSize
-                            anchors.verticalCenter: parent.verticalCenter
-                            x: parent.cursorRectangle.x
                             visible: parent.activeFocus
+                            width: 1
+                            x: parent.cursorRectangle.x
 
-                            // Smooth right/left movement
-                            Behavior on x
-                            {
-                                NumberAnimation
-                                {
-                                    duration: 80
-                                    easing.type: Easing.OutCubic
+                            // Smooth flashing
+                            SequentialAnimation on opacity {
+                                loops: Animation.Infinite
+
+                                NumberAnimation {
+                                    duration: 500
+                                    easing.type: Easing.InOutSine
+                                    to: 0
+                                }
+                                NumberAnimation {
+                                    duration: 500
+                                    easing.type: Easing.InOutSine
+                                    to: 1
                                 }
                             }
 
-                            // Smooth flashing
-                            SequentialAnimation on opacity
-                            {
-                                loops: Animation.Infinite
-                                NumberAnimation { to: 0; duration: 500; easing.type: Easing.InOutSine }
-                                NumberAnimation { to: 1; duration: 500; easing.type: Easing.InOutSine }
+                            // Smooth right/left movement
+                            Behavior on x {
+                                NumberAnimation {
+                                    duration: 80
+                                    easing.type: Easing.OutCubic
+                                }
                             }
                         }
                     }
@@ -259,75 +252,70 @@ Rectangle
     }
 
     // Inbox Separator
-    Rectangle
-    {
+    Rectangle {
         id: separatorLine
 
-        anchors.top:searchSection.bottom
-        anchors.leftMargin: 0
-        anchors.rightMargin: 0
-        anchors.topMargin: 0
         anchors.left: parent.left
+        anchors.leftMargin: 0
         anchors.right: parent.right
-
-        height: 34
+        anchors.rightMargin: 0
+        anchors.top: searchSection.bottom
+        anchors.topMargin: 0
         color: "#f9fafb"
+        height: 34
 
         // Top border
-        Rectangle
-        {
+        Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
-            height: 1
             color: "#e5e7eb"
+            height: 1
         }
 
         // Bottom border
-        Rectangle
-        {
+        Rectangle {
+            anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            height: 1
             color: "#e5e7eb"
+            height: 1
         }
-
-        Rectangle
-        {
+        Rectangle {
             id: separatorContainer
-            anchors
-            {
+
+            color: "transparent"
+            height: 18
+
+            anchors {
                 left: parent.left
+                margins: 16
                 right: parent.right
                 top: parent.top
-                margins: 16
             }
-            height: 18
-            color: "transparent"
 
             // Inbox and page label
-            Rectangle
-            {
+            Rectangle {
                 id: textContainer
-                y: -8
-                height: 18
+
                 anchors.left: parent.left
-                anchors.right: navButtonContainer.left
                 anchors.leftMargin: 0
+                anchors.right: navButtonContainer.left
                 anchors.rightMargin: 0
                 color: "transparent"
+                height: 18
+                y: -8
 
-                Text
-                {
+                Text {
                     id: inboxText
-                    height: 16
+
                     color: "#6a7282"
                     font.capitalization: Font.AllUppercase
                     font.family: "Segoe UI"
                     font.letterSpacing: 0.60
                     font.pixelSize: 12
                     font.weight: Font.Black
+                    height: 16
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
@@ -335,202 +323,187 @@ Rectangle
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                 }
-
-                Text
-                {
+                Text {
                     id: pageText
+
                     anchors.right: parent.right
-                    y: 1
-                    height: 16
                     color: "#000000"
                     font.capitalization: Font.AllUppercase
                     font.family: "Segoe UI"
                     font.letterSpacing: 0.60
                     font.pixelSize: 12
                     font.weight: Font.Normal
+                    height: 16
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
                     text: amountText
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
+                    y: 1
                 }
             }
 
             // Navigation buttons
-            Item
-            {
+            Item {
                 id: navButtonContainer
-                x: 564
-                y: -8
+
                 anchors.right: parent.right
                 anchors.rightMargin: -6
-                width: 50
                 height: 18
+                width: 50
+                x: 564
+                y: -8
 
                 // Button back
-                Rectangle
-                {
+                Rectangle {
                     id: moveBackButtonContainer
-                    anchors.left: parent.left
-                    width: 15
-                    height: 17
-                    color: "transparent"
-                    scale: moveBackButtonClickArea.containsMouse ? 1.3 : 1.0
 
-                    Behavior on scale
-                    {
-                        NumberAnimation
-                        {
+                    anchors.left: parent.left
+                    color: "transparent"
+                    height: 17
+                    scale: moveBackButtonClickArea.containsMouse ? 1.3 : 1.0
+                    width: 15
+
+                    Behavior on scale {
+                        NumberAnimation {
                             duration: 150
                             easing.type: Easing.InOutQuad
                         }
                     }
-                    MouseArea
-                    {
+
+                    MouseArea {
                         id: moveBackButtonClickArea
+
                         anchors.fill: parent
-
-                        hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
 
-                        onClicked:
-                        {
-                            if (listView.model)
-                            {
-                                listView.model.PrevPage()
+                        onClicked: {
+                            if (listView.model) {
+                                listView.model.PrevPage();
                             }
                         }
                     }
-                    Rectangle
-                    {
+                    Rectangle {
                         id: moveBackButton
-                        y: 2
-                        height: 15
-                        width: 15
+
                         clip: true
                         color: "transparent"
+                        height: 15
+                        width: 15
+                        y: 2
 
-                        Image
-                        {
-                            source: "qrc:/pngs/assets/ic_button_back.svg"
-                            width: 15
-                            height: 15
-                            sourceSize.width: width * Screen.devicePixelRatio
-                            sourceSize.height: height * Screen.devicePixelRatio
-                            fillMode: Image.PreserveAspectFit
+                        Image {
                             anchors.centerIn: parent
+                            fillMode: Image.PreserveAspectFit
+                            height: 15
+                            source: "qrc:/pngs/assets/ic_button_back.svg"
+                            sourceSize.height: height * Screen.devicePixelRatio
+                            sourceSize.width: width * Screen.devicePixelRatio
+                            width: 15
                         }
                     }
                 }
 
                 // Button forward
-                Rectangle
-                {
+                Rectangle {
                     id: moveForwardButtonContainer
+
                     anchors.right: parent.right
-                    width: 15
-                    height: 18
                     color: "transparent"
+                    height: 18
                     scale: moveForwardButtonClickArea.containsMouse ? 1.3 : 1.0
-                    MouseArea {
-                        id: moveForwardButtonClickArea
-                        anchors.fill: parent
+                    width: 15
 
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-
-                        onClicked:
-                        {
-                            if (listView.model)
-                            {
-                                listView.model.NextPage()
-                            }
-                        }
-                    }
-
-                    Behavior on scale
-                    {
-                        NumberAnimation
-                        {
+                    Behavior on scale {
+                        NumberAnimation {
                             duration: 150
                             easing.type: Easing.InOutQuad
                         }
                     }
 
-                    Rectangle
-                    {
+                    MouseArea {
+                        id: moveForwardButtonClickArea
+
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+
+                        onClicked: {
+                            if (listView.model) {
+                                listView.model.NextPage();
+                            }
+                        }
+                    }
+                    Rectangle {
                         id: moveForwardButton
-                        y: 2
-                        height: 15
-                        width: 15
+
                         clip: true
                         color: "transparent"
+                        height: 15
+                        width: 15
+                        y: 2
 
-                        Image
-                        {
-                            source: "qrc:/pngs/assets/ic_button_forward.svg"
-                            width: 15
-                            height: 15
-                            sourceSize.width: width * Screen.devicePixelRatio
-                            sourceSize.height: height * Screen.devicePixelRatio
-                            fillMode: Image.PreserveAspectFit
+                        Image {
                             anchors.centerIn: parent
+                            fillMode: Image.PreserveAspectFit
+                            height: 15
+                            source: "qrc:/pngs/assets/ic_button_forward.svg"
+                            sourceSize.height: height * Screen.devicePixelRatio
+                            sourceSize.width: width * Screen.devicePixelRatio
+                            width: 15
                         }
                     }
                 }
             }
         }
     }
-
-    HoverHandler
-    {
+    HoverHandler {
         id: listViewHover
     }
 
     //Emails model conector
-    ListView
-    {
+    ListView {
         id: listView
+
         clip: true
-        anchors
-        {
-            top: separatorLine.bottom;
-            right: parent.right;
-            left: parent.left;
-            bottom: parent.bottom;
-        }
         model: sourceModel
-        delegate: Loader
-        {
-            width: listView.width
-            property string pTheme: emailsTheme
-            property string pName: emailsName
-            property string pSendTo: emailsSendTo
-            property string pPreview: emailsPreview
+
+        ScrollBar.vertical: ScrollBar {
+            id: vBar
+
+            active: true
+            policy: ScrollBar.AsNeeded
+            visible: (listView.contentHeight > listView.height) && listViewHover.hovered
+
+            contentItem: Rectangle {
+                color: "#e5e7eb"
+                implicitHeight: 100
+                implicitWidth: 6
+                radius: 3
+            }
+        }
+        delegate: Loader {
             property string pContent: emailsContent
-            property string pTime: emailsTime
-            property bool pStarred: emailsStarred
-            property var pSearchModel: emailsListQML.activeSearchModel()
             property int pIndex: index
-            sourceComponent: isDraftMode
-                ? draftDelegate
-                : emailsDelegate
+            property string pName: emailsName
+            property string pPreview: emailsPreview
+            property var pSearchModel: emailsListQML.activeSearchModel()
+            property string pSendTo: emailsSendTo
+            property bool pStarred: emailsStarred
+            property string pTheme: emailsTheme
+            property string pTime: emailsTime
+
+            sourceComponent: isDraftMode ? draftDelegate : emailsDelegate
+            width: listView.width
         }
 
-        ScrollBar.vertical: ScrollBar
-        {
-            id: vBar
-            active: true
-            visible: (listView.contentHeight > listView.height) && listViewHover.hovered
-            policy: ScrollBar.AsNeeded
-            contentItem: Rectangle
-            {
-                implicitWidth: 6
-                implicitHeight: 100
-                radius: 3
-                color: "#e5e7eb"
-            }
+        anchors {
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+            top: separatorLine.bottom
         }
     }
 }

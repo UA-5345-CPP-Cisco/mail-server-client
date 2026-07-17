@@ -5,6 +5,7 @@
 #include <QQuickStyle>
 #include <QIcon>
 #include <QQmlContext>
+
 #include "headers/mail/EmailListModel.h"
 #include "headers/mail/EmailFilterProxy.h"
 #include "headers/mail/EmailPageProxy.h"
@@ -14,7 +15,12 @@
 #include "headers/search/MessageSearchModel.h"
 #include "headers/database/RegistrationHandler.h"
 #include "headers/users/AccountListModel.h"
-#include "../../libs/mail-storage/include/mail_storage/UserRepository.h"
+#include "headers/client_logger/ClientConfigReader.h"
+#include "headers/client_logger/ClientProxyLogger.h"
+#include "headers/service/Service.h"
+
+#include "mail_storage/UserRepository.h"
+#include "logger/Logger.h"
 
 
 int main(int argc, char *argv[])
@@ -24,11 +30,26 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/pngs/assets/Icon.png"));
 
+    ISXConfig::ClientConfigReader reader;
+    auto config = reader.ReadConfig(ISXConfig::ClientConfigReader::ConfigPath());
+
+    if (!config)
+    {
+      qDebug() << "File is failed to read!";
+      return -1;
+    }
+
+    ISXClientLogger::ClientLoggerProvider logger_provider(config.value());
+    ISXClientLogger::ClientLogger logger(Logging::Logger::Instance(), logger_provider);
+
+    ISXService::Service::Initialize(logger);
+
     ISXDatabaseManager::DatabaseManager::EnsureInitialized();
     auto dbPath = ISXDatabaseManager::DatabaseManager::DatabasePath();
     Storage::Database database(dbPath);
     QQmlApplicationEngine engine;
 
+    (void)Logging::Logger::Instance();
     RegistrationHandler regHandler(database);
     engine.rootContext()->setContextProperty("regHandler", &regHandler);
 

@@ -71,6 +71,105 @@ TEST_F(ConfigurationTest, LoadsAllConfigurationSections)
   EXPECT_EQ(configuration.Tls().privateKeyPath, "server.key");
 }
 
+TEST_F(ConfigurationTest, LoadsConfigurationWithInvalidStoragePath)
+{
+  Write(R"({
+		"database": {
+			"storage_path": ""
+		}
+	})");
+
+  EXPECT_THROW((void)smtp::Configuration{path_}, std::runtime_error);
+}
+
+TEST_F(ConfigurationTest, LoadsConfigurationWithInvalidMigrationPath)
+{
+  Write(R"({
+		"database": {
+      "migrations_path": ""
+		}
+	})");
+
+  EXPECT_THROW((void)smtp::Configuration{path_}, std::runtime_error);
+}
+
+TEST_F(ConfigurationTest, LoadsConfigurationWithInvalidServerHost)
+{
+  Write(R"({
+		"server": {
+			"host": ""
+		}
+	})");
+
+  EXPECT_THROW((void)smtp::Configuration{path_}, std::runtime_error);
+}
+
+TEST_F(ConfigurationTest, LoadsConfigurationWithInvalidServerName)
+{
+  Write(R"({
+		"server": {
+			"server_name": ""
+		}
+	})");
+
+  EXPECT_THROW((void)smtp::Configuration{path_}, std::runtime_error);
+}
+
+TEST_F(ConfigurationTest, LoadsConfigurationWithInvalidServerPort)
+{
+  Write(R"({
+		"server": {
+			"port": 0
+		}
+	})");
+
+  EXPECT_THROW((void)smtp::Configuration{path_}, std::runtime_error);
+}
+
+TEST_F(ConfigurationTest, LoadsConfigurationWithInvalidMaxConnections)
+{
+  Write(R"({
+		"server": {
+			"max_connections": 0
+		}
+	})");
+
+  EXPECT_THROW((void)smtp::Configuration{path_}, std::runtime_error);
+}
+
+TEST_F(ConfigurationTest, LoadsConfigurationWithInvalidMaxMessageSize)
+{
+  Write(R"({
+		"server": {
+			"max_message_size_bytes": 0
+		}
+	})");
+
+  EXPECT_THROW((void)smtp::Configuration{path_}, std::runtime_error);
+}
+
+TEST_F(ConfigurationTest, LoadsConfigurationWithInvalidBatchSize)
+{
+  Write(R"({
+		"delivery": {
+			"batch_size": 0
+		}
+	})");
+
+  EXPECT_THROW((void)smtp::Configuration{path_}, std::runtime_error);
+}
+
+TEST_F(ConfigurationTest, LoadsConfigurationWithInvalidPollInterval)
+{
+  Write(R"({
+		"delivery": {
+			"poll_interval_ms": 0
+		}
+	})");
+
+  EXPECT_THROW((void)smtp::Configuration{path_}, std::runtime_error);
+}
+
 TEST_F(ConfigurationTest, UsesDefaultsForMissingValues)
 {
   Write("{}");
@@ -113,6 +212,11 @@ TEST_F(ConfigurationTest, ReportsMalformedJson)
   Write("{");
 
   EXPECT_THROW((void)smtp::Configuration{path_}, std::runtime_error);
+}
+
+TEST_F(ConfigurationTest, LoadsConfigurationWithInvalidPath)
+{
+  EXPECT_THROW((void)smtp::Configuration{"/smth/bad/path"}, std::runtime_error);
 }
 
 } // namespace
