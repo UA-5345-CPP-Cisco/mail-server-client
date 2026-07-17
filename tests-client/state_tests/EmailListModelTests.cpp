@@ -4,7 +4,7 @@
 #include <QString>
 #include <gtest/gtest.h>
 
-#include "headers/mail/EmailListModel.h"
+#include "mail/EmailListModel.h"
 #include "database/DatabaseManager.h"
 
 using namespace ISXMail;

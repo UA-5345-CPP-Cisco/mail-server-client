@@ -1,7 +1,7 @@
 #include<gtest/gtest.h>
 #include <memory>
 
-#include "headers/database/RegistrationHandler.h"
+#include "database/RegistrationHandler.h"
 #include "../../../../libs/mail-storage/include/mail_storage/UserRepository.h"
 #include "database/DatabaseManager.h"
 

@@ -1,6 +1,6 @@
 #include<gtest/gtest.h>
 
-#include "headers/database/DatabaseManager.h"
+#include "database/DatabaseManager.h"
 
 #include "../../../../libs/mail-storage/include/mail_storage/Database.h"
 #include "../../../../libs/mail-storage/include/mail_storage/MigrationRunner.h"

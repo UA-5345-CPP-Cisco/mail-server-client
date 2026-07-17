@@ -3,9 +3,9 @@
 #include <QTemporaryFile>
 #include <gtest/gtest.h>
 
-#include "headers/database/CacheStore.h"
-#include "headers/database/DatabaseManager.h"
-#include "headers/mail/EmailCache.h"
+#include "database/CacheStore.h"
+#include "database/DatabaseManager.h"
+#include "mail/EmailCache.h"
 
 class EmailCacheTests : public ::testing::Test
 {

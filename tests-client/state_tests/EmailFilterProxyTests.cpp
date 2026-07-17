@@ -2,8 +2,8 @@
 #include <QStandardItemModel>
 #include <gtest/gtest.h>
 
-#include "headers/mail/EmailFilterProxy.h"
-#include "headers/mail/EmailListModel.h"
+#include "mail/EmailFilterProxy.h"
+#include "mail/EmailListModel.h"
 
 class EmailFilterProxyTest : public ::testing::Test
 {

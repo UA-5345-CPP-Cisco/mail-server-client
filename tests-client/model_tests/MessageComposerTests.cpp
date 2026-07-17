@@ -1,8 +1,8 @@
 #include<gtest/gtest.h>
 #include <memory>
 
-#include "headers/mail/MessageComposer.h"
-#include "headers/database/DatabaseManager.h"
+#include "mail/MessageComposer.h"
+#include "database/DatabaseManager.h"
 
 //WhenUseCaseTargetClassDoesX
 

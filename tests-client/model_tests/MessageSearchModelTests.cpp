@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
-#include<memory>
+#include <memory>
 #include <QStandardItemModel>
 
-#include "headers/search/MessageSearchModel.h"
+#include "search/MessageSearchModel.h"
 
 class MessageSearchModelTests : public ::testing::Test {
     protected:
