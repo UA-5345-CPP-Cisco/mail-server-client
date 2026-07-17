@@ -294,8 +294,7 @@ Item {
 
             background: Rectangle {
                 id: passwordBackgroundRectangle
-
-                //border.color: passwordTextField.activeFocus ? Color.hover : Color.outline
+                
                 border.color: rootItem.passwordError !== "" ? "#fda29b" : (passwordTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
                 border.width: passwordTextField.activeFocus ? 2 : 1
                 color: Color.background
@@ -406,9 +405,9 @@ Item {
                 hoverEnabled: true
 
                 onClicked: {
-                    var nameErr = rootWindow.getValidationError("name", fullNameTextField.text)
-                    var emailErr = rootWindow.getValidationError("email", emailTextField.text)
-                    var pwdErr = rootWindow.getValidationError("password", passwordTextField.text)
+                    var nameErr = rootWindow.getRegisterValidationError("name", fullNameTextField.text)
+                    var emailErr = rootWindow.getRegisterValidationError("email", emailTextField.text)
+                    var pwdErr = rootWindow.getRegisterValidationError("password", passwordTextField.text)
                     emailError = emailErr
                     passwordError = pwdErr
                     nameError = nameErr

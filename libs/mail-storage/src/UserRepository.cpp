@@ -217,4 +217,16 @@ std::vector<UserRecord> UserRepository::FindAll() const
   return users;
 }
 
+bool UserRepository::UserExists(const std::string& email)
+{
+  Statement statement(m_database, "SELECT COUNT(*) FROM users WHERE email = ?;");
+  statement.BindText(1, email);
+
+  if (statement.Step())
+  {
+    return statement.ColumnInt64(0) > 0;
+  }
+  return false;
+}
+
 } // namespace Storage

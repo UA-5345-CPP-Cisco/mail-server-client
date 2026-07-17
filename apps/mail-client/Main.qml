@@ -407,8 +407,8 @@ ApplicationWindow {
         }
 
         Shortcut {
-            enabled: authLoader.active
             sequence: "Escape"
+            enabled: !initialSetupRequired
 
             onActivated: {
                 closeAuthWindow();

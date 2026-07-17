@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Shapes
 import QtQuick.Effects
+import com.auth.system 1.0
 
 Rectangle {
     id: rootWindow
@@ -13,7 +14,32 @@ Rectangle {
     radius: 14
     visible: true
 
-    function getValidationError(type, text) 
+    function getLoginErrorMessage(errorCode) 
+    {
+        if (errorCode === AuthHandler.AuthResult.UserNotFound || errorCode === AuthHandler.AuthResult.WrongPassword) 
+        {
+            return "Invalid email or password";
+        }
+    
+        if (errorCode === AuthHandler.AuthResult.DatabaseError) 
+        {
+            return "Internal database error";
+        }
+
+        if (errorCode === AuthHandler.AuthResult.InternalError) 
+        {
+            return "System error";
+        }
+
+        if (errorCode === AuthHandler.AuthResult.UserAlreadyExists) 
+        {
+            return "This account is already added";
+        }
+    
+        return "An unknown error occurred";
+    }
+
+    function getRegisterValidationError(type, text) 
     {
         var value = text.trim();
         var value_lower = text.trim().toLowerCase()
@@ -110,7 +136,7 @@ Rectangle {
 
             return ""
         }
-        return ""
+        return "An unknown error occurred"
     }
 
 
@@ -136,6 +162,8 @@ Rectangle {
         scale: closeClickArea.containsMouse ? 1.3 : 1.0
         width: 40
         z: 10
+
+        visible: !initialSetupRequired
 
         Behavior on scale {
             id: closeScaleBehavior
@@ -185,27 +213,46 @@ Rectangle {
         id: loaderConnections
 
         // Handle back navigation
-        function onBackRequested() {
+        function onBackRequested() 
+        {
             contentLoader.sourceComponent = choiceScreenComponent;
         }
 
         // Handle login submit
-        function onLoginSubmitted(email, password) {
-            //rootWindow.close()
+        function onLoginSubmitted(email, password) 
+        {
+            var result = authHandler.loginUser(email, password);
+
+            if (result === AuthHandler.AuthResult.Success) 
+            {
+                var name = authHandler.getLastLoggedInName();
+                var firstLetter = avatarInitial(name);
+                accountModel.AddAccount(name, email, "", Color.avatar, firstLetter, true);
+                CurrentUser.Authorize(name, email, "");
+                closeAuthWindow();
+            } 
+            else 
+            {
+                contentLoader.item.generalError = getLoginErrorMessage(result);
+            }
         }
 
         // Handle registration submit
-        function onRegisterSubmitted(name, email, password) {
+        function onRegisterSubmitted(name, email, password) 
+        {
             var success = authHandler.registerUser(name, email, password);
 
-            if (success) {
+            if (success)
+            {
                 var firstLetter = avatarInitial(name);
 
                 accountModel.AddAccount(name, email, "", Color.avatar, firstLetter, true);
                 CurrentUser.Authorize(name, email, "");
 
                 closeAuthWindow();
-            } else {
+            } 
+            else 
+            {
                 return -1;
             }
         }
@@ -213,6 +260,7 @@ Rectangle {
         ignoreUnknownSignals: true
         target: contentLoader.item
     }
+
     Component {
         id: choiceScreenComponent
 

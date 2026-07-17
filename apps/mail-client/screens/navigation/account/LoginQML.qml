@@ -7,8 +7,7 @@ Item {
 
     signal backRequested
     signal loginSubmitted(string email, string password)
-    property string emailError: ""
-    property string passwordError: ""
+    property string generalError: ""
     property bool passwordVisible: false
 
     implicitHeight: 350
@@ -107,7 +106,7 @@ Item {
             background: Rectangle {
                 id: emailBackgroundRectangle
 
-                border.color: rootItem.emailError !== "" ? "#fda29b" : (emailTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
+                border.color: emailTextField.activeFocus ? "#1a66ff" : "#e5e7eb"
                 border.width: emailTextField.activeFocus ? 2 : 1
                 color: Color.background
                 radius: 8
@@ -157,17 +156,6 @@ Item {
                     }
                 }
             }
-            onTextChanged: rootItem.emailError = ""
-        }
-
-        // Error message for email field
-        Text {
-            text: rootItem.emailError
-            color: "#f04438"
-            font.family: "Segoe UI"
-            font.pixelSize: 12
-            visible: emailError !== ""
-            topPadding: -14
         }
 
         // Password field for login screen
@@ -207,7 +195,7 @@ Item {
 
             background: Rectangle {
                 id: passwordBackgroundRectangle
-                border.color: rootItem.passwordError !== "" ? "#fda29b" : (passwordTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
+                border.color: passwordTextField.activeFocus ? "#1a66ff" : "#e5e7eb"
                 border.width: passwordTextField.activeFocus ? 2 : 1
                 color: Color.background
                 radius: 8
@@ -257,17 +245,6 @@ Item {
                     }
                 }
             }
-            onTextChanged: rootItem.passwordError = ""
-        }
-
-        // Error message for password field
-        Text {
-            text: rootItem.passwordError
-            color: "#f04438"
-            font.family: "Segoe UI"
-            font.pixelSize: 12
-            visible: passwordError !== ""
-            topPadding: -14
         }
 
         // Button to login
@@ -309,13 +286,29 @@ Item {
                 hoverEnabled: true
 
                 onClicked: {
-                    var emailErr = rootWindow.getValidationError("email", emailTextField.text)
-                    var pwdErr = rootWindow.getValidationError("password", passwordTextField.text)
-                    emailError = emailErr
-                    passwordError = pwdErr
-                    //rootItem.loginSubmitted(emailTextField.text, passwordTextField.text);
+                    rootItem.generalError = "" 
+    
+                    if (emailTextField.text === "" || passwordTextField.text === "") 
+                    {
+                        rootItem.generalError = "Please fill in all fields"
+                    }
+                    else 
+                    {
+                        rootItem.loginSubmitted(emailTextField.text, passwordTextField.text);
+                    }
                 }
             }
+        }
+
+        Text {
+            id: generalErrorText
+            text: rootItem.generalError
+            color: "#f04438"
+            font.family: "Segoe UI"
+            font.pixelSize: 12
+            visible: rootItem.generalError !== ""
+            anchors.horizontalCenter: parent.horizontalCenter
+            topPadding: -10
         }
     }
 }
