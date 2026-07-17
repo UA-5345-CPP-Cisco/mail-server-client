@@ -2,7 +2,7 @@
 #include <memory>
 
 #include "database/RegistrationHandler.h"
-#include "../../../../libs/mail-storage/include/mail_storage/UserRepository.h"
+#include "mail_storage/UserRepository.h"
 #include "database/DatabaseManager.h"
 
 class RegistrationHandlerTests : public ::testing::Test {

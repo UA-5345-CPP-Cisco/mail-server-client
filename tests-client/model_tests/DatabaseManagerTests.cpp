@@ -2,8 +2,7 @@
 
 #include "database/DatabaseManager.h"
 
-#include "../../../../libs/mail-storage/include/mail_storage/Database.h"
-#include "../../../../libs/mail-storage/include/mail_storage/MigrationRunner.h"
+#include "mail_storage/Database.h"
 
 class DatabaseManagerTests : public ::testing::Test {};
 

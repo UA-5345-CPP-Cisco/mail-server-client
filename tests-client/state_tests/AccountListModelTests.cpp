@@ -1,7 +1,7 @@
 #include <QTemporaryFile>
 #include <gtest/gtest.h>
 
-#include "../../../../libs/mail-storage/include/mail_storage/UserRepository.h"
+#include "mail_storage/UserRepository.h"
 #include "database/DatabaseManager.h"
 #include "users/AccountListModel.h"
 #include "users/CurrentUser.h"
