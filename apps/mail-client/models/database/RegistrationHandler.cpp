@@ -18,7 +18,7 @@ bool RegistrationHandler::registerUser(const QString& username, const QString& e
     }
     catch (...)
     {
-      // TODO: Logger with ERROR level about this possible issue
+      // IN FUTURE: Logger with ERROR level about this possible issue
     }
 
     return id != -1;
