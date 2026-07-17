@@ -12,8 +12,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(MAIL_BUILD_TESTS "Build tests" ON)
 option(MAIL_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
-option(MAIL_BUILD_QT_CLIENT "Build Qt mail client" ON)
-option(MAIL_BUILD_QT_CLIENT_TESTS "Build Qt mail client tests" ON)
+option(MAIL_BUILD_QT_CLIENT "Build Qt mail client" OFF)
+option(MAIL_BUILD_QT_CLIENT_TESTS "Build Qt mail client tests" OFF)
 
 include(FetchContent)
 
