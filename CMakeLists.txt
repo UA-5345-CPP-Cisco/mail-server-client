@@ -47,14 +47,6 @@ FetchContent_MakeAvailable(cryptopp_cmake)
 
 find_package(Threads REQUIRED)
 
-# --- nlohmann JSON ---
-FetchContent_Declare(
-		nlohmann_json
-		URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
-		DOWNLOAD_EXTRACT_TIMESTAMP ON
-)
-FetchContent_MakeAvailable(nlohmann_json)
-
 # --- OpenSSL (CMake wrapper) ---
 set(WITH_APPS OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(
@@ -85,7 +77,6 @@ add_subdirectory(libs/mail-server-sdk)
 # Applications
 # ──────────────────────────────────────────
 add_subdirectory(apps/smtp-server)
-add_subdirectory(apps/simple-client)
 add_subdirectory(apps/mail-server-neo)
 
 if(MAIL_BUILD_QT_CLIENT)
