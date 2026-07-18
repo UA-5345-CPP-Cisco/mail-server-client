@@ -10,6 +10,9 @@ set(WINDOWS_DEV_CONSOLE ON)
 find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
 #find_package(SQLite3 REQUIRED)
 
+qt_standard_project_setup(REQUIRES 6.10)
+
+
 if(NOT TARGET mail_storage)
 	add_subdirectory(
 			${CMAKE_CURRENT_SOURCE_DIR}/../../libs/mail-storage
@@ -28,12 +31,67 @@ if(NOT TARGET Threads::Threads)
 	find_package(Threads REQUIRED)
 endif()
 
-qt_standard_project_setup(REQUIRES 6.10)
+qt_add_qml_module(qtappmail_core
+		URI qtapptestmail.core
+		VERSION 1.0
+		STATIC
+		SOURCES
+		headers/database/CacheStore.h
+		headers/database/DatabaseManager.h
+		headers/mail/EmailCache.h
+		headers/mail/EmailFilterProxy.h
+		headers/mail/EmailListModel.h
+		headers/mail/EmailPageProxy.h
+		headers/mail/MessageComposer.h
+		headers/search/MessageSearchModel.h
+		headers/users/CurrentUser.h
+		headers/users/UserCache.h
+		headers/database/RegistrationHandler.h
+		headers/users/AccountListModel.h
+		headers/service/Service.h
+		headers/client_logger/ClientProxyLogger.h
+		headers/client_logger/ClientConfigReader.h
+
+		models/database/RegistrationHandler.cpp
+		models/database/CacheStore.cpp
+		models/database/DatabaseManager.cpp
+		models/mail/EmailCache.cpp
+		models/mail/EmailFilterProxy.cpp
+		models/mail/EmailListModel.cpp
+		models/mail/EmailPageProxy.cpp
+		models/mail/MessageComposer.cpp
+		models/search/MessageSearchModel.cpp
+		models/users/CurrentUser.cpp
+		models/users/UserCache.cpp
+		models/users/AccountListModel.cpp
+		models/service/Service.cpp
+		models/client_logger/ClientProxyLogger.cpp
+		models/client_logger/ClientConfigReader.cpp
+)
+
+target_include_directories(qtappmail_core
+		PUBLIC
+		${CMAKE_CURRENT_SOURCE_DIR}
+		${CMAKE_CURRENT_SOURCE_DIR}/headers
+)
+
+target_link_libraries(qtappmail_core
+		PUBLIC
+		mail_logger
+		mail_storage
+		Qt6::Quick
+		Qt6::Sql
+		Qt6::Core
+		Qt6::QuickControls2
+)
+
+target_compile_definitions(qtappmail_core PUBLIC
+		CONFIG_DIR="${CMAKE_CURRENT_SOURCE_DIR}/config"
+)
 
 qt_add_executable(appqtapptestmail
 		main.cpp
 )
-
 
 file(GLOB ASSET_FILES "assets/*")
 foreach(asset_file ${ASSET_FILES})
@@ -61,49 +119,12 @@ qt_add_qml_module(appqtapptestmail
 		screens/email_list/EmailToolTip.qml
 		RESOURCES
 		resources.qrc
-		SOURCES
-		headers/database/CacheStore.h
-		headers/database/DatabaseManager.h
-		headers/mail/EmailCache.h
-		headers/mail/EmailFilterProxy.h
-		headers/mail/EmailListModel.h
-		headers/mail/EmailPageProxy.h
-		headers/mail/MessageComposer.h
-		headers/search/MessageSearchModel.h
-		headers/users/CurrentUser.h
-		headers/users/UserCache.h
-		models/database/RegistrationHandler.cpp
-		models/database/CacheStore.cpp
-		models/database/DatabaseManager.cpp
-		models/mail/EmailCache.cpp
-		models/mail/EmailFilterProxy.cpp
-		models/mail/EmailListModel.cpp
-		models/mail/EmailPageProxy.cpp
-		models/mail/MessageComposer.cpp
-		models/search/MessageSearchModel.cpp
-		models/users/CurrentUser.cpp
-		models/users/UserCache.cpp
-		headers/database/RegistrationHandler.h
-		headers/users/AccountListModel.h
-		models/users/AccountListModel.cpp
-		models/database/RegistrationHandler.cpp
-
-		headers/service/Service.h
-		headers/client_logger/ClientProxyLogger.h
-		headers/client_logger/ClientConfigReader.h
-		models/service/Service.cpp
-		models/client_logger/ClientProxyLogger.cpp
-		models/client_logger/ClientConfigReader.cpp
 )
 
 set_target_properties(appqtapptestmail PROPERTIES
 		MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
 		MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
 		MACOSX_BUNDLE TRUE
-)
-
-target_compile_definitions(appqtapptestmail PRIVATE
-		CONFIG_DIR="${CMAKE_SOURCE_DIR}/config"
 )
 
 if(WINDOWS_DEV_CONSOLE)
@@ -121,6 +142,7 @@ target_link_libraries(appqtapptestmail
 		mail_logger
 		mail_storage
 	PRIVATE
+		qtappmail_core
 		Qt6::Quick
 		Qt6::Sql
 		Qt6::QuickControls2
@@ -129,7 +151,7 @@ target_link_libraries(appqtapptestmail
 target_include_directories(appqtapptestmail
 		PRIVATE
 		${CMAKE_CURRENT_SOURCE_DIR}
-		${CMAKE_CURRENT_SOURCE_DIR}/include
+		${CMAKE_CURRENT_SOURCE_DIR}/headers
 )
 
 install(TARGETS appqtapptestmail

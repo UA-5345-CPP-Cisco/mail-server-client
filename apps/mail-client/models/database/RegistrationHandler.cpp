@@ -11,7 +11,15 @@ bool RegistrationHandler::registerUser(const QString& username, const QString& e
     Storage::UserRepository repo(m_db);
 
     // Transmit data directly without hashing
-    std::int64_t id = repo.CreateUser(username.toStdString(), email.toStdString(), password.toStdString());
+    std::int64_t id{-1};
+    try
+    {
+      id = repo.CreateUser(username.toStdString(), email.toStdString(), password.toStdString());
+    }
+    catch (...)
+    {
+      // IN FUTURE: Logger with ERROR level about this possible issue
+    }
 
     return id != -1;
 }

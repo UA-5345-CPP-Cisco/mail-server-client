@@ -13,6 +13,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 option(MAIL_BUILD_TESTS "Build tests" ON)
 option(MAIL_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 option(MAIL_BUILD_QT_CLIENT "Build Qt mail client" OFF)
+option(MAIL_BUILD_QT_CLIENT_TESTS "Build Qt mail client tests" OFF)
 
 include(FetchContent)
 
@@ -82,6 +83,7 @@ add_subdirectory(apps/mail-server-neo)
 if(MAIL_BUILD_QT_CLIENT)
 	add_subdirectory(apps/mail-client)
 endif()
+
 # ──────────────────────────────────────────
 # Tests
 # ──────────────────────────────────────────
@@ -95,4 +97,7 @@ if(MAIL_BUILD_TESTS)
 	set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 	FetchContent_MakeAvailable(googletest)
 	add_subdirectory(tests)
+	if(MAIL_BUILD_QT_CLIENT_TESTS)
+		add_subdirectory(tests-client)
+	endif()
 endif()
