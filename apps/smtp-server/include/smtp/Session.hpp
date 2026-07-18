@@ -80,24 +80,17 @@ class SmtpSessionHandler
   void HandleEvent(const SmtpEvent& event, SmtpSessionState& state, SmtpSessionContext& context);
 
   private:
-  void
-  HandleConnected(const SmtpEvent& event, SmtpSessionState& state, SmtpSessionContext& context);
+  void HandleConnected(const SmtpEvent& event, SmtpSessionState& state, SmtpSessionContext& context);
 
-  void HandleMessageReceived(const SmtpEvent& event,
-                             SmtpSessionState& state,
-                             SmtpSessionContext& context);
+  void HandleMessageReceived(const SmtpEvent& event, SmtpSessionState& state, SmtpSessionContext& context);
 
-  void
-  HandleDisconnected(const SmtpEvent& event, SmtpSessionState& state, SmtpSessionContext& context);
+  void HandleDisconnected(const SmtpEvent& event, SmtpSessionState& state, SmtpSessionContext& context);
 
   std::int64_t StoreMessage(const SmtpSessionState& state, SmtpSessionContext& context);
 
   void ResetMailTransaction(SmtpSessionState& state);
 
-  void SendReply(SmtpSessionContext& context,
-                 ConnectionId connectionId,
-                 int statusCode,
-                 const std::string& message);
+  void SendReply(SmtpSessionContext& context, ConnectionId connectionId, int statusCode, const std::string& message);
 };
 
 // Owns one client's ordered event queue. The server loop pushes events here;

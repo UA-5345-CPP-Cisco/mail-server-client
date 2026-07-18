@@ -41,8 +41,7 @@ void QueueDispatcher::Poll()
   nextPoll_ = now + std::chrono::milliseconds(config_.pollIntervalMilliseconds);
 
   const std::size_t maximumInt = static_cast<std::size_t>(std::numeric_limits<int>::max());
-  const int limit =
-    static_cast<int>(config_.batchSize > maximumInt ? maximumInt : config_.batchSize);
+  const int limit = static_cast<int>(config_.batchSize > maximumInt ? maximumInt : config_.batchSize);
 
   std::vector<Storage::MessageRecipientRecord> recipients;
   {
@@ -51,9 +50,8 @@ void QueueDispatcher::Poll()
 
     for (const Storage::MessageRecipientRecord& recipient : recipients)
     {
-      mailMessages_.UpdateStatus(recipient.message_id,
-                                 Storage::MailMessageStatus::Queued,
-                                 Storage::MailMessageStatus::Sending);
+      mailMessages_.UpdateStatus(
+        recipient.message_id, Storage::MailMessageStatus::Queued, Storage::MailMessageStatus::Sending);
     }
   }
 
@@ -61,14 +59,13 @@ void QueueDispatcher::Poll()
   {
     try
     {
-      threadPool_.Enqueue(
-        [recipient,
-         &users = users_,
-         &mailMessages = mailMessages_,
-         &messageRecipients = messageRecipients_,
-         &storageMutex = storageMutex_,
-         &logger = logger_]
-        { Deliver(recipient, users, mailMessages, messageRecipients, storageMutex, logger); });
+      threadPool_.Enqueue([recipient,
+                           &users = users_,
+                           &mailMessages = mailMessages_,
+                           &messageRecipients = messageRecipients_,
+                           &storageMutex = storageMutex_,
+                           &logger = logger_]
+                          { Deliver(recipient, users, mailMessages, messageRecipients, storageMutex, logger); });
     }
     catch (const std::exception& error)
     {

@@ -71,8 +71,8 @@ void Logger::Log(LogLevel level, std::string_view message)
   const auto timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(now).count();
   std::ostream& output = file_.is_open() ? file_ : std::clog;
 
-  output << '[' << timestamp << "] [" << std::this_thread::get_id() << "] [" << ToString(level)
-         << "] " << message << '\n';
+  output << '[' << timestamp << "] [" << std::this_thread::get_id() << "] [" << ToString(level) << "] " << message
+         << '\n';
 
   if (flushAfterWrite_)
   {

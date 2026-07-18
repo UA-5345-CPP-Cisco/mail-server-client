@@ -39,8 +39,7 @@ std::int64_t MessageRecipientRepository::CreateRecipient(std::int64_t message_id
   return statement.LastInsertRowId();
 }
 
-std::optional<MessageRecipientRecord>
-MessageRecipientRepository::FindById(std::int64_t recipient_id) const
+std::optional<MessageRecipientRecord> MessageRecipientRepository::FindById(std::int64_t recipient_id) const
 {
   Statement statement(m_database,
                       R"SQL(
@@ -69,8 +68,7 @@ MessageRecipientRepository::FindById(std::int64_t recipient_id) const
   return ReadRecipient(statement);
 }
 
-std::vector<MessageRecipientRecord>
-MessageRecipientRepository::FindByMessageId(std::int64_t message_id) const
+std::vector<MessageRecipientRecord> MessageRecipientRepository::FindByMessageId(std::int64_t message_id) const
 {
   Statement statement(m_database,
                       R"SQL(
@@ -233,14 +231,12 @@ bool MessageRecipientRepository::MarkTemporaryFailed(std::int64_t recipient_id,
   return statement.ChangedRowCount() > 0;
 }
 
-bool MessageRecipientRepository::MarkBounced(std::int64_t recipient_id,
-                                             const std::string& last_error)
+bool MessageRecipientRepository::MarkBounced(std::int64_t recipient_id, const std::string& last_error)
 {
   return MarkTerminal(recipient_id, DeliveryStatus::Bounced, last_error);
 }
 
-bool MessageRecipientRepository::MarkFailed(std::int64_t recipient_id,
-                                            const std::string& last_error)
+bool MessageRecipientRepository::MarkFailed(std::int64_t recipient_id, const std::string& last_error)
 {
   return MarkTerminal(recipient_id, DeliveryStatus::Failed, last_error);
 }
@@ -312,8 +308,7 @@ std::string MessageRecipientRepository::RecipientTypeToString(RecipientType reci
   throw std::runtime_error("Unsupported recipient type");
 }
 
-RecipientType
-MessageRecipientRepository::RecipientTypeFromString(const std::string& recipient_type) const
+RecipientType MessageRecipientRepository::RecipientTypeFromString(const std::string& recipient_type) const
 {
   if (recipient_type == "TO")
   {
