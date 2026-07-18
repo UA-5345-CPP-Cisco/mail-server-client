@@ -1,19 +1,23 @@
 #pragma once
 
-#include "common.h"
-#include "router.h"
+#include "Common.h"
+#include "Router.h"
+
+namespace ISXMailServer {
 
 class Server
 {
   public:
   Server(net::io_context& io_context, tcp::endpoint endpoint, std::shared_ptr<Router const> router);
 
-  void run();
+  void Run();
 
   private:
-  void do_accept();
+  void DoAccept();
 
   tcp::acceptor m_acceptor;
 
   std::shared_ptr<Router const> m_router;
 };
+
+} // namespace ISXMailServer

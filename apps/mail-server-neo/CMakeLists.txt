@@ -1,9 +1,9 @@
 add_executable(mail_server_neo
-    main.cpp
-    src/common.cpp
-    src/server.cpp
-    src/session.cpp
-    src/handlers/hello_handler.cpp
+    Main.cpp
+    src/Common.cpp
+    src/Server.cpp
+    src/Session.cpp
+    src/handlers/HelloHandler.cpp
 )
 
 target_include_directories(mail_server_neo

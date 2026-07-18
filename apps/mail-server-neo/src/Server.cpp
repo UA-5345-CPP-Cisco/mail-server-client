@@ -1,13 +1,9 @@
-//
-// Created by  Pavlo Kilko on 14.07.2026.
-//
+#include <mail_server/Server.h>
+#include <mail_server/Session.h>
 
-#include <mail_server/server.h>
-#include <mail_server/session.h>
+namespace ISXMailServer {
 
-Server::Server(net::io_context& io_context,
-               tcp::endpoint endpoint,
-               std::shared_ptr<Router const> router) :
+Server::Server(net::io_context& io_context, tcp::endpoint endpoint, std::shared_ptr<Router const> router) :
   m_acceptor(io_context),
   m_router(std::move(router))
 {
@@ -38,21 +34,23 @@ Server::Server(net::io_context& io_context,
   }
 }
 
-void Server::run()
+void Server::Run()
 {
-  do_accept();
+  DoAccept();
 }
 
-void Server::do_accept()
+void Server::DoAccept()
 {
   m_acceptor.async_accept(
     [this](const beast::error_code& error, tcp::socket socket)
     {
       if (!error)
       {
-        std::make_shared<Session>(std::move(socket), m_router)->run();
+        std::make_shared<Session>(std::move(socket), m_router)->Run();
       }
 
-      do_accept();
+      DoAccept();
     });
 }
+
+} // namespace ISXMailServer

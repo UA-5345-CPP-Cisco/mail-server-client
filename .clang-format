@@ -9,7 +9,7 @@ TabWidth: 2
 ContinuationIndentWidth: 2
 
 # Line length
-ColumnLimit: 100
+ColumnLimit: 120
 
 # Class access modifiers: public:, protected:, private: at class brace level
 IndentAccessModifiers: false

@@ -3,37 +3,39 @@
 #include <functional>
 #include <unordered_map>
 
-#include "common.h"
+#include "Common.h"
+
+namespace ISXMailServer {
 
 class Router
 {
   public:
   using Handler = std::function<Response(Request const&)>;
 
-  void add(http::verb method, std::string path, Handler handler)
+  void Add(http::verb method, std::string path, Handler handler)
   {
     m_routes.insert_or_assign(RouteKey{method, std::move(path)}, std::move(handler));
   }
 
-  void get(std::string path, Handler handler)
+  void Get(std::string path, Handler handler)
   {
-    add(http::verb::get, std::move(path), std::move(handler));
+    Add(http::verb::get, std::move(path), std::move(handler));
   }
 
-  void post(std::string path, Handler handler)
+  void Post(std::string path, Handler handler)
   {
-    add(http::verb::post, std::move(path), std::move(handler));
+    Add(http::verb::post, std::move(path), std::move(handler));
   }
 
-  [[nodiscard]] Response dispatch(Request const& request) const
+  [[nodiscard]] Response Dispatch(Request const& request) const
   {
-    const std::string path = extract_path(request.target());
+    const std::string path = ExtractPath(request.target());
 
     const auto iterator = m_routes.find(RouteKey{request.method(), path});
 
     if (iterator == m_routes.end())
     {
-      return make_error(request, http::status::not_found, "Route not found");
+      return MakeError(request, http::status::not_found, "Route not found");
     }
 
     try
@@ -42,7 +44,7 @@ class Router
     }
     catch (std::exception const& exception)
     {
-      return make_error(request, http::status::internal_server_error, exception.what());
+      return MakeError(request, http::status::internal_server_error, exception.what());
     }
   }
 
@@ -70,7 +72,7 @@ class Router
     }
   };
 
-  static std::string extract_path(beast::string_view target)
+  static std::string ExtractPath(beast::string_view target)
   {
     const auto query_position = target.find('?');
 
@@ -79,3 +81,5 @@ class Router
 
   std::unordered_map<RouteKey, Handler, RouteKeyHash> m_routes;
 };
+
+} // namespace ISXMailServer
