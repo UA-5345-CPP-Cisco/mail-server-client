@@ -1,0 +1,119 @@
+---
+Language: Cpp
+BasedOnStyle: LLVM
+
+# Qt code commonly follows Qt Creator defaults: 4-space indentation, no tabs.
+UseTab: Never
+IndentWidth: 4
+TabWidth: 4
+ContinuationIndentWidth: 4
+ColumnLimit: 120
+
+# Keep Qt access sections readable inside QObject-derived classes.
+AccessModifierOffset: -4
+IndentAccessModifiers: false
+
+# Qt style keeps namespace contents indented.
+NamespaceIndentation: All
+CompactNamespaces: false
+
+# Keep Qt headers grouped before non-Qt third-party headers.
+IncludeBlocks: Regroup
+IncludeIsMainRegex: '$'
+SortIncludes: CaseSensitive
+IncludeCategories:
+  - Regex: '^<Q.*>$'
+    Priority: 1
+  - Regex: '^<Qt.*>$'
+    Priority: 2
+  - Regex: '^<(algorithm|array|atomic|bitset|cassert|cctype|cerrno|cfenv|cfloat|chrono|cinttypes|climits|cmath|codecvt|complex|condition_variable|csetjmp|csignal|cstdarg|cstddef|cstdint|cstdio|cstdlib|cstring|ctime|cwchar|cwctype|deque|exception|filesystem|forward_list|fstream|functional|future|initializer_list|iomanip|ios|iosfwd|iostream|istream|iterator|limits|list|locale|map|memory|mutex|new|numeric|optional|ostream|queue|random|ratio|regex|scoped_allocator|set|shared_mutex|sstream|stack|stdexcept|streambuf|string|string_view|system_error|thread|tuple|type_traits|typeindex|typeinfo|unordered_map|unordered_set|utility|variant|vector)>$'
+    Priority: 3
+  - Regex: '^<.*>$'
+    Priority: 4
+  - Regex: '^".*"$'
+    Priority: 5
+
+# Qt style: declarations/functions/classes on the next line, compact control statements.
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterEnum: true
+  AfterFunction: true
+  AfterControlStatement: Never
+  AfterNamespace: false
+  BeforeElse: false
+  BeforeCatch: false
+  BeforeLambdaBody: false
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: false
+
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortBlocksOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+DerivePointerAlignment: false
+PointerAlignment: Left
+ReferenceAlignment: Pointer
+
+SpaceBeforeParens: ControlStatements
+SpaceBeforeCpp11BracedList: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+SpaceAfterCStyleCast: false
+
+BinPackArguments: false
+BinPackParameters: false
+AllowAllParametersOfDeclarationOnNextLine: true
+BreakBeforeBinaryOperators: None
+
+BreakConstructorInitializers: BeforeComma
+PackConstructorInitializers: Never
+ConstructorInitializerIndentWidth: 4
+SpaceBeforeCtorInitializerColon: true
+
+BreakInheritanceList: BeforeComma
+SpaceBeforeInheritanceColon: true
+
+IndentPPDirectives: None
+ReflowComments: true
+
+# Qt-specific syntax.
+ForEachMacros:
+  - foreach
+  - Q_FOREACH
+  - BOOST_FOREACH
+
+StatementMacros:
+  - Q_OBJECT
+  - Q_GADGET
+  - Q_NAMESPACE
+  - Q_PROPERTY
+  - Q_ENUM
+  - Q_ENUM_NS
+  - Q_FLAG
+  - Q_FLAG_NS
+  - Q_DECLARE_FLAGS
+  - Q_DECLARE_OPERATORS_FOR_FLAGS
+  - Q_DISABLE_COPY
+  - Q_DISABLE_COPY_MOVE
+  - Q_DECLARE_PRIVATE
+  - Q_DECLARE_PUBLIC
+  - Q_SIGNALS
+  - Q_SLOTS
+  - Q_EMIT
+  - emit
+
+StatementAttributeLikeMacros:
+  - Q_NORETURN
+
+WhitespaceSensitiveMacros:
+  - QStringLiteral
+  - QByteArrayLiteral
+  - QLatin1String
+  - QT_TRANSLATE_NOOP
+  - QT_TR_NOOP

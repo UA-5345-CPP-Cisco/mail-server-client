@@ -5,7 +5,8 @@
 
 #include "mail_storage/Database.h"
 
-class RegistrationHandler : public QObject {
+class RegistrationHandler : public QObject
+{
     Q_OBJECT
 public:
     explicit RegistrationHandler(Storage::Database& db, QObject* parent = nullptr);

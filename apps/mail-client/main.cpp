@@ -1,29 +1,27 @@
 #include <QDir>
 #include <QGuiApplication>
-#include <QQmlApplicationEngine>
-#include <QQuickWindow>
-#include <QQuickStyle>
 #include <QIcon>
+#include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QQuickStyle>
+#include <QQuickWindow>
 
-#include "headers/mail/EmailListModel.h"
-#include "headers/mail/EmailFilterProxy.h"
-#include "headers/mail/EmailPageProxy.h"
-#include "headers/mail/MessageComposer.h"
-#include "headers/database/DatabaseManager.h"
-#include "headers/users/CurrentUser.h"
-#include "headers/search/MessageSearchModel.h"
-#include "headers/database/RegistrationHandler.h"
-#include "headers/users/AccountListModel.h"
 #include "headers/client_logger/ClientConfigReader.h"
 #include "headers/client_logger/ClientProxyLogger.h"
+#include "headers/database/DatabaseManager.h"
+#include "headers/database/RegistrationHandler.h"
+#include "headers/mail/EmailFilterProxy.h"
+#include "headers/mail/EmailListModel.h"
+#include "headers/mail/EmailPageProxy.h"
+#include "headers/mail/MessageComposer.h"
+#include "headers/search/MessageSearchModel.h"
 #include "headers/service/Service.h"
-
-#include "mail_storage/UserRepository.h"
+#include "headers/users/AccountListModel.h"
+#include "headers/users/CurrentUser.h"
 #include "logger/Logger.h"
+#include "mail_storage/UserRepository.h"
 
-
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     qputenv("QT_QUICK_BACKEND", "software");
     QQuickStyle::setStyle(QStringLiteral("Fusion"));
@@ -33,10 +31,9 @@ int main(int argc, char *argv[])
     ISXConfig::ClientConfigReader reader;
     auto config = reader.ReadConfig(ISXConfig::ClientConfigReader::ConfigPath());
 
-    if (!config)
-    {
-      qDebug() << "File is failed to read!";
-      return -1;
+    if (!config) {
+        qDebug() << "File is failed to read!";
+        return -1;
     }
 
     ISXClientLogger::ClientLoggerProvider logger_provider(config.value());
@@ -60,8 +57,7 @@ int main(int argc, char *argv[])
     if (hasUsers) {
         auto activeUser = repo.FindActiveUser();
 
-        if (activeUser.has_value())
-        {
+        if (activeUser.has_value()) {
             QString name = QString::fromStdString(activeUser->username);
             QString email = QString::fromStdString(activeUser->email);
             ISXCurrentUser::CurrentUser::GetInstance().Authorize(name, email, "");
@@ -114,18 +110,9 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("draftSearchModel", draftSearch);
     engine.rootContext()->setContextProperty("MessageComposer", message_composer);
 
-    engine.rootContext()->setContextProperty(
-        "CurrentUser",
-        &ISXCurrentUser::CurrentUser::GetInstance()
-        );
+    engine.rootContext()->setContextProperty("CurrentUser", &ISXCurrentUser::CurrentUser::GetInstance());
 
-    qmlRegisterUncreatableMetaObject(
-        ISXMail::staticMetaObject,
-        "ISXMail",
-        1, 0,
-        "EmailRole",
-        "Not creatable"
-    );
+    qmlRegisterUncreatableMetaObject(ISXMail::staticMetaObject, "ISXMail", 1, 0, "EmailRole", "Not creatable");
 
     QObject::connect(
         &engine,

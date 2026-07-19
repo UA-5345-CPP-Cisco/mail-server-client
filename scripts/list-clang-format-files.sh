@@ -5,6 +5,7 @@ script_dir="$(cd "$(dirname "$0")" && pwd)"
 project_root="$(cd "${script_dir}/.." && pwd)"
 
 source_dirs=(
+  "${project_root}/apps/mail-client"
   "${project_root}/apps/mail-server-neo"
   "${project_root}/apps/smtp-server"
   "${project_root}/libs"
