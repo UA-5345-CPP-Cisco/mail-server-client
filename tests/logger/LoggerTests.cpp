@@ -47,19 +47,6 @@ class LoggerTest : public testing::Test
     return contents.str();
   }
 
-  static int CountLines(const std::string& contents)
-  {
-    std::istringstream stream(contents);
-    int lineCount = 0;
-    std::string line;
-    while (std::getline(stream, line))
-    {
-      ++lineCount;
-    }
-
-    return lineCount;
-  }
-
   std::string filePath_;
   std::string secondFilePath_;
 };
@@ -192,9 +179,19 @@ TEST_F(LoggerTest, WritesCompleteLinesFromMultipleThreads)
   }
 
   const std::string contents = ReadLog();
-  EXPECT_EQ(CountLines(contents), ThreadCount * MessagesPerThread);
-  EXPECT_NE(contents.find("thread 0 message 0"), std::string::npos);
-  EXPECT_NE(contents.find("thread 7 message 24"), std::string::npos);
+  const std::regex expectedLine(
+    R"(\[[0-9]+\] \[[^\]]+\] \[INFO\] thread [0-9]+ message [0-9]+)");
+  std::istringstream lines(contents);
+  std::string line;
+  int lineCount = 0;
+
+  while (std::getline(lines, line))
+  {
+    EXPECT_TRUE(std::regex_match(line, expectedLine)) << "Interleaved log line: " << line;
+    ++lineCount;
+  }
+
+  EXPECT_EQ(lineCount, ThreadCount * MessagesPerThread);
 }
 
 } // namespace
