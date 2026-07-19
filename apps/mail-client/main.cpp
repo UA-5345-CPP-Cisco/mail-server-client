@@ -1,5 +1,5 @@
 #include <QDir>
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQuickWindow>
 #include <QQuickStyle>
@@ -19,6 +19,7 @@
 #include "headers/client_logger/ClientConfigReader.h"
 #include "headers/client_logger/ClientProxyLogger.h"
 #include "headers/service/Service.h"
+#include "headers/mail/NotificationsModel.h"
 
 #include "mail_storage/UserRepository.h"
 #include "logger/Logger.h"
@@ -28,7 +29,8 @@ int main(int argc, char *argv[])
 {
     qputenv("QT_QUICK_BACKEND", "software");
     QQuickStyle::setStyle(QStringLiteral("Fusion"));
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
+    app.setQuitOnLastWindowClosed(false);
     app.setWindowIcon(QIcon(":/pngs/assets/Icon.png"));
 
     ISXConfig::ClientConfigReader reader;
@@ -130,6 +132,12 @@ int main(int argc, char *argv[])
 
     auto* colorProvider = new ISXMail::ColorProvider(&app);
     engine.rootContext()->setContextProperty("Color", colorProvider);
+
+    auto* notifications = new ISXMail::NotificationsModel(&app);
+    engine.rootContext()->setContextProperty("notificationsModel", notifications);
+
+    QObject::connect(model, &ISXMail::EmailListModel::inboxMessageReceived,
+                     notifications, &ISXMail::NotificationsModel::onNewInboxMessage);
 
     qmlRegisterUncreatableMetaObject(
         ISXMail::staticMetaObject,

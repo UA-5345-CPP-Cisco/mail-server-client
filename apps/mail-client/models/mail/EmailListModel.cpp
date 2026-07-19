@@ -211,6 +211,23 @@ void EmailListModel::AddData(const EmailData& item)
 	endInsertRows();
    ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::AddData: data was added");
 	emit dataAdded();
+
+	if (item.is_inbox)
+	{
+		emit inboxMessageReceived(item.name, item.theme, item.preview);
+		for (const auto& callback : m_inbox_callbacks)
+		{
+			if (callback)
+			{
+				callback(item.name, item.theme, item.preview);
+			}
+		}
+	}
+}
+
+void EmailListModel::registerInboxMessageCallback(InboxMessageCallback callback)
+{
+	m_inbox_callbacks.push_back(callback);
 }
 
 bool EmailListModel::SetStarred(int row, bool starred)

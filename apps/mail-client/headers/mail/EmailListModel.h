@@ -3,6 +3,7 @@
 #include <memory>
 #include <cstdint>
 #include <vector>
+#include <functional>
 
 #include <QObject>
 #include <QAbstractListModel>
@@ -73,11 +74,15 @@ public:
     bool ToggleArchive(int row);
     void AddData(const EmailData& item);
 
+    using InboxMessageCallback = std::function<void(const QString& sender, const QString& subject, const QString& preview)>;
+    void registerInboxMessageCallback(InboxMessageCallback callback);
+
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;
     Qt::ItemFlags flags(const QModelIndex& index) const override;
 
 signals:
     void dataAdded();
+    void inboxMessageReceived(const QString& sender, const QString& subject, const QString& preview);
 
 private:
     void LoadFromDatabase();
@@ -88,6 +93,7 @@ private:
     Storage::MailMessageRepository m_message_repository;
     Storage::MessageRecipientRepository m_recipient_repository;
     std::vector<EmailData> m_data;
+    std::vector<InboxMessageCallback> m_inbox_callbacks;
 };
 
 } // namespace ISXMail

@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
 set(WINDOWS_DEV_CONSOLE ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
+find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2 Widgets)
 #find_package(SQLite3 REQUIRED)
 
 qt_standard_project_setup(REQUIRES 6.10)
@@ -53,6 +53,7 @@ qt_add_qml_module(qtappmail_core
 		headers/mail/EmailFilterProxy.h
 		headers/mail/EmailListModel.h
 		headers/mail/EmailPageProxy.h
+		headers/mail/NotificationsModel.h
 		headers/mail/MessageComposer.h
 		headers/search/MessageSearchModel.h
 		headers/users/CurrentUser.h
@@ -72,6 +73,7 @@ qt_add_qml_module(qtappmail_core
 		models/mail/EmailFilterProxy.cpp
 		models/mail/EmailListModel.cpp
 		models/mail/EmailPageProxy.cpp
+		models/mail/NotificationsModel.cpp
 		models/mail/MessageComposer.cpp
 		models/search/MessageSearchModel.cpp
 		models/users/CurrentUser.cpp
@@ -98,6 +100,7 @@ target_link_libraries(qtappmail_core
 		Qt6::Sql
 		Qt6::Core
 		Qt6::QuickControls2
+		Qt6::Widgets
 		cryptopp
 )
 
@@ -163,6 +166,7 @@ target_link_libraries(appqtapptestmail
 		Qt6::Quick
 		Qt6::Sql
 		Qt6::QuickControls2
+		Qt6::Widgets
 		cryptopp
 )
 
