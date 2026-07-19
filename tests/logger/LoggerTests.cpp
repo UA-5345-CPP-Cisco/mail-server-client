@@ -179,8 +179,7 @@ TEST_F(LoggerTest, WritesCompleteLinesFromMultipleThreads)
   }
 
   const std::string contents = ReadLog();
-  const std::regex expectedLine(
-    R"(\[[0-9]+\] \[[^\]]+\] \[INFO\] thread [0-9]+ message [0-9]+)");
+  const std::regex expectedLine(R"(\[[0-9]+\] \[[^\]]+\] \[INFO\] thread [0-9]+ message [0-9]+)");
   std::istringstream lines(contents);
   std::string line;
   int lineCount = 0;
