@@ -16,6 +16,11 @@
 #include "headers/search/MessageSearchModel.h"
 #include "headers/users/AccountListModel.h"
 #include "headers/users/CurrentUser.h"
+#include "headers/client_logger/ClientConfigReader.h"
+#include "headers/client_logger/ClientProxyLogger.h"
+#include "headers/service/Service.h"
+
+#include "mail_storage/UserRepository.h"
 #include "logger/Logger.h"
 #include "mail_storage/UserRepository.h"
 
@@ -26,10 +31,24 @@ int main(int argc, char* argv[])
   QGuiApplication app(argc, argv);
   app.setWindowIcon(QIcon(":/pngs/assets/Icon.png"));
 
-  ISXDatabaseManager::DatabaseManager::EnsureInitialized();
-  auto dbPath = ISXDatabaseManager::DatabaseManager::DatabasePath();
-  Storage::Database database(dbPath);
-  QQmlApplicationEngine engine;
+    ISXConfig::ClientConfigReader reader;
+    auto config = reader.ReadConfig(ISXConfig::ClientConfigReader::ConfigPath());
+
+    if (!config)
+    {
+      qDebug() << "File is failed to read!";
+      return -1;
+    }
+
+    ISXClientLogger::ClientLoggerProvider logger_provider(config.value());
+    ISXClientLogger::ClientLogger logger(Logging::Logger::Instance(), logger_provider);
+
+    ISXService::Service::Initialize(logger);
+
+    ISXDatabaseManager::DatabaseManager::EnsureInitialized();
+    auto dbPath = ISXDatabaseManager::DatabaseManager::DatabasePath();
+    Storage::Database database(dbPath);
+    QQmlApplicationEngine engine;
 
   (void)Logging::Logger::Instance();
 

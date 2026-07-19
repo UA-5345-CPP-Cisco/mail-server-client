@@ -1,7 +1,10 @@
 #include "headers/color/ColorProvider.h"
-#include "logger/Logger.h"
+#include "headers/service/Service.h"
 
 #include <QSettings>
+
+#include <string>
+
 namespace ISXMail {
 
 // CONSTRUCTORS
@@ -93,7 +96,7 @@ bool ColorProvider::LoadScheme(const QString& path)
 {
 	if (!m_model.LoadFromFile(path))
 	{
-		Logging::Logger::Instance().Log(Logging::LogLevel::Info, "ColorProvider::LoadScheme: Failed to find path");
+		ISXService::Service::Logger().Log(Logging::LogLevel::Debug, std::string("Couldn't load from file ' "));
 		return false;
 	}
 
@@ -110,20 +113,16 @@ bool ColorProvider::SetTheme(Theme theme)
 	switch (theme)
 	{
 		case Theme::Light:
-			path = ":/pngs/assets/LightColorScheme.json";
+			path = ":/pngs/assets/theme/LightColorScheme.json";
 			break;
 
 		case Theme::Dark:
-			path = ":/pngs/assets/DarkColorScheme.json";
+			path = ":/pngs/assets/theme/DarkColorScheme.json";
 			break;
 	}
 
 	if (!m_model.LoadFromFile(path))
 	{
-		Logging::Logger::Instance().Log(
-			Logging::LogLevel::Error,
-			"ColorProvider::SetTheme: Failed to load theme file.");
-
 		return false;
 	}
 
@@ -134,11 +133,6 @@ bool ColorProvider::SetTheme(Theme theme)
 		theme == Theme::Dark ? "Dark" : "Light");
 
 	emit colorsChanged();
-
-	Logging::Logger::Instance().Log(
-		Logging::LogLevel::Info,
-		"ColorProvider::SetTheme: Theme loaded successfully.");
-
 	return true;
 }
 
@@ -151,11 +145,6 @@ bool ColorProvider::SetTheme(const QString& theme_name)
 
 	if (theme == "light")
 		return SetTheme(Theme::Light);
-
-	Logging::Logger::Instance().Log(
-		Logging::LogLevel::Warning,
-		"ColorProvider::SetTheme: Unknown theme '" +
-		theme_name.toStdString() + "'.");
 
 	return false;
 }

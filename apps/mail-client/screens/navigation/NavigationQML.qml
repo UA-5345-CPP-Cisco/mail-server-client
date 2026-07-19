@@ -4,14 +4,19 @@ import QtQuick
 Rectangle {
     id: navigationQML
 
-    signal archiveClicked
-    signal draftClicked
-    signal inboxClicked
-    signal sentClicked
-    signal starredClicked
+        signal draftClicked
+        signal inboxClicked
+        signal sentClicked
+        signal starredClicked
+        signal archiveClicked
 
     color: Color.background
 
+    function showPopup(msg)
+    {
+        statePopup.message = String(msg);
+        statePopup.show();
+    }
     // headerNavigation
     Rectangle {
         id: headerNavigation
@@ -797,6 +802,7 @@ Rectangle {
         }
     }
 
+
     // Footer: Settings button
     Rectangle {
         id: footerNavigation
@@ -894,6 +900,19 @@ Rectangle {
                 }
             }
         }
+    }
+
+    // State popup shown when Settings is clicked; slides up out of the footer, hovers, then slides back down and disappears
+    StatePopup {
+        id: statePopup
+
+        anchors.bottom: footerNavigation.top
+        anchors.bottomMargin: 8
+        anchors.left: navigationQML.left
+        anchors.right: navigationQML.right
+        anchors.leftMargin: 8
+        anchors.rightMargin: 8
+        z: 999
     }
 
     // Loader for Account change popup

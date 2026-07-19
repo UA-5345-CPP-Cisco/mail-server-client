@@ -1,18 +1,14 @@
 #include "headers/mail/EmailPageProxy.h"
 
-#include "logger/Logger.h"
+#include "headers/service/Service.h"
 
 namespace ISXMail{
-
-namespace
-{
-}
 
 EmailPageProxy::EmailPageProxy(QObject* parent) :
     QSortFilterProxyModel(parent)
 {
 
-  Logging::Logger::Instance().Log(Logging::LogLevel::Debug, "EmailPageProxy: constructed");
+   ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailPageProxy: constructed");
 }
 
 void EmailPageProxy::NextPage()
@@ -26,7 +22,7 @@ void EmailPageProxy::NextPage()
         emit pageAmountTextChanged();
     }
 
-  Logging::Logger::Instance().Log(Logging::LogLevel::Debug, QString("EmailPageProxy::NextPage: current page - " + QString::number(m_current_page)).toStdString());
+   ISXService::Service::Logger().Log(Logging::LogLevel::Debug, QString("EmailPageProxy::NextPage: current page - " + QString::number(m_current_page)).toStdString());
 }
 
 void EmailPageProxy::PrevPage()
@@ -40,7 +36,7 @@ void EmailPageProxy::PrevPage()
         emit pageAmountTextChanged();
     }
 
-  Logging::Logger::Instance().Log(Logging::LogLevel::Debug, QString("EmailPageProxy::PrevPage: current page - " + QString::number(m_current_page)).toStdString());
+   ISXService::Service::Logger().Log(Logging::LogLevel::Debug, QString("EmailPageProxy::PrevPage: current page - " + QString::number(m_current_page)).toStdString());
 }
 
 int EmailPageProxy::CurrentPage() const
@@ -78,7 +74,7 @@ void EmailPageProxy::setSourceModel(QAbstractItemModel *source_model)
                 this,
                 &EmailPageProxy::RecalcValues);
     }
-    Logging::Logger::Instance().Log(Logging::LogLevel::Debug, "EmailPageProxy::setSourceModel: source model was assigned successfully");
+     ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailPageProxy::setSourceModel: source model was assigned successfully");
     RecalcValues();
 }
 
@@ -163,7 +159,7 @@ bool EmailPageProxy::SetStarred(int proxyRow, bool starred)
 
 void EmailPageProxy::RemoveEmailData(int proxyRow)
 {
-    Logging::Logger::Instance().Log(Logging::LogLevel::Debug, "EmailPageProxy::RemoveEmailData: source model was assigned successfully");
+     ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailPageProxy::RemoveEmailData: source model was assigned successfully");
     QModelIndex idx = index(proxyRow, 0);
 
     while (auto* proxy =
@@ -182,7 +178,7 @@ void EmailPageProxy::RemoveEmailData(int proxyRow)
     model->RemoveData(idx.row());
 }
 
-void EmailPageProxy::ToggleArchive(int row)
+bool EmailPageProxy::ToggleArchive(int row)
 {
   QModelIndex idx = index(row, 0);
 
@@ -198,10 +194,10 @@ void EmailPageProxy::ToggleArchive(int row)
 
   if (!model || !idx.isValid())
   {
-    return;
+    return false;
   }
 
-  model->ToggleArchive(idx.row());
+  return model->ToggleArchive(idx.row());
 }
 
 }

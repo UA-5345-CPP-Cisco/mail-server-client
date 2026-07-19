@@ -16,6 +16,7 @@ Rectangle {
 
     signal draftChanged(string index, string subject, string recipient, string text)
     signal draftFinished(string index, string subject, string recipient, string text)
+    signal emailSent()
 
     border.color: Color.border
     clip: true
@@ -131,7 +132,7 @@ Rectangle {
                         hoverEnabled: true
 
                         onClicked: {
-                            if ((subjectTextField.text.trim() === "" && recipientTextField.text.trim() === "" && messageBodyTextField.text.trim() === "") || isDraft || isReply || isForward) {
+                            if ((subjectTextField.text.trim() === "" && recipientTextField.text.trim() === "" && messageBodyTextField.text.trim() === "") || !isDraft || isReply || isForward) {
                                 closeMessageWindow();
                             } else {
                                 let subject_text = subjectTextField.text.trim();
@@ -466,8 +467,10 @@ Rectangle {
                             if (!isDraft && MessageComposer.SendMessage(CurrentUser.username, CurrentUser.email, recipientTextField.text.trim(), subject_text, message_text, true)) {
                                 emailsModel.AddData(false, false, false, false, subject_text, CurrentUser.username, recipient_text, message_text, "", true);
                             }
+                            emailSent()
                         } else if (!isDraft && MessageComposer.SendMessage(CurrentUser.username, CurrentUser.email, recipientTextField.text.trim(), subject_text, message_text, false)) {
                             emailsModel.AddData(false, true, false, false, subject_text, CurrentUser.username, recipient_text, message_text, "");
+                            emailSent()
                         } else {
                             draftFinished(newIndex, subject_text, recipient_text, message_text);
                         }

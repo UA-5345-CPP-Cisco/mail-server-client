@@ -9,6 +9,7 @@ Rectangle {
     property var sourceModel: inboxModel
 
     signal emailOpenRequested(int index, string theme, string name, string sendTo, string content, string time, bool starred)
+    signal starredItemClicked(bool starred)
 
     function activeSearchModel() {
         if (sourceModel === inboxModel)
@@ -94,6 +95,7 @@ Rectangle {
             }
             onStarredClicked: {
                 sourceModel.SetStarred(parent.pIndex, starred);
+                starredItemClicked(starred);
             }
         }
     }

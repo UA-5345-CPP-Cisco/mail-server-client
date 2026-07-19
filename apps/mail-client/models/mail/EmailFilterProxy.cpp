@@ -1,18 +1,12 @@
 #include "headers/mail/EmailFilterProxy.h"
 
-#include "logger/Logger.h"
+#include "headers/service/Service.h"
 
 namespace ISXMail{
-
-    namespace
-    {
-
-    }
-
     EmailFilterProxy::EmailFilterProxy(FolderType type, QObject *parent)
         : QSortFilterProxyModel(parent), m_type(type)
     {
-        Logging::Logger::Instance().Log(Logging::LogLevel::Debug, "EmailFilterProxy: constructed");
+         ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailFilterProxy: constructed");
         setDynamicSortFilter(true);
     }
 

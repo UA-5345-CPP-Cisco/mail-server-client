@@ -67,7 +67,7 @@ AuthHandler::AuthResult AuthHandler::loginUser(const QString& email, const QStri
 {
   auto user_data = getMockUser(email.toStdString());
 
-  if (!user_data.has_value())
+  if (!user_data)
   {
     return AuthResult::UserNotFound;
   }
