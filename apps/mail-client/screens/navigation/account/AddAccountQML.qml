@@ -221,7 +221,7 @@ Rectangle {
         // Handle login submit
         function onLoginSubmitted(email, password) 
         {
-            var result = authHandler.loginUser(email, password);
+            var result = authHandler.LoginUser(email, password);
 
             if (result === AuthHandler.AuthResult.Success) 
             {
@@ -240,7 +240,7 @@ Rectangle {
         // Handle registration submit
         function onRegisterSubmitted(name, email, password) 
         {
-            var success = authHandler.registerUser(name, email, password);
+            var success = authHandler.RegisterUser(name, email, password);
 
             if (success)
             {

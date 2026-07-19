@@ -52,13 +52,13 @@ int main(int argc, char* argv[])
 
   (void)Logging::Logger::Instance();
 
-  qmlRegisterUncreatableType<AuthHandler>(
+  qmlRegisterUncreatableType<ISXAuth::AuthHandler>(
     "com.auth.system",
     1,
     0,
     "AuthHandler",
     "AuthHandler cannot be instantiated, used only as a namespace for enums");
-  AuthHandler authHandler(database);
+  ISXAuth::AuthHandler authHandler(database);
   engine.rootContext()->setContextProperty("authHandler", &authHandler);
 
   Storage::UserRepository repo(database);

@@ -8,12 +8,14 @@
 #include "mail_storage/UserRepository.h"
 using namespace CryptoPP;
 
+namespace ISXAuth {
+
 AuthHandler::AuthHandler(Storage::Database& db, QObject* parent) : QObject(parent), m_db(db)
 {
 }
 
 // ----- HELPER FUNCTION TO CONVERT BYTE ARRAY TO HEX STRING -----
-std::string toHex(const CryptoPP::byte* data, size_t size)
+std::string ToHex(const CryptoPP::byte* data, size_t size)
 {
   std::string hex;
   StringSource(data, size, true, new HexEncoder(new StringSink(hex)));
@@ -21,7 +23,7 @@ std::string toHex(const CryptoPP::byte* data, size_t size)
 }
 
 // ----- HELPER FUNCTION TO CONVERT HEX STRING TO BYTE ARRAY -----
-std::vector<CryptoPP::byte> fromHex(const std::string& hex)
+std::vector<CryptoPP::byte> FromHex(const std::string& hex)
 {
   std::vector<CryptoPP::byte> bytes;
 
@@ -31,7 +33,7 @@ std::vector<CryptoPP::byte> fromHex(const std::string& hex)
 }
 
 // ----- REGISTRATION -----
-bool AuthHandler::registerUser(const QString& username,
+bool AuthHandler::RegisterUser(const QString& username,
                                const QString& email,
                                const QString& password)
 {
@@ -53,8 +55,8 @@ bool AuthHandler::registerUser(const QString& username,
                    65536,
                    4);
 
-  std::string hash_hex = toHex(hash, sizeof(hash));
-  std::string salt_hex = toHex(salt, sizeof(salt));
+  std::string hash_hex = ToHex(hash, sizeof(hash));
+  std::string salt_hex = ToHex(salt, sizeof(salt));
 
   Storage::UserRepository repo(m_db);
   std::string combined = salt_hex + ":" + hash_hex;
@@ -63,19 +65,19 @@ bool AuthHandler::registerUser(const QString& username,
 }
 
 // ----- LOGIN -----
-AuthHandler::AuthResult AuthHandler::loginUser(const QString& email, const QString& password)
+AuthHandler::AuthResult AuthHandler::LoginUser(const QString& email, const QString& password)
 {
-  auto user_data = getMockUser(email.toStdString());
+  auto user_data = get_mock_user(email.toStdString());
 
   if (!user_data)
   {
     return AuthResult::UserNotFound;
   }
 
-  std::string combined = user_data->passwordData;
+  std::string combined = user_data->password_data;
   std::string username = user_data->username;
 
-  if (!verifyPassword(password, combined))
+  if (!VerifyPassword(password, combined))
   {
     return AuthResult::WrongPassword;
   }
@@ -92,26 +94,26 @@ AuthHandler::AuthResult AuthHandler::loginUser(const QString& email, const QStri
     return AuthResult::DatabaseError;
   }
 
-  m_currentUserName = QString::fromStdString(username);
+  m_current_user_name = QString::fromStdString(username);
 
   return AuthResult::Success;
 }
 
 // ---- PASSWORD VERIFICATION FUNCTION ----
-bool AuthHandler::verifyPassword(const QString& password, const std::string& storedPasswordData)
+bool AuthHandler::VerifyPassword(const QString& password, const std::string& stored_password_data)
 {
-  size_t colonPos = storedPasswordData.find(':');
+  size_t colon_pos = stored_password_data.find(':');
 
-  if (colonPos == std::string::npos)
+  if (colon_pos == std::string::npos)
   {
     return false;
   }
 
-  std::string saltHex = storedPasswordData.substr(0, colonPos);
-  std::string hashHex = storedPasswordData.substr(colonPos + 1);
+  std::string saltHex = stored_password_data.substr(0, colon_pos);
+  std::string hashHex = stored_password_data.substr(colon_pos + 1);
 
-  std::vector<byte> salt = fromHex(saltHex);
-  std::vector<byte> storedHash = fromHex(hashHex);
+  std::vector<byte> salt = FromHex(saltHex);
+  std::vector<byte> storedHash = FromHex(hashHex);
 
   byte hash[32];
   Argon2 argon2(Argon2::ARGON2ID);
@@ -133,7 +135,7 @@ bool AuthHandler::verifyPassword(const QString& password, const std::string& sto
 }
 
 // ----- MOCK USER DATA -----
-std::optional<AuthHandler::MockUser> AuthHandler::getMockUser(const std::string& email)
+std::optional<AuthHandler::MockUser> AuthHandler::get_mock_user(const std::string& email)
 {
   static const MockUser users[] = {
     {"test1@user.com",
@@ -157,7 +159,9 @@ std::optional<AuthHandler::MockUser> AuthHandler::getMockUser(const std::string&
   return std::nullopt;
 }
 
-QString AuthHandler::getLastLoggedInName() const
+QString AuthHandler::get_last_logged_in_name() const
 {
-  return m_currentUserName;
+  return m_current_user_name;
 }
+
+} // namespace ISXAuth

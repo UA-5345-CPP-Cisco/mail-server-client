@@ -5,6 +5,7 @@
 
 #include "mail_storage/Database.h"
 
+namespace ISXAuth {
 class AuthHandler : public QObject
 {
   Q_OBJECT
@@ -22,10 +23,10 @@ class AuthHandler : public QObject
   explicit AuthHandler(Storage::Database& db, QObject* parent = nullptr);
 
   Q_INVOKABLE bool
-  registerUser(const QString& username, const QString& email, const QString& password);
-  Q_INVOKABLE AuthHandler::AuthResult loginUser(const QString& email, const QString& password);
+  RegisterUser(const QString& username, const QString& email, const QString& password);
+  Q_INVOKABLE AuthHandler::AuthResult LoginUser(const QString& email, const QString& password);
 
-  Q_INVOKABLE QString getLastLoggedInName() const;
+  Q_INVOKABLE QString get_last_logged_in_name() const;
 
   signals:
   void registrationSuccess();
@@ -35,11 +36,13 @@ class AuthHandler : public QObject
   {
     std::string email;
     std::string username;
-    std::string passwordData;
+    std::string password_data;
   };
   Storage::Database& m_db;
-  std::optional<MockUser> getMockUser(const std::string& email);
-  bool verifyPassword(const QString& password, const std::string& storedHash);
+  std::optional<MockUser> get_mock_user(const std::string& email);
+  bool VerifyPassword(const QString& password, const std::string& stored_password_data);
 
-  QString m_currentUserName;
+  QString m_current_user_name;
 };
+
+} // namespace ISXAuth
