@@ -6,15 +6,17 @@ ToolTip {
     id: root
     delay: 400
 
-    contentItem: Text {
+    contentItem: Text
+    {
         text: root.text
-        color: "#ffffff"
+        color: Color.secondaryText
         font.family: "Segoe UI"
         font.pixelSize: 12
     }
 
-    background: Rectangle {
-        color: "#1f2937"
+    background: Rectangle
+    {
+        color:Color.hover
         radius: 6
     }
 }

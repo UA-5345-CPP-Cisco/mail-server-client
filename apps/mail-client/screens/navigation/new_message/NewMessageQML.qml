@@ -6,8 +6,8 @@ Rectangle {
     id: newMessageQml
 
     property bool isDraft: false
-    property bool isReply: false
     property bool isForward: false
+    property bool isReply: false
     property string newIndex: ""
     property string newRecipient: ""
     property string newSubject: ""
@@ -16,8 +16,9 @@ Rectangle {
 
     signal draftChanged(string index, string subject, string recipient, string text)
     signal draftFinished(string index, string subject, string recipient, string text)
+    signal emailSent()
 
-    border.color: "#e5e7eb"
+    border.color: Color.border
     clip: true
     color: "#fcf3e6"
     implicitHeight: 398
@@ -131,7 +132,7 @@ Rectangle {
                         hoverEnabled: true
 
                         onClicked: {
-                            if ((subjectTextField.text.trim() === "" && recipientTextField.text.trim() === "" && messageBodyTextField.text.trim() === "") || isDraft || isReply || isForward) {
+                            if ((subjectTextField.text.trim() === "" && recipientTextField.text.trim() === "" && messageBodyTextField.text.trim() === "") || !isDraft || isReply || isForward) {
                                 closeMessageWindow();
                             } else {
                                 let subject_text = subjectTextField.text.trim();
@@ -143,7 +144,7 @@ Rectangle {
                                 if (isDraft) {
                                     draftChanged(newIndex, subject_text, recipient_text, message_text);
                                 } else {
-                                    emailsModel.AddData(false, false, true, subject_text, CurrentUser.username, recipient_text, message_text, "");
+                                    emailsModel.AddData(false, false, true, false, subject_text, CurrentUser.username, recipient_text, message_text, "");
                                 }
                                 closeMessageWindow();
                             }
@@ -408,10 +409,8 @@ Rectangle {
                             easing.type: Easing.OutCubic
                         }
                     }
-                    Behavior on y
-                    {
-                        NumberAnimation
-                        {
+                    Behavior on y {
+                        NumberAnimation {
                             duration: 80
                             easing.type: Easing.OutCubic
                         }
@@ -422,8 +421,7 @@ Rectangle {
     }
 
     //footer
-    Rectangle
-    {
+    Rectangle {
         id: footerNavigation
 
         color: "transparent"
@@ -432,8 +430,7 @@ Rectangle {
         y: 340
 
         // Send
-        Rectangle
-        {
+        Rectangle {
             id: buttonToSentMessage
 
             anchors.verticalCenter: parent.verticalCenter
@@ -444,45 +441,37 @@ Rectangle {
             width: 63
             x: 12
 
-            Behavior on scale
-            {
-                NumberAnimation
-                {
+            Behavior on scale {
+                NumberAnimation {
                     duration: 150
                     easing.type: Easing.InOutQuad
                 }
             }
 
-            MouseArea
-            {
+            MouseArea {
                 id: sentClickArea
 
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
 
-                onClicked:
-                {
-                    if (recipientTextField.text === "")
-                    {
+                onClicked: {
+                    if (recipientTextField.text === "") {
                         recipientTextField.text = "Enter Recipient!";
                     } else {
                         let recipient_text = recipientTextField.text.trim() === "" ? "empty" : recipientTextField.text;
                         let subject_text = subjectTextField.text.trim() === "" ? "empty" : subjectTextField.text;
                         let message_text = messageBodyTextField.text.trim() === "" ? "empty" : messageBodyTextField.text;
 
-                        if (recipient_text === "inboxtest")
-                        {
-                            if (!isDraft &&
-                                MessageComposer.SendMessage(CurrentUser.username, CurrentUser.email, recipientTextField.text.trim(), subject_text, message_text, true))
-                            {
-                                emailsModel.AddData(false, false, false, subject_text, CurrentUser.username, recipient_text, message_text, "", true);
+                        if (recipient_text === "inboxtest") {
+                            if (!isDraft && MessageComposer.SendMessage(CurrentUser.username, CurrentUser.email, recipientTextField.text.trim(), subject_text, message_text, true)) {
+                                emailsModel.AddData(false, false, false, false, subject_text, CurrentUser.username, recipient_text, message_text, "", true);
                             }
-                        } else if (!isDraft && MessageComposer.SendMessage(CurrentUser.username, CurrentUser.email, recipientTextField.text.trim(), subject_text, message_text, false))
-                        {
-                            emailsModel.AddData(false, true, false, subject_text, CurrentUser.username, recipient_text, message_text, "");
-                        } else
-                        {
+                            emailSent()
+                        } else if (!isDraft && MessageComposer.SendMessage(CurrentUser.username, CurrentUser.email, recipientTextField.text.trim(), subject_text, message_text, false)) {
+                            emailsModel.AddData(false, true, false, false, subject_text, CurrentUser.username, recipient_text, message_text, "");
+                            emailSent()
+                        } else {
                             draftFinished(newIndex, subject_text, recipient_text, message_text);
                         }
                         messageBodyTextField.clear();
@@ -491,8 +480,7 @@ Rectangle {
                     }
                 }
             }
-            Text
-            {
+            Text {
                 id: sentButtonText
 
                 anchors.centerIn: parent
@@ -506,8 +494,7 @@ Rectangle {
         }
 
         // Delete
-        Rectangle
-        {
+        Rectangle {
             id: buttonToDelete
 
             anchors.verticalCenter: parent.verticalCenter
@@ -518,32 +505,27 @@ Rectangle {
             width: 28
             x: 85
 
-            Behavior on scale
-            {
-                NumberAnimation
-                {
+            Behavior on scale {
+                NumberAnimation {
                     duration: 150
                     easing.type: Easing.InOutQuad
                 }
             }
 
-            MouseArea
-            {
+            MouseArea {
                 id: deleteClickArea
 
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
 
-                onClicked:
-                {
+                onClicked: {
                     messageBodyTextField.clear();
                     recipientTextField.clear();
                     subjectTextField.clear();
                 }
             }
-            Rectangle
-            {
+            Rectangle {
                 id: deleteButtonIcon
 
                 anchors.centerIn: parent
@@ -552,8 +534,7 @@ Rectangle {
                 height: 16
                 width: 16
 
-                Image
-                {
+                Image {
                     anchors.centerIn: parent
                     fillMode: Image.PreserveAspectFit
                     height: 16

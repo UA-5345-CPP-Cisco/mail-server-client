@@ -1,3 +1,10 @@
+option(MAIL_ENABLE_COVERAGE "Enable code coverage" ON)
+
+if(MAIL_ENABLE_COVERAGE)
+    add_compile_options(--coverage -O0 -g)
+    add_link_options(--coverage)
+endif()
+
 add_executable(mail_storage_tests
         mail_storage/DatabaseTests.cpp
         mail_storage/MailDeliveryRepositoryTests.cpp

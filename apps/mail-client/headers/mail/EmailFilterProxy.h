@@ -8,10 +8,10 @@ namespace ISXMail{
 
     class EmailFilterProxy : public QSortFilterProxyModel
     {
-        Q_OBJECT
+        Q_OBJECT;
     public:
-        enum FolderType { Inbox, Sent, Starred, Draft };
-        Q_ENUM(FolderType)
+        enum FolderType { Inbox, Sent, Starred, Draft,  Archive};
+        Q_ENUM(FolderType);
 
         explicit EmailFilterProxy(FolderType type, QObject *parent = nullptr);
 

@@ -10,7 +10,7 @@ Rectangle
     implicitHeight: headerRectangle.height + accountListView.contentHeight + addButtonRectangle.height + bottomSpacerRectangle.height + 16
 
     clip: false
-    color: "#ffffff"
+    color: Color.background
     radius: 14
 
     MouseArea
@@ -32,7 +32,7 @@ Rectangle
         anchors.left: parent.left
         anchors.right: parent.right
         height: 52
-        color: "#00000000"
+        color: Color.transparent
 
         Text
         {
@@ -40,7 +40,7 @@ Rectangle
             x: 16
             y: 16
             height: 20
-            color: "#101828"
+            color: Color.primaryText
             font.family: "Segoe UI"
             font.pixelSize: 14
             font.weight: Font.Black
@@ -56,7 +56,7 @@ Rectangle
             anchors.verticalCenter: parent.verticalCenter
             width: 16
             height: 16
-            color: "transparent"
+            color: Color.transparent
 
             Image
             {
@@ -102,7 +102,7 @@ Rectangle
         anchors.leftMargin: 1
         anchors.rightMargin: 1
         height: 1
-        color: "#e5e7eb"
+        color: Color.outline
     }
 
     // Account list
@@ -135,7 +135,7 @@ Rectangle
         anchors.leftMargin: 1
         anchors.rightMargin: 1
         height: 1
-        color: "#e5e7eb"
+        color: Color.outline
     }
 
     // "Add account" button
@@ -146,7 +146,7 @@ Rectangle
         anchors.left: parent.left
         anchors.right: parent.right
         height: 72
-        color: "transparent"
+        color: Color.transparent
 
         signal addAccountRequested()
 
@@ -158,7 +158,7 @@ Rectangle
             width: parent.width - 16
             height: 56
             radius: 10
-            color: addClickArea.containsMouse ? "#f9fafb" : "transparent"
+            color: addClickArea.containsMouse ? Color.surface : Color.transparent
 
             Rectangle
             {
@@ -168,8 +168,8 @@ Rectangle
                 width: 36
                 height: 36
                 radius: 18
-                color: "transparent"
-                border.color: "#e5e7eb"
+                color: Color.transparent
+                border.color: Color.outline
                 border.width: 1
 
                 Image
@@ -199,7 +199,7 @@ Rectangle
                 y: 18
                 height: 20
                 text: "Add account"
-                color: "#4a5565"
+                color: Color.primaryText
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Normal
@@ -236,7 +236,7 @@ Rectangle
         anchors.left: parent.left
         anchors.right: parent.right
         height: 300
-        color: "#ffffff"
+        color: Color.background
 
         MouseArea
         {

@@ -1,0 +1,17 @@
+{
+  "background":         "#141922",
+  "surface":            "#1a2130",
+  "button":             "#101828",
+  "buttonSpecial":      "#1b199c",
+  "buttonSpecialHover": "#151473",
+  "buttonSpecialText":  "#ffffff",
+  "selected":           "#324461",
+  "outline":            "#2a3347",
+  "avatar":             "#3b82f6",
+  "hover":              "#1f2a3c",
+  "primaryText":        "#d4dbe8",
+  "secondaryText":      "#7e8fa8",
+  "highlight":          "#1f2a3c",
+  "border":             "#1f2a3c",
+  "transparent":        "#00000000"
+}

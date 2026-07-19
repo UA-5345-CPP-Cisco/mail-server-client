@@ -1,854 +1,939 @@
 import QtQuick
 
 //declaration of QML
-Rectangle
-{
+Rectangle {
     id: navigationQML
 
-    color: "#ffffff"
+        signal draftClicked
+        signal inboxClicked
+        signal sentClicked
+        signal starredClicked
+        signal archiveClicked
 
-    signal inboxClicked
-    signal starredClicked
-    signal sentClicked
-    signal draftClicked
+    color: Color.background
 
-    // headerNavigation
-    Rectangle
+    function showPopup(msg)
     {
+        statePopup.message = String(msg);
+        statePopup.show();
+    }
+    // headerNavigation
+    Rectangle {
         id: headerNavigation
+
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
+        color: Color.background
         height: 60
-        color: "#ffffff"
         z: 10
 
         // Bottom border
-        Rectangle
-        {
+        Rectangle {
+            anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.bottom: parent.bottom
+            color: Color.outline
             height: 1
-            color: "#e5e7eb"
         }
 
         // Avatar
-        Rectangle
-        {
+        Rectangle {
             id: avatar
+
+            clip: true
+            color: CurrentUser.avatarPath !== "" ? Color.transparent : Color.avatar
+            height: 32
+            radius: 16
+            width: 32
             x: 12
             y: 14
-            height: 32
-            width: 32
-            color: CurrentUser.avatarPath !== "" ? "transparent" : "#2b7fff"
-            radius: 16
-            clip: true
 
-            Image
-            {
+            Image {
                 anchors.fill: parent
-                source: CurrentUser.avatarPath
-                visible: CurrentUser.avatarPath !== ""
                 cache: false
                 fillMode: Image.PreserveAspectCrop
+                source: CurrentUser.avatarPath
+                visible: CurrentUser.avatarPath !== ""
             }
-            Text
-            {
+            Text {
                 anchors.centerIn: parent
-                visible: CurrentUser.avatarPath === ""
-                color: "#ffffff"
+                color: Color.background
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Black
                 text: avatarInitial(CurrentUser.username)
+                visible: CurrentUser.avatarPath === ""
             }
         }
 
         // Content
-        Rectangle
-        {
+        Rectangle {
             id: userInfoWrapper
+
             anchors.left: avatar.right
             anchors.leftMargin: 8
             anchors.right: accountChangeWrapper.left
             anchors.rightMargin: 4
             anchors.verticalCenter: parent.verticalCenter
+            color: Color.transparent
             height: 36
-            color: "transparent"
 
-            Rectangle
-            {
+            Rectangle {
                 id: userName
+
                 anchors.left: parent.left
                 anchors.right: parent.right
-                height: 20
                 clip: true
-                color: "transparent"
+                color: Color.transparent
+                height: 20
 
-                Text
-                {
+                Text {
                     id: userNameText
-                    height: 20
-                    width: parent.width
-                    color: "#101828"
+
+                    color: Color.primaryText
                     font.family: "Segoe UI"
                     font.pixelSize: 14
                     font.weight: Font.Normal
+                    height: 20
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 20
                     lineHeightMode: Text.FixedHeight
                     text: CurrentUser.username
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
+                    width: parent.width
                     wrapMode: Text.Wrap
                 }
             }
-
-            Rectangle
-            {
+            Rectangle {
                 id: userInfo
+
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: userName.bottom
-                height: 16
                 clip: true
-                color: "transparent"
+                color: Color.transparent
+                height: 16
 
-                Text
-                {
+                Text {
                     id: userEmailText
-                    height: 16
-                    width: parent.width
-                    color: "#6a7282"
+
+                    color: Color.secondaryText
                     font.family: "Segoe UI"
                     font.pixelSize: 12
                     font.weight: Font.Normal
+                    height: 16
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
                     text: CurrentUser.email
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
+                    width: parent.width
                     wrapMode: Text.Wrap
                 }
             }
         }
 
         // Wrapper for the Button and Loader
-        Item
-        {
+        Item {
             id: accountChangeWrapper
+
+            anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.top: parent.top
-            anchors.bottom: parent.bottom
             width: 48
 
-            Rectangle
-            {
+            Rectangle {
                 id: buttonAccountChange
+
                 anchors.centerIn: parent
+                color: clickAreaAccountChange.pressed ? Color.hover : Color.transparent
                 height: 24
-                width: 24
-                color: clickAreaAccountChange.pressed ? "#ffdede" : "transparent"
                 radius: 4
+                width: 24
 
-                Rectangle
-                {
+                Rectangle {
                     id: accounChangeIcon
-                    anchors.centerIn: parent
-                    height: 16
-                    width: 16
-                    clip: true
-                    color: "transparent"
-                    scale: clickAreaAccountChange.hovered ? 1.5 : 1.0
 
-                    Behavior on scale
-                    {
-                        NumberAnimation
-                        {
+                    anchors.centerIn: parent
+                    clip: true
+                    color: Color.transparent
+                    height: 16
+                    scale: clickAreaAccountChange.hovered ? 1.5 : 1.0
+                    width: 16
+
+                    Behavior on scale {
+                        NumberAnimation {
                             duration: 150
                             easing.type: Easing.InOutQuad
                         }
                     }
 
-                    Image
-                    {
-                        source: "qrc:/pngs/assets/ic_arrow_down.svg"
-                        width: 18
-                        height: 18
-                        sourceSize.width: width * Screen.devicePixelRatio
-                        sourceSize.height: height * Screen.devicePixelRatio
-                        fillMode: Image.PreserveAspectFit
+                    Image {
                         anchors.centerIn: parent
+                        fillMode: Image.PreserveAspectFit
+                        height: 18
+                        source: "qrc:/pngs/assets/ic_arrow_down.svg"
+                        sourceSize.height: height * Screen.devicePixelRatio
+                        sourceSize.width: width * Screen.devicePixelRatio
+                        width: 18
                     }
                 }
-
-                HoverHandler
-                {
+                HoverHandler {
                     id: clickAreaAccountChange
+
                     cursorShape: Qt.PointingHandCursor
                 }
-
-                TapHandler
-                {
-                    onTapped:
-                    {
-                        if (String(accountChangeLoader.source) === "")
-                        {
-                            accountChangeLoader.source = "account/SwitchAccountQML.qml"
-                        }
-                        else
-                        {
-                            accountChangeLoader.source = ""
+                TapHandler {
+                    onTapped: {
+                        if (String(accountChangeLoader.source) === "") {
+                            accountChangeLoader.source = "account/SwitchAccountQML.qml";
+                        } else {
+                            accountChangeLoader.source = "";
                         }
                     }
                 }
             }
         }
     }
-    
+
     // Compose button
-    Rectangle
-    {
+    Rectangle {
         id: composeEmailWrapper
 
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: headerNavigation.bottom
-
+        color: Color.transparent
         height: 76
-        color: "transparent"
 
-        Rectangle
-        {
+        Rectangle {
             id: buttonToComposeEmail
 
             anchors.left: parent.left
+            anchors.margins: 16
             anchors.right: parent.right
             anchors.top: parent.top
-            anchors.margins: 16
-
+            color: hoverHandlerComposeEmails.hovered ? Color.buttonSpecialHover : Color.buttonSpecial
             height: 44
-
-            color: hoverHandlerComposeEmails.hovered ? "#0c43f7" : "#155dfc"
             radius: 10
 
-            HoverHandler
-            {
+            HoverHandler {
                 id: hoverHandlerComposeEmails
+
                 cursorShape: Qt.PointingHandCursor
             }
-
-            TapHandler
-            {
-                onTapped:
-                {
-                    if (newMessageLoader.selectedItem !== null)
-                    {
-                        newMessageLoader.selectedItem = null
-                        newMessageLoader.active = false
-                        newMessageLoader.active = true
-                        newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml"
-                    }
-                    else if (String(newMessageLoader.source) === "")
-                    {
-                        newMessageLoader.selectedItem = null
-                        newMessageLoader.active = true
-                        newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml"
-                    }
-                    else
-                    {
-                        newMessageLoader.source = ""
-                        newMessageLoader.active = false
+            TapHandler {
+                onTapped: {
+                    if (newMessageLoader.selectedItem !== null) {
+                        newMessageLoader.selectedItem = null;
+                        newMessageLoader.active = false;
+                        newMessageLoader.active = true;
+                        newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml";
+                    } else if (String(newMessageLoader.source) === "") {
+                        newMessageLoader.selectedItem = null;
+                        newMessageLoader.active = true;
+                        newMessageLoader.source = "screens/navigation/new_message/NewMessageQML.qml";
+                    } else {
+                        newMessageLoader.source = "";
+                        newMessageLoader.active = false;
                     }
                 }
             }
-
-            Rectangle
-            {
+            Rectangle {
                 id: composeEmailIcon
 
-                x: 16
-                y: 13
+                clip: true
+                color: Color.transparent
                 height: 18
                 width: 18
-                clip: true
-                color: "transparent"
+                x: 16
+                y: 13
 
-                Image
-                {
-                    source: "qrc:/pngs/assets/ic_compose.svg"
-                    width: 18
-                    height: 18
-                    sourceSize.width: width * Screen.devicePixelRatio
-                    sourceSize.height: height * Screen.devicePixelRatio
-                    fillMode: Image.PreserveAspectFit
+                Image {
                     anchors.centerIn: parent
+                    fillMode: Image.PreserveAspectFit
+                    height: 18
+                    source: "qrc:/pngs/assets/ic_compose.svg"
+                    sourceSize.height: height * Screen.devicePixelRatio
+                    sourceSize.width: width * Screen.devicePixelRatio
+                    width: 18
                 }
             }
-
-            Text
-            {
+            Text {
                 id: composeEmailText
 
-                x: 42
-                y: 10
-                height: 24
-                width: 69
-
-                color: "#ffffff"
+                color: Color.buttonSpecialText
                 font.family: "Segoe UI"
                 font.pixelSize: 16
                 font.weight: Font.Normal
+                height: 24
                 horizontalAlignment: Text.AlignHCenter
                 lineHeight: 24
                 lineHeightMode: Text.FixedHeight
                 text: "Compose"
                 textFormat: Text.PlainText
                 verticalAlignment: Text.AlignVCenter
+                width: 69
+                x: 42
+                y: 10
             }
         }
     }
 
     // Navigation
-    Rectangle
-    {
+    Rectangle {
         id: navigationWrapper
 
+        anchors.bottom: footerNavigation.top
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: composeEmailWrapper.bottom
-        anchors.bottom: footerNavigation.top
-
-        color: "transparent"
+        color: Color.transparent
 
         // Inbox button
-        Rectangle
-        {
+        Rectangle {
             id: buttonToOpenInbox
 
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: 8
-            anchors.rightMargin: 8
-            height: 40
-            radius: 10
             property bool isInboxSelected: selectedFolder === "inbox"
 
-            color: isInboxSelected ? "#dbdbdb" : (hoverHandlerInboxButton.hovered ? "#f3f4f6" : "#ffffff")
+            anchors.left: parent.left
+            anchors.leftMargin: 8
+            anchors.right: parent.right
+            anchors.rightMargin: 8
+            color: isInboxSelected ? Color.selected : (hoverHandlerInboxButton.hovered ? Color.highlight : Color.background)
+            height: 40
+            radius: 10
 
-            HoverHandler
-            {
+            HoverHandler {
                 id: hoverHandlerInboxButton
+
                 cursorShape: Qt.PointingHandCursor
             }
-
-            TapHandler
-            {
-                onTapped:
-                {
-                    window.selectedFolder = "inbox"
-                    inboxClicked()
+            TapHandler {
+                onTapped: {
+                    window.selectedFolder = "inbox";
+                    inboxClicked();
                 }
             }
-
-            Rectangle
-            {
+            Rectangle {
                 id: inboxButtonIcon
-                x: 12; y: 11
-                height: 18; width: 18
-                clip: true; color: "transparent"
 
-                Image
-                {
-                    source: "qrc:/pngs/assets/ic_inbox.svg"
-                    width: 18
-                    height: 18
-                    sourceSize.width: width * Screen.devicePixelRatio
-                    sourceSize.height: height * Screen.devicePixelRatio
-                    fillMode: Image.PreserveAspectFit
+                clip: true
+                color: Color.transparent
+                height: 18
+                width: 18
+                x: 12
+                y: 11
+
+                Image {
                     anchors.centerIn: parent
+                    fillMode: Image.PreserveAspectFit
+                    height: 18
+                    source: "qrc:/pngs/assets/ic_inbox.svg"
+                    sourceSize.height: height * Screen.devicePixelRatio
+                    sourceSize.width: width * Screen.devicePixelRatio
+                    width: 18
                 }
             }
-
-            Rectangle
-            {
+            Rectangle {
                 id: inboxButtonTextWrapper
-                x: 42; y: 8
+
+                color: Color.transparent
                 height: 24
+                x: 42
+                y: 8
 
-                color: "transparent"
-
-                Text
-                {
+                Text {
                     id: inboxButtonText
-                    height: 24; width: parent.width
-                    color: "#101828"
-                    font.family: "Segoe UI"; font.pixelSize: 16; font.weight: Font.Normal
+
+                    color: Color.secondaryText
+                    font.family: "Segoe UI"
+                    font.pixelSize: 16
+                    font.weight: Font.Normal
+                    height: 24
                     horizontalAlignment: Text.AlignLeft
-                    lineHeight: 24; lineHeightMode: Text.FixedHeight
-                    text: "Inbox"; textFormat: Text.PlainText
-                    verticalAlignment: Text.AlignVCenter; wrapMode: Text.Wrap
+                    lineHeight: 24
+                    lineHeightMode: Text.FixedHeight
+                    text: "Inbox"
+                    textFormat: Text.PlainText
+                    verticalAlignment: Text.AlignVCenter
+                    width: parent.width
+                    wrapMode: Text.Wrap
                 }
             }
-
-            Rectangle
-            {
+            Rectangle {
                 id: amountOfInboxHolder
+
                 anchors.right: parent.right
                 anchors.rightMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
-                height: 16; width: 20
-                color: "transparent"
+                color: Color.transparent
+                height: 16
+                width: 20
 
-                Text
-                {
+                Text {
                     id: amountOfInboxText
-                    height: 16; width: parent.width
-                    color: "#6a7282"
-                    font.family: "Segoe UI";
-                    font.pixelSize: 12;
+
+                    color: Color.secondaryText
+                    font.family: "Segoe UI"
+                    font.pixelSize: 12
                     font.weight: Font.Normal
+                    height: 16
                     horizontalAlignment: Text.AlignHCenter
-                    lineHeight: 16;
+                    lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: inboxCount;
+                    text: inboxCount
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
+                    width: parent.width
                 }
             }
         }
 
         // Sent button
-        Rectangle
-        {
+        Rectangle {
             id: buttonToOpenSent
 
+            property bool isSentSelected: selectedFolder === "sent"
+
             anchors.left: parent.left
-            anchors.right: parent.right
             anchors.leftMargin: 8
+            anchors.right: parent.right
             anchors.rightMargin: 8
             anchors.top: buttonToOpenInbox.bottom
             anchors.topMargin: 4
-            property bool isSentSelected: selectedFolder === "sent"
-
-            color: isSentSelected ? "#dbdbdb" : (hoverHandlerSentButton.hovered ? "#f3f4f6" : "#ffffff")
+            color: isSentSelected ? Color.selected : (hoverHandlerSentButton.hovered ? Color.highlight : Color.background)
             height: 40
             radius: 10
 
-            HoverHandler
-            {
+            HoverHandler {
                 id: hoverHandlerSentButton
+
                 cursorShape: Qt.PointingHandCursor
             }
-
-            TapHandler
-            {
-                onTapped:
-                {
-                    window.selectedFolder = "sent"
-                    sentClicked()
+            TapHandler {
+                onTapped: {
+                    window.selectedFolder = "sent";
+                    sentClicked();
                 }
             }
 
             // TEMP ICON
-            Rectangle
-            {
+            Rectangle {
                 id: sentButtonIcon
-                x: 12; y: 11
-                height: 18; width: 18
-                clip: true; color: "transparent"
 
-                Image
-                {
-                    source: "qrc:/pngs/assets/ic_sent.svg"
-                    width: 18
-                    height: 18
-                    sourceSize.width: width * Screen.devicePixelRatio
-                    sourceSize.height: height * Screen.devicePixelRatio
-                    fillMode: Image.PreserveAspectFit
+                clip: true
+                color: Color.transparent
+                height: 18
+                width: 18
+                x: 12
+                y: 11
+
+                Image {
                     anchors.centerIn: parent
+                    fillMode: Image.PreserveAspectFit
+                    height: 18
+                    source: "qrc:/pngs/assets/ic_sent.svg"
+                    sourceSize.height: height * Screen.devicePixelRatio
+                    sourceSize.width: width * Screen.devicePixelRatio
+                    width: 18
                 }
             }
-
-            Rectangle
-            {
+            Rectangle {
                 id: sentButtonTextWrapper
-                x: 42; y: 8
-                height: 24
-                color: "transparent"
 
-                Text
-                {
+                color: Color.transparent
+                height: 24
+                x: 42
+                y: 8
+
+                Text {
                     id: sentButtonText
-                    height: 24; width: parent.width
-                    color: "#4a5565"
-                    font.family: "Segoe UI";
-                    font.pixelSize: 16;
+
+                    color: Color.secondaryText
+                    font.family: "Segoe UI"
+                    font.pixelSize: 16
                     font.weight: Font.Normal
+                    height: 24
                     horizontalAlignment: Text.AlignLeft
-                    lineHeight: 24;
+                    lineHeight: 24
                     lineHeightMode: Text.FixedHeight
-                    text: "Sent";
+                    text: "Sent"
                     textFormat: Text.PlainText
-                    verticalAlignment: Text.AlignVCenter; wrapMode: Text.Wrap
+                    verticalAlignment: Text.AlignVCenter
+                    width: parent.width
+                    wrapMode: Text.Wrap
                 }
             }
-
-            Rectangle
-            {
+            Rectangle {
                 id: amountOfSentHolder
+
                 anchors.right: parent.right
                 anchors.rightMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
-                height: 16; width: 20
-                color: "transparent"
+                color: Color.transparent
+                height: 16
+                width: 20
 
-                Text
-                {
+                Text {
                     id: amountOfSentText
-                    height: 16; width: parent.width
-                    color: "#6a7282"
-                    font.family: "Segoe UI";
-                    font.pixelSize: 12;
+
+                    color: Color.secondaryText
+                    font.family: "Segoe UI"
+                    font.pixelSize: 12
                     font.weight: Font.Normal
+                    height: 16
                     horizontalAlignment: Text.AlignHCenter
-                    lineHeight: 16;
+                    lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: sentCount;
+                    text: sentCount
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
+                    width: parent.width
                 }
             }
         }
 
         // Starred button
-        Rectangle
-        {
+        Rectangle {
             id: buttonToOpenStarred
 
+            property bool isStarredSelected: selectedFolder === "starred"
+
             anchors.left: parent.left
-            anchors.right: parent.right
             anchors.leftMargin: 8
+            anchors.right: parent.right
             anchors.rightMargin: 8
             anchors.top: buttonToOpenSent.bottom
             anchors.topMargin: 4
-            property bool isStarredSelected: selectedFolder === "starred"
-
-
-            color: isStarredSelected ? "#dbdbdb" : (hoverHandlerStarredButton.hovered ? "#f3f4f6" : "#ffffff")
+            color: isStarredSelected ? Color.selected : (hoverHandlerStarredButton.hovered ? Color.highlight : Color.background)
             height: 40
             radius: 10
 
-            HoverHandler
-            {
+            HoverHandler {
                 id: hoverHandlerStarredButton
+
                 cursorShape: Qt.PointingHandCursor
             }
-
-            TapHandler
-            {
-                onTapped:
-                {
-                    window.selectedFolder = "starred"
-                    starredClicked()
+            TapHandler {
+                onTapped: {
+                    window.selectedFolder = "starred";
+                    starredClicked();
                 }
             }
-
-
-            Rectangle
-            {
+            Rectangle {
                 id: starredButtonIcon
-                x: 12; y: 11
-                height: 18; width: 18
-                clip: true; color: "transparent"
 
-                Image
-                {
-                    source: "qrc:/pngs/assets/ic_star.svg"
-                    width: 18
-                    height: 18
-                    sourceSize.width: width * Screen.devicePixelRatio
-                    sourceSize.height: height * Screen.devicePixelRatio
-                    fillMode: Image.PreserveAspectFit
+                clip: true
+                color: Color.transparent
+                height: 18
+                width: 18
+                x: 12
+                y: 11
+
+                Image {
                     anchors.centerIn: parent
+                    fillMode: Image.PreserveAspectFit
+                    height: 18
+                    source: "qrc:/pngs/assets/ic_star.svg"
+                    sourceSize.height: height * Screen.devicePixelRatio
+                    sourceSize.width: width * Screen.devicePixelRatio
+                    width: 18
                 }
             }
-
-            Rectangle
-            {
+            Rectangle {
                 id: starredButtonTextWrapper
-                x: 42; y: 8
-                height: 24
-                color: "transparent"
 
-                Text
-                {
+                color: Color.transparent
+                height: 24
+                x: 42
+                y: 8
+
+                Text {
                     id: starredButtonText
-                    height: 24; width: parent.width
-                    color: "#4a5565"
-                    font.family: "Segoe UI"; font.pixelSize: 16; font.weight: Font.Normal
+
+                    color: Color.secondaryText
+                    font.family: "Segoe UI"
+                    font.pixelSize: 16
+                    font.weight: Font.Normal
+                    height: 24
                     horizontalAlignment: Text.AlignLeft
-                    lineHeight: 24; lineHeightMode: Text.FixedHeight
-                    text: "Starred"; textFormat: Text.PlainText
-                    verticalAlignment: Text.AlignVCenter; wrapMode: Text.Wrap
+                    lineHeight: 24
+                    lineHeightMode: Text.FixedHeight
+                    text: "Starred"
+                    textFormat: Text.PlainText
+                    verticalAlignment: Text.AlignVCenter
+                    width: parent.width
+                    wrapMode: Text.Wrap
                 }
             }
-
-            Rectangle
-            {
+            Rectangle {
                 id: amountOfStarredHolder
+
                 anchors.right: parent.right
                 anchors.rightMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
-                height: 16; width: 20
-                color: "transparent"
+                color: Color.transparent
+                height: 16
+                width: 20
 
-                Text
-                {
+                Text {
                     id: amountOfStarredText
-                    height: 16; width: parent.width
-                    color: "#6a7282"
-                    font.family: "Segoe UI";
-                    font.pixelSize: 12;
+
+                    color: Color.secondaryText
+                    font.family: "Segoe UI"
+                    font.pixelSize: 12
                     font.weight: Font.Normal
+                    height: 16
                     horizontalAlignment: Text.AlignHCenter
-                    lineHeight: 16;
+                    lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: starredCount;
+                    text: starredCount
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
+                    width: parent.width
                 }
             }
         }
 
         // Drafts button
-        Rectangle
-        {
+        Rectangle {
             id: buttonToOpenDrafts
 
+            property bool isDraftsSelected: selectedFolder === "drafts"
+
             anchors.left: parent.left
-            anchors.right: parent.right
             anchors.leftMargin: 8
+            anchors.right: parent.right
             anchors.rightMargin: 8
             anchors.top: buttonToOpenStarred.bottom
             anchors.topMargin: 4
-            property bool isDraftsSelected: selectedFolder === "drafts"
-
-            color: isDraftsSelected ? "#dbdbdb" : (hoverHandlerDraftsButton.hovered ? "#f3f4f6" : "#ffffff")
+            color: isDraftsSelected ? Color.selected : (hoverHandlerDraftsButton.hovered ? Color.highlight : Color.background)
             height: 40
             radius: 10
 
-            HoverHandler
-            {
+            HoverHandler {
                 id: hoverHandlerDraftsButton
+
                 cursorShape: Qt.PointingHandCursor
             }
-
-            TapHandler
-            {
-                onTapped:
-                {
-                    window.selectedFolder = "drafts"
-                    draftClicked()
+            TapHandler {
+                onTapped: {
+                    window.selectedFolder = "drafts";
+                    draftClicked();
                 }
             }
-
-
             Rectangle {
                 id: draftsButtonIcon
-                x: 12; y: 11
-                height: 18; width: 18
-                clip: true; color: "transparent"
-                Image
-                {
-                    source: "qrc:/pngs/assets/ic_drafts.svg"
-                    width: 18
-                    height: 18
-                    sourceSize.width: width * Screen.devicePixelRatio
-                    sourceSize.height: height * Screen.devicePixelRatio
-                    fillMode: Image.PreserveAspectFit
+
+                clip: true
+                color: Color.transparent
+                height: 18
+                width: 18
+                x: 12
+                y: 11
+
+                Image {
                     anchors.centerIn: parent
+                    fillMode: Image.PreserveAspectFit
+                    height: 18
+                    source: "qrc:/pngs/assets/ic_drafts.svg"
+                    sourceSize.height: height * Screen.devicePixelRatio
+                    sourceSize.width: width * Screen.devicePixelRatio
+                    width: 18
                 }
             }
-
-            Rectangle
-            {
+            Rectangle {
                 id: draftsButtonTextWrapper
-                x: 42; y: 8
-                height: 24
-                color: "transparent"
 
-                Text
-                {
+                color: Color.transparent
+                height: 24
+                x: 42
+                y: 8
+
+                Text {
                     id: draftsButtonText
-                    height: 24; width: parent.width
-                    color: "#4a5565"
-                    font.family: "Segoe UI"; font.pixelSize: 16; font.weight: Font.Normal
+
+                    color: Color.secondaryText
+                    font.family: "Segoe UI"
+                    font.pixelSize: 16
+                    font.weight: Font.Normal
+                    height: 24
                     horizontalAlignment: Text.AlignLeft
-                    lineHeight: 24; lineHeightMode: Text.FixedHeight
-                    text: "Drafts"; textFormat: Text.PlainText
-                    verticalAlignment: Text.AlignVCenter; wrapMode: Text.Wrap
+                    lineHeight: 24
+                    lineHeightMode: Text.FixedHeight
+                    text: "Drafts"
+                    textFormat: Text.PlainText
+                    verticalAlignment: Text.AlignVCenter
+                    width: parent.width
+                    wrapMode: Text.Wrap
                 }
             }
-
-            Rectangle
-            {
+            Rectangle {
                 id: amountOfDraftsHolder
+
                 anchors.right: parent.right
                 anchors.rightMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
-                height: 16; width: 20
-                color: "transparent"
+                color: Color.transparent
+                height: 16
+                width: 20
 
-                Text
-                {
+                Text {
                     id: amountOfDraftsText
-                    height: 16; width: parent.width
-                    color: "#6a7282"
-                    font.family: "Segoe UI"; font.pixelSize: 12; font.weight: Font.Normal
+
+                    color: Color.secondaryText
+                    font.family: "Segoe UI"
+                    font.pixelSize: 12
+                    font.weight: Font.Normal
+                    height: 16
                     horizontalAlignment: Text.AlignHCenter
-                    lineHeight: 16;
+                    lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: draftsCount;
+                    text: draftsCount
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
+                    width: parent.width
+                }
+            }
+        }
+        Rectangle {
+            id: buttonToOpenArchives
+
+            property bool isArchivesSelected: selectedFolder === "archive"
+
+            anchors.left: parent.left
+            anchors.leftMargin: 8
+            anchors.right: parent.right
+            anchors.rightMargin: 8
+            anchors.top: buttonToOpenDrafts.bottom
+            anchors.topMargin: 4
+            color: isArchivesSelected ? Color.selected : (hoverHandlerArchivesButton.hovered ? Color.highlight : Color.background)
+            height: 40
+            radius: 10
+
+            HoverHandler {
+                id: hoverHandlerArchivesButton
+
+                cursorShape: Qt.PointingHandCursor
+            }
+            TapHandler {
+                onTapped: {
+                    window.selectedFolder = "archive";
+                    archiveClicked();
+                }
+            }
+            Rectangle {
+                id: archivesButtonIcon
+
+                clip: true
+                color: Color.transparent
+                height: 18
+                width: 18
+                x: 12
+                y: 11
+
+                Image {
+                    anchors.centerIn: parent
+                    fillMode: Image.PreserveAspectFit
+                    height: 18
+                    source: "qrc:/pngs/assets/ic_archive.svg"
+                    sourceSize.height: height * Screen.devicePixelRatio
+                    sourceSize.width: width * Screen.devicePixelRatio
+                    width: 18
+                }
+            }
+            Rectangle {
+                id: archivesButtonTextWrapper
+
+                color: Color.transparent
+                height: 24
+                x: 42
+                y: 8
+
+                Text {
+                    id: archivesButtonText
+
+                    color: Color.secondaryText
+                    font.family: "Segoe UI"
+                    font.pixelSize: 16
+                    font.weight: Font.Normal
+                    height: 24
+                    horizontalAlignment: Text.AlignLeft
+                    lineHeight: 24
+                    lineHeightMode: Text.FixedHeight
+                    text: "Archive"
+                    textFormat: Text.PlainText
+                    verticalAlignment: Text.AlignVCenter
+                    width: parent.width
+                    wrapMode: Text.Wrap
+                }
+            }
+            Rectangle {
+                id: amountOfArchivesHolder
+
+                anchors.right: parent.right
+                anchors.rightMargin: 12
+                anchors.verticalCenter: parent.verticalCenter
+                color: Color.transparent
+                height: 16
+                width: 20
+
+                Text {
+                    id: amountOfArchivesText
+
+                    color: Color.secondaryText
+                    font.family: "Segoe UI"
+                    font.pixelSize: 12
+                    font.weight: Font.Normal
+                    height: 16
+                    horizontalAlignment: Text.AlignHCenter
+                    lineHeight: 16
+                    lineHeightMode: Text.FixedHeight
+                    text: archiveCount
+                    textFormat: Text.PlainText
+                    verticalAlignment: Text.AlignVCenter
+                    width: parent.width
                 }
             }
         }
     }
 
+
     // Footer: Settings button
-    Rectangle
-    {
+    Rectangle {
         id: footerNavigation
 
+        anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottom: parent.bottom
-
+        color: clickAreaSettings.hovered ? Color.selected : Color.background
         height: 60
-        color: clickAreaSettings.hovered ? "#dbdbdb" : "#ffffff"
 
         // Top border
-        Rectangle
-        {
+        Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
+            color: Color.outline
             height: 1
-            color: "#e5e7eb"
         }
 
         // Settings button
-        Rectangle
-        {
+        Rectangle {
             id: buttonToOpenSettings
 
             anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: 12
-            color: clickAreaSettings.hovered ? "#dbdbdb" : "#ffffff"
+            anchors.right: parent.right
             anchors.rightMargin: 12
-
+            anchors.verticalCenter: parent.verticalCenter
+            color: clickAreaSettings.hovered ? Color.selected : Color.background
             height: 36
-
             radius: 10
 
-            HoverHandler
-            {
+            HoverHandler {
                 id: clickAreaSettings
+
                 cursorShape: Qt.PointingHandCursor
             }
-
-            TapHandler
-            {
-                onTapped:
-                {
-                    settingsLoader.active = true
-                    if (String( settingsLoader.source) === "")
-                    {
-                         settingsLoader.source = "screens/navigation/settings/SettingsQML.qml"
-                    } else
-                    {
-                         settingsLoader.source = ""
+            TapHandler {
+                onTapped: {
+                    settingsLoader.active = true;
+                    if (String(settingsLoader.source) === "") {
+                        settingsLoader.source = "screens/navigation/settings/SettingsQML.qml";
+                    } else {
+                        settingsLoader.source = "";
                     }
                 }
             }
-
-            Text
-            {
+            Text {
                 id: settingsButtonText
-                height: 20
-                color: "#4a5565"
+
+                anchors.centerIn: parent
+                anchors.horizontalCenterOffset: 0
+                anchors.verticalCenterOffset: 0
+                color: Color.secondaryText
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Normal
+                height: 20
                 horizontalAlignment: Text.AlignLeft
                 lineHeight: 20
                 lineHeightMode: Text.FixedHeight
-                anchors.verticalCenterOffset: 0
-                anchors.horizontalCenterOffset: 0
-                anchors.centerIn: parent
                 text: "Settings"
                 textFormat: Text.PlainText
                 verticalAlignment: Text.AlignVCenter
 
-                Rectangle
-                {
+                Rectangle {
                     id: settingsButtonIcon
-                    y: 2
-                    height: 16; width: 16
-                    clip: true; color: "transparent"
+
                     anchors.right: parent.left
                     anchors.rightMargin: 5
+                    clip: true
+                    color: Color.transparent
+                    height: 16
                     rotation: clickAreaSettings.hovered ? 180 : 0
-                    Behavior on rotation
-                    {
-                        RotationAnimation
-                        {
-                            duration: 500
+                    width: 16
+                    y: 2
+
+                    Behavior on rotation {
+                        RotationAnimation {
                             direction: RotationAnimation.Clockwise
+                            duration: 500
                             easing.type: Easing.InOutQuad
                         }
                     }
 
-                    Image
-                    {
-                        source: "qrc:/pngs/assets/ic_settings.svg"
-                        width: 16
-                        height: 16
-                        sourceSize.width: width * Screen.devicePixelRatio
-                        sourceSize.height: height * Screen.devicePixelRatio
-                        fillMode: Image.PreserveAspectFit
+                    Image {
                         anchors.centerIn: parent
+                        fillMode: Image.PreserveAspectFit
+                        height: 16
+                        source: "qrc:/pngs/assets/ic_settings.svg"
+                        sourceSize.height: height * Screen.devicePixelRatio
+                        sourceSize.width: width * Screen.devicePixelRatio
+                        width: 16
                     }
                 }
             }
         }
     }
 
-    // Loader for Account change popup
-    Loader
-    {
-        id: accountChangeLoader
+    // State popup shown when Settings is clicked; slides up out of the footer, hovers, then slides back down and disappears
+    StatePopup {
+        id: statePopup
+
+        anchors.bottom: footerNavigation.top
+        anchors.bottomMargin: 8
+        anchors.left: navigationQML.left
+        anchors.right: navigationQML.right
+        anchors.leftMargin: 8
+        anchors.rightMargin: 8
         z: 999
+    }
+
+    // Loader for Account change popup
+    Loader {
+        id: accountChangeLoader
+
+        anchors.left: parent.left
+        anchors.leftMargin: 0
+        anchors.right: parent.right
+        anchors.rightMargin: 0
         anchors.top: headerNavigation.bottom
         anchors.topMargin: 4
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.leftMargin: 0
-        anchors.rightMargin: 0
-
         height: item ? item.implicitHeight : 0
-        source: ""
         opacity: status === Loader.Ready ? 1 : 0
+        source: ""
+        z: 999
 
-        Behavior on opacity
-        {
-            NumberAnimation { duration: 200 }
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 200
+            }
         }
     }
 }
