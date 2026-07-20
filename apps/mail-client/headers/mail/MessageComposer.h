@@ -6,6 +6,9 @@
 #include "mail_storage/Database.h"
 #include "mail_storage/MailMessageRepository.h"
 #include "mail_storage/MessageRecipientRepository.h"
+#include "smtp_server_sdk/SmtpClient.h"
+#include "smtp_server_sdk/MailBuilder.h"
+#include "smtp_server_sdk/SmtpResult.h"
 
 namespace ISXMail
 {
@@ -33,10 +36,15 @@ public:
 		const QString& body
 	);
 
+  signals:
+  void messageSent(bool success, const QString& errorMessage);
+
 private:
 	Storage::Database m_database;
 	Storage::MailMessageRepository m_repository;
 	Storage::MessageRecipientRepository m_recipient_repository;
+  QString m_smtp_host = "127.0.0.1";
+  quint16 m_smtp_port = 2525;
 
 	void EnsureSchema();
 };

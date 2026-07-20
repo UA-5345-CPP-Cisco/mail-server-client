@@ -1,7 +1,9 @@
- #include "headers/mail/MessageComposer.h"
-
 #include <optional>
 
+#include <QtConcurrent>
+#include <QFutureWatcher>
+
+#include "headers/mail/MessageComposer.h"
 #include "headers/database/DatabaseManager.h"
 #include "headers/service/Service.h"
 
@@ -75,7 +77,36 @@ bool MessageComposer::SendMessage(
 
 		m_database.Execute("COMMIT;");
 		 ISXService::Service::Logger().Log(Logging::LogLevel::Info, (std::string("MessageComposer::SendMessage: committed message_id=") + std::to_string(message_id)));
-		return true;
+	  const std::string host = m_smtp_host.toStdString();
+	  const uint16_t port = m_smtp_port;
+	  const std::string smtp_sender = sender_email.toStdString();
+	  const std::string smtp_recipient = recipient_email.trimmed().toStdString();
+	  const std::string smtp_subject = subject.toStdString();
+	  const std::string smtp_body = body.toStdString();
+
+	  auto future = QtConcurrent::run([=]() -> Smtp::SmtpResult {
+      Smtp::SmtpClient client(host, port);
+      Smtp::Mail mail = Smtp::MailBuilder()
+        .SetSender(smtp_sender)
+        .AddRecipients({smtp_recipient})
+        .SetSubject(smtp_subject)
+        .SetBody(smtp_body)
+        .Build();
+      return client.SendMailMessage(mail);
+    });
+
+	  auto* watcher = new QFutureWatcher<Smtp::SmtpResult>(this);
+	  connect(watcher, &QFutureWatcher<Smtp::SmtpResult>::finished,
+        this, [this, watcher]() {
+      const auto result = watcher->result();
+      emit messageSent(result.ok(),
+               QString::fromStdString(result.message));
+      watcher->deleteLater();
+    });
+	  watcher->setFuture(future);
+
+	  return true;
+
 	}
 	catch (...)
 	{

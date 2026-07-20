@@ -25,6 +25,18 @@ Rectangle {
     implicitWidth: 420
     radius: 14
 
+    Connections {
+        target: MessageComposer
+
+        function onMessageSent(success, errorMessage) {
+            if (!success) {
+                console.warn("SMTP send failed: " + errorMessage);
+            } else {
+                console.log("SMTP send successful");
+            }
+        }
+    }
+
     MouseArea {
         anchors.fill: parent
 

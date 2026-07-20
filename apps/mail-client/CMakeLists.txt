@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
 set(WINDOWS_DEV_CONSOLE ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
+find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2 Concurrent)
 #find_package(SQLite3 REQUIRED)
 
 qt_standard_project_setup(REQUIRES 6.10)
@@ -35,6 +35,13 @@ if(NOT TARGET mail_logger)
 	add_subdirectory(
 			${CMAKE_CURRENT_SOURCE_DIR}/../../libs/logger
 			${CMAKE_CURRENT_BINARY_DIR}/libs/logger
+	)
+endif()
+
+if(NOT TARGET smtp_server_sdk)
+	add_subdirectory(
+			${CMAKE_CURRENT_SOURCE_DIR}/../../libs/smtp-server-sdk
+			${CMAKE_CURRENT_BINARY_DIR}/libs/smtp-server-sdk
 	)
 endif()
 
@@ -94,10 +101,12 @@ target_link_libraries(qtappmail_core
 		PUBLIC
 		mail_logger
 		mail_storage
+		smtp_server_sdk
 		Qt6::Quick
 		Qt6::Sql
 		Qt6::Core
 		Qt6::QuickControls2
+		Qt6::Concurrent
 		cryptopp
 )
 
