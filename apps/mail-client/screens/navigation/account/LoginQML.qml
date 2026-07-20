@@ -4,240 +4,316 @@ import QtQuick.Shapes
 
 Item {
     id: rootItem
-    implicitWidth: 400
-    implicitHeight: 350
 
-    signal backRequested()
+    signal backRequested
     signal loginSubmitted(string email, string password)
+    property string emailError: ""
+    property string passwordError: ""
+    property bool passwordVisible: false
+
+    implicitHeight: 350
+    implicitWidth: 400
 
     // Button to go back to previous screen
-    Rectangle
-    {
+    Rectangle {
         id: backButtonRectangle
-        width: 40
-        height: 40
-        anchors.top: parent.top
+
         anchors.left: parent.left
+        anchors.top: parent.top
+        color: Color.transparent
+        height: 40
         radius: 8
-        color: "transparent"
+        scale: backClickArea.containsMouse ? 1.3 : 1.0
+        width: 40
         z: 10
 
-        Image
-        {
-            id: backIconImage
-            anchors.centerIn: parent
-            source: "qrc:/pngs/assets/ic_button_back.svg"
-            width: 15
-            height: 15
-            sourceSize.width: width * Screen.devicePixelRatio
-            sourceSize.height: height * Screen.devicePixelRatio
-            fillMode: Image.PreserveAspectFit
-        }
-
-        scale: backClickArea.containsMouse ? 1.3 : 1.0
-
-        Behavior on scale
-        {
+        Behavior on scale {
             id: backScaleBehavior
 
-            NumberAnimation
-            {
+            NumberAnimation {
                 id: backScaleAnimation
+
                 duration: 150
                 easing.type: Easing.InOutQuad
             }
         }
 
-        MouseArea
-        {
-            id: backClickArea
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
+        Image {
+            id: backIconImage
 
-            onClicked:
-            {
-                rootItem.backRequested()
+            anchors.centerIn: parent
+            fillMode: Image.PreserveAspectFit
+            height: 15
+            source: "qrc:/pngs/assets/ic_button_back.svg"
+            sourceSize.height: height * Screen.devicePixelRatio
+            sourceSize.width: width * Screen.devicePixelRatio
+            width: 15
+        }
+        MouseArea {
+            id: backClickArea
+
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            hoverEnabled: true
+
+            onClicked: {
+                rootItem.backRequested();
             }
         }
     }
-
-    Column
-    {
+    Column {
         id: mainContentColumn
+
         anchors.centerIn: parent
         spacing: 20
         width: 320
 
-        Text
-        {
+        Text {
             id: titleText
-            text: "Log In"
+
+            anchors.horizontalCenter: parent.horizontalCenter
+            color: Color.primaryText
             font.family: "Segoe UI"
             font.pixelSize: 28
             font.weight: Font.Black
-            color: "#101828"
-            anchors.horizontalCenter: parent.horizontalCenter
+            text: "Log In"
         }
-
-        Text
-        {
+        Text {
             id: descriptionText
-            text: "Please enter your details to sign in"
-            font.family: "Segoe UI"
-            font.pixelSize: 14
-            color: "#6a748b"
+
             anchors.horizontalCenter: parent.horizontalCenter
             bottomPadding: 10
+            color: Color.secondaryText
+            font.family: "Segoe UI"
+            font.pixelSize: 14
+            text: "Please enter your details to sign in"
         }
 
         // Email field for login screen
-        TextField
-        {
+        TextField {
             id: emailTextField
-            width: parent.width
-            placeholderText: "Email address"
+
+            bottomPadding: 12
+            color: Color.primaryText
             font.family: "Segoe UI"
             font.pixelSize: 14
-            color: "#101828"
             leftPadding: 16
+            placeholderText: "Email address"
+            placeholderTextColor: Color.secondaryText
             rightPadding: 16
             topPadding: 12
-            bottomPadding: 12
-            cursorDelegate: Item {}
+            width: parent.width
 
-            background: Rectangle
-            {
+            background: Rectangle {
                 id: emailBackgroundRectangle
-                radius: 8
-                border.color: emailTextField.activeFocus ? "#1a66ff" : "#e5e7eb"
+
+                border.color: rootItem.emailError !== "" ? "#fda29b" : (emailTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
                 border.width: emailTextField.activeFocus ? 2 : 1
-                color: "#ffffff"
+                color: Color.background
+                radius: 8
+            }
+            cursorDelegate: Item {
             }
 
-            Rectangle
-            {
+            Rectangle {
                 id: emailCustomCursorRectangle
-                width: 1.5
-                color: "#1f2937"
-                height: parent.font.pixelSize + 4
+
                 anchors.verticalCenter: parent.verticalCenter
-                x: parent.length > 0 ? parent.cursorRectangle.x : 14
+                color: Color.secondaryText
+                height: parent.font.pixelSize + 4
                 visible: parent.activeFocus
+                width: 1.5
+                x: parent.length > 0 ? parent.cursorRectangle.x : 14
 
-                Behavior on x
-                {
-                    id: emailCursorXBehavior
-                    NumberAnimation { id: emailCursorXAnimation; duration: 80; easing.type: Easing.OutCubic }
-                }
-
-                SequentialAnimation on opacity
-                {
+                SequentialAnimation on opacity {
                     id: emailCursorOpacityAnimation
-                    running: parent.activeFocus
+
                     loops: Animation.Infinite
-                    NumberAnimation { id: emailCursorFadeOut; to: 0; duration: 400; easing.type: Easing.InOutSine }
-                    NumberAnimation { id: emailCursorFadeIn; to: 1; duration: 400; easing.type: Easing.InOutSine }
+                    running: parent.activeFocus
+
+                    NumberAnimation {
+                        id: emailCursorFadeOut
+
+                        duration: 400
+                        easing.type: Easing.InOutSine
+                        to: 0
+                    }
+                    NumberAnimation {
+                        id: emailCursorFadeIn
+
+                        duration: 400
+                        easing.type: Easing.InOutSine
+                        to: 1
+                    }
+                }
+                Behavior on x {
+                    id: emailCursorXBehavior
+
+                    NumberAnimation {
+                        id: emailCursorXAnimation
+
+                        duration: 80
+                        easing.type: Easing.OutCubic
+                    }
                 }
             }
+            onTextChanged: rootItem.emailError = ""
         }
 
-        // Pasword field for login screen
-        TextField
-        {
+        // Error message for email field
+        Text {
+            text: rootItem.emailError
+            color: "#f04438"
+            font.family: "Segoe UI"
+            font.pixelSize: 12
+            visible: emailError !== ""
+            topPadding: -14
+        }
+
+        // Password field for login screen
+        TextField {
             id: passwordTextField
-            width: parent.width
-            placeholderText: "Password"
-            echoMode: TextInput.Password
+
+            bottomPadding: 12
+            color: Color.primaryText
+            echoMode: passwordVisible ? TextInput.Normal : TextInput.Password
             font.family: "Segoe UI"
             font.pixelSize: 14
-            color: "#101828"
             leftPadding: 16
+            placeholderText: "Password"
+            placeholderTextColor: Color.secondaryText
             rightPadding: 16
             topPadding: 12
-            bottomPadding: 12
+            width: parent.width
+
+            Image { 
+                id: eyeIcon
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: 12
+                source: passwordVisible ? "qrc:/pngs/assets/ic_eye_open.svg" : "qrc:/pngs/assets/ic_eye_closed.svg"
+                width: 20
+                height: 20
+                sourceSize.width: width * Screen.devicePixelRatio
+                sourceSize.height: height * Screen.devicePixelRatio
+                fillMode: Image.PreserveAspectFit
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: passwordVisible = !passwordVisible
+                }
+            }
+
+            background: Rectangle {
+                id: passwordBackgroundRectangle
+                border.color: rootItem.passwordError !== "" ? "#fda29b" : (passwordTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
+                border.width: passwordTextField.activeFocus ? 2 : 1
+                color: Color.background
+                radius: 8
+            }
             cursorDelegate: Item {}
 
-            background: Rectangle
-            {
-                id: passwordBackgroundRectangle
-                radius: 8
-                border.color: passwordTextField.activeFocus ? "#1a66ff" : "#e5e7eb"
-                border.width: passwordTextField.activeFocus ? 2 : 1
-                color: "#ffffff"
-            }
-
-            Rectangle
-            {
+            Rectangle {
                 id: passwordCustomCursorRectangle
-                width: 1.5
-                color: "#1f2937"
-                height: parent.font.pixelSize + 4
+
                 anchors.verticalCenter: parent.verticalCenter
-                x: parent.length > 0 ? parent.cursorRectangle.x : 14
+                color: Color.secondaryText
+                height: parent.font.pixelSize + 4
                 visible: parent.activeFocus
+                width: 1.5
+                x: parent.length > 0 ? parent.cursorRectangle.x : 14
 
-                Behavior on x
-                {
-                    id: passwordCursorXBehavior
-                    NumberAnimation { id: passwordCursorXAnimation; duration: 80; easing.type: Easing.OutCubic }
-                }
-
-                SequentialAnimation on opacity
-                {
+                SequentialAnimation on opacity {
                     id: passwordCursorOpacityAnimation
-                    running: parent.activeFocus
+
                     loops: Animation.Infinite
-                    NumberAnimation { id: passwordCursorFadeOut; to: 0; duration: 400; easing.type: Easing.InOutSine }
-                    NumberAnimation { id: passwordCursorFadeIn; to: 1; duration: 400; easing.type: Easing.InOutSine }
+                    running: parent.activeFocus
+
+                    NumberAnimation {
+                        id: passwordCursorFadeOut
+
+                        duration: 400
+                        easing.type: Easing.InOutSine
+                        to: 0
+                    }
+                    NumberAnimation {
+                        id: passwordCursorFadeIn
+
+                        duration: 400
+                        easing.type: Easing.InOutSine
+                        to: 1
+                    }
+                }
+                Behavior on x {
+                    id: passwordCursorXBehavior
+
+                    NumberAnimation 
+                    {
+                        id: passwordCursorXAnimation
+
+                        duration: 80
+                        easing.type: Easing.OutCubic
+                    }
                 }
             }
+            onTextChanged: rootItem.passwordError = ""
+        }
+
+        // Error message for password field
+        Text {
+            text: rootItem.passwordError
+            color: "#f04438"
+            font.family: "Segoe UI"
+            font.pixelSize: 12
+            visible: passwordError !== ""
+            topPadding: -14
         }
 
         // Button to login
-        Rectangle
-        {
+        Rectangle {
             id: loginButtonRectangle
-            width: parent.width
+
+            color: loginClickArea.containsMouse ? Color.buttonSpecialHover : Color.buttonSpecial
             height: 44
             radius: 8
-            color: loginClickArea.containsMouse ? "#0052cc" : "#1a66ff"
-
             scale: loginClickArea.containsMouse ? 1.03 : 1.0
+            width: parent.width
 
-            Behavior on scale
-            {
+            Behavior on scale {
                 id: loginScaleBehavior
 
-                NumberAnimation
-                {
+                NumberAnimation {
                     id: loginScaleAnimation
+
                     duration: 150
                     easing.type: Easing.InOutQuad
                 }
             }
 
-            Text
-            {
+            Text {
                 id: loginButtonText
+
                 anchors.centerIn: parent
-                text: "Sign In"
-                color: "#ffffff"
+                color: Color.buttonSpecialText
                 font.family: "Segoe UI"
                 font.pixelSize: 16
                 font.weight: Font.Bold
+                text: "Sign In"
             }
-
-            MouseArea
-            {
+            MouseArea {
                 id: loginClickArea
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
 
-                onClicked:
-                {
-                    rootItem.loginSubmitted(emailTextField.text, passwordTextField.text)
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+
+                onClicked: {
+                    var emailErr = rootWindow.getValidationError("email", emailTextField.text)
+                    var pwdErr = rootWindow.getValidationError("password", passwordTextField.text)
+                    emailError = emailErr
+                    passwordError = pwdErr
+                    //rootItem.loginSubmitted(emailTextField.text, passwordTextField.text);
                 }
             }
         }

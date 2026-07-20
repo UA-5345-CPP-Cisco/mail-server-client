@@ -5,11 +5,10 @@
 
 #include "mail_storage/Database.h"
 
-class RegistrationHandler : public QObject
-{
+class AuthHandler : public QObject {
     Q_OBJECT
 public:
-    explicit RegistrationHandler(Storage::Database& db, QObject* parent = nullptr);
+    explicit AuthHandler(Storage::Database& db, QObject* parent = nullptr);
 
     Q_INVOKABLE bool registerUser(const QString& username, const QString& email, const QString& password);
 
