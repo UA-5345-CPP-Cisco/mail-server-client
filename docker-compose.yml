@@ -2,7 +2,7 @@ services:
   mail-server:
     build:
       context: .
-      dockerfile: apps/mail-server-neo/Dockerfile
+      dockerfile: apps/mail-server/Dockerfile
     depends_on:
       - smtp-server
     ports:

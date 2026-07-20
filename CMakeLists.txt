@@ -39,14 +39,13 @@ FetchContent_MakeAvailable(Boost)
 
 # --- Crypto++ ---
 FetchContent_Declare(
-		cryptopp_cmake
-		GIT_REPOSITORY https://github.com/abdes/cryptopp-cmake/
-		GIT_TAG CRYPTOPP_8_9_0
+	cryptopp_modern
+	GIT_REPOSITORY https://github.com/cryptopp-modern/cryptopp-modern/
+	GIT_TAG 2026.3.0
 )
 set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(cryptopp_cmake)
-
-find_package(Threads REQUIRED)
+set(CRYPTOPP_INSTALL OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(cryptopp_modern)
 
 # --- OpenSSL (CMake wrapper) ---
 set(WITH_APPS OFF CACHE BOOL "" FORCE)
@@ -78,7 +77,7 @@ add_subdirectory(libs/mail-server-sdk)
 # Applications
 # ──────────────────────────────────────────
 add_subdirectory(apps/smtp-server)
-add_subdirectory(apps/mail-server-neo)
+add_subdirectory(apps/mail-server)
 
 if(MAIL_BUILD_QT_CLIENT)
 	add_subdirectory(apps/mail-client)

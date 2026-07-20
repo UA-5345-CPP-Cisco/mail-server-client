@@ -13,16 +13,6 @@ find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
 qt_standard_project_setup(REQUIRES 6.10)
 
 include(FetchContent)
-# --- Crypto++ (cryptopp-modern) ---
-FetchContent_Declare(
-		cryptopp_modern
-		GIT_REPOSITORY https://github.com/cryptopp-modern/cryptopp-modern/
-		GIT_TAG 2026.3.0
-)
-set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
-set(CRYPTOPP_INSTALL OFF CACHE BOOL "" FORCE)
-
-FetchContent_MakeAvailable(cryptopp_modern)
 
 if(NOT TARGET mail_storage)
 	add_subdirectory(
@@ -45,6 +35,7 @@ endif()
 qt_add_qml_module(qtappmail_core
 		URI qtapptestmail.core
 		VERSION 1.0
+		OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/qtapptestmail/core
 		STATIC
 		SOURCES
 		headers/database/CacheStore.h
@@ -117,6 +108,7 @@ endforeach()
 
 qt_add_qml_module(appqtapptestmail
 		URI qtapptestmail
+		OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/qtapptestmail
 		QML_FILES
 		Main.qml
 		screens/navigation/NavigationQML.qml
