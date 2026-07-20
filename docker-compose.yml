@@ -1,0 +1,31 @@
+services:
+  mail-server:
+    build:
+      context: .
+      dockerfile: apps/mail-server-neo/Dockerfile
+    depends_on:
+      - smtp-server
+    ports:
+      - "8080:8080"
+    volumes:
+      - mail-storage-data:/app/data
+    networks:
+      - mail-network
+
+  smtp-server:
+    build:
+      context: .
+      dockerfile: apps/smtp-server/Dockerfile
+    ports:
+      - "2525:2525"
+    volumes:
+      - mail-storage-data:/app/data
+    networks:
+      - mail-network
+
+volumes:
+  mail-storage-data:
+
+networks:
+  mail-network:
+    driver: bridge

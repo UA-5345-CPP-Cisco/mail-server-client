@@ -3,7 +3,13 @@ add_executable(mail_server_neo
     src/Common.cpp
     src/Server.cpp
     src/Session.cpp
+    src/services/MailServerConfigurator.cpp
+    src/services/MailServerLogger.cpp
+    src/services/MailStorage.cpp
+    src/services/ServiceRegistry.cpp
+    src/handlers/GetMailsHandler.cpp
     src/handlers/HelloHandler.cpp
+    src/handlers/SendMailHandler.cpp
 )
 
 target_include_directories(mail_server_neo
@@ -19,6 +25,8 @@ target_link_libraries(mail_server_neo
         Boost::system
 
         mail_logger
+        mail_storage
+        smtp_server_sdk
         mail_thread_pool
 
         Threads::Threads
