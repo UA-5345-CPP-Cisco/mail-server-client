@@ -8,7 +8,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - mail-storage-data:/app/data
+      - ./data:/app/data
     networks:
       - mail-network
 
@@ -19,12 +19,9 @@ services:
     ports:
       - "2525:2525"
     volumes:
-      - mail-storage-data:/app/data
+      - ./data:/app/data
     networks:
       - mail-network
-
-volumes:
-  mail-storage-data:
 
 networks:
   mail-network:
