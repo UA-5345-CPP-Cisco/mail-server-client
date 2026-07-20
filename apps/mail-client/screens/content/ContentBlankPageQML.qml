@@ -3,78 +3,89 @@ import QtQuick.Shapes
 
 Rectangle {
     id: contentBlankPageQML
-
-    anchors.bottom: parent.bottom
-    anchors.right: parent.right
-    anchors.top: parent.top
+    anchors.top:parent.top
+    anchors.right:parent.right
+    anchors.bottom:parent.bottom
+    width:400
+    height:400
     clip: true
-    color: Color.background
-    height: 400
-    width: 400
+    color: "#ffffff"
 
     Rectangle {
         id: background
 
+        color: "#ffffff"
         anchors.centerIn: parent
-        color: Color.background
 
         Rectangle {
             id: container
 
+
+            color: "transparent"
             anchors.centerIn: parent
-            color: Color.transparent
 
             Rectangle {
                 id: container_1
 
-                anchors.centerIn: parent
-                color: Color.transparent
+
                 height: 80
                 width: 141
 
+                color: "transparent"
+                anchors.centerIn: parent
+
+                 // TEMP ICON
                 Rectangle {
                     id: sVG
 
-                    clip: true
-                    color: Color.transparent
-                    height: 48
-                    opacity: 0.30
-                    width: 48
                     x: 46.50
 
-                    Image {
-                        anchors.centerIn: parent
-                        fillMode: Image.PreserveAspectFit
-                        height: 48
+                    height: 48
+                    width: 48
+
+                    clip: true
+                    color: "transparent"
+                    opacity: 0.30
+
+                    Image
+                    {
                         source: "qrc:/pngs/assets/ic_select_email.svg"
-                        sourceSize.height: height * Screen.devicePixelRatio
-                        sourceSize.width: width * Screen.devicePixelRatio
                         width: 48
+                        height: 48
+                        sourceSize.width: width * Screen.devicePixelRatio
+                        sourceSize.height: height * Screen.devicePixelRatio
+                        fillMode: Image.PreserveAspectFit
+                        anchors.centerIn: parent
                     }
                 }
-                Rectangle {
+                Rectangle
+                {
                     id: container_2
 
-                    color: Color.transparent
-                    height: 20
-                    width: 141
                     y: 60
 
-                    Text {
+                    height: 20
+                    width: 141
+
+                    color: "transparent"
+
+                    Text
+                    {
                         id: select_an_email_to_read
 
-                        color: Color.secondaryText
+                        height: 20
+                        width: 142
+
+                        color: "#6a7282"
                         font.family: "Segoe UI"
                         font.pixelSize: 14
                         font.weight: Font.Normal
-                        height: 20
                         horizontalAlignment: Text.AlignHCenter
                         lineHeight: 20
                         lineHeightMode: Text.FixedHeight
                         text: "Select an email to read"
                         textFormat: Text.PlainText
                         verticalAlignment: Text.AlignVCenter
-                        width: 142
                     }
                 }
             }

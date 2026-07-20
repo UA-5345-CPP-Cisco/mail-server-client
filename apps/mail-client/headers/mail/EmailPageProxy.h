@@ -10,9 +10,9 @@ namespace ISXMail{
     {
         Q_OBJECT
         Q_PROPERTY(int currentPage READ CurrentPage NOTIFY currentPageChanged)
-        Q_PROPERTY(int pageCount READ PageCount NOTIFY pageCountChanged)
-        Q_PROPERTY(int totalEmailsCount READ TotalEmailsCount NOTIFY totalEmailsCountChanged)
-        Q_PROPERTY(QString pageAmountText READ PageAmountText NOTIFY pageAmountTextChanged)
+       Q_PROPERTY(int pageCount READ PageCount NOTIFY pageCountChanged)
+       Q_PROPERTY(int totalEmailsCount READ TotalEmailsCount NOTIFY totalEmailsCountChanged)
+       Q_PROPERTY(QString pageAmountText READ PageAmountText NOTIFY pageAmountTextChanged)
     public:
         explicit EmailPageProxy(QObject* parent = nullptr);
 
@@ -21,7 +21,6 @@ namespace ISXMail{
 
         Q_INVOKABLE bool SetEmailData(int proxy_row, const QVariant& value, int role);
         Q_INVOKABLE bool SetStarred(int proxy_row, bool starred);
-        Q_INVOKABLE bool ToggleArchive(int row);
 
         Q_INVOKABLE void RemoveEmailData(int proxy_row);
 

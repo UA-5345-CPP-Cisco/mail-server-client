@@ -39,10 +39,6 @@ class MailMessageRepository
 
   bool UpdateStarred(std::int64_t message_id, bool starred);
 
-  bool UpdateArchive(std::int64_t message_id, bool archive);
-
-  int DeleteArchivedOlderThanDays(int days);
-
   bool DeleteMessage(std::int64_t message_id);
 
   private:

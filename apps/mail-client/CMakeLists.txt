@@ -12,17 +12,6 @@ find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
 
 qt_standard_project_setup(REQUIRES 6.10)
 
-include(FetchContent)
-# --- Crypto++ (cryptopp-modern) ---
-FetchContent_Declare(
-		cryptopp_modern
-		GIT_REPOSITORY https://github.com/cryptopp-modern/cryptopp-modern/
-		GIT_TAG 2026.3.0
-)
-set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
-set(CRYPTOPP_INSTALL OFF CACHE BOOL "" FORCE)
-
-FetchContent_MakeAvailable(cryptopp_modern)
 
 if(NOT TARGET mail_storage)
 	add_subdirectory(
@@ -57,15 +46,13 @@ qt_add_qml_module(qtappmail_core
 		headers/search/MessageSearchModel.h
 		headers/users/CurrentUser.h
 		headers/users/UserCache.h
-		headers/database/AuthHandler.h
+		headers/database/RegistrationHandler.h
 		headers/users/AccountListModel.h
 		headers/service/Service.h
 		headers/client_logger/ClientProxyLogger.h
 		headers/client_logger/ClientConfigReader.h
-		headers/color/ColorModel.h
-		headers/color/ColorProvider.h
 
-		models/database/AuthHandler.cpp
+		models/database/RegistrationHandler.cpp
 		models/database/CacheStore.cpp
 		models/database/DatabaseManager.cpp
 		models/mail/EmailCache.cpp
@@ -80,8 +67,6 @@ qt_add_qml_module(qtappmail_core
 		models/service/Service.cpp
 		models/client_logger/ClientProxyLogger.cpp
 		models/client_logger/ClientConfigReader.cpp
-		models/color/ColorModel.cpp
-		models/color/ColorProvider.cpp
 )
 
 target_include_directories(qtappmail_core
@@ -98,7 +83,6 @@ target_link_libraries(qtappmail_core
 		Qt6::Sql
 		Qt6::Core
 		Qt6::QuickControls2
-		cryptopp
 )
 
 target_compile_definitions(qtappmail_core PUBLIC
@@ -133,7 +117,6 @@ qt_add_qml_module(appqtapptestmail
 		screens/navigation/account/LoginQML.qml
 		screens/navigation/account/AccountItem.qml
 		screens/email_list/EmailToolTip.qml
-		screens/email_list/StatePopup.qml
 		RESOURCES
 		resources.qrc
 )
@@ -163,7 +146,6 @@ target_link_libraries(appqtapptestmail
 		Qt6::Quick
 		Qt6::Sql
 		Qt6::QuickControls2
-		cryptopp
 )
 
 target_include_directories(appqtapptestmail

@@ -9,7 +9,6 @@ Rectangle {
     property var sourceModel: inboxModel
 
     signal emailOpenRequested(int index, string theme, string name, string sendTo, string content, string time, bool starred)
-    signal starredItemClicked(bool starred)
 
     function activeSearchModel() {
         if (sourceModel === inboxModel)
@@ -23,7 +22,7 @@ Rectangle {
         return inboxSearchModel;
     }
 
-    color: Color.background
+    color: "#ffffff"
 
     onSourceModelChanged: {
         var searchProxy = activeSearchModel();
@@ -95,7 +94,6 @@ Rectangle {
             }
             onStarredClicked: {
                 sourceModel.SetStarred(parent.pIndex, starred);
-                starredItemClicked(starred);
             }
         }
     }
@@ -105,7 +103,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         anchors.top: parent.top
-        color: Color.outline
+        color: "#e5e7eb"
         width: 1
         z: 1
     }
@@ -115,7 +113,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.top: parent.top
-        color: Color.outline
+        color: "#e5e7eb"
         width: 1
         z: 1
     }
@@ -127,13 +125,13 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        color: Color.background
+        color: "#ffffff"
         height: 70
 
         Rectangle {
             id: searchLine
 
-            color: Color.transparent
+            color: "transparent"
             height: 38
 
             anchors {
@@ -149,10 +147,10 @@ Rectangle {
 
                 anchors.left: parent.left
                 anchors.right: parent.right
-                border.color: Color.border
+                border.color: "#d1d5dc"
                 border.width: 1
                 clip: true
-                color: Color.background
+                color: "#ffffff"
                 height: 38
                 radius: 10
 
@@ -183,7 +181,7 @@ Rectangle {
                     anchors.rightMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
                     clip: true
-                    color: Color.transparent
+                    color: "transparent"
                     height: 19
 
                     TextField {
@@ -191,18 +189,18 @@ Rectangle {
 
                         anchors.fill: parent
                         bottomPadding: 0
-                        color:Color.hover
+                        color: "#1f2937"
                         font.family: "Segoe UI"
                         font.pixelSize: 14
                         font.weight: Font.Normal
                         horizontalAlignment: Text.AlignLeft
                         leftPadding: 0
                         placeholderText: "Search mail"
-                        placeholderTextColor: Color.secondaryText
+                        placeholderTextColor: "#99a1af"
                         topPadding: 0
 
                         background: Rectangle {
-                            color: Color.transparent
+                            color: "transparent"
                         }
                         cursorDelegate: Item {
                         }
@@ -217,7 +215,7 @@ Rectangle {
                             id: customCursorContainer
 
                             anchors.verticalCenter: parent.verticalCenter
-                            color: Color.secondaryText
+                            color: "#1f2937"
                             height: parent.font.pixelSize
                             visible: parent.activeFocus
                             width: 1
@@ -263,7 +261,7 @@ Rectangle {
         anchors.rightMargin: 0
         anchors.top: searchSection.bottom
         anchors.topMargin: 0
-        color: Color.surface
+        color: "#f9fafb"
         height: 34
 
         // Top border
@@ -271,7 +269,7 @@ Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
-            color: Color.outline
+            color: "#e5e7eb"
             height: 1
         }
 
@@ -280,13 +278,13 @@ Rectangle {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.right: parent.right
-            color: Color.outline
+            color: "#e5e7eb"
             height: 1
         }
         Rectangle {
             id: separatorContainer
 
-            color: Color.transparent
+            color: "transparent"
             height: 18
 
             anchors {
@@ -304,14 +302,14 @@ Rectangle {
                 anchors.leftMargin: 0
                 anchors.right: navButtonContainer.left
                 anchors.rightMargin: 0
-                color: Color.transparent
+                color: "transparent"
                 height: 18
                 y: -8
 
                 Text {
                     id: inboxText
 
-                    color: Color.secondaryText
+                    color: "#6a7282"
                     font.capitalization: Font.AllUppercase
                     font.family: "Segoe UI"
                     font.letterSpacing: 0.60
@@ -329,7 +327,7 @@ Rectangle {
                     id: pageText
 
                     anchors.right: parent.right
-                    color: Color.secondaryText
+                    color: "#000000"
                     font.capitalization: Font.AllUppercase
                     font.family: "Segoe UI"
                     font.letterSpacing: 0.60
@@ -362,7 +360,7 @@ Rectangle {
                     id: moveBackButtonContainer
 
                     anchors.left: parent.left
-                    color: Color.transparent
+                    color: "transparent"
                     height: 17
                     scale: moveBackButtonClickArea.containsMouse ? 1.3 : 1.0
                     width: 15
@@ -391,7 +389,7 @@ Rectangle {
                         id: moveBackButton
 
                         clip: true
-                        color: Color.transparent
+                        color: "transparent"
                         height: 15
                         width: 15
                         y: 2
@@ -413,7 +411,7 @@ Rectangle {
                     id: moveForwardButtonContainer
 
                     anchors.right: parent.right
-                    color: Color.transparent
+                    color: "transparent"
                     height: 18
                     scale: moveForwardButtonClickArea.containsMouse ? 1.3 : 1.0
                     width: 15
@@ -442,7 +440,7 @@ Rectangle {
                         id: moveForwardButton
 
                         clip: true
-                        color: Color.transparent
+                        color: "transparent"
                         height: 15
                         width: 15
                         y: 2
@@ -465,7 +463,7 @@ Rectangle {
         id: listViewHover
     }
 
-    //Emails model connector
+    //Emails model conector
     ListView {
         id: listView
 
@@ -480,7 +478,7 @@ Rectangle {
             visible: (listView.contentHeight > listView.height) && listViewHover.hovered
 
             contentItem: Rectangle {
-                color: Color.outline
+                color: "#e5e7eb"
                 implicitHeight: 100
                 implicitWidth: 6
                 radius: 3

@@ -6,7 +6,7 @@ Rectangle
 {
     id: rootRectangle
     height: 72
-    color: Color.transparent
+    color: "transparent"
     anchors.left: parent.left
     anchors.right: parent.right
 
@@ -26,7 +26,7 @@ Rectangle
         width: parent.width - 16
         height: 56
         radius: 10
-        color: delegateClickArea.containsMouse ? Color.surface : Color.transparent
+        color: delegateClickArea.containsMouse ? "#f9fafb" : "transparent"
 
         // Avatar wrapper for added users
         Rectangle
@@ -37,7 +37,7 @@ Rectangle
             width: 36
             height: 36
             radius: 18
-            color: avatarUrl !== "" ? Color.transparent : avatarColor
+            color: avatarUrl !== "" ? "transparent" : avatarColor
 
             Image
             {
@@ -79,7 +79,7 @@ Rectangle
                 anchors.centerIn: parent
                 visible: avatarUrl === ""
                 text: avatarInitial
-                color: Color.background
+                color: "#ffffff"
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Black
@@ -101,7 +101,7 @@ Rectangle
                 width: parent.width
                 height: 20
                 text: accountName
-                color: Color.primaryText
+                color: "#101828"
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Normal
@@ -115,7 +115,7 @@ Rectangle
                 width: parent.width
                 height: 16
                 text: accountEmail
-                color: Color.secondaryText
+                color: "#6a7282"
                 font.family: "Segoe UI"
                 font.pixelSize: 12
                 font.weight: Font.Normal

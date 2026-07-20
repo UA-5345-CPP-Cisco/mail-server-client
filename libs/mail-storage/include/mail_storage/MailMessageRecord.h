@@ -12,7 +12,6 @@ enum class MailMessageStatus
   Queued,
   Sending,
   Sent,
-  Archive,
   Failed
 };
 
@@ -28,7 +27,6 @@ struct MailMessageRecord
   bool is_inbox{false};
   bool is_starred{false};
   bool is_draft{false}; // move into status
-  bool is_archive{false};
   MailMessageStatus status{MailMessageStatus::Queued};
 };
 

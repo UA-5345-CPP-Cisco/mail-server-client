@@ -16,26 +16,23 @@ Rectangle {
 
     signal deleteClicked
     signal starClicked(bool starred)
-    signal archiveClicked
 
-    color: Color.background
+    color: "#ffffff"
 
     //header
-    Rectangle
-    {
+    Rectangle {
         id: header
 
-        color: Color.background
+        color: "white"
         height: 124
 
-        anchors
-        {
+        anchors {
             left: parent.left
             right: parent.right
             top: parent.top
         }
         Rectangle {
-            color: Color.outline
+            color: "#e5e7eb"
             height: 1
 
             anchors {
@@ -44,8 +41,7 @@ Rectangle {
                 right: parent.right
             }
         }
-        ColumnLayout
-        {
+        ColumnLayout {
             anchors.fill: parent
             anchors.margins: 24
             spacing: 12
@@ -54,11 +50,10 @@ Rectangle {
             // SUBJECT
             //
 
-            Text
-            {
+            Text {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 28
-                color: Color.primaryText
+                color: "#101828"
                 elide: Text.ElideRight
                 font.family: "Segoe UI"
                 font.pixelSize: 20
@@ -82,17 +77,15 @@ Rectangle {
                 // Avatar
                 //
 
-                Rectangle
-                {
+                Rectangle {
                     Layout.preferredHeight: 36
                     Layout.preferredWidth: 36
-                    color: Color.avatar
+                    color: "#2b7fff"
                     radius: 18
 
-                    Text
-                    {
+                    Text {
                         anchors.centerIn: parent
-                        color: Color.background
+                        color: "white"
                         font.family: "Segoe UI"
                         font.pixelSize: 14
                         font.weight: Font.Black
@@ -110,7 +103,7 @@ Rectangle {
 
                     Text {
                         Layout.fillWidth: true
-                        color: Color.primaryText
+                        color: "#101828"
                         elide: Text.ElideRight
                         font.family: "Segoe UI"
                         font.pixelSize: 14
@@ -119,7 +112,7 @@ Rectangle {
                     }
                     Text {
                         Layout.fillWidth: true
-                        color: Color.secondaryText
+                        color: "#6a7282"
                         elide: Text.ElideRight
                         font.family: "Segoe UI"
                         font.pixelSize: 12
@@ -134,7 +127,7 @@ Rectangle {
 
                 Text {
                     Layout.alignment: Qt.AlignVCenter
-                    color: Color.secondaryText
+                    color: "#6a7282"
                     font.family: "Segoe UI"
                     font.pixelSize: 12
                     text: formatEmailTimeFull(contentPageLetterQML.letterTime)
@@ -189,7 +182,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.top: header.bottom
         clip: true
-        color: Color.transparent
+        color: "transparent"
 
         Flickable {
             id: contentHolder
@@ -215,10 +208,10 @@ Rectangle {
                 width: 6
 
                 background: Rectangle {
-                    color: Color.transparent
+                    color: "transparent"
                 }
                 contentItem: Rectangle {
-                    color: letterScrollBar.pressed ? Color.secondaryText : Color.primaryText
+                    color: letterScrollBar.pressed ? "#4a5565" : "#9ca3af"
                     implicitWidth: 2
                     opacity: letterScrollBar.policy === ScrollBar.AlwaysOff ? 0 : 0.8
                     radius: 2
@@ -228,7 +221,7 @@ Rectangle {
             Text {
                 id: letterBody
 
-                color: Color.secondaryText
+                color: "#4a5565"
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Normal
@@ -251,7 +244,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        color: Color.background
+        color: "#ffffff"
         height: 72
 
         // Top border
@@ -259,7 +252,7 @@ Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
-            color: Color.outline
+            color: "#e5e7eb"
             height: 1
         }
 
@@ -270,7 +263,7 @@ Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: 16
             anchors.verticalCenter: parent.verticalCenter
-            color: Color.buttonSpecial
+            color: "#155dfc"
             height: 38
             radius: 10
             scale: clickAreaReply.containsMouse ? 1.1 : 1.0
@@ -314,7 +307,7 @@ Rectangle {
                 id: reply
 
                 anchors.centerIn: parent
-                color: Color.buttonSpecialText
+                color: "#ffffff"
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Normal
@@ -336,9 +329,9 @@ Rectangle {
             anchors.left: buttonToReply.right
             anchors.leftMargin: 8
             anchors.verticalCenter: parent.verticalCenter
-            border.color: Color.secondaryText
+            border.color: "#e5e7eb"
             border.width: 1
-            color: Color.transparent
+            color: "transparent"
             height: 38
             radius: 10
             scale: clickAreaForward.containsMouse ? 1.1 : 1.0
@@ -382,7 +375,7 @@ Rectangle {
                 id: forward
 
                 anchors.centerIn: parent
-                color: Color.secondaryText
+                color: "#4a5565"
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Normal
@@ -405,7 +398,7 @@ Rectangle {
             anchors.rightMargin: 14
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: 5
-            color: Color.transparent
+            color: "transparent"
             height: 28
             width: 58
             x: 568
@@ -415,7 +408,7 @@ Rectangle {
                 id: buttonToArchiveEmail
 
                 anchors.left: parent.left
-                color: Color.transparent
+                color: "transparent"
                 height: 18
                 radius: 10
                 scale: clickAreaArchive.containsMouse ? 1.3 : 1.0
@@ -437,7 +430,6 @@ Rectangle {
 
                     onClicked: {
                         // MinimizeWindow
-                        archiveClicked();
                     }
                 }
                 Image {
@@ -456,7 +448,7 @@ Rectangle {
                 id: buttonToDeleteEmail
 
                 anchors.right: parent.right
-                color: Color.transparent
+                color: "transparent"
                 height: 18
                 radius: 10
                 scale: clickAreaDelete.containsMouse ? 1.3 : 1.0

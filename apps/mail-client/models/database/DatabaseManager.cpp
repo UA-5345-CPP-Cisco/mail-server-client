@@ -1,7 +1,6 @@
 #include "headers/database/DatabaseManager.h"
 
 #include <cstdlib>
-#include <string>
 #include <QCoreApplication>
 #include <QDir>
 #include <QStandardPaths>

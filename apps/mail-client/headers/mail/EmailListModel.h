@@ -17,7 +17,7 @@
 namespace ISXMail
 {
 
-Q_NAMESPACE;
+Q_NAMESPACE
 
 struct EmailData
 {
@@ -26,7 +26,6 @@ struct EmailData
     bool is_starred;
     bool is_sent;
     bool is_draft;
-    bool is_archive;
     QString theme;
     QString name;
     QString send_to;
@@ -40,7 +39,6 @@ enum EmailRole
     StarredRole = Qt::UserRole + 1,
     SentRole,
     DraftRole,
-    ArchiveRole,
     InboxRole,
     ThemeRole,
     NameRole,
@@ -50,11 +48,11 @@ enum EmailRole
     TimeRole
 };
 
-Q_ENUM_NS(EmailRole);
+Q_ENUM_NS(EmailRole)
 
 class EmailListModel : public QAbstractListModel
 {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     explicit EmailListModel(QObject* parent = nullptr);
@@ -66,11 +64,10 @@ public:
     void RemoveData(int row);
     Q_INVOKABLE bool DeleteEmail(int row);
     Q_INVOKABLE void AddData(bool is_starred, bool is_sent, bool is_draft,
-                             bool is_archive, const QString& theme, const QString& name,
+                             const QString& theme, const QString& name,
                              const QString& send_to, const QString& content, const QString& time,
                              bool is_inbox = false);
     Q_INVOKABLE bool SetStarred(int row, bool starred);
-    bool ToggleArchive(int row);
     void AddData(const EmailData& item);
 
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;

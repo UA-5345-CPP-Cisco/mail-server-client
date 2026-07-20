@@ -3,433 +3,360 @@ import QtQuick.Controls
 import QtQuick.Shapes
 import QtQuick.Effects
 
-Rectangle {
+Rectangle
+{
     id: rootWindow
-
-    clip: true
-    implicitHeight: 460
     implicitWidth: 640
-    color: Color.background
-    radius: 14
+    implicitHeight: 460
     visible: true
+    clip: true
+    radius: 14
 
-    function getValidationError(type, text) 
+
+    Rectangle
     {
-        var value = text.trim();
-        var value_lower = text.trim().toLowerCase()
-        const layouts = 
-        [
-            "qwertyuiop", 
-            "asdfghjkl", 
-            "zxcvbnm", 
-            "1234567890"
-        ];
-
-        if (type === "name") 
-        {
-            if (value.length === 0) 
-            {
-                return "Name cannot be empty"
-            }
-            if (value.split(/\s+/).length !== 2)
-            {
-                return "Please enter your first and last name"
-            }
-            if (!/^[A-Z][a-z]+ [A-Z][a-z]+$/.test(value))
-            {
-                return "Each name must start with a capital letter"
-            }
-
-            return ""
-        }
-
-        if (type === "email") 
-        {
-            if (value.length === 0)
-            {
-                return "Email cannot be empty"
-            }
-
-            var email_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-            if (!email_regex.test(value)) 
-            {
-                return "Invalid email format"
-            }
-
-            return ""
-        }
-
-        if (type === "password") 
-        {
-            if (value.length === 0) 
-            {
-                return "Password cannot be empty"
-            }
-
-            if (value.length < 6) 
-            {
-                return "Password must be at least 6 characters long"
-            }
-
-            if (value.length < 10) 
-            {
-                for (let layout of layouts) 
-                {
-                    for (let i = 0; i <= layout.length - 5; i++) 
-                    {
-                        let forward = layout.substring(i, i + 5);
-                        let backward = forward.split("").reverse().join("");
-            
-                        if (value_lower.includes(forward) || value_lower.includes(backward)) 
-                        {
-                            return "Password cannot contain simple sequences";
-                        }
-                    }
-                }
-            }
-
-            if (/(.)\1{4,}/.test(value)) 
-            {
-                return "Password cannot contain repeated characters";
-            }
-
-            if (!/[A-Z]/.test(value)) 
-            {
-                return "Password must contain at least one uppercase letter"
-            }
-
-            if (!/\d/.test(value)) 
-            {
-                return "Password must contain at least one number"
-            }
-
-            if (!/[!@#$%^&*(),.?":{}|<>\-_]/.test(value))
-            {
-                return "Password must contain at least one special character"
-            }
-
-            return ""
-        }
-        return ""
-    }
-
-
-    Rectangle {
         id: backgroundRectangle
-
         anchors.fill: parent
-        border.color: Color.border
-        border.width: 1
-        color: Color.background
+        color: "#ffffff"
         radius: 14
+        border.color: "#e5e7eb"
+        border.width: 1
     }
-    Rectangle {
-        id: closeButtonRectangle
 
-        anchors.right: parent.right
-        anchors.rightMargin: 4
-        anchors.top: parent.top
-        anchors.topMargin: 4
-        color: Color.transparent
-        height: 40
-        radius: 8
-        scale: closeClickArea.containsMouse ? 1.3 : 1.0
+    Rectangle
+    {
+        id: closeButtonRectangle
         width: 40
+        height: 40
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.topMargin: 4
+        anchors.rightMargin: 4
+        radius: 8
+        color: "transparent"
         z: 10
 
-        Behavior on scale {
+        Image
+        {
+            id: closeIcon
+            anchors.centerIn: parent
+            source: "qrc:/pngs/assets/ic_close_window_black.svg"
+            width: 15
+            height: 15
+            sourceSize.width: width * Screen.devicePixelRatio
+            sourceSize.height: height * Screen.devicePixelRatio
+            fillMode: Image.PreserveAspectFit
+        }
+
+        scale: closeClickArea.containsMouse ? 1.3 : 1.0
+
+        Behavior on scale
+        {
             id: closeScaleBehavior
 
-            NumberAnimation {
+            NumberAnimation
+            {
                 id: closeScaleAnimation
-
                 duration: 150
                 easing.type: Easing.InOutQuad
             }
         }
 
-        Image {
-            id: closeIcon
-
-            anchors.centerIn: parent
-            fillMode: Image.PreserveAspectFit
-            height: 15
-            source: "qrc:/pngs/assets/ic_close_window_black.svg"
-            sourceSize.height: height * Screen.devicePixelRatio
-            sourceSize.width: width * Screen.devicePixelRatio
-            width: 15
-        }
-        MouseArea {
+        MouseArea
+        {
             id: closeClickArea
-
             anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
             hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
 
-            onClicked: {
-                closeAuthWindow();
+            onClicked:
+            {
+                closeAuthWindow()
             }
         }
     }
 
     // Dynamic screen loader for changing screens
-    Loader {
+    Loader
+    {
         id: contentLoader
-
         anchors.fill: parent
         sourceComponent: choiceScreenComponent
     }
 
     // Event routing from loaded screens
-    Connections {
+    Connections
+    {
         id: loaderConnections
+        target: contentLoader.item
+        ignoreUnknownSignals: true
 
         // Handle back navigation
-        function onBackRequested() {
-            contentLoader.sourceComponent = choiceScreenComponent;
+        function onBackRequested()
+        {
+            contentLoader.sourceComponent = choiceScreenComponent
         }
 
         // Handle login submit
-        function onLoginSubmitted(email, password) {
+        function onLoginSubmitted(email, password)
+        {
             //rootWindow.close()
         }
 
         // Handle registration submit
-        function onRegisterSubmitted(name, email, password) {
-            var success = authHandler.registerUser(name, email, password);
+        function onRegisterSubmitted(name, email, password)
+        {
+            var success = regHandler.registerUser(name, email, password);
 
-            if (success) {
-                var firstLetter = avatarInitial(name);
+            if (success)
+            {
+                var firstLetter = avatarInitial(name)
 
-                accountModel.AddAccount(name, email, "", Color.avatar, firstLetter, true);
-                CurrentUser.Authorize(name, email, "");
+                accountModel.AddAccount(name, email, "", "#3b82f6", firstLetter, true)
+                CurrentUser.Authorize(name, email, "")
 
-                closeAuthWindow();
-            } else {
+                closeAuthWindow()
+            }
+            else
+            {
                 return -1;
             }
         }
-
-        ignoreUnknownSignals: true
-        target: contentLoader.item
     }
-    Component {
+
+    Component
+    {
         id: choiceScreenComponent
 
-        Item {
+        Item
+        {
             id: choiceScreenRootItem
-
             anchors.fill: parent
 
-            Column {
+            Column
+            {
                 id: mainLayoutColumn
-
                 anchors.centerIn: parent
                 spacing: 30
 
-                Text {
+                Text
+                {
                     id: mainTitleText
-
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    color: Color.primaryText
+                    text: "Add an Account"
                     font.family: "Segoe UI"
                     font.pixelSize: 32
                     font.weight: Font.Bold
-                    text: "Add an Account"
-                }
-                Row {
-                    id: optionsRow
-
+                    color: "#000000"
                     anchors.horizontalCenter: parent.horizontalCenter
+                }
+
+                Row
+                {
+                    id: optionsRow
                     spacing: 24
+                    anchors.horizontalCenter: parent.horizontalCenter
 
                     // Login selection
-                    Rectangle {
+                    Rectangle
+                    {
                         id: loginSelectionBlock
-
-                        border.color: Color.outline
-                        border.width: 1
-                        color: Color.transparent
+                        width: 260
                         height: 300
                         radius: 12
-                        width: 260
+                        border.color: "#e5e7eb"
+                        border.width: 1
+                        color: "transparent"
 
-                        Column {
+                        Column
+                        {
                             id: loginContentColumn
-
                             anchors.centerIn: parent
                             spacing: 16
                             width: parent.width - 32
 
-                            Image {
+                            Image
+                            {
                                 id: loginIcon
-
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                fillMode: Image.PreserveAspectFit
-                                height: 80
                                 source: "qrc:/pngs/assets/ic_login.svg"
-                                sourceSize.height: height * Screen.devicePixelRatio
-                                sourceSize.width: width * Screen.devicePixelRatio
                                 width: 80
-                            }
-                            Text {
-                                id: loginTitleText
-
+                                height: 80
+                                sourceSize.width: width * Screen.devicePixelRatio
+                                sourceSize.height: height * Screen.devicePixelRatio
+                                fillMode: Image.PreserveAspectFit
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                color: Color.primaryText
+                            }
+
+                            Text
+                            {
+                                id: loginTitleText
+                                text: "Existing User?"
                                 font.family: "Segoe UI"
                                 font.pixelSize: 22
                                 font.weight: Font.Bold
-                                text: "Existing User?"
-                            }
-                            Rectangle {
-                                id: loginButton
-
+                                color: "#6a748b"
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                color: loginClickArea.containsMouse ? Color.buttonSpecialHover : Color.buttonSpecial
+                            }
+
+                            Rectangle
+                            {
+                                id: loginButton
+                                width: 160
                                 height: 44
                                 radius: 8
-                                scale: loginClickArea.containsMouse ? 1.05 : 1.0
-                                width: 160
+                                color: loginClickArea.containsMouse ? "#0052cc" : "#1a66ff"
+                                anchors.horizontalCenter: parent.horizontalCenter
 
-                                Behavior on scale {
+                                Text
+                                {
+                                    id: loginButtonText
+                                    anchors.centerIn: parent
+                                    text: "Log In"
+                                    color: "#ffffff"
+                                    font.family: "Segoe UI"
+                                    font.pixelSize: 16
+                                    font.weight: Font.Bold
+                                }
+
+                                scale: loginClickArea.containsMouse ? 1.05 : 1.0
+
+                                Behavior on scale
+                                {
                                     id: loginScaleBehavior
 
-                                    NumberAnimation {
+                                    NumberAnimation
+                                    {
                                         id: loginScaleAnimation
-
                                         duration: 150
                                         easing.type: Easing.InOutQuad
                                     }
                                 }
 
-                                Text {
-                                    id: loginButtonText
-
-                                    anchors.centerIn: parent
-                                    color: Color.buttonSpecialText
-                                    font.family: "Segoe UI"
-                                    font.pixelSize: 16
-                                    font.weight: Font.Bold
-                                    text: "Log In"
-                                }
-                                MouseArea {
+                                MouseArea
+                                {
                                     id: loginClickArea
-
                                     anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
                                     hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
 
-                                    onClicked: {
-                                        contentLoader.source = "LoginQML.qml";
+                                    onClicked:
+                                    {
+                                        contentLoader.source = "LoginQML.qml"
                                     }
                                 }
                             }
-                            Text {
-                                id: loginDescriptionText
 
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                color: Color.secondaryText
+                            Text
+                            {
+                                id: loginDescriptionText
+                                text: "Access your personal \n or work profile"
                                 font.family: "Segoe UI"
                                 font.pixelSize: 14
+                                color: "#6a748b"
                                 horizontalAlignment: Text.AlignHCenter
-                                text: "Access your personal \n or work profile"
+                                anchors.horizontalCenter: parent.horizontalCenter
                             }
                         }
                     }
 
                     // Redister selection
-                    Rectangle {
+                    Rectangle
+                    {
                         id: registerSelectionBlock
-
-                        border.color: Color.outline
-                        border.width: 1
-                        color: Color.transparent
+                        width: 260
                         height: 300
                         radius: 12
-                        width: 260
+                        border.color: "#e5e7eb"
+                        border.width: 1
+                        color: "transparent"
 
-                        Column {
+                        Column
+                        {
                             id: registerContentColumn
-
                             anchors.centerIn: parent
                             anchors.verticalCenterOffset: -2
                             spacing: 16
                             width: parent.width - 32
 
-                            Image {
+                            Image
+                            {
                                 id: registerIcon
-
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                fillMode: Image.PreserveAspectFit
-                                height: 64
                                 source: "qrc:/pngs/assets/ic_add_account.svg"
-                                sourceSize.height: height * Screen.devicePixelRatio
-                                sourceSize.width: width * Screen.devicePixelRatio
                                 width: 64
-                            }
-                            Text {
-                                id: registerTitleText
-
+                                height: 64
+                                sourceSize.width: width * Screen.devicePixelRatio
+                                sourceSize.height: height * Screen.devicePixelRatio
+                                fillMode: Image.PreserveAspectFit
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                color: Color.primaryText
+                            }
+
+                            Text
+                            {
+                                id: registerTitleText
+                                text: "New User?"
                                 font.family: "Segoe UI"
                                 font.pixelSize: 22
                                 font.weight: Font.Bold
-                                text: "New User?"
-                            }
-                            Rectangle {
-                                id: registerButton
-
+                                color: "#6a748b"
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                color: registerClickArea.containsMouse ? Color.buttonSpecialHover : Color.buttonSpecial
+                            }
+
+                            Rectangle
+                            {
+                                id: registerButton
+                                width: 160
                                 height: 44
                                 radius: 8
-                                scale: registerClickArea.containsMouse ? 1.05 : 1.0
-                                width: 160
+                                color: registerClickArea.containsMouse ? "#0052cc" : "#1a66ff"
+                                anchors.horizontalCenter: parent.horizontalCenter
 
-                                Behavior on scale {
+                                Text
+                                {
+                                    id: registerButtonText
+                                    anchors.centerIn: parent
+                                    text: "Register"
+                                    color: "#ffffff"
+                                    font.family: "Segoe UI"
+                                    font.pixelSize: 16
+                                    font.weight: Font.Bold
+                                }
+
+                                scale: registerClickArea.containsMouse ? 1.05 : 1.0
+
+                                Behavior on scale
+                                {
                                     id: registerScaleBehavior
 
-                                    NumberAnimation {
+                                    NumberAnimation
+                                    {
                                         id: registerScaleAnimation
-
                                         duration: 150
                                         easing.type: Easing.InOutQuad
                                     }
                                 }
 
-                                Text {
-                                    id: registerButtonText
-
-                                    anchors.centerIn: parent
-                                    color: Color.buttonSpecialText
-                                    font.family: "Segoe UI"
-                                    font.pixelSize: 16
-                                    font.weight: Font.Bold
-                                    text: "Register"
-                                }
-                                MouseArea {
+                                MouseArea
+                                {
                                     id: registerClickArea
-
                                     anchors.fill: parent
-                                    cursorShape: Qt.PointingHandCursor
                                     hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
 
-                                    onClicked: {
-                                        contentLoader.source = "RegistrationQML.qml";
+                                    onClicked:
+                                    {
+                                        contentLoader.source = "RegistrationQML.qml"
                                     }
                                 }
                             }
-                            Text {
-                                id: registerDescriptionText
 
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                color: Color.secondaryText
+                            Text
+                            {
+                                id: registerDescriptionText
+                                text: "Create a new account"
                                 font.family: "Segoe UI"
                                 font.pixelSize: 14
+                                color: "#6a748b"
                                 horizontalAlignment: Text.AlignHCenter
-                                text: "Create a new account"
+                                anchors.horizontalCenter: parent.horizontalCenter
                             }
                         }
                     }

@@ -3,348 +3,393 @@ import QtQuick.Effects
 import QtQuick.Shapes
 import QtQuick.Controls
 
-Rectangle {
+Rectangle
+{
     id: root
-
-    property string content: preview
-    property string name: "NameHolder"
-    property string preview: "TextHolderTextHolderTextHolderTextHolde...."
-    property var searchModel: null
-    property string sendTo: ""
-    property bool starred: false
-    property string theme: "ThemeHolder"
-    property string time: "10:30"
-    property int state: 0
-
-    signal deleteClicked
-    signal openRequested(string theme, string name, string sendTo, string content, string time, bool starred)
-    signal starredClicked
-
-    color: state === 2 ? Color.highlight : state === 1 ? Color.surface : Color.background
     height: 92
 
-    Behavior on color {
-        ColorAnimation {
+    property bool starred: false
+    property string theme: "ThemeHolder"
+    property string name: "NameHolder"
+    property string preview: "TextHolderTextHolderTextHolderTextHolde...."
+    property string content: preview
+    property string sendTo: ""
+    property string time: "10:30"
+    property var searchModel: null
+
+    signal openRequested(string theme, string name, string sendTo, string content, string time, bool starred)
+        signal starredClicked
+        signal deleteClicked
+
+    color: "#ffffff"
+
+    Behavior on color
+    {
+        ColorAnimation
+        {
             duration: 150
             easing.type: Easing.OutCubic
         }
     }
-
     MouseArea
     {
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
         anchors.fill: parent
         hoverEnabled: true
         propagateComposedEvents: true
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
 
+        onEntered: root.color = "#f9fafb"
+        onExited: root.color = "#ffffff"
+        onPressed: root.color = "#f3f4f6"
         onClicked: mouse => {
-            if (mouse.button === Qt.LeftButton) {
-                root.state = containsMouse ? 1 : 0;
-                var starPos = favouriteButtonContainer.mapToItem(root, 0, 0);
-                var inStarZone = (mouse.x >= starPos.x - 8 && mouse.x <= starPos.x + favouriteButtonContainer.width + 8 && mouse.y >= starPos.y - 8 && mouse.y <= starPos.y + favouriteButtonContainer.height + 8);
-                if (!inStarZone) {
-                    root.openRequested(root.theme, root.name, root.sendTo, root.content, root.time, root.starred);
+            if (mouse.button === Qt.LeftButton)
+            {
+                root.color = containsMouse ? "#f9fafb" : "#ffffff"
+                var starPos = favouriteButtonContainer.mapToItem(root, 0, 0)
+                var inStarZone = (mouse.x >= starPos.x - 8
+                    && mouse.x <= starPos.x + favouriteButtonContainer.width + 8
+                    && mouse.y >= starPos.y - 8 && mouse.y
+                    <= starPos.y + favouriteButtonContainer.height + 8)
+                if (!inStarZone)
+                {
+                    root.openRequested(root.theme, root.name,
+                        root.sendTo, root.content,
+                        root.time, root.starred)
                 }
-            } else if (mouse.button === Qt.RightButton) {
-                contextMenu.popup();
+            } else if (mouse.button === Qt.RightButton)
+            {
+                contextMenu.popup()
             }
         }
-        onEntered: root.state = 2
-        onExited: root.state = 0
-        onPressed: mouse => {
-            if (mouse.button === Qt.LeftButton) {
-                root.state = 1;
-            }
-        }
-
+        onCanceled: root.color = "#ffffff"
     }
-    Menu {
+    Menu
+    {
         id: contextMenu
 
-        background: Rectangle {
-            border.color: Color.outline
-            border.width: 1
-            color: Color.background
-            implicitHeight: 40
-            implicitWidth: 200
-            radius: 8
+        palette
+        {
+            base: "#ffffff"
+            text: "#1f2937"
+            highlight: "#f3f4f6"
+            highlightedText: "#1f2937"
         }
-        delegate: MenuItem {
-            id: menuItem
 
-            implicitHeight: 36
+        background: Rectangle
+        {
             implicitWidth: 200
+            implicitHeight: 40
+            color: "#ffffff"
+            radius: 8
+            border.color: "#e5e7eb"
+            border.width: 1
+        }
+
+        delegate: MenuItem
+        {
+            id: menuItem
+            implicitWidth: 200
+            implicitHeight: 36
             padding: 0
 
-            background: Rectangle {
-                anchors.margins: 4
-                color: menuItem.hovered ? Color.highlight : Color.transparent
-                radius: 4
-            }
-            contentItem: Text {
-                color: Color.secondaryText
+            contentItem: Text
+            {
+                text: menuItem.text
+                color: menuItem.hovered ? "#1f2937" : "#6b7280"
                 font.pixelSize: 13
                 leftPadding: 12
-                text: menuItem.text
                 verticalAlignment: Text.AlignVCenter
             }
-        }
 
-        palette {
-            base: Color.background
-            highlight: Color.highlight
-            highlightedText: Color.hover
-            text: Color.secondaryText
-        }
-        MenuItem {
-            text: "Copy"
-
-            onTriggered: {}
-        }
-        MenuSeparator {
-            padding: 4
-
-            contentItem: Rectangle {
-                color: Color.outline
-                implicitHeight: 1
-                implicitWidth: 200
+            background: Rectangle
+            {
+                color: menuItem.hovered ? "#f3f4f6" : "transparent"
+                radius: 4
+                anchors.margins: 4
             }
         }
-        MenuItem {
 
+        MenuItem
+        {
+            text: "Copy"
+            onTriggered:
+            {
+
+            }
+        }
+
+        MenuSeparator
+        {
+            padding: 4
+            contentItem: Rectangle
+            {
+                implicitWidth: 200
+                implicitHeight: 1
+                color: "#e5e7eb"
+            }
+        }
+
+        MenuItem
+        {
             text: "Delete"
-            onTriggered: root.deleteClicked()
+            onClicked: root.deleteClicked()
         }
     }
 
     // Bottom border
-    Rectangle {
-        anchors.bottom: parent.bottom
+    Rectangle
+    {
         anchors.left: parent.left
         anchors.right: parent.right
-        color: Color.outline
+        anchors.bottom: parent.bottom
         height: 1
+        color: "#e5e7eb"
     }
+
     Rectangle {
         id: itemContainer
-
-        color: Color.transparent
-        height: 60
-
-        anchors {
+        anchors
+        {
             left: parent.left
-            margins: 16
             right: parent.right
             top: parent.top
+            margins: 16
         }
+        height: 60
+        color: "transparent"
 
         // Star icon
-        Rectangle {
+        Rectangle
+        {
             id: favouriteButtonContainer
-
-            anchors.verticalCenter: parent.verticalCenter
-            color: Color.transparent
             height: 17
-            scale: favouriteButtonClickArea.containsMouse ? 1.1 : 1.0
             width: 15
+            anchors.verticalCenter: parent.verticalCenter
+            color: "transparent"
+            MouseArea {
+                id: favouriteButtonClickArea
+                anchors.fill: parent
+                anchors.margins: -8
+                cursorShape: Qt.PointingHandCursor
 
-            Behavior on scale {
-                NumberAnimation {
+                z: 10
+                onClicked:
+                {
+                    root.starred = !root.starred
+                    root.starredClicked()
+                }
+            }
+            scale: favouriteButtonClickArea.containsMouse ? 1.1 : 1.0
+
+            Behavior on scale
+            {
+                NumberAnimation
+                {
                     duration: 150
                     easing.type: Easing.InOutQuad
                 }
             }
 
-            MouseArea {
-                id: favouriteButtonClickArea
-
-                anchors.fill: parent
-                anchors.margins: -8
-                cursorShape: Qt.PointingHandCursor
-                z: 10
-
-                onClicked: {
-                    root.starred = !root.starred;
-                    root.starredClicked();
-                }
-            }
-            Rectangle {
+            Rectangle
+            {
                 id: favouriteButton
-
-                clip: true
-                color: Color.transparent
+                y: 2
                 height: 18
                 width: 18
-                y: 2
+                clip: true
+                color: "transparent"
 
-                Image {
-                    anchors.centerIn: parent
-                    fillMode: Image.PreserveAspectFit
-                    height: 18
+                Image
+                {
                     source: starred ? "qrc:/pngs/assets/ic_star_active.svg" : "qrc:/pngs/assets/ic_star.svg"
-                    sourceSize.height: height * Screen.devicePixelRatio
-                    sourceSize.width: width * Screen.devicePixelRatio
                     width: 18
+                    height: 18
+                    sourceSize.width: width * Screen.devicePixelRatio
+                    sourceSize.height: height * Screen.devicePixelRatio
+                    fillMode: Image.PreserveAspectFit
+                    anchors.centerIn: parent
                 }
             }
         }
 
         // Content
-        Rectangle {
+        Rectangle
+        {
             id: contentContainer
-
             anchors.left: favouriteButtonContainer.right
             anchors.leftMargin: 8
             anchors.right: parent.right
-            color: Color.transparent
             height: 60
+            color: "transparent"
 
-            Rectangle {
+            Rectangle
+            {
                 id: headerContainer
-
                 anchors.left: parent.left
                 anchors.right: parent.right
-                clip: true
-                color: Color.transparent
                 height: 20
+                clip: true
+                color: "transparent"
 
-                Rectangle {
+                Rectangle
+                {
                     id: nameContainer
-
                     anchors.left: parent.left
                     anchors.right: timeContainer.left
-                    clip: true
-                    color: Color.transparent
                     height: 20
+                    clip: true
+                    color: "transparent"
 
-                    Text {
+                    Text
+                    {
                         id: nameText
-
-                        color: Color.primaryText
-                        elide: Text.ElideRight
+                        height: 20
+                        width: parent.width
+                        color: "#101828"
                         font.family: "Segoe UI"
                         font.pixelSize: 14
                         font.weight: Font.Black
-                        height: 20
                         horizontalAlignment: Text.AlignLeft
                         lineHeight: 20
                         lineHeightMode: Text.FixedHeight
-                        maximumLineCount: 1
-                        text: searchModel ? searchModel.HighlightAllFoundWords(name, searchModel.SearchedText) : name
+                        text: searchModel ? searchModel.HighlightAllFoundWords(
+                            name,
+                            searchModel.SearchedText) : name
                         textFormat: Text.RichText
                         verticalAlignment: Text.AlignVCenter
-                        width: parent.width
                         wrapMode: Text.NoWrap
+                        elide: Text.ElideRight
+                        maximumLineCount: 1
                     }
-                    HoverHandler {
+
+                    HoverHandler
+                    {
                         id: nameHover
                     }
-                    EmailToolTip {
-                        text: name
+
+                    EmailToolTip
+                    {
                         visible: nameHover.hovered && (nameText.contentWidth > nameText.width)
+                        text: name
                         x: 0
                         y: nameContainer.height + 4
                     }
                 }
-                Rectangle {
-                    id: timeContainer
 
+                Rectangle
+                {
+                    id: timeContainer
                     anchors.right: parent.right
                     anchors.rightMargin: 0
                     anchors.verticalCenter: parent.verticalCenter
-                    color: Color.transparent
                     height: 16
                     width: timeText.implicitWidth
+                    color: "transparent"
 
-                    Text {
+                    Text
+                    {
                         id: timeText
-
                         anchors.fill: parent
-                        color: Color.secondaryText
+                        color: "#6a7282"
                         font.family: "Segoe UI"
                         font.pixelSize: 12
                         font.weight: Font.Normal
                         horizontalAlignment: Text.AlignRight
+                        verticalAlignment: Text.AlignVCenter
                         text: time
                         textFormat: Text.PlainText
-                        verticalAlignment: Text.AlignVCenter
                     }
                 }
             }
-            Rectangle {
-                id: themeContainer
 
+            Rectangle
+            {
+                id: themeContainer
                 anchors.left: parent.left
                 anchors.right: parent.right
-                clip: true
-                color: Color.transparent
-                height: 20
                 y: 22
+                height: 20
+                clip: true
+                color: "transparent"
 
-                Text {
+                Text
+                {
                     id: themeText
-
-                    color: Color.primaryText
-                    elide: Text.ElideRight
+                    height: 20
+                    width: parent.width
+                    color: "#101828"
                     font.family: "Segoe UI"
                     font.pixelSize: 14
                     font.weight: Font.Black
-                    height: 20
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 20
                     lineHeightMode: Text.FixedHeight
-                    maximumLineCount: 1
-                    text: searchModel ? searchModel.HighlightAllFoundWords(theme, searchModel.SearchedText) : theme
+                    text: searchModel ? searchModel.HighlightAllFoundWords(
+                        theme,
+                        searchModel.SearchedText) : theme
                     textFormat: Text.RichText
                     verticalAlignment: Text.AlignVCenter
-                    width: parent.width
                     wrapMode: Text.NoWrap
+                    elide: Text.ElideRight
+                    maximumLineCount: 1
                 }
-                HoverHandler {
+
+                HoverHandler
+                {
                     id: themeHover
                 }
-                EmailToolTip {
+
+                EmailToolTip
+                {
+                    visible: themeHover.hovered
+                        && (themeText.contentWidth > themeText.width)
                     text: theme
-                    visible: themeHover.hovered && (themeText.contentWidth > themeText.width)
                     x: 0
                     y: themeContainer.height + 4
                 }
             }
-            Rectangle {
-                id: previewContainer
 
+            Rectangle
+            {
+                id: previewContainer
                 anchors.left: parent.left
                 anchors.right: parent.right
-                clip: true
-                color: Color.transparent
-                height: 16
                 y: 44
+                height: 16
+                clip: true
+                color: "transparent"
 
-                Text {
+                Text
+                {
                     id: previewText
-
-                    color: Color.secondaryText
-                    elide: Text.ElideRight
+                    height: 16
+                    width: parent.width
+                    color: "#6a7282"
                     font.family: "Segoe UI"
                     font.pixelSize: 12
                     font.weight: Font.Normal
-                    height: 16
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    maximumLineCount: 1
-                    text: searchModel ? searchModel.HighlightAllFoundWords(preview, searchModel.SearchedText) : preview
+                    text: searchModel ? searchModel.HighlightAllFoundWords(
+                        preview,
+                        searchModel.SearchedText) : preview
                     textFormat: Text.RichText
                     verticalAlignment: Text.AlignVCenter
-                    width: parent.width
                     wrapMode: Text.NoWrap
+                    elide: Text.ElideRight
+                    maximumLineCount: 1
                 }
-                HoverHandler {
+
+                HoverHandler
+                {
                     id: previewHover
                 }
-                EmailToolTip {
-                    text: content
+
+                EmailToolTip
+                {
                     visible: previewHover.hovered
+                    text: content
                     x: 0
                     y: previewContainer.height + 4
                 }
