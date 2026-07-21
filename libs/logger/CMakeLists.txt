@@ -15,6 +15,7 @@ target_compile_features(mail_logger
 
 target_link_libraries(mail_logger
         PUBLIC
+        Boost::date_time
         Threads::Threads
 )
 

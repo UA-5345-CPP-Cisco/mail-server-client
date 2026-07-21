@@ -38,6 +38,7 @@ The Backend Mail Service and SMTP Server currently use the same database.
 * Preserve the existing style of the component being modified.
 * Avoid unrelated formatting or refactoring.
 * Use modern C++17 features where they improve clarity and safety, for example smart pointers.
+* Prefer Boost implementations over usage of macros for cross-platform builds
 * Keep public interfaces backward-compatible unless the task explicitly requires an API change.
 
 ## Project Directory Structure

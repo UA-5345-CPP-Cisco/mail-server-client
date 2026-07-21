@@ -15,7 +15,7 @@ qt_standard_project_setup(REQUIRES 6.10)
 include(FetchContent)
 
 if(NOT TARGET Boost::asio)
-	set(BOOST_INCLUDE_LIBRARIES asio beast json property_tree system)
+	set(BOOST_INCLUDE_LIBRARIES asio beast date_time json property_tree system)
 	set(BOOST_ENABLE_MPI OFF)
 	set(BOOST_ENABLE_PYTHON OFF)
 	set(BUILD_TESTING OFF)
