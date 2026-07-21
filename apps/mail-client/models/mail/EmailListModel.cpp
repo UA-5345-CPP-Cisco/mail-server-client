@@ -62,6 +62,60 @@ namespace ISXMail {
         {
             return str.toStdString();
         }
+
+        QString NormalizeLineEndings(QString text)
+        {
+            text.replace(QStringLiteral("\r\n"), QStringLiteral("\n"));
+            text.replace(QLatin1Char('\r'), QLatin1Char('\n'));
+            return text;
+        }
+
+        QString HeaderValue(const QString& raw_text, const QString& header_name)
+        {
+            const QString text = NormalizeLineEndings(raw_text);
+            const QString prefix = header_name + QStringLiteral(":");
+            bool reading_header = false;
+            QString value;
+
+            for (const QString& line : text.split(QLatin1Char('\n'))) {
+                if (line.trimmed().isEmpty()) {
+                    break;
+                }
+
+                if (reading_header && (line.startsWith(QLatin1Char(' ')) || line.startsWith(QLatin1Char('\t')))) {
+                    value += QLatin1Char(' ') + line.trimmed();
+                    continue;
+                }
+
+                reading_header = line.startsWith(prefix, Qt::CaseInsensitive);
+                if (reading_header) {
+                    value = line.mid(prefix.length()).trimmed();
+                }
+            }
+
+            return value;
+        }
+
+        QString StripMessageHeaders(const QString& raw_text)
+        {
+            const QString text = NormalizeLineEndings(raw_text);
+            const qsizetype header_end = text.indexOf(QStringLiteral("\n\n"));
+            if (header_end < 0) {
+                return text.trimmed();
+            }
+
+            return text.mid(header_end + 2).trimmed();
+        }
+
+        QString DisplaySubject(const QString& subject, const QString& body)
+        {
+            QString display_subject = subject.trimmed();
+            if (display_subject.isEmpty()) {
+                display_subject = HeaderValue(body, QStringLiteral("Subject"));
+            }
+
+            return display_subject.isEmpty() ? QStringLiteral("(No subject)") : display_subject;
+        }
     } // namespace
 
     EmailListModel::EmailListModel(QObject* parent)
@@ -71,7 +125,6 @@ namespace ISXMail {
         , m_recipient_repository(m_database)
     {
         ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel: constructed");
-        LoadFromDatabase();
     }
 
     int EmailListModel::rowCount(const QModelIndex& parent) const
@@ -301,12 +354,19 @@ namespace ISXMail {
                     }
                 }
 
-                const QString content = QString::fromStdString(body);
-                const bool is_sent =
-                    QString::fromStdString(from).compare(current_email, Qt::CaseInsensitive) == 0 && status == "sent";
+                const QString sender_email = QString::fromStdString(from);
+                const bool is_current_sender = sender_email.compare(current_email, Qt::CaseInsensitive) == 0;
+                if (!is_current_sender && !is_recipient) {
+                    continue;
+                }
+
+                const QString raw_content = QString::fromStdString(body);
+                const QString content = StripMessageHeaders(raw_content);
+                const QString display_subject = DisplaySubject(QString::fromStdString(subject), raw_content);
                 const bool is_draft = status == "draft";
                 const bool is_archive = status == "archive";
-                const bool is_inbox = is_recipient && !is_sent;
+                const bool is_sent = is_current_sender && !is_draft && !is_archive;
+                const bool is_inbox = is_recipient && !is_current_sender && !is_draft && !is_archive;
                 const std::int64_t id = mail.contains("id") && mail.at("id").is_int64() ? mail.at("id").as_int64() : -1;
                 const bool is_starred = mail.contains("is_starred") && mail.at("is_starred").is_bool()
                                             ? mail.at("is_starred").as_bool()
@@ -318,8 +378,8 @@ namespace ISXMail {
                                        is_sent,
                                        is_draft,
                                        is_archive,
-                                       QString::fromStdString(subject),
-                                       QString::fromStdString(from),
+                                       display_subject,
+                                       sender_email,
                                        recipient_email,
                                        MakePreview(content, 30),
                                        content,
@@ -346,47 +406,72 @@ namespace ISXMail {
 
     void EmailListModel::LoadFromDatabase()
     {
+        const QString current_email = ISXCurrentUser::CurrentUser::GetInstance().email();
+        if (current_email.trimmed().isEmpty()) {
+            return;
+        }
+
         const auto messages = m_message_repository.FindAll();
 
         if (messages.empty()) {
             return;
         }
 
-        beginInsertRows(QModelIndex(), 0, static_cast<int>(messages.size()) - 1);
+        std::vector<EmailData> local_data;
 
         for (const auto& message : messages) {
             QString recipient_email;
+            bool is_recipient = false;
             const auto recipients = m_recipient_repository.FindByMessageId(message.id);
 
-            if (!recipients.empty()) {
-                recipient_email = QString::fromStdString(recipients.front().recipient_email);
+            for (const auto& recipient_record : recipients) {
+                const QString recipient = QString::fromStdString(recipient_record.recipient_email);
+                if (recipient_email.isEmpty()) {
+                    recipient_email = recipient;
+                }
+
+                if (recipient.compare(current_email, Qt::CaseInsensitive) == 0) {
+                    is_recipient = true;
+                }
             }
 
-            const QString theme =
-                message.subject.has_value() ? QString::fromStdString(*message.subject) : QStringLiteral("empty");
-            const QString name = QString::fromStdString(message.sender_email);
-            const QString content = QString::fromStdString(message.body);
+            const QString sender_email = QString::fromStdString(message.sender_email);
+            const bool is_current_sender = sender_email.compare(current_email, Qt::CaseInsensitive) == 0;
+            if (!is_current_sender && !is_recipient) {
+                continue;
+            }
+
+            const QString raw_content = QString::fromStdString(message.body);
+            const QString theme = DisplaySubject(
+                message.subject.has_value() ? QString::fromStdString(*message.subject) : QString(), raw_content);
+            const QString content = StripMessageHeaders(raw_content);
             const QString preview = MakePreview(content, 30);
             const QString time = QString::fromStdString(message.created_at);
-            const bool is_inbox = message.is_inbox;
             const bool is_draft = message.is_draft || message.status == Storage::MailMessageStatus::Draft;
-            const bool is_sent = !is_inbox && message.status == Storage::MailMessageStatus::Sent;
             const bool is_archive = message.is_archive || message.status == Storage::MailMessageStatus::Archive;
+            const bool is_sent = is_current_sender && !is_draft && !is_archive;
+            const bool is_inbox = is_recipient && !is_current_sender && !is_draft && !is_archive;
 
-            m_data.push_back({message.id,
-                              is_inbox,
-                              message.is_starred,
-                              is_sent,
-                              is_draft,
-                              is_archive,
-                              theme,
-                              name,
-                              recipient_email,
-                              preview,
-                              content,
-                              time});
+            local_data.push_back({message.id,
+                                  is_inbox,
+                                  message.is_starred,
+                                  is_sent,
+                                  is_draft,
+                                  is_archive,
+                                  theme,
+                                  sender_email,
+                                  recipient_email,
+                                  preview,
+                                  content,
+                                  time});
         }
 
+        if (local_data.empty()) {
+            return;
+        }
+
+        beginInsertRows(QModelIndex(), 0, static_cast<int>(local_data.size()) - 1);
+        m_data.insert(m_data.end(), local_data.begin(), local_data.end());
         endInsertRows();
         ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
                                           "EmailListModel::LoadFromDatabase: data was loaded from database");

@@ -195,7 +195,7 @@ Rectangle {
 
             if (success) {
                 accountModel.AddAccount(CurrentUser.username, CurrentUser.email, "", Color.avatar, avatarInitial(CurrentUser.username), true);
-                emailsModel.RefreshFromServer();
+                showInboxForCurrentUser();
                 closeAuthWindow();
             }
         }
@@ -208,7 +208,7 @@ Rectangle {
                 var firstLetter = avatarInitial(name);
 
                 accountModel.AddAccount(name, email, "", Color.avatar, firstLetter, true);
-                emailsModel.RefreshFromServer();
+                showInboxForCurrentUser();
 
                 closeAuthWindow();
             } else {
