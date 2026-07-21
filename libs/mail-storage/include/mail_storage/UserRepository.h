@@ -23,9 +23,7 @@ class UserRepository
 
   std::optional<UserRecord> FindByUsername(const std::string& username) const;
 
-  std::int64_t CreateUser(const std::string& username,
-                          const std::string& email,
-                          const std::string& password_hash);
+  std::int64_t CreateUser(const std::string& username, const std::string& email, const std::string& password_hash);
 
   std::optional<UserRecord> FindActiveUser() const;
 

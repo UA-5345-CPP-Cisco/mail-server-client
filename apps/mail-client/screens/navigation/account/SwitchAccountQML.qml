@@ -13,6 +13,9 @@ Rectangle
     color: Color.background
     radius: 14
 
+    signal accountSelected()
+    signal addAccountRequested()
+
     MouseArea
     {
         id: rootClickArea
@@ -122,7 +125,11 @@ Rectangle
 
         model: accountModel
 
-        delegate: AccountItem {}
+        delegate: AccountItem {
+            onSelected: {
+                switchAccountRectangle.accountSelected();
+            }
+        }
     }
 
     // Divider before button
@@ -215,6 +222,7 @@ Rectangle
 
                 onClicked:
                 {
+                    switchAccountRectangle.addAccountRequested()
                     authLoader.active = true
                     if (String( authLoader.source) === "")
                     {

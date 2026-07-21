@@ -1,10 +1,12 @@
 #include "logger/Logger.h"
 
-#include <chrono>
+#include <iomanip>
 #include <iostream>
 #include <ostream>
+#include <sstream>
 #include <stdexcept>
-#include <thread>
+
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace Logging {
 
@@ -27,6 +29,29 @@ const char* ToString(LogLevel level)
   }
 
   return "UNKNOWN";
+}
+
+std::string Timestamp()
+{
+  const boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
+  const boost::gregorian::date date = now.date();
+  const boost::posix_time::time_duration time = now.time_of_day();
+
+  const long fractional_seconds = time.fractional_seconds();
+  const int fractional_digits = boost::posix_time::time_duration::num_fractional_digits();
+  int milliseconds = static_cast<int>(fractional_seconds);
+  for (int digits = fractional_digits; digits > 3; --digits)
+  {
+    milliseconds /= 10;
+  }
+
+  std::ostringstream output;
+  output << std::setfill('0') << std::setw(2) << time.hours() << ":" << std::setw(2) << time.minutes()
+         << ":" << std::setw(2) << time.seconds() << ":" << std::setw(3) << milliseconds << ' ' << std::setw(2)
+         << date.year() % 100 << '/' << std::setw(2) << static_cast<int>(date.month()) << '/' << std::setw(2)
+         << static_cast<int>(date.day());
+
+  return output.str();
 }
 
 } // namespace
@@ -67,12 +92,9 @@ void Logger::Log(LogLevel level, std::string_view message)
     return;
   }
 
-  const auto now = std::chrono::system_clock::now().time_since_epoch();
-  const auto timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(now).count();
   std::ostream& output = file_.is_open() ? file_ : std::clog;
 
-  output << '[' << timestamp << "] [" << std::this_thread::get_id() << "] [" << ToString(level)
-         << "] " << message << '\n';
+  output << '[' << Timestamp() << "] [" << ToString(level) << "] " << message << '\n';
 
   if (flushAfterWrite_)
   {

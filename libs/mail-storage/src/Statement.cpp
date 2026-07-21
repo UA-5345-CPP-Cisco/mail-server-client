@@ -9,8 +9,7 @@ namespace Storage {
 Statement::Statement(Database& database, const std::string& sql)
 {
   sqlite3_stmt* raw_statement = nullptr;
-  const int result =
-    sqlite3_prepare_v2(database.m_connection.get(), sql.c_str(), -1, &raw_statement, nullptr);
+  const int result = sqlite3_prepare_v2(database.m_connection.get(), sql.c_str(), -1, &raw_statement, nullptr);
 
   m_statement.reset(raw_statement);
 
@@ -47,8 +46,7 @@ void Statement::BindInt64(int index, std::int64_t value)
 
 void Statement::BindText(int index, const std::string& value)
 {
-  const int result =
-    sqlite3_bind_text(m_statement.get(), index, value.c_str(), -1, SQLITE_TRANSIENT);
+  const int result = sqlite3_bind_text(m_statement.get(), index, value.c_str(), -1, SQLITE_TRANSIENT);
 
   if (result != SQLITE_OK)
   {

@@ -9,7 +9,7 @@
 
 ## Which CDETS/Jira Item does this PR address?
 
-Addresses #
+> Addresses #
 
 ## What this PR does / why we need it:
 

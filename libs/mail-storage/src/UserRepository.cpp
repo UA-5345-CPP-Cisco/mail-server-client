@@ -13,9 +13,8 @@ UserRepository::UserRepository(Database& database) : m_database(database)
 {
 }
 
-std::int64_t UserRepository::CreateUser(const std::string& username,
-                                        const std::string& email,
-                                        const std::string& password_hash)
+std::int64_t
+UserRepository::CreateUser(const std::string& username, const std::string& email, const std::string& password_hash)
 {
   Statement statement(m_database,
                       R"SQL(
@@ -208,8 +207,7 @@ std::optional<UserRecord> UserRepository::FindActiveUser() const
 std::vector<UserRecord> UserRepository::FindAll() const
 {
   std::vector<UserRecord> users;
-  Statement statement(m_database,
-                      "SELECT id, username, email, password_hash, status, created_at FROM users;");
+  Statement statement(m_database, "SELECT id, username, email, password_hash, status, created_at FROM users;");
   while (statement.Step())
   {
     users.push_back(ReadUser(statement));

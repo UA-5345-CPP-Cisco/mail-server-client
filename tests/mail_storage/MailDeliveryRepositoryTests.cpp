@@ -26,8 +26,8 @@ class MailDeliveryRepositoryTest : public testing::Test
   {
     const auto timestamp = std::chrono::steady_clock::now().time_since_epoch().count();
 
-    m_database_path = std::filesystem::temp_directory_path() /
-                      ("mail_delivery_test_" + std::to_string(timestamp) + ".sqlite3");
+    m_database_path =
+      std::filesystem::temp_directory_path() / ("mail_delivery_test_" + std::to_string(timestamp) + ".sqlite3");
 
     m_database = std::make_unique<Storage::Database>(m_database_path);
 
@@ -59,13 +59,8 @@ class MailDeliveryRepositoryTest : public testing::Test
 
   std::int64_t CreateMessage(Storage::MailMessageStatus status = Storage::MailMessageStatus::Queued)
   {
-    return m_message_repository->CreateMessage(std::nullopt,
-                                               "sender@example.com",
-                                               std::string("Subject"),
-                                               "Body",
-                                               std::nullopt,
-                                               false,
-                                               status);
+    return m_message_repository->CreateMessage(
+      std::nullopt, "sender@example.com", std::string("Subject"), "Body", std::nullopt, false, status);
   }
 
   std::filesystem::path m_database_path;
@@ -78,21 +73,13 @@ class MailDeliveryRepositoryTest : public testing::Test
 TEST_F(MailDeliveryRepositoryTest, CreatesAndFindsMessages)
 {
   const std::int64_t user_id = CreateUser();
-  const std::int64_t parent_message_id =
-    m_message_repository->CreateMessage(user_id,
-                                        "sender@example.com",
-                                        std::nullopt,
-                                        "Parent body",
-                                        std::nullopt,
-                                        false,
-                                        Storage::MailMessageStatus::Draft);
+  const std::int64_t parent_message_id = m_message_repository->CreateMessage(
+    user_id, "sender@example.com", std::nullopt, "Parent body", std::nullopt, false, Storage::MailMessageStatus::Draft);
   const std::int64_t reply_message_id = m_message_repository->CreateMessage(
     user_id, "sender@example.com", std::string("Reply"), "Reply body", parent_message_id, false);
 
-  const std::optional<Storage::MailMessageRecord> parent =
-    m_message_repository->FindById(parent_message_id);
-  const std::optional<Storage::MailMessageRecord> reply =
-    m_message_repository->FindById(reply_message_id);
+  const std::optional<Storage::MailMessageRecord> parent = m_message_repository->FindById(parent_message_id);
+  const std::optional<Storage::MailMessageRecord> reply = m_message_repository->FindById(reply_message_id);
 
   ASSERT_TRUE(parent.has_value());
   ASSERT_TRUE(reply.has_value());
@@ -140,20 +127,19 @@ TEST_F(MailDeliveryRepositoryTest, FindsAndTransitionsMessagesByStatus)
 TEST_F(MailDeliveryRepositoryTest, EnforcesMessageRelationships)
 {
   const std::int64_t user_id = CreateUser();
-  const std::int64_t message_id = m_message_repository->CreateMessage(
-    user_id, "sender@example.com", std::nullopt, "Body", std::nullopt, false);
+  const std::int64_t message_id =
+    m_message_repository->CreateMessage(user_id, "sender@example.com", std::nullopt, "Body", std::nullopt, false);
 
-  EXPECT_THROW(m_message_repository->CreateMessage(
-                 user_id + 1, "sender@example.com", std::nullopt, "Body", std::nullopt, false),
-               std::runtime_error);
-  EXPECT_THROW(m_message_repository->CreateMessage(
-                 user_id, "sender@example.com", std::nullopt, "Body", message_id + 1, false),
-               std::runtime_error);
+  EXPECT_THROW(
+    m_message_repository->CreateMessage(user_id + 1, "sender@example.com", std::nullopt, "Body", std::nullopt, false),
+    std::runtime_error);
+  EXPECT_THROW(
+    m_message_repository->CreateMessage(user_id, "sender@example.com", std::nullopt, "Body", message_id + 1, false),
+    std::runtime_error);
 
   m_database->Execute("DELETE FROM users WHERE id = 1;");
 
-  const std::optional<Storage::MailMessageRecord> message =
-    m_message_repository->FindById(message_id);
+  const std::optional<Storage::MailMessageRecord> message = m_message_repository->FindById(message_id);
 
   ASSERT_TRUE(message.has_value());
   EXPECT_FALSE(message->sender_user_id.has_value());
@@ -163,17 +149,14 @@ TEST_F(MailDeliveryRepositoryTest, EnforcesMessageRelationships)
 TEST_F(MailDeliveryRepositoryTest, CreatesAndFindsRecipients)
 {
   const std::int64_t message_id = CreateMessage();
-  const std::int64_t to_recipient_id = m_recipient_repository->CreateRecipient(
-    message_id, "to@example.com", Storage::RecipientType::To);
+  const std::int64_t to_recipient_id =
+    m_recipient_repository->CreateRecipient(message_id, "to@example.com", Storage::RecipientType::To);
   const std::int64_t cc_recipient_id = m_recipient_repository->CreateRecipient(
     message_id, "cc@example.com", Storage::RecipientType::Cc, Storage::DeliveryStatus::Queued);
-  m_recipient_repository->CreateRecipient(
-    message_id, "bcc@example.com", Storage::RecipientType::Bcc);
+  m_recipient_repository->CreateRecipient(message_id, "bcc@example.com", Storage::RecipientType::Bcc);
 
-  const std::optional<Storage::MessageRecipientRecord> to_recipient =
-    m_recipient_repository->FindById(to_recipient_id);
-  const std::vector<Storage::MessageRecipientRecord> recipients =
-    m_recipient_repository->FindByMessageId(message_id);
+  const std::optional<Storage::MessageRecipientRecord> to_recipient = m_recipient_repository->FindById(to_recipient_id);
+  const std::vector<Storage::MessageRecipientRecord> recipients = m_recipient_repository->FindByMessageId(message_id);
 
   ASSERT_TRUE(to_recipient.has_value());
   EXPECT_EQ(to_recipient->message_id, message_id);
@@ -194,12 +177,12 @@ TEST_F(MailDeliveryRepositoryTest, CreatesAndFindsRecipients)
 TEST_F(MailDeliveryRepositoryTest, EnforcesRecipientForeignKeyAndCascade)
 {
   const std::int64_t message_id = CreateMessage();
-  const std::int64_t recipient_id = m_recipient_repository->CreateRecipient(
-    message_id, "recipient@example.com", Storage::RecipientType::To);
+  const std::int64_t recipient_id =
+    m_recipient_repository->CreateRecipient(message_id, "recipient@example.com", Storage::RecipientType::To);
 
-  EXPECT_THROW(m_recipient_repository->CreateRecipient(
-                 message_id + 1, "invalid@example.com", Storage::RecipientType::To),
-               std::runtime_error);
+  EXPECT_THROW(
+    m_recipient_repository->CreateRecipient(message_id + 1, "invalid@example.com", Storage::RecipientType::To),
+    std::runtime_error);
 
   m_database->Execute("DELETE FROM mail_messages WHERE id = " + std::to_string(message_id) + ";");
 
@@ -213,11 +196,9 @@ TEST_F(MailDeliveryRepositoryTest, ClaimsQueuedRecipientsOnlyOnce)
     message_id, "first@example.com", Storage::RecipientType::To, Storage::DeliveryStatus::Queued);
   const std::int64_t second_recipient_id = m_recipient_repository->CreateRecipient(
     message_id, "second@example.com", Storage::RecipientType::To, Storage::DeliveryStatus::Queued);
-  m_recipient_repository->CreateRecipient(
-    message_id, "pending@example.com", Storage::RecipientType::To);
+  m_recipient_repository->CreateRecipient(message_id, "pending@example.com", Storage::RecipientType::To);
 
-  const std::vector<Storage::MessageRecipientRecord> first_claim =
-    m_recipient_repository->ClaimReadyRecipients(1);
+  const std::vector<Storage::MessageRecipientRecord> first_claim = m_recipient_repository->ClaimReadyRecipients(1);
 
   ASSERT_EQ(first_claim.size(), 1);
   EXPECT_EQ(first_claim[0].id, first_recipient_id);
@@ -227,8 +208,7 @@ TEST_F(MailDeliveryRepositoryTest, ClaimsQueuedRecipientsOnlyOnce)
   Storage::Database second_database(m_database_path);
   Storage::MessageRecipientRepository second_repository(second_database);
 
-  const std::vector<Storage::MessageRecipientRecord> second_claim =
-    second_repository.ClaimReadyRecipients(10);
+  const std::vector<Storage::MessageRecipientRecord> second_claim = second_repository.ClaimReadyRecipients(10);
 
   ASSERT_EQ(second_claim.size(), 1);
   EXPECT_EQ(second_claim[0].id, second_recipient_id);
@@ -238,18 +218,13 @@ TEST_F(MailDeliveryRepositoryTest, ClaimsQueuedRecipientsOnlyOnce)
 TEST_F(MailDeliveryRepositoryTest, RetriesTemporaryFailuresWhenReady)
 {
   const std::int64_t message_id = CreateMessage();
-  const std::int64_t recipient_id =
-    m_recipient_repository->CreateRecipient(message_id,
-                                            "recipient@example.com",
-                                            Storage::RecipientType::To,
-                                            Storage::DeliveryStatus::Queued);
+  const std::int64_t recipient_id = m_recipient_repository->CreateRecipient(
+    message_id, "recipient@example.com", Storage::RecipientType::To, Storage::DeliveryStatus::Queued);
 
-  std::vector<Storage::MessageRecipientRecord> claimed_recipients =
-    m_recipient_repository->ClaimReadyRecipients(1);
+  std::vector<Storage::MessageRecipientRecord> claimed_recipients = m_recipient_repository->ClaimReadyRecipients(1);
   ASSERT_EQ(claimed_recipients.size(), 1);
 
-  EXPECT_TRUE(m_recipient_repository->MarkTemporaryFailed(
-    recipient_id, "2999-01-01 00:00:00", "temporary failure"));
+  EXPECT_TRUE(m_recipient_repository->MarkTemporaryFailed(recipient_id, "2999-01-01 00:00:00", "temporary failure"));
   EXPECT_TRUE(m_recipient_repository->ClaimReadyRecipients(1).empty());
   EXPECT_TRUE(m_recipient_repository->QueueRecipient(recipient_id));
 
@@ -264,8 +239,7 @@ TEST_F(MailDeliveryRepositoryTest, RetriesTemporaryFailuresWhenReady)
   EXPECT_TRUE(m_recipient_repository->MarkDelivered(recipient_id));
   EXPECT_FALSE(m_recipient_repository->MarkDelivered(recipient_id));
 
-  const std::optional<Storage::MessageRecipientRecord> recipient =
-    m_recipient_repository->FindById(recipient_id);
+  const std::optional<Storage::MessageRecipientRecord> recipient = m_recipient_repository->FindById(recipient_id);
 
   ASSERT_TRUE(recipient.has_value());
   EXPECT_EQ(recipient->delivery_status, Storage::DeliveryStatus::Delivered);

@@ -1,0 +1,19 @@
+{
+  "database": {
+    "storage_path": "data/mail-server.db",
+    "migrations_path": "libs/mail-storage/migrations"
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8080
+  },
+  "smtp": {
+    "host": "smtp-server",
+    "port": 2525
+  },
+  "logging": {
+    "file_path": "data/mail-server.log",
+    "print_in_console": true,
+    "level": "Info"
+  }
+}

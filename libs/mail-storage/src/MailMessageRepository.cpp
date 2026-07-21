@@ -14,14 +14,13 @@ MailMessageRepository::MailMessageRepository(Database& database) : m_database(da
 {
 }
 
-std::int64_t
-MailMessageRepository::CreateMessage(const std::optional<std::int64_t>& sender_user_id,
-                                     const std::string& sender_email,
-                                     const std::optional<std::string>& subject,
-                                     const std::string& body,
-                                     const std::optional<std::int64_t>& reply_to_message_id,
-                                     bool is_inbox,
-                                     MailMessageStatus status)
+std::int64_t MailMessageRepository::CreateMessage(const std::optional<std::int64_t>& sender_user_id,
+                                                  const std::string& sender_email,
+                                                  const std::optional<std::string>& subject,
+                                                  const std::string& body,
+                                                  const std::optional<std::int64_t>& reply_to_message_id,
+                                                  bool is_inbox,
+                                                  MailMessageStatus status)
 {
   Statement statement(m_database,
                       R"SQL(
@@ -146,8 +145,7 @@ std::vector<MailMessageRecord> MailMessageRepository::FindAll() const
   return messages;
 }
 
-std::vector<MailMessageRecord> MailMessageRepository::FindByStatus(MailMessageStatus status,
-                                                                   int limit) const
+std::vector<MailMessageRecord> MailMessageRepository::FindByStatus(MailMessageStatus status, int limit) const
 {
   if (limit <= 0)
   {

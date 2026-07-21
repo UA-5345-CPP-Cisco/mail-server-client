@@ -57,8 +57,7 @@ std::vector<MigrationRunner::Migration> MigrationRunner::LoadMigrations() const
   {
     if (error_code)
     {
-      throw std::runtime_error("Failed to read migrations directory: " +
-                               m_migrations_path.string());
+      throw std::runtime_error("Failed to read migrations directory: " + m_migrations_path.string());
     }
 
     const std::filesystem::directory_entry& entry = *iterator;
@@ -93,8 +92,7 @@ std::vector<MigrationRunner::Migration> MigrationRunner::LoadMigrations() const
   {
     if (migrations[index - 1].version == migrations[index].version)
     {
-      throw std::runtime_error("Duplicate migration version: " +
-                               std::to_string(migrations[index].version));
+      throw std::runtime_error("Duplicate migration version: " + std::to_string(migrations[index].version));
     }
   }
 
@@ -182,17 +180,16 @@ int MigrationRunner::ParseVersion(const std::string& filename) const
 {
   const std::size_t separator_position = filename.find('_');
 
-  if (separator_position == std::string::npos || separator_position == 0 ||
-      filename.size() <= separator_position + 5 || filename.substr(filename.size() - 4) != ".sql")
+  if (separator_position == std::string::npos || separator_position == 0 || filename.size() <= separator_position + 5 ||
+      filename.substr(filename.size() - 4) != ".sql")
   {
     throw std::runtime_error("Invalid migration filename: " + filename);
   }
 
   const std::string version_text = filename.substr(0, separator_position);
 
-  if (!std::all_of(version_text.begin(),
-                   version_text.end(),
-                   [](unsigned char character) { return std::isdigit(character) != 0; }))
+  if (!std::all_of(
+        version_text.begin(), version_text.end(), [](unsigned char character) { return std::isdigit(character) != 0; }))
   {
     throw std::runtime_error("Invalid migration filename: " + filename);
   }
@@ -202,8 +199,7 @@ int MigrationRunner::ParseVersion(const std::string& filename) const
     std::size_t parsed_characters = 0;
     const long version = std::stol(version_text, &parsed_characters);
 
-    if (parsed_characters != version_text.size() || version <= 0 ||
-        version > std::numeric_limits<int>::max())
+    if (parsed_characters != version_text.size() || version <= 0 || version > std::numeric_limits<int>::max())
     {
       throw std::runtime_error("Invalid migration filename: " + filename);
     }

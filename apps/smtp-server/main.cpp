@@ -34,8 +34,7 @@ int main(int argumentCount, char* arguments[])
 {
   try
   {
-    const std::string configurationPath =
-      argumentCount > 1 ? arguments[1] : "config/smtp_server.json";
+    const std::string configurationPath = argumentCount > 1 ? arguments[1] : "config/smtp_server.json";
     const smtp::Configuration configuration(configurationPath);
 
     smtp::BoostSocketsManager socketsManager;
@@ -50,13 +49,8 @@ int main(int argumentCount, char* arguments[])
     std::mutex storageMutex;
     Logging::Logger logger;
     Concurrency::ThreadPool threadPool;
-    smtp::QueueDispatcher queueDispatcher(configuration.Server().delivery,
-                                          threadPool,
-                                          users,
-                                          mailMessages,
-                                          messageRecipients,
-                                          storageMutex,
-                                          logger);
+    smtp::QueueDispatcher queueDispatcher(
+      configuration.Server().delivery, threadPool, users, mailMessages, messageRecipients, storageMutex, logger);
 
     const std::string username = ReadEnv("SMTP_AUTH_USER");
     const std::string password = ReadEnv("SMTP_AUTH_PASSWORD");

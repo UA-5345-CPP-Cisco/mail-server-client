@@ -5,9 +5,7 @@
 
 namespace smtp {
 
-SmtpSession::SmtpSession(ConnectionId connectionId,
-                         SmtpSessionContext context,
-                         SmtpSessionHandler& handler) :
+SmtpSession::SmtpSession(ConnectionId connectionId, SmtpSessionContext context, SmtpSessionHandler& handler) :
   connectionId_(connectionId),
   context_(context),
   handler_(handler),

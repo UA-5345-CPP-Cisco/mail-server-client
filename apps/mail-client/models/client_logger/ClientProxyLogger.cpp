@@ -2,30 +2,28 @@
 
 namespace ISXClientLogger {
 
-  ClientLogger::ClientLogger(ILogger& logger, ILoggerProvider& provider) :
-    m_logger(logger),
-    m_loggerProvider(provider)
-  {
-  }
-
-  void ClientLogger::Log(Logging::LogLevel level, std::string_view message)
-  {
-    if (static_cast<int>(level) < static_cast<int>(m_loggerProvider.MinimumLogLevel()))
+    ClientLogger::ClientLogger(ILogger& logger, ILoggerProvider& provider)
+        : m_logger(logger)
+        , m_loggerProvider(provider)
     {
-      return;
     }
 
-    m_logger.Log(level, message);
-  }
+    void ClientLogger::Log(Logging::LogLevel level, std::string_view message)
+    {
+        if (static_cast<int>(level) < static_cast<int>(m_loggerProvider.MinimumLogLevel())) {
+            return;
+        }
 
-  ClientLoggerProvider::ClientLoggerProvider(ISXConfig::ClientConfig config) :
-      m_clientConfig(config)
-  {
+        m_logger.Log(level, message);
+    }
 
-  }
-  Logging::LogLevel ClientLoggerProvider::MinimumLogLevel() const
-  {
-    return m_clientConfig.logLevel;
-  }
+    ClientLoggerProvider::ClientLoggerProvider(ISXConfig::ClientConfig config)
+        : m_clientConfig(config)
+    {
+    }
+    Logging::LogLevel ClientLoggerProvider::MinimumLogLevel() const
+    {
+        return m_clientConfig.logLevel;
+    }
 
-}
+} // namespace ISXClientLogger

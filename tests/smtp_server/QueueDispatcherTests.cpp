@@ -104,13 +104,8 @@ TEST_F(QueueDispatcherTest, DeliversToActiveLocalUsersAndIgnoresUnknownUsers)
   m_message_recipients.CreateRecipient(
     messageId, "remote@external.test", Storage::RecipientType::To, Storage::DeliveryStatus::Queued);
 
-  smtp::QueueDispatcher dispatcher({32, 100},
-                                   m_thread_pool,
-                                   m_users,
-                                   m_mail_messages,
-                                   m_message_recipients,
-                                   m_storage_mutex,
-                                   m_logger);
+  smtp::QueueDispatcher dispatcher(
+    {32, 100}, m_thread_pool, m_users, m_mail_messages, m_message_recipients, m_storage_mutex, m_logger);
 
   dispatcher.Poll();
 
@@ -132,13 +127,8 @@ TEST_F(QueueDispatcherTest, FailsMessageWhenNoRecipientIsLocal)
   m_message_recipients.CreateRecipient(
     messageId, "remote@external.test", Storage::RecipientType::To, Storage::DeliveryStatus::Queued);
 
-  smtp::QueueDispatcher dispatcher({32, 100},
-                                   m_thread_pool,
-                                   m_users,
-                                   m_mail_messages,
-                                   m_message_recipients,
-                                   m_storage_mutex,
-                                   m_logger);
+  smtp::QueueDispatcher dispatcher(
+    {32, 100}, m_thread_pool, m_users, m_mail_messages, m_message_recipients, m_storage_mutex, m_logger);
 
   dispatcher.Poll();
 
@@ -160,13 +150,8 @@ TEST_F(QueueDispatcherTest, SkipPollWhenIntervalBig)
       messageId, "local@example.test", Storage::RecipientType::To, Storage::DeliveryStatus::Queued);
   }
 
-  smtp::QueueDispatcher dispatcher({1, 1000000},
-                                   m_thread_pool,
-                                   m_users,
-                                   m_mail_messages,
-                                   m_message_recipients,
-                                   m_storage_mutex,
-                                   m_logger);
+  smtp::QueueDispatcher dispatcher(
+    {1, 1000000}, m_thread_pool, m_users, m_mail_messages, m_message_recipients, m_storage_mutex, m_logger);
 
   dispatcher.Poll();
 
@@ -190,13 +175,8 @@ TEST_F(QueueDispatcherTest, BatchSizeLimitsPerPoll)
       messageId, "local@example.test", Storage::RecipientType::To, Storage::DeliveryStatus::Queued);
   }
 
-  smtp::QueueDispatcher dispatcher({2, 100},
-                                   m_thread_pool,
-                                   m_users,
-                                   m_mail_messages,
-                                   m_message_recipients,
-                                   m_storage_mutex,
-                                   m_logger);
+  smtp::QueueDispatcher dispatcher(
+    {2, 100}, m_thread_pool, m_users, m_mail_messages, m_message_recipients, m_storage_mutex, m_logger);
 
   dispatcher.Poll();
 
@@ -206,8 +186,7 @@ TEST_F(QueueDispatcherTest, BatchSizeLimitsPerPoll)
   const auto stillQueued =
     std::count_if(recipients.begin(),
                   recipients.end(),
-                  [](const auto& recipient)
-                  { return recipient.delivery_status == Storage::DeliveryStatus::Queued; });
+                  [](const auto& recipient) { return recipient.delivery_status == Storage::DeliveryStatus::Queued; });
   EXPECT_EQ(stillQueued, 3);
 }
 
@@ -225,13 +204,8 @@ TEST_F(QueueDispatcherTest, MultipleMessagesInSinglePoll)
   m_message_recipients.CreateRecipient(
     message_id1, "local@example.test", Storage::RecipientType::To, Storage::DeliveryStatus::Queued);
 
-  smtp::QueueDispatcher dispatcher({32, 100},
-                                   m_thread_pool,
-                                   m_users,
-                                   m_mail_messages,
-                                   m_message_recipients,
-                                   m_storage_mutex,
-                                   m_logger);
+  smtp::QueueDispatcher dispatcher(
+    {32, 100}, m_thread_pool, m_users, m_mail_messages, m_message_recipients, m_storage_mutex, m_logger);
 
   dispatcher.Poll();
 
@@ -251,13 +225,8 @@ TEST_F(QueueDispatcherTest, RecipientsFailedWhenNoUsersExist)
   m_message_recipients.CreateRecipient(
     message_id, "ghost@example.test", Storage::RecipientType::To, Storage::DeliveryStatus::Queued);
 
-  smtp::QueueDispatcher dispatcher({32, 100},
-                                   m_thread_pool,
-                                   m_users,
-                                   m_mail_messages,
-                                   m_message_recipients,
-                                   m_storage_mutex,
-                                   m_logger);
+  smtp::QueueDispatcher dispatcher(
+    {32, 100}, m_thread_pool, m_users, m_mail_messages, m_message_recipients, m_storage_mutex, m_logger);
 
   EXPECT_NO_THROW(dispatcher.Poll());
 
@@ -281,13 +250,8 @@ TEST_F(QueueDispatcherTest, HandlesMixedLocalAndRemoteRecipientsForSameMessage)
   m_message_recipients.CreateRecipient(
     messageId, "remote@external.test", Storage::RecipientType::To, Storage::DeliveryStatus::Queued);
 
-  smtp::QueueDispatcher dispatcher({32, 100},
-                                   m_thread_pool,
-                                   m_users,
-                                   m_mail_messages,
-                                   m_message_recipients,
-                                   m_storage_mutex,
-                                   m_logger);
+  smtp::QueueDispatcher dispatcher(
+    {32, 100}, m_thread_pool, m_users, m_mail_messages, m_message_recipients, m_storage_mutex, m_logger);
 
   dispatcher.Poll();
 
