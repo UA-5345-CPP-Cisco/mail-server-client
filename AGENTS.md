@@ -28,7 +28,7 @@ The Backend Mail Service and SMTP Server currently use the same database.
     * Asio
     * Beast
     * JSON
-* Crypto++
+* Crypto++ Modern
 * SQLite
 * CMake
 
