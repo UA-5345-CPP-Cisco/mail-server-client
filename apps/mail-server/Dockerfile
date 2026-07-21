@@ -23,16 +23,16 @@ RUN cmake \
         -DCMAKE_BUILD_TYPE=Release \
         -DMAIL_BUILD_TESTS=OFF \
         -DMAIL_BUILD_QT_CLIENT=OFF \
-    && cmake --build /src/cmake-build-release --target mail_server_neo
+    && cmake --build /src/cmake-build-release --target mail_server
 
 WORKDIR /app
 
 RUN mkdir -p /app/data \
-    && cp /src/cmake-build-release/apps/mail-server-neo/mail_server_neo /app/mail_server_neo \
+    && cp /src/cmake-build-release/apps/mail-server/mail_server /app/mail_server \
     && cp -R /src/config /app/config \
     && mkdir -p /app/libs/mail-storage \
     && cp -R /src/libs/mail-storage/migrations /app/libs/mail-storage/migrations
 
 EXPOSE 8080
 
-CMD ["./mail_server_neo", "config/mail_server.docker.json"]
+CMD ["./mail_server", "config/mail_server.docker.json"]

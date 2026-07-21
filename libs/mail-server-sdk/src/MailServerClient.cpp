@@ -13,6 +13,20 @@ http::HttpResponse MailServerClient::hello(std::string name) const
   return m_http_client.post_json("/hello", boost::json::object{{"name", std::move(name)}});
 }
 
+http::HttpResponse MailServerClient::Login(std::string email, std::string password) const
+{
+  return m_http_client.post_json("/login",
+                                 boost::json::object{{"email", std::move(email)}, {"password", std::move(password)}});
+}
+
+http::HttpResponse MailServerClient::Register(std::string username, std::string email, std::string password) const
+{
+  return m_http_client.post_json("/register",
+                                 boost::json::object{{"username", std::move(username)},
+                                                     {"email", std::move(email)},
+                                                     {"password", std::move(password)}});
+}
+
 http::HttpResponse MailServerClient::GetMails(std::string user_email) const
 {
   return m_http_client.get("/mails", {{"X-User-Email", std::move(user_email)}});

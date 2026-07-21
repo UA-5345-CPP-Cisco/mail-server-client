@@ -41,6 +41,7 @@ namespace ISXMail {
                                       bool is_inbox)
     {
         Q_UNUSED(sender_name);
+        Q_UNUSED(is_inbox);
 
         if (recipient_email.trimmed().isEmpty() || body.trimmed().isEmpty()) {
             ISXService::Service::Logger().Log(
@@ -53,40 +54,21 @@ namespace ISXMail {
                                           (std::string("MessageComposer::SendMessage: sending to ") +
                                            recipient_email.toStdString() +
                                            " subject_len=" + std::to_string(subject.size())));
-        m_database.Execute("BEGIN IMMEDIATE;");
 
         try {
-            const std::int64_t message_id = m_repository.CreateMessage(std::nullopt,
-                                                                       sender_email.toStdString(),
-                                                                       ToOptionalString(subject),
-                                                                       body.toStdString(),
-                                                                       std::nullopt,
-                                                                       is_inbox,
-                                                                       Storage::MailMessageStatus::Sent);
-
-            m_recipient_repository.CreateRecipient(message_id,
-                                                   recipient_email.toStdString(),
-                                                   Storage::RecipientType::To,
-                                                   Storage::DeliveryStatus::Pending);
-
-            m_database.Execute("COMMIT;");
-            ISXService::Service::Logger().Log(
-                Logging::LogLevel::Info,
-                (std::string("MessageComposer::SendMessage: committed message_id=") + std::to_string(message_id)));
-            return true;
-        } catch (...) {
-            ISXService::Service::Logger().Log(Logging::LogLevel::Error,
-                                              "MessageComposer::SendMessage: exception occurred, attempting ROLLBACK");
-            try {
-                m_database.Execute("ROLLBACK;");
-                ISXService::Service::Logger().Log(Logging::LogLevel::Info,
-                                                  "MessageComposer::SendMessage: rollback succeeded");
-            } catch (...) {
-                ISXService::Service::Logger().Log(Logging::LogLevel::Error,
-                                                  "MessageComposer::SendMessage: rollback failed");
+            const auto response = ISXService::Service::MailServerClient().SendMail(
+                sender_email.toStdString(), {recipient_email.toStdString()}, subject.toStdString(), body.toStdString());
+            if (!response.is_success()) {
+                ISXService::Service::Logger().Log(Logging::LogLevel::Warning,
+                                                  "MessageComposer::SendMessage: mail server rejected send request");
+                return false;
             }
 
-            throw;
+            return true;
+        } catch (const std::exception& exception) {
+            ISXService::Service::Logger().Log(Logging::LogLevel::Error,
+                                              std::string("MessageComposer::SendMessage failed: ") + exception.what());
+            return false;
         }
     }
 

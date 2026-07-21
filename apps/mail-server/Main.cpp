@@ -13,6 +13,8 @@ Router MakeRouter()
 
   router.Get("/mails", GetMailsHandler);
   router.Post("/hello", HelloHandler);
+  router.Post("/login", LoginHandler);
+  router.Post("/register", RegisterHandler);
   router.Post("/send-mail", SendMailHandler);
 
   return router;

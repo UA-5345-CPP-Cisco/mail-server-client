@@ -207,7 +207,6 @@ ApplicationWindow {
                 if (newMessageLoader.selectedItem != null)
                 {
                     draftModel.RemoveEmailData(parseInt(index));
-                    emailsModel.AddData(false, true, false, false, subject, CurrentUser.username, recipient, text, "");
                 }
 
                 showPopup("Email is sent");

@@ -1,30 +1,29 @@
 #include <QDir>
 #include <QGuiApplication>
-#include <QQmlApplicationEngine>
-#include <QQuickWindow>
-#include <QQuickStyle>
 #include <QIcon>
+#include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QQuickStyle>
+#include <QQuickWindow>
 
-#include "headers/mail/EmailListModel.h"
-#include "headers/mail/EmailFilterProxy.h"
-#include "headers/mail/EmailPageProxy.h"
-#include "headers/mail/MessageComposer.h"
-#include "headers/database/DatabaseManager.h"
-#include "headers/color/ColorProvider.h"
-#include "headers/users/CurrentUser.h"
-#include "headers/search/MessageSearchModel.h"
-#include "headers/database/AuthHandler.h" 
-#include "headers/users/AccountListModel.h"
 #include "headers/client_logger/ClientConfigReader.h"
 #include "headers/client_logger/ClientProxyLogger.h"
+#include "headers/color/ColorProvider.h"
+#include "headers/database/AuthHandler.h"
+#include "headers/database/DatabaseManager.h"
+#include "headers/mail/EmailFilterProxy.h"
+#include "headers/mail/EmailListModel.h"
+#include "headers/mail/EmailPageProxy.h"
+#include "headers/mail/MessageComposer.h"
+#include "headers/search/MessageSearchModel.h"
 #include "headers/service/Service.h"
-
-#include "mail_storage/UserRepository.h"
+#include "headers/users/AccountListModel.h"
+#include "headers/users/CurrentUser.h"
 #include "logger/Logger.h"
+#include "mail_server_sdk/MailServerClient.h"
+#include "mail_storage/UserRepository.h"
 
-
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     qputenv("QT_QUICK_BACKEND", "software");
     QQuickStyle::setStyle(QStringLiteral("Fusion"));
@@ -34,16 +33,16 @@ int main(int argc, char *argv[])
     ISXConfig::ClientConfigReader reader;
     auto config = reader.ReadConfig(ISXConfig::ClientConfigReader::ConfigPath());
 
-    if (!config)
-    {
-      qDebug() << "File is failed to read!";
-      return -1;
+    if (!config) {
+        qDebug() << "File is failed to read!";
+        return -1;
     }
 
     ISXClientLogger::ClientLoggerProvider logger_provider(config.value());
     ISXClientLogger::ClientLogger logger(Logging::Logger::Instance(), logger_provider);
+    ISXMailServerSDK::MailServerClient mail_server_client(config->mailServerHost, config->mailServerPort);
 
-    ISXService::Service::Initialize(logger);
+    ISXService::Service::Initialize(logger, mail_server_client);
 
     ISXDatabaseManager::DatabaseManager::EnsureInitialized();
     auto dbPath = ISXDatabaseManager::DatabaseManager::DatabasePath();
@@ -51,25 +50,12 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     (void)Logging::Logger::Instance();
-    AuthHandler authHandler(database);
+    AuthHandler authHandler;
     engine.rootContext()->setContextProperty("authHandler", &authHandler);
 
-    Storage::UserRepository repo(database);
-    bool hasUsers = repo.HasUsers();
-    engine.rootContext()->setContextProperty("initialSetupRequired", !hasUsers);
+    engine.rootContext()->setContextProperty("initialSetupRequired", true);
 
-    if (hasUsers) {
-        auto activeUser = repo.FindActiveUser();
-
-        if (activeUser.has_value())
-        {
-            QString name = QString::fromStdString(activeUser->username);
-            QString email = QString::fromStdString(activeUser->email);
-            ISXCurrentUser::CurrentUser::GetInstance().Authorize(name, email, "");
-        }
-    }
-
-        auto* model = new ISXMail::EmailListModel(&app);
+    auto* model = new ISXMail::EmailListModel(&app);
     auto* message_composer = new ISXMail::MessageComposer(&app);
     auto* account_model = new ISXMail::AccountListModel(&app);
 
@@ -123,21 +109,12 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("archiveSearchModel", archiveSearch);
     engine.rootContext()->setContextProperty("MessageComposer", message_composer);
 
-    engine.rootContext()->setContextProperty(
-        "CurrentUser",
-        &ISXCurrentUser::CurrentUser::GetInstance()
-        );
+    engine.rootContext()->setContextProperty("CurrentUser", &ISXCurrentUser::CurrentUser::GetInstance());
 
     auto* colorProvider = new ISXMail::ColorProvider(&app);
     engine.rootContext()->setContextProperty("Color", colorProvider);
 
-    qmlRegisterUncreatableMetaObject(
-        ISXMail::staticMetaObject,
-        "ISXMail",
-        1, 0,
-        "EmailRole",
-        "Not creatable"
-    );
+    qmlRegisterUncreatableMetaObject(ISXMail::staticMetaObject, "ISXMail", 1, 0, "EmailRole", "Not creatable");
 
     QObject::connect(
         &engine,

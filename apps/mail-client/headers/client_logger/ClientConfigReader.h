@@ -1,6 +1,7 @@
 #pragma once
 
 #include <optional>
+#include <string>
 
 #include "logger/Logger.h"
 
@@ -9,6 +10,8 @@ namespace ISXConfig {
     struct ClientConfig
     {
         Logging::LogLevel logLevel;
+        std::string mailServerHost;
+        std::string mailServerPort;
     };
 
     class IConfigReader

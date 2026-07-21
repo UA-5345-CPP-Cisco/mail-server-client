@@ -9,7 +9,8 @@ namespace ISXMailServer {
 MailStorage::MailStorage(const DatabaseConfiguration& configuration) :
   m_database(configuration.storage_path),
   m_messages(m_database),
-  m_recipients(m_database)
+  m_recipients(m_database),
+  m_users(m_database)
 {
   Storage::MigrationRunner runner(m_database, configuration.migrations_path);
   runner.Run();
@@ -29,6 +30,25 @@ boost::json::array MailStorage::FindMailsForUser(const std::string& user_email)
   }
 
   return mails;
+}
+
+boost::json::object
+MailStorage::CreateUser(const std::string& username, const std::string& email, const std::string& password_hash)
+{
+  std::lock_guard<std::mutex> lock(m_mutex);
+
+  const std::int64_t user_id = m_users.CreateUser(username, email, password_hash);
+  const std::optional<Storage::UserRecord> user = m_users.FindById(user_id);
+
+  return boost::json::object{{"id", user_id},
+                             {"username", user.has_value() ? user->username : username},
+                             {"email", user.has_value() ? user->email : email}};
+}
+
+std::optional<Storage::UserRecord> MailStorage::FindUserByEmail(const std::string& email)
+{
+  std::lock_guard<std::mutex> lock(m_mutex);
+  return m_users.FindByEmail(email);
 }
 
 boost::json::object MailStorage::SerializeMessage(const Storage::MailMessageRecord& message)
@@ -62,6 +82,8 @@ std::string MailStorage::StatusToString(Storage::MailMessageStatus status) const
     return "sending";
   case Storage::MailMessageStatus::Sent:
     return "sent";
+  case Storage::MailMessageStatus::Archive:
+    return "archive";
   case Storage::MailMessageStatus::Failed:
     return "failed";
   }

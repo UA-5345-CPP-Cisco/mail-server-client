@@ -111,10 +111,10 @@ BEGIN IMMEDIATE;
 
 INSERT INTO users (username, email, password_hash, status)
 VALUES
-  ('alice', 'alice@mail.local', 'demo-password-hash', 'active'),
-  ('bob', 'bob@mail.local', 'demo-password-hash', 'active'),
-  ('carol', 'carol@mail.local', 'demo-password-hash', 'active'),
-  ('dave_disabled', 'dave@mail.local', 'demo-password-hash', 'disabled')
+  ('alice', 'alice@mail.local', 'Password1!', 'active'),
+  ('bob', 'bob@mail.local', 'Password1!', 'active'),
+  ('carol', 'carol@mail.local', 'Password1!', 'active'),
+  ('dave_disabled', 'dave@mail.local', 'Password1!', 'disabled')
 ON CONFLICT(email) DO UPDATE SET
   username = excluded.username,
   password_hash = excluded.password_hash,
@@ -284,3 +284,4 @@ SQL
 
 printf 'Seeded mail storage database: %s\n' "${db_path}"
 printf 'Demo users: alice@mail.local, bob@mail.local, carol@mail.local, dave@mail.local\n'
+printf 'Demo password: Password1!\n'

@@ -14,15 +14,18 @@ qt_standard_project_setup(REQUIRES 6.10)
 
 include(FetchContent)
 
-if(NOT TARGET cryptopp)
+if(NOT TARGET Boost::asio)
+	set(BOOST_INCLUDE_LIBRARIES asio beast json property_tree system)
+	set(BOOST_ENABLE_MPI OFF)
+	set(BOOST_ENABLE_PYTHON OFF)
+	set(BUILD_TESTING OFF)
+
 	FetchContent_Declare(
-			cryptopp_modern
-			GIT_REPOSITORY https://github.com/cryptopp-modern/cryptopp-modern/
-			GIT_TAG 2026.3.0
+			Boost
+			URL https://github.com/boostorg/boost/releases/download/boost-1.88.0/boost-1.88.0-cmake.tar.xz
+			DOWNLOAD_EXTRACT_TIMESTAMP ON
 	)
-	set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
-	set(CRYPTOPP_INSTALL OFF CACHE BOOL "" FORCE)
-	FetchContent_MakeAvailable(cryptopp_modern)
+	FetchContent_MakeAvailable(Boost)
 endif()
 
 if(NOT TARGET mail_storage)
@@ -41,6 +44,20 @@ endif()
 
 if(NOT TARGET Threads::Threads)
 	find_package(Threads REQUIRED)
+endif()
+
+if(NOT TARGET mail_thread_pool)
+	add_subdirectory(
+			${CMAKE_CURRENT_SOURCE_DIR}/../../libs/thread_pool
+			${CMAKE_CURRENT_BINARY_DIR}/libs/thread_pool
+	)
+endif()
+
+if(NOT TARGET mail_server_sdk)
+	add_subdirectory(
+			${CMAKE_CURRENT_SOURCE_DIR}/../../libs/mail-server-sdk
+			${CMAKE_CURRENT_BINARY_DIR}/libs/mail-server-sdk
+	)
 endif()
 
 qt_add_qml_module(qtappmail_core
@@ -100,7 +117,7 @@ target_link_libraries(qtappmail_core
 		Qt6::Sql
 		Qt6::Core
 		Qt6::QuickControls2
-		cryptopp
+		mail_server_sdk
 )
 
 target_compile_definitions(qtappmail_core PUBLIC
@@ -166,7 +183,7 @@ target_link_libraries(appqtapptestmail
 		Qt6::Quick
 		Qt6::Sql
 		Qt6::QuickControls2
-		cryptopp
+		mail_server_sdk
 )
 
 target_include_directories(appqtapptestmail
