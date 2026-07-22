@@ -64,7 +64,8 @@ TEST_F(LoggerTest, WritesFormattedTimestampWithoutProcessId)
   logger.Log(Logging::LogLevel::Info, "formatted");
 
   const std::string contents = ReadLog();
-  const std::regex linePattern(R"(\[\d{2}:\d{2}:\d{2}:\d{3} \d{2}/\d{2}/\d{2}\] \[INFO\] formatted\n)");
+  const std::regex linePattern(
+    R"(\[\d{2}:\d{2}:\d{2}:\d{3} \d{2}/\d{2}/\d{2}\] \[INFO\] formatted\n)");
   EXPECT_TRUE(std::regex_match(contents, linePattern)) << contents;
 }
 

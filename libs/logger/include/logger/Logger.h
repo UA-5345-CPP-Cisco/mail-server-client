@@ -34,7 +34,9 @@ class Logger final : public ILogger
   }
   explicit Logger(LogLevel minimumLevel = LogLevel::Info, bool flushAfterWrite = false);
 
-  Logger(const std::string& filePath, LogLevel minimumLevel = LogLevel::Info, bool flushAfterWrite = false);
+  Logger(const std::string& filePath,
+         LogLevel minimumLevel = LogLevel::Info,
+         bool flushAfterWrite = false);
 
   bool Open(const std::string& filePath);
   void Log(LogLevel level, std::string_view message) override;
