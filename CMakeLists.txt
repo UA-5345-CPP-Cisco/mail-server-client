@@ -47,6 +47,14 @@ set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
 set(CRYPTOPP_INSTALL OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(cryptopp_modern)
 
+# --- nlohmann JSON ---
+FetchContent_Declare(
+	nlohmann_json
+	URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+	DOWNLOAD_EXTRACT_TIMESTAMP ON
+)
+FetchContent_MakeAvailable(nlohmann_json)
+
 # --- OpenSSL (CMake wrapper) ---
 set(WITH_APPS OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(
