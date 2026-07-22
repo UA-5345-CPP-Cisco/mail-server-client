@@ -46,6 +46,14 @@ ApplicationWindow {
         settingsLoader.active = false;
         settingsLoader.source = "";
     }
+    function showInboxForCurrentUser()
+    {
+        emailsModel.RefreshFromServer();
+        emailList.isDraftMode = false;
+        emailList.sourceModel = inboxModel;
+        window.selectedEmail = null;
+        window.selectedFolder = "inbox";
+    }
     function formatEmailTime(input_time)
     {
         let message_date = parseDatabaseTimestamp(input_time);
@@ -207,7 +215,6 @@ ApplicationWindow {
                 if (newMessageLoader.selectedItem != null)
                 {
                     draftModel.RemoveEmailData(parseInt(index));
-                    emailsModel.AddData(false, true, false, false, subject, CurrentUser.username, recipient, text, "");
                 }
 
                 showPopup("Email is sent");
@@ -267,6 +274,10 @@ ApplicationWindow {
                     emailList.sourceModel = archiveModel;
                     window.selectedEmail = null;
                     selectedFolder = "archive";
+                }
+                onAccountChanged:
+                {
+                    showInboxForCurrentUser();
                 }
                 onInboxClicked:
                 {
