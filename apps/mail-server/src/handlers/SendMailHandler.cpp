@@ -76,25 +76,31 @@ Response SendMailHandler(Request const& request)
 
     const MailServerConfiguration& configuration = ServiceRegistry::Configurator().Configuration();
     Smtp::SmtpClient smtp_client(configuration.smtp.host, configuration.smtp.port);
-    Smtp::Mail mail =
-      Smtp::MailBuilder().SetSender(from).AddRecipients(recipients).SetSubject(subject).SetBody(body).Build();
+    Smtp::Mail mail = Smtp::MailBuilder()
+                        .SetSender(from)
+                        .AddRecipients(recipients)
+                        .SetSubject(subject)
+                        .SetBody(body)
+                        .Build();
 
     const Smtp::SmtpResult result = smtp_client.SendMailMessage(mail);
 
     if (!result.ok())
     {
       ServiceRegistry::Logger().Log(LogLevel::Warning, "SMTP delivery failed: " + result.message);
-      return MakeJsonResponse(
-        request,
-        http::status::bad_gateway,
-        json::object{{"status", "failed"}, {"message", result.message}, {"smtp_code", result.smtpCode}});
+      return MakeJsonResponse(request,
+                              http::status::bad_gateway,
+                              json::object{{"status", "failed"},
+                                           {"message", result.message},
+                                           {"smtp_code", result.smtpCode}});
     }
 
     ServiceRegistry::Logger().Log(LogLevel::Info, "Mail submitted to SMTP server from " + from);
-    return MakeJsonResponse(
-      request,
-      http::status::accepted,
-      json::object{{"status", "accepted"}, {"message", result.message}, {"smtp_code", result.smtpCode}});
+    return MakeJsonResponse(request,
+                            http::status::accepted,
+                            json::object{{"status", "accepted"},
+                                         {"message", result.message},
+                                         {"smtp_code", result.smtpCode}});
   }
   catch (const std::exception& exception)
   {
