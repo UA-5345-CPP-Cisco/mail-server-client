@@ -9,6 +9,7 @@ Rectangle {
         signal sentClicked
         signal starredClicked
         signal archiveClicked
+        signal accountChanged
 
     color: Color.background
 
@@ -16,6 +17,11 @@ Rectangle {
     {
         statePopup.message = String(msg);
         statePopup.show();
+    }
+
+    function closeAccountMenu()
+    {
+        accountChangeLoader.source = "";
     }
     // headerNavigation
     Rectangle {
@@ -933,6 +939,22 @@ Rectangle {
         Behavior on opacity {
             NumberAnimation {
                 duration: 200
+            }
+        }
+
+        Connections {
+            target: accountChangeLoader.item
+            ignoreUnknownSignals: true
+
+            function onAccountSelected()
+            {
+                closeAccountMenu();
+                accountChanged();
+            }
+
+            function onAddAccountRequested()
+            {
+                closeAccountMenu();
             }
         }
     }

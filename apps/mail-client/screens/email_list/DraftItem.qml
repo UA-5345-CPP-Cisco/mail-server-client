@@ -80,7 +80,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 20
                     lineHeightMode: Text.FixedHeight
-                    text: searchModel ? searchModel.HighlightAllFoundWords(name, searchModel.SearchedText) : name
+                    text: searchModel ? searchModel.HighlightAllFoundWords(theme, searchModel.SearchedText) : theme
                     textFormat: Text.RichText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
@@ -142,7 +142,7 @@ Rectangle {
                 lineHeight: 20
                 lineHeightMode: Text.FixedHeight
                 maximumLineCount: 1
-                text: searchModel ? searchModel.HighlightAllFoundWords(theme, searchModel.SearchedText) : theme
+                text: searchModel ? searchModel.HighlightAllFoundWords(name, searchModel.SearchedText) : name
                 textFormat: Text.RichText
                 verticalAlignment: Text.AlignVCenter
                 width: parent.width

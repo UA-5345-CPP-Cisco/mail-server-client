@@ -463,16 +463,12 @@ Rectangle {
                         let subject_text = subjectTextField.text.trim() === "" ? "empty" : subjectTextField.text;
                         let message_text = messageBodyTextField.text.trim() === "" ? "empty" : messageBodyTextField.text;
 
-                        if (recipient_text === "inboxtest") {
-                            if (!isDraft && MessageComposer.SendMessage(CurrentUser.username, CurrentUser.email, recipientTextField.text.trim(), subject_text, message_text, true)) {
-                                emailsModel.AddData(false, false, false, false, subject_text, CurrentUser.username, recipient_text, message_text, "", true);
+                        if (MessageComposer.SendMessage(CurrentUser.username, CurrentUser.email, recipientTextField.text.trim(), subject_text, message_text, false)) {
+                            emailsModel.RefreshFromServer();
+                            if (isDraft) {
+                                draftFinished(newIndex, subject_text, recipient_text, message_text);
                             }
                             emailSent()
-                        } else if (!isDraft && MessageComposer.SendMessage(CurrentUser.username, CurrentUser.email, recipientTextField.text.trim(), subject_text, message_text, false)) {
-                            emailsModel.AddData(false, true, false, false, subject_text, CurrentUser.username, recipient_text, message_text, "");
-                            emailSent()
-                        } else {
-                            draftFinished(newIndex, subject_text, recipient_text, message_text);
                         }
                         messageBodyTextField.clear();
                         recipientTextField.clear();

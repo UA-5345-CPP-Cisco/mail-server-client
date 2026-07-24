@@ -230,7 +230,7 @@ Rectangle {
                         lineHeight: 20
                         lineHeightMode: Text.FixedHeight
                         maximumLineCount: 1
-                        text: searchModel ? searchModel.HighlightAllFoundWords(name, searchModel.SearchedText) : name
+                        text: searchModel ? searchModel.HighlightAllFoundWords(theme, searchModel.SearchedText) : theme
                         textFormat: Text.RichText
                         verticalAlignment: Text.AlignVCenter
                         width: parent.width
@@ -240,7 +240,7 @@ Rectangle {
                         id: nameHover
                     }
                     EmailToolTip {
-                        text: name
+                        text: theme
                         visible: nameHover.hovered && (nameText.contentWidth > nameText.width)
                         x: 0
                         y: nameContainer.height + 4
@@ -294,7 +294,7 @@ Rectangle {
                     lineHeight: 20
                     lineHeightMode: Text.FixedHeight
                     maximumLineCount: 1
-                    text: searchModel ? searchModel.HighlightAllFoundWords(theme, searchModel.SearchedText) : theme
+                    text: searchModel ? searchModel.HighlightAllFoundWords(name, searchModel.SearchedText) : name
                     textFormat: Text.RichText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
@@ -304,7 +304,7 @@ Rectangle {
                     id: themeHover
                 }
                 EmailToolTip {
-                    text: theme
+                    text: name
                     visible: themeHover.hovered && (themeText.contentWidth > themeText.width)
                     x: 0
                     y: themeContainer.height + 4

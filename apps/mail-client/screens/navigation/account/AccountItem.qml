@@ -18,6 +18,8 @@ Rectangle
     required property bool isActive
     required property int index
 
+    signal selected()
+
     Rectangle
     {
         id: selectAccountButtonRectangle
@@ -149,8 +151,9 @@ Rectangle
 
             onClicked:
             {
-                CurrentUser.Authorize(accountName, accountEmail, avatarUrl)
-                accountModel.SetActiveAccount(index)
+                if (accountModel.SetActiveAccount(index)) {
+                    rootRectangle.selected()
+                }
             }
         }
     }

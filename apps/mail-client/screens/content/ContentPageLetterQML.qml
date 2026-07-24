@@ -14,6 +14,16 @@ Rectangle {
     property string letterTheme: "ThemeHolder"
     property string letterTime: "10:30"
 
+    function replyRecipient() {
+        const sender = letterName.trim();
+        const recipient = letterSendTo.trim();
+
+        if (sender.toLowerCase() === CurrentUser.email.toLowerCase())
+            return recipient;
+
+        return sender;
+    }
+
     signal deleteClicked
     signal starClicked(bool starred)
     signal archiveClicked
@@ -294,7 +304,7 @@ Rectangle {
                     newMessageLoader.selectedItem = {
                         "index": letterIndex,
                         "subject": "re: " + letterTheme,
-                        "sendTo": letterSendTo,
+                        "sendTo": replyRecipient(),
                         "content": "",
                         "IsReply": true,
                         "IsForward": false,

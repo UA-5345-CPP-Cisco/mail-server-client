@@ -2,51 +2,51 @@
 
 #include <QColor>
 #include <QHash>
-#include <QString>
 #include <QJsonObject>
+#include <QString>
 
-namespace ISXMail
-{
-enum class Theme
-{
-    Light,
-    Dark
-};
-class ColorModel
-{
-public:
-    enum class Role
+namespace ISXMail {
+    enum class Theme
     {
-        Background,
-        Surface,
-        Button,
-        Outline,
-        ButtonSpecial,
-        ButtonSpecialHover,
-        Avatar,
-        ButtonSpecialText,
-        Selected,
-        Hover,
-        PrimaryText,
-        SecondaryText,
-        Highlight,
-        Border,
-        Transparent,
-        Unknown
+        Light,
+        Dark
     };
-    ColorModel();
+    class ColorModel
+    {
+    public:
+        enum class Role
+        {
+            Background,
+            Surface,
+            Button,
+            Outline,
+            ButtonSpecial,
+            ButtonSpecialHover,
+            Avatar,
+            ButtonSpecialText,
+            Selected,
+            Hover,
+            PrimaryText,
+            SecondaryText,
+            Highlight,
+            Border,
+            Transparent,
+            Unknown
+        };
+        ColorModel();
 
-    bool LoadFromFile(const QString& path);
-    bool LoadFromJson(const QJsonObject& obj);
-    QColor Color(Role role) const;
-    QColor Color(const QString& role_name) const;
-    void SetColor(Role role, const QColor& color);
+        bool LoadFromFile(const QString& path);
+        bool LoadFromJson(const QJsonObject& obj);
+        QColor Color(Role role) const;
+        QColor Color(const QString& role_name) const;
+        void SetColor(Role role, const QColor& color);
 
-    static QString RoleToString(Role r);
-    static Role RoleFromString(const QString& name);
-    static QColor FromHex(const QString& hex);
-private:
-    // DATA MEMBERS
-    QHash<Role, QColor> m_colors;
-};
-}
+        static QString RoleToString(Role r);
+        static Role RoleFromString(const QString& name);
+        static QColor FromHex(const QString& hex);
+
+    private:
+        // DATA MEMBERS
+        QHash<Role, QColor> m_colors;
+    };
+} // namespace ISXMail

@@ -313,7 +313,9 @@ Item {
                     var pwdErr = rootWindow.getValidationError("password", passwordTextField.text)
                     emailError = emailErr
                     passwordError = pwdErr
-                    //rootItem.loginSubmitted(emailTextField.text, passwordTextField.text);
+                    if (emailError === "" && passwordError === "") {
+                        rootItem.loginSubmitted(emailTextField.text, passwordTextField.text);
+                    }
                 }
             }
         }
