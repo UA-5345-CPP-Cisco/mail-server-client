@@ -1,11 +1,8 @@
 #include <iostream>
 
-#include "mail_server_sdk/Server.h"
-
 int main()
 {
-  Server server(4);
-  server.StartServer();
+  std::cout << "Mail Server executable is not implemented in this branch yet.\n";
 
   return 0;
 }
