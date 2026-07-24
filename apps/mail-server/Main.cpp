@@ -24,7 +24,8 @@ Router MakeRouter()
 
 int main(int argument_count, char* arguments[])
 {
-  const std::string configuration_path = argument_count > 1 ? arguments[1] : "config/mail_server.json";
+  const std::string configuration_path =
+    argument_count > 1 ? arguments[1] : "config/mail_server.json";
 
   ISXMailServer::ServiceRegistry::Initialize(configuration_path);
   const ISXMailServer::MailServerConfiguration& configuration =
@@ -35,9 +36,12 @@ int main(int argument_count, char* arguments[])
   auto router = std::make_shared<ISXMailServer::Router>(ISXMailServer::MakeRouter());
 
   ISXMailServer::Server server(
-    io_context, ISXMailServer::tcp::endpoint{ISXMailServer::tcp::v4(), configuration.server.port}, router);
+    io_context,
+    ISXMailServer::tcp::endpoint{ISXMailServer::tcp::v4(), configuration.server.port},
+    router);
 
   server.Run();
-  ISXMailServer::ServiceRegistry::Logger().Log(ISXMailServer::LogLevel::Info, "Mail server started");
+  ISXMailServer::ServiceRegistry::Logger().Log(ISXMailServer::LogLevel::Info,
+                                               "Mail server started");
   io_context.run();
 }

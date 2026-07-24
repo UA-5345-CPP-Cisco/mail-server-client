@@ -27,8 +27,9 @@ class MailStorage
   explicit MailStorage(const DatabaseConfiguration& configuration);
 
   [[nodiscard]] boost::json::array FindMailsForUser(const std::string& user_email);
-  [[nodiscard]] boost::json::object
-  CreateUser(const std::string& username, const std::string& email, const std::string& password_hash);
+  [[nodiscard]] boost::json::object CreateUser(const std::string& username,
+                                               const std::string& email,
+                                               const std::string& password_hash);
   [[nodiscard]] std::optional<Storage::UserRecord> FindUserByEmail(const std::string& email);
 
   private:
@@ -40,7 +41,8 @@ class MailStorage
 
   [[nodiscard]] boost::json::object SerializeMessage(const Storage::MailMessageRecord& message);
   [[nodiscard]] std::string StatusToString(Storage::MailMessageStatus status) const;
-  [[nodiscard]] bool HasRecipient(const Storage::MailMessageRecord& message, const std::string& user_email);
+  [[nodiscard]] bool HasRecipient(const Storage::MailMessageRecord& message,
+                                  const std::string& user_email);
 };
 
 } // namespace ISXMailServer
