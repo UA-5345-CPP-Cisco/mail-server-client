@@ -16,9 +16,7 @@ Response GetMailsHandler(Request const& request)
   ServiceRegistry::Logger().Log(LogLevel::Debug, "Fetching mails for " + user_email);
 
   return MakeJsonResponse(
-    request,
-    http::status::ok,
-    json::object{{"mails", ServiceRegistry::Storage().FindMailsForUser(user_email)}});
+    request, http::status::ok, json::object{{"mails", ServiceRegistry::Storage().FindMailsForUser(user_email)}});
 }
 
 } // namespace ISXMailServer
