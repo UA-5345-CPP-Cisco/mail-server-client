@@ -13,16 +13,19 @@ find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
 qt_standard_project_setup(REQUIRES 6.10)
 
 include(FetchContent)
+
 # --- Crypto++ (cryptopp-modern) ---
-FetchContent_Declare(
+if(NOT TARGET cryptopp)
+	FetchContent_Declare(
 		cryptopp_modern
 		GIT_REPOSITORY https://github.com/cryptopp-modern/cryptopp-modern/
 		GIT_TAG 2026.3.0
-)
-set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
-set(CRYPTOPP_INSTALL OFF CACHE BOOL "" FORCE)
+	)
+	set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
+	set(CRYPTOPP_INSTALL OFF CACHE BOOL "" FORCE)
 
-FetchContent_MakeAvailable(cryptopp_modern)
+	FetchContent_MakeAvailable(cryptopp_modern)
+endif()
 
 if(NOT TARGET mail_storage)
 	add_subdirectory(
