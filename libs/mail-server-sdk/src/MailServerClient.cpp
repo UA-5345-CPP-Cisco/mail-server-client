@@ -4,7 +4,8 @@
 
 namespace ISXMailServerSDK {
 
-MailServerClient::MailServerClient(std::string host, std::string port) : m_http_client(std::move(host), std::move(port))
+MailServerClient::MailServerClient(std::string host, std::string port) :
+  m_http_client(std::move(host), std::move(port))
 {
 }
 
@@ -15,11 +16,12 @@ http::HttpResponse MailServerClient::hello(std::string name) const
 
 http::HttpResponse MailServerClient::Login(std::string email, std::string password) const
 {
-  return m_http_client.post_json("/login",
-                                 boost::json::object{{"email", std::move(email)}, {"password", std::move(password)}});
+  return m_http_client.post_json(
+    "/login", boost::json::object{{"email", std::move(email)}, {"password", std::move(password)}});
 }
 
-http::HttpResponse MailServerClient::Register(std::string username, std::string email, std::string password) const
+http::HttpResponse
+MailServerClient::Register(std::string username, std::string email, std::string password) const
 {
   return m_http_client.post_json("/register",
                                  boost::json::object{{"username", std::move(username)},
@@ -32,8 +34,10 @@ http::HttpResponse MailServerClient::GetMails(std::string user_email) const
   return m_http_client.get("/mails", {{"X-User-Email", std::move(user_email)}});
 }
 
-http::HttpResponse
-MailServerClient::SendMail(std::string from, std::vector<std::string> to, std::string subject, std::string body) const
+http::HttpResponse MailServerClient::SendMail(std::string from,
+                                              std::vector<std::string> to,
+                                              std::string subject,
+                                              std::string body) const
 {
   boost::json::array recipients;
 
