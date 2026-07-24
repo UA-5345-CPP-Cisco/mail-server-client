@@ -1,9 +1,11 @@
 option(MAIL_ENABLE_COVERAGE "Enable code coverage" ON)
 
-if(MAIL_ENABLE_COVERAGE)
-    add_compile_options(--coverage -O0 -g)
-    add_link_options(--coverage)
-endif()
+function(enable_test_coverage target_name)
+    if(MAIL_ENABLE_COVERAGE)
+        target_compile_options(${target_name} PRIVATE --coverage -O0 -g)
+        target_link_options(${target_name} PRIVATE --coverage)
+    endif()
+endfunction()
 
 add_executable(mail_storage_tests
         mail_storage/DatabaseTests.cpp
@@ -24,6 +26,8 @@ target_compile_features(mail_storage_tests
         PRIVATE
         cxx_std_17
 )
+
+enable_test_coverage(mail_storage_tests)
 
 target_compile_definitions(mail_storage_tests
         PRIVATE
@@ -48,6 +52,8 @@ target_compile_features(smtp_server_sdk_tests
         PRIVATE
         cxx_std_17
 )
+
+enable_test_coverage(smtp_server_sdk_tests)
 
 gtest_discover_tests(smtp_server_sdk_tests)
 
@@ -84,6 +90,8 @@ target_compile_features(thread_pool_tests
         cxx_std_17
 )
 
+enable_test_coverage(thread_pool_tests)
+
 gtest_discover_tests(thread_pool_tests)
 
 add_executable(smtp_server_configuration_tests
@@ -102,6 +110,8 @@ target_compile_features(smtp_server_configuration_tests
         PRIVATE
         cxx_std_17
 )
+
+enable_test_coverage(smtp_server_configuration_tests)
 
 target_compile_definitions(smtp_server_configuration_tests
         PRIVATE

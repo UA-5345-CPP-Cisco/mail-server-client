@@ -13,6 +13,8 @@
 
 namespace {
 
+const std::string TimestampPattern = R"(\d{2}:\d{2}:\d{2}:\d{3} \d{2}/\d{2}/\d{2})";
+
 class LoggerTest : public testing::Test
 {
   protected:
@@ -88,7 +90,7 @@ TEST_F(LoggerTest, WritesExpectedLogLineFormat)
   logger.Log(Logging::LogLevel::Info, "formatted message");
 
   const std::string contents = ReadLog();
-  const std::regex expectedFormat(R"(\[[0-9]+\] \[[^\]]+\] \[INFO\] formatted message)");
+  const std::regex expectedFormat("\\[" + TimestampPattern + R"(\] \[INFO\] formatted message\n)");
   EXPECT_TRUE(std::regex_search(contents, expectedFormat));
 }
 
@@ -106,6 +108,17 @@ TEST_F(LoggerTest, AppendsToExistingLogFile)
   const std::string contents = ReadLog();
   EXPECT_NE(contents.find("first"), std::string::npos);
   EXPECT_NE(contents.find("second"), std::string::npos);
+}
+
+TEST_F(LoggerTest, WritesFormattedTimestampWithoutProcessId)
+{
+  Logging::Logger logger(filePath_, Logging::LogLevel::Trace, true);
+
+  logger.Log(Logging::LogLevel::Info, "formatted");
+
+  const std::string contents = ReadLog();
+  const std::regex linePattern("\\[" + TimestampPattern + R"(\] \[INFO\] formatted\n)");
+  EXPECT_TRUE(std::regex_match(contents, linePattern)) << contents;
 }
 
 TEST_F(LoggerTest, OpenReturnsTrueAndWritesToOpenedFile)
@@ -179,7 +192,8 @@ TEST_F(LoggerTest, WritesCompleteLinesFromMultipleThreads)
   }
 
   const std::string contents = ReadLog();
-  const std::regex expectedLine(R"(\[[0-9]+\] \[[^\]]+\] \[INFO\] thread [0-9]+ message [0-9]+)");
+  const std::regex expectedLine("\\[" + TimestampPattern +
+                                R"(\] \[INFO\] thread [0-9]+ message [0-9]+)");
   std::istringstream lines(contents);
   std::string line;
   int lineCount = 0;
