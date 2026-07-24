@@ -25,7 +25,7 @@ include(FetchContent)
 find_package(Threads REQUIRED)
 
 # --- Boost ---
-set(BOOST_INCLUDE_LIBRARIES asio property_tree system)
+set(BOOST_INCLUDE_LIBRARIES asio beast json property_tree system)
 set(BOOST_ENABLE_MPI OFF)
 set(BOOST_ENABLE_PYTHON OFF)
 set(BUILD_TESTING OFF)
@@ -39,12 +39,17 @@ FetchContent_MakeAvailable(Boost)
 
 # --- Crypto++ ---
 FetchContent_Declare(
-		cryptopp_cmake
-		GIT_REPOSITORY https://github.com/abdes/cryptopp-cmake/
-		GIT_TAG CRYPTOPP_8_9_0
+	cryptopp_modern
+	GIT_REPOSITORY https://github.com/cryptopp-modern/cryptopp-modern/
+	GIT_TAG 2026.3.0
 )
 set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(cryptopp_cmake)
+set(CRYPTOPP_INSTALL OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(cryptopp_modern)
+
+if(TARGET cryptopp AND NOT TARGET cryptopp::cryptopp)
+	add_library(cryptopp::cryptopp ALIAS cryptopp)
+endif()
 
 find_package(Threads REQUIRED)
 
