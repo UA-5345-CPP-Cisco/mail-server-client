@@ -78,7 +78,8 @@ public:
 
 signals:
     void dataAdded();
-
+private slots:
+    void onCurrentUserChanged();
 private:
     void LoadFromDatabase();
     QString MakePreview(const QString& text, int maxLen = 50);
@@ -88,6 +89,7 @@ private:
     Storage::MailMessageRepository m_message_repository;
     Storage::MessageRecipientRepository m_recipient_repository;
     std::vector<EmailData> m_data;
+    QString m_current_user_email;
 };
 
 } // namespace ISXMail

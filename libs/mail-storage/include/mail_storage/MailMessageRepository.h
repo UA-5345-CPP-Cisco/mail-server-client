@@ -29,6 +29,8 @@ class MailMessageRepository
 
   std::vector<MailMessageRecord> FindByStatus(MailMessageStatus status, int limit) const;
 
+  std::vector<MailMessageRecord> FindByAccount(const std::string& account) const;
+
   bool UpdateStatus(std::int64_t message_id,
                     MailMessageStatus expected_status,
                     MailMessageStatus new_status);

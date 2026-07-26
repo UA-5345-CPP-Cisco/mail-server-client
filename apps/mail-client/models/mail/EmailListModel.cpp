@@ -4,6 +4,7 @@
 
 #include "headers/database/DatabaseManager.h"
 #include "headers/service/Service.h"
+#include "users/CurrentUser.h"
 
 namespace ISXMail
 {
@@ -58,7 +59,28 @@ EmailListModel::EmailListModel(QObject* parent) :
 	m_recipient_repository(m_database)
 {
   ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel: constructed");
-	LoadFromDatabase();
+  connect(&ISXCurrentUser::CurrentUser::GetInstance(), &ISXCurrentUser::CurrentUser::authorizationChanged, this, &EmailListModel::onCurrentUserChanged);
+	onCurrentUserChanged();
+}
+
+void EmailListModel::onCurrentUserChanged()
+{
+  auto& user = ISXCurrentUser::CurrentUser::GetInstance();
+  QString email = user.is_authorized() ? user.email() : QString();
+
+  if (m_current_user_email == email)
+  {
+    return;
+  }
+
+  m_current_user_email = email;
+
+  beginResetModel();
+  m_data.clear();
+  LoadFromDatabase();
+  endResetModel();
+
+  ISXService::Service::Logger().Log(Logging::LogLevel::Debug, GetStdString(QString("onCurrentUserChanged: account has changed to %1").arg(m_current_user_email)));
 }
 
 int EmailListModel::rowCount(const QModelIndex& parent) const
@@ -234,7 +256,12 @@ bool EmailListModel::SetStarred(int row, bool starred)
 
 void EmailListModel::LoadFromDatabase()
 {
-	const auto messages = m_message_repository.FindAll();
+  if (m_current_user_email.isEmpty())
+  {
+    return;
+  }
+
+	const auto messages = m_message_repository.FindByAccount(m_current_user_email.toStdString());
 
 	if (messages.empty())
 	{
@@ -282,7 +309,7 @@ void EmailListModel::LoadFromDatabase()
 	}
 
 	endInsertRows();
-   ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::LoadFromDatabase: data was loaded from database");
+  ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::LoadFromDatabase: data was loaded from database");
 }
 
 bool EmailListModel::setData(const QModelIndex& index, const QVariant& value, int role)

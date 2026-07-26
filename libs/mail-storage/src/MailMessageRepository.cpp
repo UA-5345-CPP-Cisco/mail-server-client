@@ -188,6 +188,47 @@ std::vector<MailMessageRecord> MailMessageRepository::FindByStatus(MailMessageSt
   return messages;
 }
 
+std::vector<MailMessageRecord> MailMessageRepository::FindByAccount(const std::string& account) const
+{
+  if (account.empty())
+  {
+    return {};
+  }
+
+  Statement statement(m_database,
+                    R"SQL(
+			SELECT
+				m.id,
+				m.sender_user_id,
+				m.sender_email,
+				m.subject,
+				m.body,
+				m.reply_to_message_id,
+				m.created_at,
+				m.is_inbox,
+				m.is_starred,
+				m.is_draft,
+        m.is_archive,
+				m.status
+			FROM mail_messages m
+      LEFT JOIN message_recipients r ON r.message_id = m.id
+			WHERE m.sender_email = ? OR r.recipient_email = ?
+			ORDER BY created_at ASC
+		)SQL");
+
+  std::vector<Storage::MailMessageRecord> messages;
+
+  statement.BindText(1, account);
+  statement.BindText(2, account);
+
+  while (statement.Step())
+  {
+    messages.push_back(ReadMessage(statement));
+  }
+
+  return messages;
+}
+
 bool MailMessageRepository::UpdateStatus(std::int64_t message_id,
                                          MailMessageStatus expected_status,
                                          MailMessageStatus new_status)
