@@ -6,6 +6,7 @@
 #include <cryptopp/osrng.h>
 
 #include "mail_storage/UserRepository.h"
+#include "service/Service.h"
 using namespace CryptoPP;
 
 namespace ISXAuth {
@@ -33,10 +34,20 @@ std::vector<CryptoPP::byte> FromHex(const std::string& hex)
 }
 
 // ----- REGISTRATION -----
-bool AuthHandler::RegisterUser(const QString& username,
-                               const QString& email,
-                               const QString& password)
+AuthHandler::AuthResult
+AuthHandler::RegisterUser(const QString& username, const QString& email, const QString& password)
 {
+  ISXService::Service::Logger().Log(Logging::LogLevel::Info,
+                                    "AuthHandler::RegisterUser: registration started");
+
+  Storage::UserRepository repo(m_db);
+
+  if (repo.UserExists(email.toStdString()))
+  {
+    ISXService::Service::Logger().Log(Logging::LogLevel::Warning,
+                                      "AuthHandler::RegisterUser: email already exists");
+    return AuthResult::UserAlreadyExists;
+  }
   byte salt[16];
   AutoSeededRandomPool crypto_random;
   crypto_random.GenerateBlock(salt, sizeof(salt));
@@ -51,26 +62,44 @@ bool AuthHandler::RegisterUser(const QString& username,
                    raw_password.size(),
                    salt,
                    sizeof(salt),
-                   3,
-                   65536,
-                   4);
+                   3,     // iterations
+                   65536, // memory size in KiB
+                   4);    // parallelism
 
   std::string hash_hex = ToHex(hash, sizeof(hash));
   std::string salt_hex = ToHex(salt, sizeof(salt));
 
-  Storage::UserRepository repo(m_db);
+  // Storage::UserRepository repo(m_db);
   std::string combined = salt_hex + ":" + hash_hex;
 
-  return repo.CreateUser(username.toStdString(), email.toStdString(), combined) != -1;
+  bool success = repo.CreateUser(username.toStdString(), email.toStdString(), combined) != -1;
+
+  if (success)
+  {
+    ISXService::Service::Logger().Log(Logging::LogLevel::Info,
+                                      "AuthHandler::RegisterUser: user registered successfully");
+    return AuthResult::Success;
+  }
+  else
+  {
+    ISXService::Service::Logger().Log(Logging::LogLevel::Error,
+                                      "AuthHandler::RegisterUser: failed to create user");
+    return AuthResult::DatabaseError;
+  }
 }
 
 // ----- LOGIN -----
 AuthHandler::AuthResult AuthHandler::LoginUser(const QString& email, const QString& password)
 {
+  ISXService::Service::Logger().Log(Logging::LogLevel::Info,
+                                    "AuthHandler::LoginUser: login started");
+
   auto user_data = get_mock_user(email.toStdString());
 
   if (!user_data)
   {
+    ISXService::Service::Logger().Log(Logging::LogLevel::Warning,
+                                      "AuthHandler::LoginUser: user not found");
     return AuthResult::UserNotFound;
   }
 
@@ -79,6 +108,8 @@ AuthHandler::AuthResult AuthHandler::LoginUser(const QString& email, const QStri
 
   if (!VerifyPassword(password, combined))
   {
+    ISXService::Service::Logger().Log(Logging::LogLevel::Warning,
+                                      "AuthHandler::LoginUser: wrong password");
     return AuthResult::WrongPassword;
   }
 
@@ -86,15 +117,22 @@ AuthHandler::AuthResult AuthHandler::LoginUser(const QString& email, const QStri
 
   if (repo.UserExists(email.toStdString()))
   {
+    ISXService::Service::Logger().Log(Logging::LogLevel::Warning,
+                                      "AuthHandler::LoginUser: user already exists");
     return AuthResult::UserAlreadyExists;
   }
 
   if (repo.CreateUser(username, email.toStdString(), combined) == -1)
   {
+    ISXService::Service::Logger().Log(Logging::LogLevel::Error,
+                                      "AuthHandler::LoginUser: database error");
     return AuthResult::DatabaseError;
   }
 
   m_current_user_name = QString::fromStdString(username);
+
+  ISXService::Service::Logger().Log(Logging::LogLevel::Info,
+                                    "AuthHandler::LoginUser: login successful");
 
   return AuthResult::Success;
 }
@@ -126,9 +164,9 @@ bool AuthHandler::VerifyPassword(const QString& password, const std::string& sto
                    rawPassword.size(),
                    salt.data(),
                    salt.size(),
-                   3,
-                   65536,
-                   4);
+                   3,     // iterations
+                   65536, // memory size in KiB
+                   4);    // parallelism
 
   return storedHash.size() == sizeof(hash) &&
          CryptoPP::VerifyBufsEqual(hash, storedHash.data(), sizeof(hash));
@@ -141,12 +179,12 @@ std::optional<AuthHandler::MockUser> AuthHandler::get_mock_user(const std::strin
     {"test1@user.com",
      "Rainbow Dash",
      "F458979513E497DDA7A5EA069BFEADAF:"
-     "9ADF582FFC589AB9B9E6E809C96BE6D6EB6417371BE84BDFE9862DE5D23EBC3F"},
+     "9ADF582FFC589AB9B9E6E809C96BE6D6EB6417371BE84BDFE9862DE5D23EBC3F"}, // Password: "Asd-123"
 
     {"test2@user.com",
      "Fluttershy",
      "330BDA3176F1050E100C982CA6B330D4:"
-     "5505897DBB3D8EDF105A38BC1C2865A25FFA377A3914EEC96CDA699CF524A506"}};
+     "5505897DBB3D8EDF105A38BC1C2865A25FFA377A3914EEC96CDA699CF524A506"}}; // Password: "Qwe-123"
 
   for (const MockUser& user : users)
   {

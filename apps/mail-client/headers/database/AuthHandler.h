@@ -22,14 +22,11 @@ class AuthHandler : public QObject
   Q_ENUM(AuthResult)
   explicit AuthHandler(Storage::Database& db, QObject* parent = nullptr);
 
-  Q_INVOKABLE bool
+  Q_INVOKABLE AuthHandler::AuthResult
   RegisterUser(const QString& username, const QString& email, const QString& password);
   Q_INVOKABLE AuthHandler::AuthResult LoginUser(const QString& email, const QString& password);
 
   Q_INVOKABLE QString get_last_logged_in_name() const;
-
-  signals:
-  void registrationSuccess();
 
   private:
   struct MockUser

@@ -11,6 +11,7 @@ Item {
     property string emailError: ""
     property string passwordError: ""
     property bool passwordVisible: false
+    property string generalError: ""
 
     implicitHeight: 350
     implicitWidth: 400
@@ -107,8 +108,6 @@ Item {
 
             background: Rectangle {
                 id: fullNameBackgroundRectangle
-
-                //border.color: fullNameTextField.activeFocus ? Color.hover : Color.outline
                 border.color: rootItem.nameError !== "" ? "#fda29b" : (fullNameTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
                 border.width: fullNameTextField.activeFocus ? 2 : 1
                 color: Color.background
@@ -189,9 +188,7 @@ Item {
 
             background: Rectangle {
                 id: emailBackgroundRectangle
-
-                //border.color: emailTextField.activeFocus ? Color.hover : Color.outline
-                 border.color: rootItem.emailError !== "" ? "#fda29b" : (emailTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
+                border.color: rootItem.emailError !== "" ? "#fda29b" : (emailTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
                 border.width: emailTextField.activeFocus ? 2 : 1
                 color: Color.background
                 radius: 8
@@ -405,6 +402,8 @@ Item {
                 hoverEnabled: true
 
                 onClicked: {
+                    //onTextChanged: rootItem.generalError = ""
+                    rootItem.generalError = "" 
                     var nameErr = rootWindow.getRegisterValidationError("name", fullNameTextField.text)
                     var emailErr = rootWindow.getRegisterValidationError("email", emailTextField.text)
                     var pwdErr = rootWindow.getRegisterValidationError("password", passwordTextField.text)
@@ -419,76 +418,14 @@ Item {
             }
         }
 
-        // Button for registration through Google
-        Rectangle {
-            id: googleRegisterButtonRectangle
-
-            border.color: Color.outline
-            border.width: 1
-            color: googleClickArea.containsMouse ? Color.button : Color.highlight
-            height: 44
-            radius: 8
-            scale: googleClickArea.containsMouse ? 1.03 : 1.0
-            width: parent.width
-
-            Behavior on color {
-                id: googleColorBehavior
-
-                ColorAnimation {
-                    id: googleColorAnimation
-
-                    duration: 150
-                }
-            }
-            Behavior on scale {
-                id: googleScaleBehavior
-
-                NumberAnimation {
-                    id: googleScaleAnimation
-
-                    duration: 150
-                    easing.type: Easing.InOutQuad
-                }
-            }
-
-            Row {
-                id: googleContentRow
-
-                anchors.centerIn: parent
-                spacing: 10
-
-                Image {
-                    id: googleIconImage
-
-                    fillMode: Image.PreserveAspectFit
-                    height: 20
-                    source: "qrc:/pngs/assets/ic_google_logo.svg"
-                    sourceSize.height: height * Screen.devicePixelRatio
-                    sourceSize.width: width * Screen.devicePixelRatio
-                    width: 20
-                }
-                Text {
-                    id: googleButtonText
-
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: Color.secondaryText
-                    font.family: "Segoe UI"
-                    font.pixelSize: 16
-                    font.weight: Font.Medium
-                    text: "Register with Google"
-                }
-            }
-            MouseArea {
-                id: googleClickArea
-
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                hoverEnabled: true
-
-                onClicked: {
-                    // method
-                }
-            }
+        Text {
+         id: generalErrorText
+         text: rootItem.generalError
+         color: "#f04438"
+         font.family: "Segoe UI"
+         font.pixelSize: 12
+         visible: rootItem.generalError !== ""
+         anchors.horizontalCenter: parent.horizontalCenter
         }
     }
 }

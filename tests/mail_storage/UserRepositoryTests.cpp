@@ -118,4 +118,43 @@ TEST_F(UserRepositoryTest, TreatsInputAsBoundValues)
   EXPECT_NO_THROW(m_repository->CreateUser("second-user", "second@example.com", "password-hash"));
 }
 
+TEST_F(UserRepositoryTest, CheckHasUsersAndUserExists)
+{
+  EXPECT_FALSE(m_repository->HasUsers());
+  EXPECT_FALSE(m_repository->UserExists("alice@example.com"));
+
+  m_repository->CreateUser("alice", "alice@example.com", "password-hash");
+
+  EXPECT_TRUE(m_repository->HasUsers());
+  EXPECT_TRUE(m_repository->UserExists("alice@example.com"));
+  EXPECT_FALSE(m_repository->UserExists("bob@example.com"));
+}
+
+TEST_F(UserRepositoryTest, FindAllReturnsAllUsers)
+{
+  EXPECT_TRUE(m_repository->FindAll().empty());
+
+  m_repository->CreateUser("alice", "alice@example.com", "hash1");
+  m_repository->CreateUser("bob", "bob@example.com", "hash2");
+
+  const std::vector<Storage::UserRecord> users = m_repository->FindAll();
+  EXPECT_EQ(users.size(), 2);
+}
+
+TEST_F(UserRepositoryTest, FindActiveUserBehavior)
+{
+  EXPECT_FALSE(m_repository->FindActiveUser().has_value());
+
+  const std::int64_t user_id =
+    m_repository->CreateUser("alice", "alice@example.com", "password-hash");
+
+  const std::optional<Storage::UserRecord> active_user = m_repository->FindActiveUser();
+  ASSERT_TRUE(active_user.has_value());
+  EXPECT_EQ(active_user->username, "alice");
+
+  m_repository->UpdateStatus(user_id, Storage::UserStatus::Disabled);
+
+  EXPECT_FALSE(m_repository->FindActiveUser().has_value());
+}
+
 } // namespace

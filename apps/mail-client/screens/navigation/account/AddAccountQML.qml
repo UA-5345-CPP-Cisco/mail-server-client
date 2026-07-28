@@ -14,7 +14,7 @@ Rectangle {
     radius: 14
     visible: true
 
-    function getLoginErrorMessage(errorCode) 
+    function getAuthErrorMessage(errorCode) 
     {
         if (errorCode === AuthHandler.AuthResult.UserNotFound || errorCode === AuthHandler.AuthResult.WrongPassword) 
         {
@@ -225,24 +225,26 @@ Rectangle {
 
             if (result === AuthHandler.AuthResult.Success) 
             {
-                var name = authHandler.getLastLoggedInName();
+                var name = authHandler.get_last_logged_in_name();
                 var firstLetter = avatarInitial(name);
+                
                 accountModel.AddAccount(name, email, "", Color.avatar, firstLetter, true);
                 CurrentUser.Authorize(name, email, "");
+
                 closeAuthWindow();
             } 
             else 
             {
-                contentLoader.item.generalError = getLoginErrorMessage(result);
+                contentLoader.item.generalError = getAuthErrorMessage(result);
             }
         }
 
         // Handle registration submit
         function onRegisterSubmitted(name, email, password) 
         {
-            var success = authHandler.RegisterUser(name, email, password);
+            var result = authHandler.RegisterUser(name, email, password);
 
-            if (success)
+            if (result === AuthHandler.AuthResult.Success)
             {
                 var firstLetter = avatarInitial(name);
 
@@ -253,7 +255,7 @@ Rectangle {
             } 
             else 
             {
-                return -1;
+                contentLoader.item.generalError = getAuthErrorMessage(result);
             }
         }
 
