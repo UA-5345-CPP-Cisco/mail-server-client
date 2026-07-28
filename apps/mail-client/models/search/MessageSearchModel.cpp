@@ -26,8 +26,7 @@ namespace ISXMail {
         beginFilterChange();
         m_searchedText = text;
         endFilterChange(QSortFilterProxyModel::Direction::Rows);
-        emit
-        searchedTextChanged();
+        emit searchedTextChanged();
     }
 
     bool MessageSearchModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const

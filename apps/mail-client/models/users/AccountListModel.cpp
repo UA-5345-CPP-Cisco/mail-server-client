@@ -84,8 +84,7 @@ namespace ISXMail {
             return false;
         }
 
-        emit
-        dataChanged(index, index, {role});
+        emit dataChanged(index, index, {role});
         return true;
     }
 
@@ -95,8 +94,7 @@ namespace ISXMail {
         beginInsertRows(QModelIndex(), row, row);
         m_data.push_back(item);
         endInsertRows();
-        emit
-        accountAdded();
+        emit accountAdded();
     }
 
     void AccountListModel::AddAccount(const QString& name,
@@ -162,13 +160,11 @@ namespace ISXMail {
 
                 // Notify Qt views that the active role has changed to trigger a UI repaint
                 const QModelIndex idx = index(static_cast<int>(i));
-                emit
-                dataChanged(idx, idx, {IsActiveRole});
+                emit dataChanged(idx, idx, {IsActiveRole});
             }
         }
 
-        emit
-        activeAccountChanged(row);
+        emit activeAccountChanged(row);
         return true;
     }
 

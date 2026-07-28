@@ -55,12 +55,10 @@ namespace ISXCurrentUser {
             UpdateAvatarPath(avatar_path);
         } else {
             m_avatar_path = "";
-            emit
-            profileChanged();
+            emit profileChanged();
         }
 
-        emit
-        authorizationChanged();
+        emit authorizationChanged();
     }
 
     void CurrentUser::Logout()
@@ -74,10 +72,8 @@ namespace ISXCurrentUser {
         m_avatar_path.clear();
         m_is_authorized = false;
 
-        emit
-        profileChanged();
-        emit
-        authorizationChanged();
+        emit profileChanged();
+        emit authorizationChanged();
     }
 
     void CurrentUser::UpdateAvatarPath(const QString& new_path)
@@ -117,8 +113,7 @@ namespace ISXCurrentUser {
             m_avatar_path = clean_path;
         }
 
-        emit
-        profileChanged();
+        emit profileChanged();
     }
 
     void CurrentUser::SaveAvatarToSqlite(const QString& local_path)

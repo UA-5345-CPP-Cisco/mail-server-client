@@ -106,7 +106,6 @@ StatementMacros:
   - Q_SIGNALS
   - Q_SLOTS
   - Q_EMIT
-  - emit
 
 StatementAttributeLikeMacros:
   - Q_NORETURN

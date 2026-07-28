@@ -23,8 +23,7 @@ bool AuthHandler::registerUser(const QString& username, const QString& email, co
         }
 
         ISXCurrentUser::CurrentUser::GetInstance().Authorize(username, email, "");
-        emit
-        registrationSuccess();
+        emit registrationSuccess();
         return true;
     } catch (const std::exception& exception) {
         ISXService::Service::Logger().Log(Logging::LogLevel::Error,
@@ -61,8 +60,7 @@ bool AuthHandler::loginUser(const QString& email, const QString& password)
             QString::fromStdString(std::string(username_value->as_string().c_str())),
             QString::fromStdString(std::string(email_value->as_string().c_str())),
             "");
-        emit
-        loginSuccess();
+        emit loginSuccess();
         return true;
     } catch (const std::exception& exception) {
         ISXService::Service::Logger().Log(Logging::LogLevel::Error,

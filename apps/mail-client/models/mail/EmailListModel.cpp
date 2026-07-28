@@ -265,8 +265,7 @@ namespace ISXMail {
         m_data.insert(m_data.begin(), item);
         endInsertRows();
         ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::AddData: data was added");
-        emit
-        dataAdded();
+        emit dataAdded();
     }
 
     bool EmailListModel::SetStarred(int row, bool starred)
@@ -280,8 +279,7 @@ namespace ISXMail {
 
         m_data[row].is_starred = starred;
         const QModelIndex idx = index(row, 0);
-        emit
-        dataChanged(idx, idx, {StarredRole});
+        emit dataChanged(idx, idx, {StarredRole});
         ISXService::Service::Logger().Log(
             Logging::LogLevel::Debug,
             GetStdString(QString("EmailListModel::SetStarred: data at %1 changed %2 field to %3")
@@ -400,8 +398,7 @@ namespace ISXMail {
         beginResetModel();
         m_data = std::move(data);
         endResetModel();
-        emit
-        dataAdded();
+        emit dataAdded();
     }
 
     void EmailListModel::LoadFromDatabase()
@@ -508,8 +505,7 @@ namespace ISXMail {
             GetStdString(QString("EmailListModel::setData: data at %1 changed value of role %2")
                              .arg(QString::number(index.row()))
                              .arg(GetEnumString(role))));
-        emit
-        dataChanged(index, index, {role});
+        emit dataChanged(index, index, {role});
         return true;
     }
 
@@ -526,8 +522,7 @@ namespace ISXMail {
 
         m_data[row].is_archive = !m_data[row].is_archive;
         const QModelIndex idx = index(row, 0);
-        emit
-        dataChanged(idx, idx, {ArchiveRole});
+        emit dataChanged(idx, idx, {ArchiveRole});
 
         Logging::Logger::Instance().Log(
             Logging::LogLevel::Debug,
