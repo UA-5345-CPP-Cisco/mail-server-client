@@ -463,7 +463,7 @@ Rectangle {
                         let subject_text = subjectTextField.text.trim() === "" ? "empty" : subjectTextField.text;
                         let message_text = messageBodyTextField.text.trim() === "" ? "empty" : messageBodyTextField.text;
 
-                        if (MessageComposer.SendMessage(CurrentUser.username, CurrentUser.email, recipientTextField.text.trim(), subject_text, message_text, false)) {
+                        if (MessageComposer.SendMailMessage(CurrentUser.username, CurrentUser.email, recipientTextField.text.trim(), subject_text, message_text, false)) {
                             emailsModel.RefreshFromServer();
                             if (isDraft) {
                                 draftFinished(newIndex, subject_text, recipient_text, message_text);

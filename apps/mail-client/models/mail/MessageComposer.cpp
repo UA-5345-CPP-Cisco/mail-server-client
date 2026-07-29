@@ -33,12 +33,12 @@ namespace ISXMail {
                                               ISXDatabaseManager::DatabaseManager::DatabasePath().string());
     }
 
-    bool MessageComposer::SendMessage(const QString& sender_name,
-                                      const QString& sender_email,
-                                      const QString& recipient_email,
-                                      const QString& subject,
-                                      const QString& body,
-                                      bool is_inbox)
+    bool MessageComposer::SendMailMessage(const QString& sender_name,
+                                          const QString& sender_email,
+                                          const QString& recipient_email,
+                                          const QString& subject,
+                                          const QString& body,
+                                          bool is_inbox)
     {
         Q_UNUSED(sender_name);
         Q_UNUSED(is_inbox);
@@ -46,12 +46,12 @@ namespace ISXMail {
         if (recipient_email.trimmed().isEmpty() || body.trimmed().isEmpty()) {
             ISXService::Service::Logger().Log(
                 Logging::LogLevel::Warning,
-                "MessageComposer::SendMessage: validation failed - recipient or body empty");
+                "MessageComposer::SendMailMessage: validation failed - recipient or body empty");
             return false;
         }
 
         ISXService::Service::Logger().Log(Logging::LogLevel::Info,
-                                          (std::string("MessageComposer::SendMessage: sending to ") +
+                                          (std::string("MessageComposer::SendMailMessage: sending to ") +
                                            recipient_email.toStdString() +
                                            " subject_len=" + std::to_string(subject.size())));
 
@@ -59,15 +59,15 @@ namespace ISXMail {
             const auto response = ISXService::Service::MailServerClient().SendMail(
                 sender_email.toStdString(), {recipient_email.toStdString()}, subject.toStdString(), body.toStdString());
             if (!response.is_success()) {
-                ISXService::Service::Logger().Log(Logging::LogLevel::Warning,
-                                                  "MessageComposer::SendMessage: mail server rejected send request");
+                ISXService::Service::Logger().Log(
+                    Logging::LogLevel::Warning, "MessageComposer::SendMailMessage: mail server rejected send request");
                 return false;
             }
 
             return true;
         } catch (const std::exception& exception) {
-            ISXService::Service::Logger().Log(Logging::LogLevel::Error,
-                                              std::string("MessageComposer::SendMessage failed: ") + exception.what());
+            ISXService::Service::Logger().Log(
+                Logging::LogLevel::Error, std::string("MessageComposer::SendMailMessage failed: ") + exception.what());
             return false;
         }
     }
