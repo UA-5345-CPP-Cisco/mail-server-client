@@ -32,9 +32,8 @@ boost::json::array MailStorage::FindMailsForUser(const std::string& user_email)
   return mails;
 }
 
-boost::json::object MailStorage::CreateUser(const std::string& username,
-                                            const std::string& email,
-                                            const std::string& password_hash)
+boost::json::object
+MailStorage::CreateUser(const std::string& username, const std::string& email, const std::string& password_hash)
 {
   std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -92,11 +91,9 @@ std::string MailStorage::StatusToString(Storage::MailMessageStatus status) const
   return "unknown";
 }
 
-bool MailStorage::HasRecipient(const Storage::MailMessageRecord& message,
-                               const std::string& user_email)
+bool MailStorage::HasRecipient(const Storage::MailMessageRecord& message, const std::string& user_email)
 {
-  const std::vector<Storage::MessageRecipientRecord> recipients =
-    m_recipients.FindByMessageId(message.id);
+  const std::vector<Storage::MessageRecipientRecord> recipients = m_recipients.FindByMessageId(message.id);
   return std::any_of(recipients.begin(),
                      recipients.end(),
                      [&user_email](const Storage::MessageRecipientRecord& recipient)

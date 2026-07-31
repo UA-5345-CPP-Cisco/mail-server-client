@@ -17,8 +17,7 @@ void Session::DoRead()
 {
   m_request = {};
 
-  http::async_read(
-    m_socket, m_buffer, m_request, beast::bind_front_handler(&Session::OnRead, shared_from_this()));
+  http::async_read(m_socket, m_buffer, m_request, beast::bind_front_handler(&Session::OnRead, shared_from_this()));
 }
 
 void Session::OnRead(beast::error_code error, std::size_t bytes_transferred)
@@ -45,8 +44,7 @@ void Session::DoWrite(Response response)
 
   m_response = std::make_shared<Response>(std::move(response));
 
-  http::async_write(
-    m_socket, *m_response, beast::bind_front_handler(&Session::OnWrite, shared_from_this(), close));
+  http::async_write(m_socket, *m_response, beast::bind_front_handler(&Session::OnWrite, shared_from_this(), close));
 }
 
 void Session::OnWrite(bool close, beast::error_code error, std::size_t bytes_transferred)

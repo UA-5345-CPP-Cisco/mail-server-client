@@ -141,9 +141,8 @@ TEST_F(LoggerTest, OpenReturnsFalseWhenFileCannotBeOpened)
 
 TEST_F(LoggerTest, ConstructorThrowsWhenFileCannotBeOpened)
 {
-  EXPECT_THROW(
-    Logging::Logger("missing-logger-directory/logger-test.log", Logging::LogLevel::Info, true),
-    std::runtime_error);
+  EXPECT_THROW(Logging::Logger("missing-logger-directory/logger-test.log", Logging::LogLevel::Info, true),
+               std::runtime_error);
 }
 
 TEST_F(LoggerTest, OpenSwitchesOutputFile)
@@ -179,8 +178,7 @@ TEST_F(LoggerTest, WritesCompleteLinesFromMultipleThreads)
           for (int messageIndex = 0; messageIndex < MessagesPerThread; ++messageIndex)
           {
             logger.Log(Logging::LogLevel::Info,
-                       "thread " + std::to_string(threadIndex) + " message " +
-                         std::to_string(messageIndex));
+                       "thread " + std::to_string(threadIndex) + " message " + std::to_string(messageIndex));
           }
         });
     }
@@ -192,8 +190,7 @@ TEST_F(LoggerTest, WritesCompleteLinesFromMultipleThreads)
   }
 
   const std::string contents = ReadLog();
-  const std::regex expectedLine("\\[" + TimestampPattern +
-                                R"(\] \[INFO\] thread [0-9]+ message [0-9]+)");
+  const std::regex expectedLine("\\[" + TimestampPattern + R"(\] \[INFO\] thread [0-9]+ message [0-9]+)");
   std::istringstream lines(contents);
   std::string line;
   int lineCount = 0;
