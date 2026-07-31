@@ -10,8 +10,10 @@ Item {
     property string nameError: ""
     property string emailError: ""
     property string passwordError: ""
+    property string confirmPasswordError: ""
     property bool passwordVisible: false
     property string generalError: ""
+    property bool confirmPasswordVisible: false
 
     implicitHeight: 350
     implicitWidth: 400
@@ -67,7 +69,7 @@ Item {
         id: mainContentColumn
 
         anchors.centerIn: parent
-        spacing: 20
+        spacing: 15
         width: 320
 
         Text {
@@ -251,7 +253,7 @@ Item {
             topPadding: -14
         }
 
-        // Pasword field for register screen
+        // Password field for register screen
         TextField {
             id: passwordTextField
 
@@ -354,6 +356,106 @@ Item {
             topPadding: -14
         }
 
+        // Password field for password confirmation
+        TextField {
+            id: passwordConfirmationTextField
+
+            bottomPadding: 12
+            color: Color.primaryText
+            echoMode: confirmPasswordVisible ? TextInput.Normal : TextInput.Password
+            font.family: "Segoe UI"
+            font.pixelSize: 14
+            leftPadding: 16
+            placeholderText: "Confirm Password"
+            placeholderTextColor: Color.secondaryText
+            rightPadding: 16
+            topPadding: 12
+            width: parent.width
+
+            Image {
+                id: confirmEyeIcon
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: 12
+                source: confirmPasswordVisible ? "qrc:/pngs/assets/ic_eye_open.svg" : "qrc:/pngs/assets/ic_eye_closed.svg"
+                width: 20
+                height: 20
+                sourceSize.width: width * Screen.devicePixelRatio
+                sourceSize.height: height * Screen.devicePixelRatio
+                fillMode: Image.PreserveAspectFit
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: confirmPasswordVisible = !confirmPasswordVisible
+                }
+            }
+
+            background: Rectangle {
+                id: confirmBackgroundRectangle
+                
+                border.color: rootItem.confirmPasswordError !== "" ? "#fda29b" : (passwordConfirmationTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
+                border.width: passwordConfirmationTextField.activeFocus ? 2 : 1
+                color: Color.background
+                radius: 8
+            }
+            cursorDelegate: Item {}
+
+            Rectangle {
+                id: confirmCustomCursorRectangle
+
+                anchors.verticalCenter: parent.verticalCenter
+                color: Color.secondaryText
+                height: parent.font.pixelSize + 4
+                visible: parent.activeFocus
+                width: 1.5
+                x: parent.length > 0 ? parent.cursorRectangle.x : 14
+
+                SequentialAnimation on opacity {
+                    id: confirmCursorOpacityAnimation
+
+                    loops: Animation.Infinite
+                    running: parent.activeFocus
+
+                    NumberAnimation {
+                        id: confirmCursorFadeOut
+
+                        duration: 400
+                        easing.type: Easing.InOutSine
+                        to: 0
+                    }
+                    NumberAnimation {
+                        id: confirmCursorFadeIn
+
+                        duration: 400
+                        easing.type: Easing.InOutSine
+                        to: 1
+                    }
+                }
+                Behavior on x {
+                    id: confirmCursorXBehavior
+
+                    NumberAnimation {
+                        id: confirmCursorXAnimation
+
+                        duration: 80
+                        easing.type: Easing.OutCubic
+                    }
+                }
+            }
+            onTextChanged: rootItem.confirmPasswordError = ""
+        }
+
+        // Error message for password confirmation field
+        Text {
+            text: rootItem.confirmPasswordError
+            color: "#f04438"
+            font.family: "Segoe UI"
+            font.pixelSize: 12
+            visible: confirmPasswordError !== ""
+            topPadding: -14
+        }
+
         // Basic register
         Rectangle {
             id: registerButtonRectangle
@@ -402,15 +504,25 @@ Item {
                 hoverEnabled: true
 
                 onClicked: {
-                    //onTextChanged: rootItem.generalError = ""
                     rootItem.generalError = "" 
-                    var nameErr = rootWindow.getRegisterValidationError("name", fullNameTextField.text)
-                    var emailErr = rootWindow.getRegisterValidationError("email", emailTextField.text)
-                    var pwdErr = rootWindow.getRegisterValidationError("password", passwordTextField.text)
-                    emailError = emailErr
-                    passwordError = pwdErr
-                    nameError = nameErr
-                    if(nameError === "" && emailError === "" && passwordError === "")
+                    var name_error = rootWindow.getRegisterValidationError("name", fullNameTextField.text)
+                    var email_error = rootWindow.getRegisterValidationError("email", emailTextField.text)
+                    var password_error = rootWindow.getRegisterValidationError("password", passwordTextField.text)
+                    var confirm_password_error = ""
+                    if (passwordConfirmationTextField.text === "") 
+                    {
+                        confirm_password_error = "Please confirm your password"
+                    } 
+                    else if (passwordTextField.text !== passwordConfirmationTextField.text) 
+                    {
+                        confirm_password_error = "Passwords do not match"
+                    }
+
+                    emailError = email_error
+                    passwordError = password_error
+                    confirmPasswordError = confirm_password_error
+                    nameError = name_error
+                    if(nameError === "" && emailError === "" && passwordError === "" && confirmPasswordError === "")
                     {
                         rootItem.registerSubmitted(fullNameTextField.text, emailTextField.text, passwordTextField.text)
                     }
