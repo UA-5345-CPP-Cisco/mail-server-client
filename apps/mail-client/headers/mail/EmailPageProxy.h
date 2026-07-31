@@ -4,7 +4,7 @@
 
 #include "EmailListModel.h"
 
-namespace ISXMail{
+namespace ISXMail {
 
     class EmailPageProxy : public QSortFilterProxyModel
     {
@@ -30,9 +30,9 @@ namespace ISXMail{
         int TotalEmailsCount() const;
         QString PageAmountText() const;
 
-        void setSourceModel(QAbstractItemModel *source_model) override;
-        signals:
-            void currentPageChanged();
+        void setSourceModel(QAbstractItemModel* source_model) override;
+    signals:
+        void currentPageChanged();
         void pageCountChanged();
         void totalEmailsCountChanged();
         void pageAmountTextChanged();
@@ -44,8 +44,8 @@ namespace ISXMail{
         void RecalcValues();
 
         int m_current_page = 0;
-        int m_page_count   = 0;
+        int m_page_count = 0;
         int m_emails_count = 0;
         static constexpr int s_per_page = 8;
     };
-}
+} // namespace ISXMail

@@ -1,5 +1,9 @@
 {
   "logger": {
     "log_level": 1
+  },
+  "mail_server": {
+    "host": "127.0.0.1",
+    "port": 8080
   }
 }
