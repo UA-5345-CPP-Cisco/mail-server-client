@@ -25,7 +25,7 @@ include(FetchContent)
 find_package(Threads REQUIRED)
 
 # --- Boost ---
-set(BOOST_INCLUDE_LIBRARIES asio property_tree system)
+set(BOOST_INCLUDE_LIBRARIES asio beast date_time json property_tree system)
 set(BOOST_ENABLE_MPI OFF)
 set(BOOST_ENABLE_PYTHON OFF)
 set(BUILD_TESTING OFF)
@@ -39,20 +39,19 @@ FetchContent_MakeAvailable(Boost)
 
 # --- Crypto++ ---
 FetchContent_Declare(
-		cryptopp_cmake
-		GIT_REPOSITORY https://github.com/abdes/cryptopp-cmake/
-		GIT_TAG CRYPTOPP_8_9_0
+	cryptopp_modern
+	GIT_REPOSITORY https://github.com/cryptopp-modern/cryptopp-modern/
+	GIT_TAG 2026.3.0
 )
 set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(cryptopp_cmake)
-
-find_package(Threads REQUIRED)
+set(CRYPTOPP_INSTALL OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(cryptopp_modern)
 
 # --- nlohmann JSON ---
 FetchContent_Declare(
-		nlohmann_json
-		URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
-		DOWNLOAD_EXTRACT_TIMESTAMP ON
+	nlohmann_json
+	URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+	DOWNLOAD_EXTRACT_TIMESTAMP ON
 )
 FetchContent_MakeAvailable(nlohmann_json)
 
@@ -86,7 +85,6 @@ add_subdirectory(libs/mail-server-sdk)
 # Applications
 # ──────────────────────────────────────────
 add_subdirectory(apps/smtp-server)
-add_subdirectory(apps/simple-client)
 add_subdirectory(apps/mail-server)
 
 if(MAIL_BUILD_QT_CLIENT)
