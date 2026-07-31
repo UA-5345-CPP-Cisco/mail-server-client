@@ -1,13 +1,37 @@
 add_executable(mail_server
-        main.cpp
+    Main.cpp
+    src/Common.cpp
+    src/Server.cpp
+    src/Session.cpp
+    src/services/MailServerConfigurator.cpp
+    src/services/MailServerLogger.cpp
+    src/services/MailStorage.cpp
+    src/services/ServiceRegistry.cpp
+    src/handlers/GetMailsHandler.cpp
+    src/handlers/AuthHandler.cpp
+    src/handlers/HelloHandler.cpp
+    src/handlers/SendMailHandler.cpp
+)
+
+target_include_directories(mail_server
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_link_libraries(mail_server
-        PUBLIC
-        mail_logger
         PRIVATE
-        mail_server_sdk
+        Boost::asio
+        Boost::beast
+        Boost::json
+        Boost::system
 
+        mail_logger
+        mail_storage
+        smtp_server_sdk
+        mail_thread_pool
+        cryptopp
+
+        Threads::Threads
 )
 
 target_compile_features(mail_server
