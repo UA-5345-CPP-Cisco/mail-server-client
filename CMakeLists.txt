@@ -25,7 +25,7 @@ include(FetchContent)
 find_package(Threads REQUIRED)
 
 # --- Boost ---
-set(BOOST_INCLUDE_LIBRARIES asio beast json property_tree system)
+set(BOOST_INCLUDE_LIBRARIES asio beast date_time json property_tree system)
 set(BOOST_ENABLE_MPI OFF)
 set(BOOST_ENABLE_PYTHON OFF)
 set(BUILD_TESTING OFF)
@@ -52,14 +52,6 @@ if(TARGET cryptopp AND NOT TARGET cryptopp::cryptopp)
 endif()
 
 find_package(Threads REQUIRED)
-
-# --- nlohmann JSON ---
-FetchContent_Declare(
-		nlohmann_json
-		URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
-		DOWNLOAD_EXTRACT_TIMESTAMP ON
-)
-FetchContent_MakeAvailable(nlohmann_json)
 
 # --- OpenSSL (CMake wrapper) ---
 set(WITH_APPS OFF CACHE BOOL "" FORCE)
@@ -91,7 +83,6 @@ add_subdirectory(libs/mail-server-sdk)
 # Applications
 # ──────────────────────────────────────────
 add_subdirectory(apps/smtp-server)
-add_subdirectory(apps/simple-client)
 add_subdirectory(apps/mail-server)
 
 if(MAIL_BUILD_QT_CLIENT)

@@ -17,9 +17,9 @@ include(FetchContent)
 # --- Crypto++ (cryptopp-modern) ---
 if(NOT TARGET cryptopp)
 	FetchContent_Declare(
-		cryptopp_modern
-		GIT_REPOSITORY https://github.com/cryptopp-modern/cryptopp-modern/
-		GIT_TAG 2026.3.0
+			cryptopp_modern
+			GIT_REPOSITORY https://github.com/cryptopp-modern/cryptopp-modern/
+			GIT_TAG 2026.3.0
 	)
 	set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
 	set(CRYPTOPP_INSTALL OFF CACHE BOOL "" FORCE)

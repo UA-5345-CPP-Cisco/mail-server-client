@@ -1,8 +1,6 @@
 add_library(mail_server_sdk
-        src/Server.cpp
-        src/Client.cpp
-        include/mail_server_sdk/Server.h
-        include/mail_server_sdk/Client.h
+    src/MailServerClient.cpp
+    src/http/HttpClient.cpp
 )
 
 target_include_directories(mail_server_sdk
@@ -12,11 +10,14 @@ target_include_directories(mail_server_sdk
 
 target_link_libraries(mail_server_sdk
         PUBLIC
+        Boost::asio
+        Boost::beast
+        Boost::json
+        Boost::system
+
         mail_logger
         mail_thread_pool
         Threads::Threads
-        #PRIVATE
-        nlohmann_json::nlohmann_json
 )
 
 target_compile_features(mail_server_sdk
