@@ -46,10 +46,10 @@ std::string Timestamp()
   }
 
   std::ostringstream output;
-  output << std::setfill('0') << std::setw(2) << time.hours() << ":" << std::setw(2) << time.minutes()
-         << ":" << std::setw(2) << time.seconds() << ":" << std::setw(3) << milliseconds << ' ' << std::setw(2)
-         << date.year() % 100 << '/' << std::setw(2) << static_cast<int>(date.month()) << '/' << std::setw(2)
-         << static_cast<int>(date.day());
+  output << std::setfill('0') << std::setw(2) << time.hours() << ":" << std::setw(2)
+         << time.minutes() << ":" << std::setw(2) << time.seconds() << ":" << std::setw(3)
+         << milliseconds << ' ' << std::setw(2) << date.year() % 100 << '/' << std::setw(2)
+         << static_cast<int>(date.month()) << '/' << std::setw(2) << static_cast<int>(date.day());
 
   return output.str();
 }

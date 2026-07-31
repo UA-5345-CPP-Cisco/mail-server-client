@@ -209,7 +209,7 @@ Rectangle {
                 height: 20
 
                 Rectangle {
-                    id: nameContainer
+                    id: themeContainer
 
                     anchors.left: parent.left
                     anchors.right: timeContainer.left
@@ -218,7 +218,7 @@ Rectangle {
                     height: 20
 
                     Text {
-                        id: nameText
+                        id: themeText
 
                         color: Color.primaryText
                         elide: Text.ElideRight
@@ -237,13 +237,13 @@ Rectangle {
                         wrapMode: Text.NoWrap
                     }
                     HoverHandler {
-                        id: nameHover
+                        id: themeHover
                     }
                     EmailToolTip {
                         text: theme
-                        visible: nameHover.hovered && (nameText.contentWidth > nameText.width)
+                        visible: themeHover.hovered && (themeText.contentWidth > themeText.width)
                         x: 0
-                        y: nameContainer.height + 4
+                        y: themeContainer.height + 4
                     }
                 }
                 Rectangle {
@@ -272,7 +272,7 @@ Rectangle {
                 }
             }
             Rectangle {
-                id: themeContainer
+                id: nameContainer
 
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -282,7 +282,7 @@ Rectangle {
                 y: 22
 
                 Text {
-                    id: themeText
+                    id: nameText
 
                     color: Color.primaryText
                     elide: Text.ElideRight
@@ -301,13 +301,13 @@ Rectangle {
                     wrapMode: Text.NoWrap
                 }
                 HoverHandler {
-                    id: themeHover
+                    id: nameHover
                 }
                 EmailToolTip {
                     text: name
-                    visible: themeHover.hovered && (themeText.contentWidth > themeText.width)
+                    visible: nameHover.hovered && (nameText.contentWidth > nameText.width)
                     x: 0
-                    y: themeContainer.height + 4
+                    y: nameContainer.height + 4
                 }
             }
             Rectangle {

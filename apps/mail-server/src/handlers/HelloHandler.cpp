@@ -28,7 +28,8 @@ Response HelloHandler(Request const& request)
 
   const std::string name = name_value->as_string().c_str();
 
-  return MakeJsonResponse(request, http::status::ok, json::object{{"message", "Hello, " + name + "!"}});
+  return MakeJsonResponse(
+    request, http::status::ok, json::object{{"message", "Hello, " + name + "!"}});
 }
 
 } // namespace ISXMailServer

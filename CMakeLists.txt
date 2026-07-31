@@ -47,6 +47,12 @@ set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
 set(CRYPTOPP_INSTALL OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(cryptopp_modern)
 
+if(TARGET cryptopp AND NOT TARGET cryptopp::cryptopp)
+	add_library(cryptopp::cryptopp ALIAS cryptopp)
+endif()
+
+find_package(Threads REQUIRED)
+
 # --- OpenSSL (CMake wrapper) ---
 set(WITH_APPS OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(

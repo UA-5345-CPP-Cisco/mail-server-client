@@ -59,9 +59,9 @@ Rectangle {
             color: Color.transparent
             height: 20
 
-            // Name
+            // Theme
             Rectangle {
-                id: nameContainer
+                id: themeContainer
 
                 anchors.left: parent.left
                 anchors.right: timeContainer.left
@@ -70,7 +70,7 @@ Rectangle {
                 height: 20
 
                 Text {
-                    id: nameText
+                    id: themeText
 
                     color: Color.primaryText
                     font.family: "Segoe UI"
@@ -117,9 +117,9 @@ Rectangle {
             }
         }
 
-        // Theme
+        // Name
         Rectangle {
-            id: themeContainer
+            id: nameContainer
 
             anchors.left: parent.left
             anchors.right: parent.right
@@ -130,7 +130,7 @@ Rectangle {
             height: 20
 
             Text {
-                id: themeText
+                id: nameText
 
                 color: Color.primaryText
                 elide: Text.ElideRight
@@ -156,7 +156,7 @@ Rectangle {
 
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.top: themeContainer.bottom
+            anchors.top: nameContainer.bottom
             anchors.topMargin: 2
             clip: true
             color: Color.transparent

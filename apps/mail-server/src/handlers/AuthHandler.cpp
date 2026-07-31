@@ -125,7 +125,8 @@ Response RegisterHandler(Request const& request)
     const std::string email = ReadRequiredString(object, "email");
     const std::string password = ReadRequiredString(object, "password");
 
-    const json::object user = ServiceRegistry::Storage().CreateUser(username, email, HashPassword(password));
+    const json::object user =
+      ServiceRegistry::Storage().CreateUser(username, email, HashPassword(password));
     ServiceRegistry::Logger().Log(LogLevel::Info, "Registered user " + email);
 
     return MakeJsonResponse(request, http::status::created, UserResponse(user));
@@ -144,7 +145,8 @@ Response LoginHandler(Request const& request)
     const std::string email = ReadRequiredString(object, "email");
     const std::string password = ReadRequiredString(object, "password");
 
-    const std::optional<Storage::UserRecord> user = ServiceRegistry::Storage().FindUserByEmail(email);
+    const std::optional<Storage::UserRecord> user =
+      ServiceRegistry::Storage().FindUserByEmail(email);
     if (!user.has_value() || user->status != Storage::UserStatus::Active ||
         !VerifyPassword(password, user->password_hash))
     {
@@ -156,7 +158,8 @@ Response LoginHandler(Request const& request)
     return MakeJsonResponse(
       request,
       http::status::ok,
-      UserResponse(json::object{{"id", user->id}, {"username", user->username}, {"email", user->email}}));
+      UserResponse(
+        json::object{{"id", user->id}, {"username", user->username}, {"email", user->email}}));
   }
   catch (const std::exception& exception)
   {

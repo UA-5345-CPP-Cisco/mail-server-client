@@ -17,10 +17,8 @@ namespace ISXMail {
             beginFilterChange();
             ++m_current_page;
             endFilterChange();
-            emit
-            currentPageChanged();
-            emit
-            pageAmountTextChanged();
+            emit currentPageChanged();
+            emit pageAmountTextChanged();
         }
 
         ISXService::Service::Logger().Log(
@@ -34,10 +32,8 @@ namespace ISXMail {
             beginFilterChange();
             --m_current_page;
             endFilterChange();
-            emit
-            currentPageChanged();
-            emit
-            pageAmountTextChanged();
+            emit currentPageChanged();
+            emit pageAmountTextChanged();
         }
 
         ISXService::Service::Logger().Log(
@@ -91,29 +87,25 @@ namespace ISXMail {
         int newEmailCount = sourceModel()->rowCount();
         if (newEmailCount != m_emails_count) {
             m_emails_count = newEmailCount;
-            emit
-            totalEmailsCountChanged();
+            emit totalEmailsCountChanged();
             amountTextDirty = true;
         }
 
         int newCount = PageCount();
         if (newCount != m_page_count) {
             m_page_count = newCount;
-            emit
-            pageCountChanged();
+            emit pageCountChanged();
         }
 
         int clamped = m_page_count == 0 ? 0 : qMin(m_current_page, m_page_count - 1);
         if (clamped != m_current_page) {
             m_current_page = clamped;
-            emit
-            currentPageChanged();
+            emit currentPageChanged();
             amountTextDirty = true;
         }
 
         if (amountTextDirty)
-            emit
-        pageAmountTextChanged();
+            emit pageAmountTextChanged();
 
         endFilterChange();
     }

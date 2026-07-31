@@ -36,12 +36,14 @@ class HttpClient
 
   [[nodiscard]] HttpResponse get(std::string target, Headers headers = {}) const;
 
-  [[nodiscard]] HttpResponse post_json(std::string target, json::value body, Headers headers = {}) const;
+  [[nodiscard]] HttpResponse
+  post_json(std::string target, json::value body, Headers headers = {}) const;
 
   private:
   std::string m_host;
   std::string m_port;
 
-  void ApplyHeaders(boost_http::request<boost_http::string_body>& request, const Headers& headers) const;
+  void ApplyHeaders(boost_http::request<boost_http::string_body>& request,
+                    const Headers& headers) const;
 };
 } // namespace ISXMailServerSDK::http

@@ -22,7 +22,9 @@ const boost::json::object& GetObject(const boost::json::object& object, std::str
   return value->as_object();
 }
 
-std::string GetString(const boost::json::object& object, std::string_view field, const std::string& default_value = "")
+std::string GetString(const boost::json::object& object,
+                      std::string_view field,
+                      const std::string& default_value = "")
 {
   auto const* value = object.if_contains(field);
   if (value == nullptr)
@@ -54,7 +56,8 @@ bool GetBool(const boost::json::object& object, std::string_view field, bool def
   return value->as_bool();
 }
 
-std::uint16_t GetPort(const boost::json::object& object, std::string_view field, std::uint16_t default_value)
+std::uint16_t
+GetPort(const boost::json::object& object, std::string_view field, std::uint16_t default_value)
 {
   auto const* value = object.if_contains(field);
   if (value == nullptr)
@@ -67,7 +70,8 @@ std::uint16_t GetPort(const boost::json::object& object, std::string_view field,
     throw std::runtime_error(std::string{field} + " must be an integer");
   }
 
-  const std::uint64_t port = value->is_uint64() ? value->as_uint64() : static_cast<std::uint64_t>(value->as_int64());
+  const std::uint64_t port =
+    value->is_uint64() ? value->as_uint64() : static_cast<std::uint64_t>(value->as_int64());
   if (port == 0 || port > std::numeric_limits<std::uint16_t>::max())
   {
     throw std::runtime_error(std::string{field} + " is outside the valid range");
@@ -103,7 +107,8 @@ void MailServerConfigurator::Load(const std::filesystem::path& path)
 
   if (error)
   {
-    throw std::runtime_error("Unable to parse mail server configuration '" + path.string() + "': " + error.message());
+    throw std::runtime_error("Unable to parse mail server configuration '" + path.string() +
+                             "': " + error.message());
   }
 
   if (!document.is_object())

@@ -100,8 +100,7 @@ namespace ISXMail {
         }
 
         updateFromModel();
-        emit
-        colorsChanged();
+        emit colorsChanged();
 
         return true;
     }
@@ -129,8 +128,7 @@ namespace ISXMail {
         QSettings settings("ISX", "MailClient");
         settings.setValue("theme", theme == Theme::Dark ? "Dark" : "Light");
 
-        emit
-        colorsChanged();
+        emit colorsChanged();
         return true;
     }
 
