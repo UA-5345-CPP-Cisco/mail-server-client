@@ -1,20 +1,12 @@
-## What type of PR is this?
+## PR Description
 
-- Defect Resolution
-- Feature
-- Documentation
-- Test Failure
-- Other
-  - If "Other", please describe here:
+<!-- Type: Defect Resolution, Feature, Documentation, Test Failure, or Other. -->
+<!-- Describe what changed and why it is needed. -->
 
-## Which CDETS/Jira Item does this PR address?
+## Kanban Item Addressed
 
-> Addresses #
+<!-- Addresses # -->
 
-## What this PR does / why we need it:
+## Special Notes for Reviewers
 
-> Please ensure this section is filled out and this line is deleted.
-
-## Special notes for your reviewer(s):
-
-> Please delete this section if there are no needed call-outs.
+<!-- Reviewer call-outs, risks, follow-ups, or "None". -->
