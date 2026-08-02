@@ -32,8 +32,10 @@ http::HttpResponse MailServerClient::GetMails(std::string user_email) const
   return m_http_client.get("/mails", {{"X-User-Email", std::move(user_email)}});
 }
 
-http::HttpResponse
-MailServerClient::SendMail(std::string from, std::vector<std::string> to, std::string subject, std::string body) const
+http::HttpResponse MailServerClient::SendMail(std::string from,
+                                              std::vector<std::string> to,
+                                              std::string subject,
+                                              std::string body) const
 {
   boost::json::array recipients;
 

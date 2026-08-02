@@ -32,8 +32,9 @@ boost::json::array MailStorage::FindMailsForUser(const std::string& user_email)
   return mails;
 }
 
-boost::json::object
-MailStorage::CreateUser(const std::string& username, const std::string& email, const std::string& password_hash)
+boost::json::object MailStorage::CreateUser(const std::string& username,
+                                            const std::string& email,
+                                            const std::string& password_hash)
 {
   std::lock_guard<std::mutex> lock(m_mutex);
 

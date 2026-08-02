@@ -19,8 +19,9 @@ using tcp = net::ip::tcp;
 using Request = http::request<http::string_body>;
 using Response = http::response<http::string_body>;
 
-inline Response
-MakeJsonResponse(const http::request<http::string_body>& request, const http::status status, const json::value& body)
+inline Response MakeJsonResponse(const http::request<http::string_body>& request,
+                                 const http::status status,
+                                 const json::value& body)
 {
   Response response(status, request.version());
 

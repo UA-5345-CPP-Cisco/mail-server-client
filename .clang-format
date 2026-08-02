@@ -78,6 +78,7 @@ SpaceAfterCStyleCast: false
 BinPackArguments: false
 BinPackParameters: false
 AllowAllParametersOfDeclarationOnNextLine: true
+PenaltyReturnTypeOnItsOwnLine: 1000
 
 # Boolean expressions: break after && / ||
 BreakBeforeBinaryOperators: None

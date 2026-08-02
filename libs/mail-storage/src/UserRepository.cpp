@@ -13,8 +13,9 @@ UserRepository::UserRepository(Database& database) : m_database(database)
 {
 }
 
-std::int64_t
-UserRepository::CreateUser(const std::string& username, const std::string& email, const std::string& password_hash)
+std::int64_t UserRepository::CreateUser(const std::string& username,
+                                        const std::string& email,
+                                        const std::string& password_hash)
 {
   Statement statement(m_database,
                       R"SQL(

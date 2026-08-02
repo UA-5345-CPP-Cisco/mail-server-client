@@ -32,8 +32,9 @@ class MessageRecipientRepository
 
   bool MarkDelivered(std::int64_t recipient_id);
 
-  bool
-  MarkTemporaryFailed(std::int64_t recipient_id, const std::string& next_attempt_at, const std::string& last_error);
+  bool MarkTemporaryFailed(std::int64_t recipient_id,
+                           const std::string& next_attempt_at,
+                           const std::string& last_error);
 
   bool MarkBounced(std::int64_t recipient_id, const std::string& last_error);
 

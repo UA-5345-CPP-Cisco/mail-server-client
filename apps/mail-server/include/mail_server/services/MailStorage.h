@@ -27,8 +27,9 @@ class MailStorage
   explicit MailStorage(const DatabaseConfiguration& configuration);
 
   [[nodiscard]] boost::json::array FindMailsForUser(const std::string& user_email);
-  [[nodiscard]] boost::json::object
-  CreateUser(const std::string& username, const std::string& email, const std::string& password_hash);
+  [[nodiscard]] boost::json::object CreateUser(const std::string& username,
+                                               const std::string& email,
+                                               const std::string& password_hash);
   [[nodiscard]] std::optional<Storage::UserRecord> FindUserByEmail(const std::string& email);
 
   private:
