@@ -15,8 +15,7 @@ class MailServerClient
 
   [[nodiscard]] http::HttpResponse Login(std::string email, std::string password) const;
 
-  [[nodiscard]] http::HttpResponse
-  Register(std::string username, std::string email, std::string password) const;
+  [[nodiscard]] http::HttpResponse Register(std::string username, std::string email, std::string password) const;
 
   [[nodiscard]] http::HttpResponse GetMails(std::string user_email) const;
 

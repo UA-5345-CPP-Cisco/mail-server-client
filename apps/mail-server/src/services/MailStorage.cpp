@@ -92,11 +92,9 @@ std::string MailStorage::StatusToString(Storage::MailMessageStatus status) const
   return "unknown";
 }
 
-bool MailStorage::HasRecipient(const Storage::MailMessageRecord& message,
-                               const std::string& user_email)
+bool MailStorage::HasRecipient(const Storage::MailMessageRecord& message, const std::string& user_email)
 {
-  const std::vector<Storage::MessageRecipientRecord> recipients =
-    m_recipients.FindByMessageId(message.id);
+  const std::vector<Storage::MessageRecipientRecord> recipients = m_recipients.FindByMessageId(message.id);
   return std::any_of(recipients.begin(),
                      recipients.end(),
                      [&user_email](const Storage::MessageRecipientRecord& recipient)

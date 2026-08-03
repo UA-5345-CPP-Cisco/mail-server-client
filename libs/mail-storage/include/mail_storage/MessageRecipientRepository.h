@@ -45,8 +45,7 @@ class MessageRecipientRepository
 
   MessageRecipientRecord ReadRecipient(const Statement& statement) const;
 
-  bool
-  MarkTerminal(std::int64_t recipient_id, DeliveryStatus status, const std::string& last_error);
+  bool MarkTerminal(std::int64_t recipient_id, DeliveryStatus status, const std::string& last_error);
 
   std::string RecipientTypeToString(RecipientType recipient_type) const;
 

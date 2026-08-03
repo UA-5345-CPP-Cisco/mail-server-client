@@ -3,9 +3,7 @@
 
 namespace ISXMailServer {
 
-Server::Server(net::io_context& io_context,
-               tcp::endpoint endpoint,
-               std::shared_ptr<Router const> router) :
+Server::Server(net::io_context& io_context, tcp::endpoint endpoint, std::shared_ptr<Router const> router) :
   m_acceptor(io_context),
   m_router(std::move(router))
 {

@@ -22,8 +22,7 @@ TEST(MailBuilderTest, BuildsMail)
 
 TEST(MailBuilderTest, RequiresSender)
 {
-  EXPECT_THROW(Smtp::MailBuilder().AddRecipients({"recipient@example.com"}).Build(),
-               std::runtime_error);
+  EXPECT_THROW(Smtp::MailBuilder().AddRecipients({"recipient@example.com"}).Build(), std::runtime_error);
 }
 
 TEST(MailBuilderTest, RequiresRecipient)

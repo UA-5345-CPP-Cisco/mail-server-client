@@ -41,8 +41,7 @@ class MailStorage
 
   [[nodiscard]] boost::json::object SerializeMessage(const Storage::MailMessageRecord& message);
   [[nodiscard]] std::string StatusToString(Storage::MailMessageStatus status) const;
-  [[nodiscard]] bool HasRecipient(const Storage::MailMessageRecord& message,
-                                  const std::string& user_email);
+  [[nodiscard]] bool HasRecipient(const Storage::MailMessageRecord& message, const std::string& user_email);
 };
 
 } // namespace ISXMailServer

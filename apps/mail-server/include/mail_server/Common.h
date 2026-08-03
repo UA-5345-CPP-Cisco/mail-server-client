@@ -35,8 +35,7 @@ inline Response MakeJsonResponse(const http::request<http::string_body>& request
   return response;
 }
 
-inline Response
-MakeError(Request const& request, const http::status status, std::string_view message)
+inline Response MakeError(Request const& request, const http::status status, std::string_view message)
 {
   return MakeJsonResponse(request, status, json::object{{"error", message}});
 }

@@ -4,8 +4,7 @@
 
 namespace smtp {
 
-AuthService::AuthService(std::unordered_map<std::string, std::string> users) :
-  users_(std::move(users))
+AuthService::AuthService(std::unordered_map<std::string, std::string> users) : users_(std::move(users))
 {
 }
 

@@ -208,8 +208,7 @@ std::optional<UserRecord> UserRepository::FindActiveUser() const
 std::vector<UserRecord> UserRepository::FindAll() const
 {
   std::vector<UserRecord> users;
-  Statement statement(m_database,
-                      "SELECT id, username, email, password_hash, status, created_at FROM users;");
+  Statement statement(m_database, "SELECT id, username, email, password_hash, status, created_at FROM users;");
   while (statement.Step())
   {
     users.push_back(ReadUser(statement));

@@ -55,9 +55,7 @@ void Configuration::Load(const std::filesystem::path& path)
     ReadValue(tree, "server.max_connections", server_.maxConnections);
     ReadValue(tree, "server.max_message_size_bytes", server_.maxMessageSizeBytes);
     ReadValue(tree, "server.require_authentication", server_.requireAuthentication);
-    ReadValue(tree,
-              "server.allow_plain_authentication_without_tls",
-              server_.allowPlainAuthenticationWithoutTls);
+    ReadValue(tree, "server.allow_plain_authentication_without_tls", server_.allowPlainAuthenticationWithoutTls);
     ReadValue(tree, "delivery.batch_size", server_.delivery.batchSize);
     ReadValue(tree, "delivery.poll_interval_ms", server_.delivery.pollIntervalMilliseconds);
     ReadValue(tree, "tls.enabled", server_.tls.enabled);
@@ -73,8 +71,7 @@ void Configuration::Load(const std::filesystem::path& path)
   }
   catch (const boost::property_tree::json_parser_error& error)
   {
-    throw std::runtime_error("Unable to read SMTP configuration '" + path.string() +
-                             "': " + error.message());
+    throw std::runtime_error("Unable to read SMTP configuration '" + path.string() + "': " + error.message());
   }
   catch (const boost::property_tree::ptree_error& error)
   {
@@ -120,8 +117,7 @@ void Configuration::Validate() const
   {
     throw std::runtime_error("delivery.poll_interval_ms must be greater than zero");
   }
-  if (server_.tls.enabled &&
-      (server_.tls.certificatePath.empty() || server_.tls.privateKeyPath.empty()))
+  if (server_.tls.enabled && (server_.tls.certificatePath.empty() || server_.tls.privateKeyPath.empty()))
   {
     throw std::runtime_error("tls.certificate_path and tls.private_key_path are required "
                              "when TLS is enabled");
