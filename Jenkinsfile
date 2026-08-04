@@ -23,7 +23,7 @@ pipeline {
          * Jenkins Secret Text credential containing the
          * private IP address or DNS name of the Docker machine.
          */
-        DEPLOY_HOST = credentials('docker-machine-ssh')
+        DEPLOY_HOST = '10.26.0.53'
 
         DEPLOY_DIR = '/opt/mail-server-client'
         SSH_PORT   = '22'
