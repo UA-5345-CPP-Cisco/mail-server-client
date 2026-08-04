@@ -85,6 +85,7 @@ pipeline {
                             -p "$SSH_PORT"
                             -o BatchMode=yes
                             -o StrictHostKeyChecking=yes
+                            -o UserKnownHostsFile="$HOME/.ssh/known_hosts"
                             -o ConnectTimeout=15
                         )
 
