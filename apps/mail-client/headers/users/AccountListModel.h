@@ -62,8 +62,6 @@ namespace ISXMail {
 
     private:
         void LoadFromDatabase();
-        bool LoadFromSettings();
-        void SaveToSettings();
         QString DefaultDatabasePath() const;
 
         Storage::Database m_database;

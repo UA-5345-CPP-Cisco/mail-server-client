@@ -502,10 +502,10 @@ ApplicationWindow {
             }
         }
 
-        Shortcut
-        {
-            enabled: authLoader.active
+        Shortcut {
+            //enabled: authLoader.active
             sequence: "Escape"
+            enabled: !initialSetupRequired
 
             onActivated:
             {

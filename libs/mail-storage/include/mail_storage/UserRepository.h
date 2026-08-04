@@ -35,6 +35,8 @@ class UserRepository
 
   UserStatus StatusFromString(const std::string& status) const;
 
+  bool UserExists(const std::string& email);
+
   bool UpdateStatus(std::int64_t user_id, UserStatus status);
 
   bool HasUsers();
