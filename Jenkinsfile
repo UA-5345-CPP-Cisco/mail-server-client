@@ -25,7 +25,7 @@ pipeline {
          */
         DEPLOY_HOST = '10.26.0.53'
 
-        DEPLOY_DIR = '/opt/mail-server-client'
+        DEPLOY_DIR = '/home/student/mail-server-client'
         SSH_PORT   = '22'
     }
 
