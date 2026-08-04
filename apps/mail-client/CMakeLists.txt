@@ -72,6 +72,7 @@ qt_add_qml_module(qtappmail_core
 		headers/mail/EmailFilterProxy.h
 		headers/mail/EmailListModel.h
 		headers/mail/EmailPageProxy.h
+		headers/mail/NotificationsModel.h
 		headers/mail/MessageComposer.h
 		headers/search/MessageSearchModel.h
 		headers/users/CurrentUser.h
@@ -91,6 +92,7 @@ qt_add_qml_module(qtappmail_core
 		models/mail/EmailFilterProxy.cpp
 		models/mail/EmailListModel.cpp
 		models/mail/EmailPageProxy.cpp
+		models/mail/NotificationsModel.cpp
 		models/mail/MessageComposer.cpp
 		models/search/MessageSearchModel.cpp
 		models/users/CurrentUser.cpp
