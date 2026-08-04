@@ -14,11 +14,14 @@ Rectangle {
     property bool starred: false
     property string theme: "ThemeHolder"
     property string time: "10:30"
+    property bool seen: false
+    property bool is_inbox: sourceModel === inboxModel
     property int state: 0
 
-    signal deleteClicked
+        signal deleteClicked
     signal openRequested(string theme, string name, string sendTo, string content, string time, bool starred)
-    signal starredClicked
+        signal starredClicked
+        signal clicked
 
     color: state === 2 ? Color.highlight : state === 1 ? Color.surface : Color.background
     height: 92
@@ -44,6 +47,11 @@ Rectangle {
                 var inStarZone = (mouse.x >= starPos.x - 8 && mouse.x <= starPos.x + favouriteButtonContainer.width + 8 && mouse.y >= starPos.y - 8 && mouse.y <= starPos.y + favouriteButtonContainer.height + 8);
                 if (!inStarZone) {
                     root.openRequested(root.theme, root.name, root.sendTo, root.content, root.time, root.starred);
+                    if(is_inbox)
+                    {
+                        root.seen = true;
+                        root.clicked();
+                    }
                 }
             } else if (mouse.button === Qt.RightButton) {
                 contextMenu.popup();
@@ -271,6 +279,29 @@ Rectangle {
                     }
                 }
             }
+
+            Rectangle
+            {
+                id:viewContainer
+                anchors.bottom: parent.bottom
+                anchors.right: parent.right
+                color: Color.transparent
+                height: 16
+                width: 16
+                visible: is_inbox
+                Image
+                {
+                    id:viewImage
+                    anchors.fill: viewContainer
+                    fillMode: Image.PreserveAspectFit
+                    width: 16
+                    height: 16
+                    sourceSize.height: height * Screen.devicePixelRatio
+                    sourceSize.width: width * Screen.devicePixelRatio
+                    source: seen ? "qrc:/pngs/assets/ic_view_check.svg" : "qrc:/pngs/assets/ic_view_uncheck.svg"
+                }
+            }
+
             Rectangle {
                 id: themeContainer
 

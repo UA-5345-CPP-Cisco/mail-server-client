@@ -39,6 +39,8 @@ QString GetEnumString(int role)
 
     case ArchiveRole: return QStringLiteral("ArchiveRole");
 
+    case SeenRole: return QStringLiteral("SeenRole");
+
     default: return QStringLiteral("UnknownRole");
 
   }
@@ -97,6 +99,8 @@ QVariant EmailListModel::data(const QModelIndex& index, int role) const
 		return item.is_draft;
 	case ArchiveRole:
 	  return item.is_archive;
+	case SeenRole:
+	  return item.is_seen;
 	case ThemeRole:
 		return item.theme;
 	case NameRole:
@@ -122,6 +126,7 @@ QHash<int, QByteArray> EmailListModel::roleNames() const
 		{SentRole, "emailsSent"},
 		{DraftRole, "emailsDraft"},
     {ArchiveRole, "emailsArchive"},
+	  {SeenRole, "emailsSeen"},
 		{ThemeRole, "emailsTheme"},
 		{NameRole, "emailsName"},
 		{SendToRole, "emailsSendTo"},
@@ -174,6 +179,7 @@ void EmailListModel::AddData(
 	bool is_sent,
 	bool is_draft,
 	bool is_archive,
+	bool is_seen,
 	const QString& theme,
 	const QString& name,
 	const QString& send_to,
@@ -184,7 +190,7 @@ void EmailListModel::AddData(
 {
 	const QString t = time.isEmpty() ? QTime::currentTime().toString("hh:mm") : time;
 	const QString preview = MakePreview(content, 30);
-	AddData({-1, is_inbox, is_starred, is_sent, is_draft, is_archive, theme, name, send_to, preview, content, t});
+	AddData({-1, is_inbox, is_starred, is_sent, is_draft, is_archive, is_seen, theme, name, send_to, preview, content, t});
 }
 
 QString EmailListModel::MakePreview(const QString& text, int maxLen)
@@ -272,6 +278,7 @@ void EmailListModel::LoadFromDatabase()
 			is_sent,
 			is_draft,
       is_archive,
+      message.is_seen,
 			theme,
 			name,
 			recipient_email,
@@ -345,6 +352,31 @@ bool EmailListModel::ToggleArchive(int row)
     .arg(m_data[row].is_archive ? "true" : "false")));
 
   return m_data[row].is_archive;
+}
+
+bool EmailListModel::UpdateSeen(int row, bool seen)
+{
+  if (row < 0 || row >= static_cast<int>(m_data.size()))
+  {
+    return false;
+  }
+
+  const std::int64_t message_id = m_data[row].id;
+  if (message_id >= 0 && !m_message_repository.UpdateSeen(message_id, seen))
+  {
+    return false;
+  }
+
+  m_data[row].is_seen = seen;
+  const QModelIndex idx = index(row, 0);
+  emit dataChanged(idx, idx, {SeenRole});
+
+  Logging::Logger::Instance().Log(Logging::LogLevel::Debug, GetStdString(QString("EmailListModel::UpdateSeen: data at %1 changed %2 field to %3")
+    .arg(row)
+    .arg(GetEnumString(SeenRole))
+    .arg(m_data[row].is_seen ? "true" : "false")));
+
+  return m_data[row].is_seen;
 }
 
 Qt::ItemFlags EmailListModel::flags(const QModelIndex& index) const

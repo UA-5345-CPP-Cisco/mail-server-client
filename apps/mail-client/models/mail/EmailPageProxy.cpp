@@ -138,9 +138,9 @@ QString EmailPageProxy::PageAmountText() const
     return QStringLiteral("%1-%2 of %3").arg(start_idx).arg(end_idx).arg(m_emails_count);
 }
 
-bool EmailPageProxy::SetEmailData(int proxyRow, const QVariant& value, int role)
+bool EmailPageProxy::SetEmailData(int proxy_row, const QVariant& value, int role)
 {
-    QModelIndex proxyIndex = index(proxyRow, 0);
+    QModelIndex proxyIndex = index(proxy_row, 0);
     QModelIndex sourceIndex = mapToSource(proxyIndex);
 
     auto* filterProxy = qobject_cast<QAbstractProxyModel*>(sourceModel());
@@ -152,36 +152,54 @@ bool EmailPageProxy::SetEmailData(int proxyRow, const QVariant& value, int role)
     return false;
 }
 
-bool EmailPageProxy::SetStarred(int proxyRow, bool starred)
+bool EmailPageProxy::SetStarred(int proxy_row, bool starred)
 {
-    return SetEmailData(proxyRow, starred, StarredRole);
+    return SetEmailData(proxy_row, starred, StarredRole);
 }
 
-void EmailPageProxy::RemoveEmailData(int proxyRow)
+void EmailPageProxy::RemoveEmailData(int proxy_row)
 {
-     ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailPageProxy::RemoveEmailData: source model was assigned successfully");
-    QModelIndex idx = index(proxyRow, 0);
+  ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailPageProxy::RemoveEmailData: source model was assigned successfully");
+  QModelIndex idx = index(proxy_row, 0);
 
-    while (auto* proxy =
-           qobject_cast<QAbstractProxyModel*>(
-               const_cast<QAbstractItemModel*>(idx.model())))
-    {
-        idx = proxy->mapToSource(idx);
-    }
+  auto* model = GetParentModel(idx);
 
-    auto* model = qobject_cast<EmailListModel*>(
-        const_cast<QAbstractItemModel*>(idx.model()));
-
-    if (!model || !idx.isValid())
-        return;
-
+  if (model)
+  {
     model->RemoveData(idx.row());
+  }
 }
 
-bool EmailPageProxy::ToggleArchive(int row)
+bool EmailPageProxy::ToggleArchive(int proxy_row)
 {
-  QModelIndex idx = index(row, 0);
+  QModelIndex idx = index(proxy_row, 0);
 
+  auto* model = GetParentModel(idx);
+
+  if (model)
+  {
+    return model->ToggleArchive(idx.row());
+  }
+
+  return false;
+}
+
+bool EmailPageProxy::UpdateSeen(int proxy_row, bool seen)
+{
+  QModelIndex idx = index(proxy_row, 0);
+
+  auto* model = GetParentModel(idx);
+
+  if (model)
+  {
+    return model->UpdateSeen(idx.row(), seen);
+  }
+
+  return false;
+}
+
+EmailListModel* EmailPageProxy::GetParentModel(QModelIndex idx)
+{
   while (auto* proxy =
          qobject_cast<QAbstractProxyModel*>(
              const_cast<QAbstractItemModel*>(idx.model())))
@@ -194,10 +212,10 @@ bool EmailPageProxy::ToggleArchive(int row)
 
   if (!model || !idx.isValid())
   {
-    return false;
+    return nullptr;
   }
 
-  return model->ToggleArchive(idx.row());
+  return model;
 }
 
 }

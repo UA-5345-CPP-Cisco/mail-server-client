@@ -27,6 +27,7 @@ struct EmailData
     bool is_sent;
     bool is_draft;
     bool is_archive;
+    bool is_seen;
     QString theme;
     QString name;
     QString send_to;
@@ -41,6 +42,7 @@ enum EmailRole
     SentRole,
     DraftRole,
     ArchiveRole,
+    SeenRole,
     InboxRole,
     ThemeRole,
     NameRole,
@@ -66,12 +68,13 @@ public:
     void RemoveData(int row);
     Q_INVOKABLE bool DeleteEmail(int row);
     Q_INVOKABLE void AddData(bool is_starred, bool is_sent, bool is_draft,
-                             bool is_archive, const QString& theme, const QString& name,
+                             bool is_archive, bool is_seen, const QString& theme, const QString& name,
                              const QString& send_to, const QString& content, const QString& time,
                              bool is_inbox = false);
     Q_INVOKABLE bool SetStarred(int row, bool starred);
     bool ToggleArchive(int row);
     void AddData(const EmailData& item);
+    bool UpdateSeen(int row, bool seen);
 
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;
     Qt::ItemFlags flags(const QModelIndex& index) const override;
