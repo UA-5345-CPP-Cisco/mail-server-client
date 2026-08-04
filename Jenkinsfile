@@ -79,13 +79,14 @@ pipeline {
                         set -Eeuo pipefail
 
                         TARGET="${SSH_USER}@${DEPLOY_HOST}"
+                        KNOWN_HOSTS="${HOME}/.ssh/known_hosts"
 
                         SSH_OPTIONS=(
                             -i "$SSH_KEY"
                             -p "$SSH_PORT"
                             -o BatchMode=yes
                             -o StrictHostKeyChecking=yes
-                            -o UserKnownHostsFile="$HOME/.ssh/known_hosts"
+                            -o UserKnownHostsFile="$KNOWN_HOSTS"
                             -o ConnectTimeout=15
                         )
 
@@ -99,21 +100,18 @@ pipeline {
                         ssh "${SSH_OPTIONS[@]}" "$TARGET" \
                             "mkdir -p '${DEPLOY_DIR}/data'"
 
-                        /*
-                         * Configure rsync to use the Jenkins SSH credential.
-                         */
+                        # Configure rsync to use the Jenkins SSH credential.
                         printf -v RSYNC_RSH \
-                            'ssh -i %q -p %q -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=15' \
-                            "$SSH_KEY" "$SSH_PORT"
+                            'ssh -i %q -p %q -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=%q -o ConnectTimeout=15' \
+                            "$SSH_KEY" \
+                            "$SSH_PORT" \
+                            "$KNOWN_HOSTS"
 
                         export RSYNC_RSH
 
                         echo "Copying repository files..."
 
-                        /*
-                         * Remove files on the Docker machine when they were
-                         * removed from Git, but preserve persistent data.
-                         */
+                        # Remove files deleted from Git, but preserve remote data.
                         rsync \
                             --archive \
                             --compress \
@@ -122,10 +120,7 @@ pipeline {
                             --exclude='data/' \
                             ./ "${TARGET}:${DEPLOY_DIR}/"
 
-                        /*
-                         * Copy initial data files only when an equivalent
-                         * file does not already exist remotely.
-                         */
+                        # Seed data files without replacing existing remote files.
                         if [[ -d data ]]; then
                             rsync \
                                 --archive \
@@ -153,7 +148,7 @@ pipeline {
 
                         echo "Service status:"
                         docker compose ps
-REMOTE_SCRIPT
+        REMOTE_SCRIPT
                     '''
                 }
             }
