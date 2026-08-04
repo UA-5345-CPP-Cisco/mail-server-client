@@ -8,6 +8,8 @@
 #include <cstdint>
 #include <memory>
 #include <vector>
+#include <functional>
+
 
 #include "mail_storage/Database.h"
 #include "mail_storage/MailMessageRepository.h"
@@ -73,6 +75,8 @@ namespace ISXMail {
                                  const QString& content,
                                  const QString& time,
                                  bool is_inbox = false);
+        using InboxMessageCallback = std::function<void(const QString& sender, const QString& subject, const QString& preview)>;
+        void registerInboxMessageCallback(InboxMessageCallback callback);
         Q_INVOKABLE bool SetStarred(int row, bool starred);
         Q_INVOKABLE bool RefreshFromServer();
         bool ToggleArchive(int row);
@@ -83,6 +87,7 @@ namespace ISXMail {
 
     signals:
         void dataAdded();
+        void inboxMessageReceived(const QString& sender, const QString& subject, const QString& preview);
 
     private:
         void LoadFromDatabase();
@@ -94,6 +99,7 @@ namespace ISXMail {
         Storage::MailMessageRepository m_message_repository;
         Storage::MessageRecipientRepository m_recipient_repository;
         std::vector<EmailData> m_data;
+        std::vector<InboxMessageCallback> m_inbox_callbacks;
     };
 
 } // namespace ISXMail

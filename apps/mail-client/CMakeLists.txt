@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
 set(WINDOWS_DEV_CONSOLE ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
+find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2 Widgets)
 #find_package(SQLite3 REQUIRED)
 
 qt_standard_project_setup(REQUIRES 6.10)
@@ -119,6 +119,7 @@ target_link_libraries(qtappmail_core
 		Qt6::Sql
 		Qt6::Core
 		Qt6::QuickControls2
+		Qt6::Widgets
 		mail_server_sdk
 )
 
@@ -186,6 +187,7 @@ target_link_libraries(appqtapptestmail
 		Qt6::Sql
 		Qt6::QuickControls2
 		mail_server_sdk
+		Qt6::Widgets
 )
 
 target_include_directories(appqtapptestmail
