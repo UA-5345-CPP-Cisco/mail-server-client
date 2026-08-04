@@ -60,11 +60,11 @@ int main(int argc, char* argv[])
     AuthHandler authHandler;
     engine.rootContext()->setContextProperty("authHandler", &authHandler);
 
-    engine.rootContext()->setContextProperty("initialSetupRequired", true);
+    auto* account_model = new ISXMail::AccountListModel(&app);
+    engine.rootContext()->setContextProperty("initialSetupRequired", account_model->rowCount() == 0);
 
     auto* model = new ISXMail::EmailListModel(&app);
     auto* message_composer = new ISXMail::MessageComposer(&app);
-    auto* account_model = new ISXMail::AccountListModel(&app);
 
     auto* inboxFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Inbox, &app);
     auto* sentFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Sent, &app);
