@@ -100,33 +100,31 @@ pipeline {
                         ssh "${SSH_OPTIONS[@]}" "$TARGET" \
                             "mkdir -p '${DEPLOY_DIR}/data'"
 
-                        # Configure rsync to use the Jenkins SSH credential.
-                        printf -v RSYNC_RSH \
-                            'ssh -i %q -p %q -o BatchMode=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=%q -o ConnectTimeout=15' \
-                            "$SSH_KEY" \
-                            "$SSH_PORT" \
-                            "$KNOWN_HOSTS"
+                        echo "Removing old application files while preserving data..."
 
-                        export RSYNC_RSH
+                        ssh "${SSH_OPTIONS[@]}" "$TARGET" \
+                            "find '${DEPLOY_DIR}' \
+                                -mindepth 1 \
+                                -maxdepth 1 \
+                                ! -name data \
+                                -exec rm -rf -- {} +"
 
                         echo "Copying repository files..."
 
-                        # Remove files deleted from Git, but preserve remote data.
-                        rsync \
-                            --archive \
-                            --compress \
-                            --delete \
-                            --exclude='.git/' \
-                            --exclude='data/' \
-                            ./ "${TARGET}:${DEPLOY_DIR}/"
+                        tar \
+                            --exclude='.git' \
+                            --exclude='data' \
+                            -czf - . |
+                        ssh "${SSH_OPTIONS[@]}" "$TARGET" \
+                            "cd '${DEPLOY_DIR}' && tar -xzf -"
 
-                        # Seed data files without replacing existing remote files.
+                        echo "Copying initial data files without overwriting existing data..."
+
                         if [[ -d data ]]; then
-                            rsync \
-                                --archive \
-                                --compress \
-                                --ignore-existing \
-                                data/ "${TARGET}:${DEPLOY_DIR}/data/"
+                            tar -C data -czf - . |
+                            ssh "${SSH_OPTIONS[@]}" "$TARGET" \
+                                "cd '${DEPLOY_DIR}/data' &&
+                                 tar --skip-old-files -xzf -"
                         fi
 
                         echo "Starting Docker Compose deployment..."
