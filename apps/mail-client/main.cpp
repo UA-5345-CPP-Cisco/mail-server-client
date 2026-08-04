@@ -14,6 +14,7 @@
 #include "headers/color/ColorProvider.h"
 #include "headers/database/AuthHandler.h"
 #include "headers/database/DatabaseManager.h"
+#include "headers/localization/LocalizationManager.h"
 #include "headers/mail/EmailFilterProxy.h"
 #include "headers/mail/EmailListModel.h"
 #include "headers/mail/EmailPageProxy.h"
@@ -55,6 +56,9 @@ int main(int argc, char* argv[])
     auto dbPath = ISXDatabaseManager::DatabaseManager::DatabasePath();
     Storage::Database database(dbPath);
     QQmlApplicationEngine engine;
+
+    auto* localization_manager = new ISXMail::LocalizationManager(&engine, &app);
+    engine.rootContext()->setContextProperty("Localization", localization_manager);
 
     (void)Logging::Logger::Instance();
     AuthHandler authHandler;

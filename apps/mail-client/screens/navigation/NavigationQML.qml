@@ -870,7 +870,7 @@ Rectangle {
                 horizontalAlignment: Text.AlignLeft
                 lineHeight: 20
                 lineHeightMode: Text.FixedHeight
-                text: "Settings"
+                text: qsTr("Settings")
                 textFormat: Text.PlainText
                 verticalAlignment: Text.AlignVCenter
 

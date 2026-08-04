@@ -1,13 +1,29 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Shapes
 import QtQuick.Layouts
 
 Rectangle {
     id: settingsContainer
 
+    property bool generalSettingsExpanded: false
+    property var languageOptions: [
+        {"code": "en", "label": "English"},
+        {"code": "uk", "label": "Українська"},
+        {"code": "pl", "label": "Polski"}
+    ]
+
+    function languageIndex(languageCode) {
+        for (let index = 0; index < languageOptions.length; ++index) {
+            if (languageOptions[index].code === languageCode)
+                return index;
+        }
+        return 0;
+    }
+
     clip: true
     color: Color.background
-    implicitHeight: 313
+    implicitHeight: generalSettingsExpanded ? 377 : 313
     implicitWidth: 382
     radius: 14
 
@@ -34,7 +50,7 @@ Rectangle {
             horizontalAlignment: Text.AlignLeft
             lineHeight: 24
             lineHeightMode: Text.FixedHeight
-            text: "Settings"
+            text: qsTr("Settings")
             textFormat: Text.PlainText
             verticalAlignment: Text.AlignVCenter
             width: 66
@@ -98,7 +114,7 @@ Rectangle {
         height: 16
         width: 350.40
         x: 11
-        y: 284
+        y: settingsContainer.generalSettingsExpanded ? 348 : 284
 
         Text {
             id: versionText
@@ -126,7 +142,7 @@ Rectangle {
         id: preferencesContainer
 
         color: Color.transparent
-        height: 220
+        height: settingsContainer.generalSettingsExpanded ? 284 : 220
         width: 382.40
         y: 64
 
@@ -349,7 +365,7 @@ Rectangle {
                             horizontalAlignment: Text.AlignLeft
                             lineHeight: 20
                             lineHeightMode: Text.FixedHeight
-                            text: "Theme"
+                            text: qsTr("Theme")
                             textFormat: Text.PlainText
                             verticalAlignment: Text.AlignVCenter
                             width: 70
@@ -374,7 +390,9 @@ Rectangle {
                             horizontalAlignment: Text.AlignLeft
                             lineHeight: 16
                             lineHeightMode: Text.FixedHeight
-                            text: "Currently light"
+                            text: Color.currentTheme.toLowerCase() === "dark"
+                                ? qsTr("Current theme: Dark")
+                                : qsTr("Current theme: Light")
                             textFormat: Text.PlainText
                             verticalAlignment: Text.AlignVCenter
                             width: 90
@@ -390,7 +408,10 @@ Rectangle {
                 id: themeAnimatedSlider
 
                 property int currentIndex: Color.currentTheme === "Dark" ? 1 : 0
-                property var options: ["Light", "Dark"]
+                property var options: [
+                    {"key": "light", "label": qsTr("Light")},
+                    {"key": "dark", "label": qsTr("Dark")}
+                ]
 
                 color: Color.background
                 height: 32
@@ -426,7 +447,7 @@ Rectangle {
 
                         delegate: Item {
                             required property int index
-                            required property string modelData
+                            required property var modelData
 
                             height: themeAnimatedSlider.height
                             width: themeAnimatedSlider.width / themeAnimatedSlider.options.length
@@ -437,7 +458,7 @@ Rectangle {
                                 font.family: "Segoe UI"
                                 font.pixelSize: 12
                                 font.weight: themeAnimatedSlider.currentIndex === index ? Font.DemiBold : Font.Normal
-                                text: modelData
+                                text: modelData.label
 
                                 Behavior on color {
                                     ColorAnimation {
@@ -448,14 +469,7 @@ Rectangle {
                             TapHandler {
                                 onTapped: {
                                     themeAnimatedSlider.currentIndex = index;
-                                    themeSubtitleText.text = "Currently " + modelData.toLowerCase();
-
-                                    // load corresponding color scheme
-                                    if (modelData.toLowerCase() === "dark") {
-                                        Color.SetTheme("dark");
-                                    } else {
-                                        Color.SetTheme("light");
-                                    }
+                                    Color.SetTheme(modelData.key);
                                 }
                             }
                         }
@@ -559,7 +573,7 @@ Rectangle {
                         horizontalAlignment: Text.AlignLeft
                         lineHeight: 20
                         lineHeightMode: Text.FixedHeight
-                        text: "Account Settings"
+                        text: qsTr("Account Settings")
                         textFormat: Text.PlainText
                         verticalAlignment: Text.AlignVCenter
                         width: 106
@@ -584,7 +598,7 @@ Rectangle {
                         horizontalAlignment: Text.AlignLeft
                         lineHeight: 16
                         lineHeightMode: Text.FixedHeight
-                        text: "Manage your profile and preferences"
+                        text: qsTr("Manage your profile and preferences")
                         textFormat: Text.PlainText
                         verticalAlignment: Text.AlignVCenter
                         width: 197
@@ -611,12 +625,7 @@ Rectangle {
             }
             TapHandler {
                 onTapped: {
-                    if (String(generalSettingsLoader.source) === "") {
-                        generalSettingsLoader.active = true;
-                        generalSettingsLoader.source = "SettingsGeneralQML.qml";
-                    } else {
-                        generalSettingsLoader.source = "";
-                    }
+                    settingsContainer.generalSettingsExpanded = !settingsContainer.generalSettingsExpanded;
                 }
             }
             Rectangle {
@@ -694,7 +703,7 @@ Rectangle {
                         horizontalAlignment: Text.AlignLeft
                         lineHeight: 20
                         lineHeightMode: Text.FixedHeight
-                        text: "General"
+                        text: qsTr("General")
                         textFormat: Text.PlainText
                         verticalAlignment: Text.AlignVCenter
                         width: 49
@@ -719,12 +728,80 @@ Rectangle {
                         horizontalAlignment: Text.AlignLeft
                         lineHeight: 16
                         lineHeightMode: Text.FixedHeight
-                        text: "Notifications, language, and more"
+                        text: qsTr("Notifications, language, and more")
                         textFormat: Text.PlainText
                         verticalAlignment: Text.AlignVCenter
                         width: 181
                     }
                 }
+            }
+        }
+        Rectangle {
+            id: languageSettingsContainer
+
+            color: Color.background
+            height: 60
+            radius: 10
+            visible: settingsContainer.generalSettingsExpanded
+            width: 350.40
+            x: 16
+            y: 196
+
+            Text {
+                id: languageTitleText
+
+                color: Color.primaryText
+                font.family: "Segoe UI"
+                font.pixelSize: 14
+                height: 20
+                text: qsTr("Language")
+                verticalAlignment: Text.AlignVCenter
+                width: 144
+                x: 46
+                y: 9
+            }
+            Text {
+                id: languageSubtitleText
+
+                color: Color.secondaryText
+                elide: Text.ElideRight
+                font.family: "Segoe UI"
+                font.pixelSize: 12
+                height: 16
+                text: qsTr("Choose the interface language")
+                verticalAlignment: Text.AlignVCenter
+                width: 144
+                x: 46
+                y: 31
+            }
+            ComboBox {
+                id: languageComboBox
+
+                currentIndex: settingsContainer.languageIndex(Localization.currentLanguage)
+                model: settingsContainer.languageOptions
+                textRole: "label"
+                valueRole: "code"
+                width: 140
+                x: 200
+                y: 14
+
+                contentItem: Text {
+                    color: Color.primaryText
+                    elide: Text.ElideRight
+                    font.family: "Segoe UI"
+                    font.pixelSize: 12
+                    leftPadding: 10
+                    text: languageComboBox.displayText
+                    verticalAlignment: Text.AlignVCenter
+                }
+                background: Rectangle {
+                    border.color: Color.outline
+                    border.width: 1
+                    color: Color.background
+                    radius: 8
+                }
+
+                onActivated: Localization.SetLanguage(currentValue)
             }
         }
     }

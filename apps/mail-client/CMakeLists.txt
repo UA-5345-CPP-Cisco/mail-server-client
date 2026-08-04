@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
 set(WINDOWS_DEV_CONSOLE ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2 Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2 Widgets LinguistTools)
 #find_package(SQLite3 REQUIRED)
 
 qt_standard_project_setup(REQUIRES 6.10)
@@ -84,6 +84,7 @@ qt_add_qml_module(qtappmail_core
 		headers/client_logger/ClientConfigReader.h
 		headers/color/ColorModel.h
 		headers/color/ColorProvider.h
+		headers/localization/LocalizationManager.h
 
 		models/database/AuthHandler.cpp
 		models/database/CacheStore.cpp
@@ -103,6 +104,7 @@ qt_add_qml_module(qtappmail_core
 		models/client_logger/ClientConfigReader.cpp
 		models/color/ColorModel.cpp
 		models/color/ColorProvider.cpp
+		models/localization/LocalizationManager.cpp
 )
 
 target_include_directories(qtappmail_core
@@ -194,6 +196,15 @@ target_include_directories(appqtapptestmail
 		PRIVATE
 		${CMAKE_CURRENT_SOURCE_DIR}
 		${CMAKE_CURRENT_SOURCE_DIR}/headers
+)
+
+qt_add_translations(
+		TARGETS appqtapptestmail
+		SOURCE_TARGETS appqtapptestmail qtappmail_core
+		TS_FILES
+		translations/mail_client_uk.ts
+		translations/mail_client_pl.ts
+		RESOURCE_PREFIX "/i18n"
 )
 
 install(TARGETS appqtapptestmail
