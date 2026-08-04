@@ -8,36 +8,20 @@ pipeline {
         timeout(time: 45, unit: 'MINUTES')
     }
 
-    /*
-     * Check GitHub approximately every five minutes.
-     *
-     * "H" distributes polling times across Jenkins jobs,
-     * avoiding all jobs polling at exactly the same second.
-     */
     triggers {
         pollSCM('H/5 * * * *')
     }
 
     environment {
-        /*
-         * Jenkins Secret Text credential containing the
-         * private IP address or DNS name of the Docker machine.
-         */
         DEPLOY_HOST = '10.26.0.53'
-
-        DEPLOY_DIR = '/home/student/mail-server-client'
-        SSH_PORT   = '22'
+        DEPLOY_DIR  = '/home/student/mail-server-client'
+        SSH_PORT    = '22'
     }
 
     stages {
         stage('Checkout main') {
             steps {
                 deleteDir()
-
-                /*
-                 * Checks out the exact repository and revision
-                 * associated with this Pipeline job.
-                 */
                 checkout scm
 
                 sh '''#!/usr/bin/env bash
@@ -45,9 +29,6 @@ pipeline {
 
                     echo "Checked out commit:"
                     git log -1 --oneline
-
-                    echo "Current branch:"
-                    git branch --show-current || true
                 '''
             }
         }
@@ -130,23 +111,13 @@ pipeline {
                         echo "Starting Docker Compose deployment..."
 
                         ssh "${SSH_OPTIONS[@]}" "$TARGET" \
-                            "DEPLOY_DIR='${DEPLOY_DIR}' bash -s" <<'REMOTE_SCRIPT'
-                        set -Eeuo pipefail
-
-                        cd "$DEPLOY_DIR"
-
-                        echo "Validating Compose configuration..."
-                        docker compose config --quiet
-
-                        echo "Building and starting services..."
-                        docker compose up \
-                            --detach \
-                            --build \
-                            --remove-orphans
-
-                        echo "Service status:"
-                        docker compose ps
-        REMOTE_SCRIPT
+                            "cd '${DEPLOY_DIR}' &&
+                             echo 'Validating Compose configuration...' &&
+                             docker compose config --quiet &&
+                             echo 'Building and starting services...' &&
+                             docker compose up --detach --build --remove-orphans &&
+                             echo 'Service status:' &&
+                             docker compose ps"
                     '''
                 }
             }
