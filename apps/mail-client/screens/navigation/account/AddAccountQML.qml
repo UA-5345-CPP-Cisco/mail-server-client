@@ -16,7 +16,7 @@ Rectangle {
 
     function getAuthErrorMessage(errorCode) 
     {
-        if (errorCode === AuthHandler.AuthResult.UserNotFound || errorCode === AuthHandler.AuthResult.WrongPassword) 
+        if (errorCode === AuthHandler.AuthResult.UserNotFound || errorCode === AuthHandler.AuthResult.WrongPasswordOREmail) 
         {
             return "Invalid email or password";
         }
@@ -31,11 +31,11 @@ Rectangle {
             return "System error";
         }
 
-        if (errorCode === AuthHandler.AuthResult.UserAlreadyExists) 
+        if (errorCode === AuthHandler.AuthResult.UserAlreadyExists)
         {
-            return "This account is already added";
+            return "User already exists";
         }
-    
+
         return "An unknown error occurred";
     }
 
@@ -215,14 +215,10 @@ Rectangle {
 
             if (result === AuthHandler.AuthResult.Success) 
             {
-                var name = authHandler.get_last_logged_in_name();
-                var firstLetter = avatarInitial(name);
-                
-                accountModel.AddAccount(name, email, "", Color.avatar, firstLetter, true);
-                CurrentUser.Authorize(name, email, "");
-
+                accountModel.AddAccount(CurrentUser.username, CurrentUser.email, "", Color.avatar, avatarInitial(CurrentUser.username), true);
+                showInboxForCurrentUser();
                 closeAuthWindow();
-            } 
+            }
             else 
             {
                 contentLoader.item.generalError = getAuthErrorMessage(result);
@@ -239,7 +235,8 @@ Rectangle {
                 var firstLetter = avatarInitial(name);
 
                 accountModel.AddAccount(name, email, "", Color.avatar, firstLetter, true);
-                CurrentUser.Authorize(name, email, "");
+                //CurrentUser.Authorize(name, email, "");
+                showInboxForCurrentUser();
 
                 closeAuthWindow();
             } 

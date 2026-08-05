@@ -102,7 +102,7 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 14
             leftPadding: 16
-            placeholderText: "Full name"
+            placeholderText: "Name"
             placeholderTextColor: Color.secondaryText
             rightPadding: 16
             topPadding: 12
