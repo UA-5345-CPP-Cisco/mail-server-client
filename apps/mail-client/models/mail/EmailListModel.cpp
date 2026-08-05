@@ -15,11 +15,8 @@ namespace ISXMail {
 
     namespace {
         QString GetEnumString(int role)
-
         {
-
             switch (role)
-
             {
             case InboxRole:
                 return QStringLiteral("InboxRole");
@@ -259,7 +256,7 @@ namespace ISXMail {
     {
         const QString t = time.isEmpty() ? QTime::currentTime().toString("hh:mm") : time;
         const QString preview = MakePreview(content, 30);
-        AddData({-1, is_inbox, is_starred, is_sent, is_draft, is_archive, theme, name, send_to, preview, content, t});
+        AddData({-1, is_inbox, is_starred, is_sent, is_draft, is_archive, is_seen, theme, name, send_to, preview, content, t});
     }
 
     QString EmailListModel::MakePreview(const QString& text, int maxLen)
@@ -426,6 +423,9 @@ namespace ISXMail {
                     const bool is_starred = mail.contains("is_starred") && mail.at("is_starred").is_bool()
                                                 ? mail.at("is_starred").as_bool()
                                                 : false;
+                    const bool is_seen = mail.contains("is_seen") && mail.at("is_seen").is_bool()
+                                             ? mail.at("is_seen").as_bool()
+                                             : false;
 
                     server_data.push_back({id,
                                            is_inbox,
@@ -433,6 +433,7 @@ namespace ISXMail {
                                            is_sent,
                                            is_draft,
                                            is_archive,
+                                           is_seen,
                                            display_subject,
                                            sender_email,
                                            recipient_email,
@@ -530,6 +531,7 @@ namespace ISXMail {
                                   is_sent,
                                   is_draft,
                                   is_archive,
+                                  message.is_seen,
                                   theme,
                                   sender_email,
                                   recipient_email,

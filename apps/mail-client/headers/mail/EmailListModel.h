@@ -76,10 +76,13 @@ enum EmailRole
                              bool is_archive, bool is_seen, const QString& theme, const QString& name,
                              const QString& send_to, const QString& content, const QString& time,
                              bool is_inbox = false);
+    using InboxMessageCallback = std::function<void(const QString& sender, const QString& subject, const QString& preview)>;
+    void registerInboxMessageCallback(InboxMessageCallback callback);
     Q_INVOKABLE bool SetStarred(int row, bool starred);
     bool ToggleArchive(int row);
     void AddData(const EmailData& item);
     bool UpdateSeen(int row, bool seen);
+    Q_INVOKABLE bool RefreshFromServer();
 
         bool setData(const QModelIndex& index, const QVariant& value, int role) override;
         Qt::ItemFlags flags(const QModelIndex& index) const override;
