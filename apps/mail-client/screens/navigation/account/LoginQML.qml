@@ -76,7 +76,7 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 28
             font.weight: Font.Black
-            text: "Log In"
+            text: qsTr("Log In")
         }
         Text {
             id: descriptionText
@@ -86,7 +86,7 @@ Item {
             color: Color.secondaryText
             font.family: "Segoe UI"
             font.pixelSize: 14
-            text: "Please enter your details to sign in"
+            text: qsTr("Please enter your details to sign in")
         }
 
         // Email field for login screen
@@ -98,7 +98,7 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 14
             leftPadding: 16
-            placeholderText: "Email address"
+            placeholderText: qsTr("Email address")
             placeholderTextColor: Color.secondaryText
             rightPadding: 16
             topPadding: 12
@@ -180,7 +180,7 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 14
             leftPadding: 16
-            placeholderText: "Password"
+            placeholderText: qsTr("Password")
             placeholderTextColor: Color.secondaryText
             rightPadding: 16
             topPadding: 12
@@ -299,7 +299,7 @@ Item {
                 font.family: "Segoe UI"
                 font.pixelSize: 16
                 font.weight: Font.Bold
-                text: "Sign In"
+                text: qsTr("Sign In")
             }
             MouseArea {
                 id: loginClickArea

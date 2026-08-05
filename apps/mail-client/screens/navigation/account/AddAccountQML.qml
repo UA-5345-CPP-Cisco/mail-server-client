@@ -241,7 +241,7 @@ Rectangle {
                     font.family: "Segoe UI"
                     font.pixelSize: 32
                     font.weight: Font.Bold
-                    text: "Add an Account"
+                    text: qsTr("Add an Account")
                 }
                 Row {
                     id: optionsRow
@@ -286,7 +286,7 @@ Rectangle {
                                 font.family: "Segoe UI"
                                 font.pixelSize: 22
                                 font.weight: Font.Bold
-                                text: "Existing User?"
+                                text: qsTr("Existing User?")
                             }
                             Rectangle {
                                 id: loginButton
@@ -317,7 +317,7 @@ Rectangle {
                                     font.family: "Segoe UI"
                                     font.pixelSize: 16
                                     font.weight: Font.Bold
-                                    text: "Log In"
+                                    text: qsTr("Log In")
                                 }
                                 MouseArea {
                                     id: loginClickArea
@@ -339,7 +339,7 @@ Rectangle {
                                 font.family: "Segoe UI"
                                 font.pixelSize: 14
                                 horizontalAlignment: Text.AlignHCenter
-                                text: "Access your personal \n or work profile"
+                                text: qsTr("Access your personal \n or work profile")
                             }
                         }
                     }
@@ -382,7 +382,7 @@ Rectangle {
                                 font.family: "Segoe UI"
                                 font.pixelSize: 22
                                 font.weight: Font.Bold
-                                text: "New User?"
+                                text: qsTr("New User?")
                             }
                             Rectangle {
                                 id: registerButton
@@ -413,7 +413,7 @@ Rectangle {
                                     font.family: "Segoe UI"
                                     font.pixelSize: 16
                                     font.weight: Font.Bold
-                                    text: "Register"
+                                    text: qsTr("Register")
                                 }
                                 MouseArea {
                                     id: registerClickArea
@@ -435,7 +435,7 @@ Rectangle {
                                 font.family: "Segoe UI"
                                 font.pixelSize: 14
                                 horizontalAlignment: Text.AlignHCenter
-                                text: "Create a new account"
+                                text: qsTr("Create a new account")
                             }
                         }
                     }

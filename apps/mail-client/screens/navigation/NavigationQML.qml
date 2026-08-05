@@ -279,7 +279,7 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 lineHeight: 24
                 lineHeightMode: Text.FixedHeight
-                text: "Compose"
+                text: qsTr("Compose")
                 textFormat: Text.PlainText
                 verticalAlignment: Text.AlignVCenter
                 width: 69
@@ -363,7 +363,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 24
                     lineHeightMode: Text.FixedHeight
-                    text: "Inbox"
+                    text: qsTr("Inbox")
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
@@ -467,7 +467,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 24
                     lineHeightMode: Text.FixedHeight
-                    text: "Sent"
+                    text: qsTr("Sent")
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
@@ -569,7 +569,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 24
                     lineHeightMode: Text.FixedHeight
-                    text: "Starred"
+                    text: qsTr("Starred")
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
@@ -671,7 +671,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 24
                     lineHeightMode: Text.FixedHeight
-                    text: "Drafts"
+                    text: qsTr("Drafts")
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
@@ -771,7 +771,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 24
                     lineHeightMode: Text.FixedHeight
-                    text: "Archive"
+                    text: qsTr("Archive")
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width

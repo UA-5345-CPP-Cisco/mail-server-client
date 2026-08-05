@@ -77,7 +77,7 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 28
             font.weight: Font.Bold
-            text: "Register"
+            text: qsTr("Register")
         }
         Text {
             id: descriptionText
@@ -87,7 +87,7 @@ Item {
             color: Color.secondaryText
             font.family: "Segoe UI"
             font.pixelSize: 14
-            text: "Please enter your details to create a new account"
+            text: qsTr("Please enter your details to create a new account")
         }
 
         // Name field for register screen
@@ -99,7 +99,7 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 14
             leftPadding: 16
-            placeholderText: "Full name"
+            placeholderText: qsTr("Full name")
             placeholderTextColor: Color.secondaryText
             rightPadding: 16
             topPadding: 12
@@ -181,7 +181,7 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 14
             leftPadding: 16
-            placeholderText: "Email address"
+            placeholderText: qsTr("Email address")
             placeholderTextColor: Color.secondaryText
             rightPadding: 16
             topPadding: 12
@@ -264,7 +264,7 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 14
             leftPadding: 16
-            placeholderText: "Password"
+            placeholderText: qsTr("Password")
             placeholderTextColor: Color.secondaryText
             rightPadding: 16
             topPadding: 12
@@ -396,7 +396,7 @@ Item {
                 font.family: "Segoe UI"
                 font.pixelSize: 16
                 font.weight: Font.Bold
-                text: "Register"
+                text: qsTr("Register")
             }
             MouseArea {
                 id: registerClickArea
@@ -476,7 +476,7 @@ Item {
                     font.family: "Segoe UI"
                     font.pixelSize: 16
                     font.weight: Font.Medium
-                    text: "Register with Google"
+                    text: qsTr("Register with Google")
                 }
             }
             MouseArea {

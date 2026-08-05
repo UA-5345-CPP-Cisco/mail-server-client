@@ -214,7 +214,7 @@ Rectangle {
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 leftPadding: 0
-                placeholderText: "To"
+                placeholderText: qsTr("To")
                 placeholderTextColor: "#99a1af"
                 text: newRecipient
                 topPadding: 0
@@ -293,7 +293,7 @@ Rectangle {
                 font.pixelSize: 14
                 font.weight: Font.Normal
                 leftPadding: 0
-                placeholderText: "Subject"
+                placeholderText: qsTr("Subject")
                 placeholderTextColor: "#99a1af"
                 text: newSubject
                 topPadding: 0
@@ -367,7 +367,7 @@ Rectangle {
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 leftPadding: 0
-                placeholderText: "Write your message..."
+                placeholderText: qsTr("Write your message...")
                 placeholderTextColor: "#99a1af"
                 text: newText
                 topPadding: 0
@@ -484,7 +484,7 @@ Rectangle {
                 font.family: "Segoe UI"
                 font.pixelSize: 14
                 font.weight: Font.Normal
-                text: "Send"
+                text: qsTr("Send")
                 textFormat: Text.PlainText
             }
         }

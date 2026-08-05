@@ -47,7 +47,7 @@ Rectangle
             font.family: "Segoe UI"
             font.pixelSize: 14
             font.weight: Font.Black
-            text: "Switch Account"
+            text: qsTr("Switch Account")
             verticalAlignment: Text.AlignVCenter
         }
 
@@ -205,7 +205,7 @@ Rectangle
                 x: 60
                 y: 18
                 height: 20
-                text: "Add account"
+                text: qsTr("Add account")
                 color: Color.primaryText
                 font.family: "Segoe UI"
                 font.pixelSize: 14
