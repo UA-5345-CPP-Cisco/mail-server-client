@@ -431,7 +431,9 @@ void EmailListModel::AddData(
                 const bool is_starred = mail.contains("is_starred") && mail.at("is_starred").is_bool()
                                             ? mail.at("is_starred").as_bool()
                                             : false;
-                const bool is_seen = false; // Add to server response
+                const bool is_seen = mail.contains("is_seen") && mail.at("is_seen").is_bool()
+                                            ? mail.at("is_seen").as_bool()
+                                            : false;
                 server_data.push_back({id,
                                        is_inbox,
                                        is_starred,
