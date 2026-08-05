@@ -115,6 +115,19 @@ ApplicationWindow {
         }
     }
 
+    Timer {
+        id: autoRefreshTimer
+        interval: 10000
+        running: CurrentUser.isAuthorized
+        repeat: true
+        triggeredOnStart: false
+        onTriggered: {
+            if (!emailsModel.isLoading) {
+                emailsModel.RefreshFromServer(true);
+            }
+        }
+    }
+
     MouseArea {
         anchors.fill: parent
 
