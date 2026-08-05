@@ -116,6 +116,11 @@ namespace ISXMail {
 
             return display_subject.isEmpty() ? QStringLiteral("(No subject)") : display_subject;
         }
+
+        bool IsServerBacked(const EmailData& item)
+        {
+            return item.id >= 0 && !item.is_draft;
+        }
     } // namespace
 
     EmailListModel::EmailListModel(QObject* parent)
@@ -193,19 +198,7 @@ namespace ISXMail {
 
     void EmailListModel::RemoveData(int row)
     {
-        if (row < 0 || row >= static_cast<int>(m_data.size())) {
-            return;
-        }
-        if (m_data[row].id >= 0 && !m_message_repository.DeleteMessage(m_data[row].id)) {
-            return;
-        }
-        beginRemoveRows(QModelIndex(), row, row);
-        m_data.erase(m_data.begin() + row);
-        endRemoveRows();
-
-        ISXService::Service::Logger().Log(
-            Logging::LogLevel::Debug,
-            GetStdString(QString("EmailListModel::RemoveData: data was removed at %1").arg(QString::number(row))));
+        DeleteEmail(row);
     }
 
     bool EmailListModel::DeleteEmail(int row)
@@ -214,8 +207,7 @@ namespace ISXMail {
             return false;
         }
 
-        const std::int64_t message_id = m_data[row].id;
-        if (message_id >= 0 && !m_message_repository.DeleteMessage(message_id)) {
+        if (!DeleteFromStorage(m_data[row])) {
             return false;
         }
 
@@ -273,8 +265,7 @@ namespace ISXMail {
         if (row < 0 || row >= static_cast<int>(m_data.size()))
             return false;
 
-        const std::int64_t message_id = m_data[row].id;
-        if (message_id >= 0 && !m_message_repository.UpdateStarred(message_id, starred))
+        if (!SetStarredInStorage(m_data[row], starred))
             return false;
 
         m_data[row].is_starred = starred;
@@ -481,12 +472,7 @@ namespace ISXMail {
         }
         switch (role) {
         case StarredRole:
-            if (m_data[index.row()].id >= 0 &&
-                !m_message_repository.UpdateStarred(m_data[index.row()].id, value.toBool())) {
-                return false;
-            }
-            m_data[index.row()].is_starred = value.toBool();
-            break;
+            return SetStarred(index.row(), value.toBool());
         case ThemeRole:
             m_data[index.row()].theme = value.toString();
             break;
@@ -515,12 +501,12 @@ namespace ISXMail {
             return false;
         }
 
-        const std::int64_t message_id = m_data[row].id;
-        if (message_id >= 0 && !m_message_repository.UpdateArchive(message_id, !m_data[row].is_archive)) {
+        const bool archived = !m_data[row].is_archive;
+        if (!SetArchivedInStorage(m_data[row], archived)) {
             return false;
         }
 
-        m_data[row].is_archive = !m_data[row].is_archive;
+        m_data[row].is_archive = archived;
         const QModelIndex idx = index(row, 0);
         emit dataChanged(idx, idx, {ArchiveRole});
 
@@ -532,6 +518,70 @@ namespace ISXMail {
                              .arg(m_data[row].is_archive ? "true" : "false")));
 
         return m_data[row].is_archive;
+    }
+
+    bool EmailListModel::DeleteFromStorage(const EmailData& item)
+    {
+        if (item.id < 0) {
+            return true;
+        }
+
+        if (!IsServerBacked(item)) {
+            return m_message_repository.DeleteMessage(item.id);
+        }
+
+        try {
+            const auto response = ISXService::Service::MailServerClient().DeleteMail(item.id);
+            return response.is_success();
+        } catch (const std::exception& exception) {
+            ISXService::Service::Logger().Log(
+                Logging::LogLevel::Error, std::string("EmailListModel::DeleteFromStorage failed: ") + exception.what());
+            return false;
+        }
+    }
+
+    bool EmailListModel::SetStarredInStorage(const EmailData& item, bool starred)
+    {
+        if (item.id < 0) {
+            return true;
+        }
+
+        if (!IsServerBacked(item)) {
+            return m_message_repository.UpdateStarred(item.id, starred);
+        }
+
+        try {
+            const auto response = starred ? ISXService::Service::MailServerClient().StarMail(item.id)
+                                          : ISXService::Service::MailServerClient().UnstarMail(item.id);
+            return response.is_success();
+        } catch (const std::exception& exception) {
+            ISXService::Service::Logger().Log(Logging::LogLevel::Error,
+                                              std::string("EmailListModel::SetStarredInStorage failed: ") +
+                                                  exception.what());
+            return false;
+        }
+    }
+
+    bool EmailListModel::SetArchivedInStorage(const EmailData& item, bool archived)
+    {
+        if (item.id < 0) {
+            return true;
+        }
+
+        if (!IsServerBacked(item)) {
+            return m_message_repository.UpdateArchive(item.id, archived);
+        }
+
+        try {
+            const auto response = archived ? ISXService::Service::MailServerClient().ArchiveMail(item.id)
+                                           : ISXService::Service::MailServerClient().UnarchiveMail(item.id);
+            return response.is_success();
+        } catch (const std::exception& exception) {
+            ISXService::Service::Logger().Log(Logging::LogLevel::Error,
+                                              std::string("EmailListModel::SetArchivedInStorage failed: ") +
+                                                  exception.what());
+            return false;
+        }
     }
 
     Qt::ItemFlags EmailListModel::flags(const QModelIndex& index) const

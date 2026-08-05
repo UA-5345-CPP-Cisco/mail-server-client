@@ -20,20 +20,7 @@ std::int64_t ReadRequiredInt64(const json::object& object, std::string_view fiel
   return value->is_int64() ? value->as_int64() : static_cast<std::int64_t>(value->as_uint64());
 }
 
-bool ReadRequiredBool(const json::object& object, std::string_view field)
-{
-  auto const* value = object.if_contains(field);
-  if (value == nullptr || !value->is_bool())
-  {
-    throw std::runtime_error("\"" + std::string{field} + "\" must be a boolean");
-  }
-
-  return value->as_bool();
-}
-
-} // namespace
-
-Response ArchiveHandler(Request const& request)
+Response SetArchived(Request const& request, bool archived)
 {
   beast::error_code error;
   json::value input = json::parse(request.body(), error);
@@ -52,7 +39,6 @@ Response ArchiveHandler(Request const& request)
   {
     const json::object& object = input.as_object();
     const std::int64_t message_id = ReadRequiredInt64(object, "id");
-    const bool archived = ReadRequiredBool(object, "archived");
 
     const bool updated = ServiceRegistry::Storage().SetArchived(message_id, archived);
     if (!updated)
@@ -70,6 +56,18 @@ Response ArchiveHandler(Request const& request)
   {
     return MakeError(request, http::status::bad_request, exception.what());
   }
+}
+
+} // namespace
+
+Response ArchiveHandler(Request const& request)
+{
+  return SetArchived(request, true);
+}
+
+Response UnarchiveHandler(Request const& request)
+{
+  return SetArchived(request, false);
 }
 
 } // namespace ISXMailServer

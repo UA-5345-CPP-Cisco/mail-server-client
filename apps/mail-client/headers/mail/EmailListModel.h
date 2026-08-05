@@ -85,6 +85,9 @@ namespace ISXMail {
         void dataAdded();
 
     private:
+        bool DeleteFromStorage(const EmailData& item);
+        bool SetStarredInStorage(const EmailData& item, bool starred);
+        bool SetArchivedInStorage(const EmailData& item, bool archived);
         void LoadFromDatabase();
         void ReplaceData(std::vector<EmailData> data);
         QString MakePreview(const QString& text, int maxLen = 50);

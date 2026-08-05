@@ -5,5 +5,6 @@
 namespace ISXMailServer {
 
 Response StarHandler(Request const& request);
+Response UnstarHandler(Request const& request);
 
 } // namespace ISXMailServer

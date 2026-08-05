@@ -5,5 +5,6 @@
 namespace ISXMailServer {
 
 Response ArchiveHandler(Request const& request);
+Response UnarchiveHandler(Request const& request);
 
 } // namespace ISXMailServer
