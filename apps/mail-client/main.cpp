@@ -67,25 +67,11 @@ int main(int argc, char* argv[])
   AuthHandler authHandler;
   engine.rootContext()->setContextProperty("authHandler", &authHandler);
 
-  Storage::UserRepository repo(database);
-  bool hasUsers = repo.HasUsers();
-  engine.rootContext()->setContextProperty("initialSetupRequired", !hasUsers);
-
-  if (hasUsers)
-  {
-    auto activeUser = repo.FindActiveUser();
-
-    if (activeUser.has_value())
-    {
-      QString name = QString::fromStdString(activeUser->username);
-      QString email = QString::fromStdString(activeUser->email);
-      ISXCurrentUser::CurrentUser::GetInstance().Authorize(name, email, "");
-    }
-  }
-
   auto* model = new ISXMail::EmailListModel(&app);
   auto* message_composer = new ISXMail::MessageComposer(&app);
   auto* account_model = new ISXMail::AccountListModel(&app);
+
+  engine.rootContext()->setContextProperty("initialSetupRequired", account_model->rowCount() == 0);
 
   auto* inboxFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Inbox, &app);
   auto* sentFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Sent, &app);
