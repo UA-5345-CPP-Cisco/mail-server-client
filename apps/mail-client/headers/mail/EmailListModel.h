@@ -57,7 +57,7 @@ enum EmailRole
     class EmailListModel : public QAbstractListModel
     {
         Q_OBJECT;
-
+        using InboxMessageCallback = std::function<void(const QString& sender, const QString& subject, const QString& preview)>;
     public:
         explicit EmailListModel(QObject* parent = nullptr);
 
@@ -65,17 +65,20 @@ enum EmailRole
         QVariant data(const QModelIndex& index, int role) const override;
         QHash<int, QByteArray> roleNames() const override;
 
-    void RemoveData(int row);
-    Q_INVOKABLE bool DeleteEmail(int row);
-    Q_INVOKABLE void AddData(bool is_starred, bool is_sent, bool is_draft,
+        void RemoveData(int row);
+        Q_INVOKABLE bool DeleteEmail(int row);
+        Q_INVOKABLE void AddData(bool is_starred, bool is_sent, bool is_draft,
                              bool is_archive, bool is_seen, const QString& theme, const QString& name,
                              const QString& send_to, const QString& content, const QString& time,
                              bool is_inbox = false);
-    Q_INVOKABLE bool SetStarred(int row, bool starred);
-    bool ToggleArchive(int row);
-    void AddData(const EmailData& item);
-    bool UpdateSeen(int row, bool seen);
+        Q_INVOKABLE bool SetStarred(int row, bool starred);
+        bool ToggleArchive(int row);
+        void AddData(const EmailData& item);
+        bool UpdateSeen(int row, bool seen);
 
+        Q_INVOKABLE bool RefreshFromServer();
+
+        void registerInboxMessageCallback(InboxMessageCallback callback);
         bool setData(const QModelIndex& index, const QVariant& value, int role) override;
         Qt::ItemFlags flags(const QModelIndex& index) const override;
 

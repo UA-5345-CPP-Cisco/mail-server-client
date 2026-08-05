@@ -398,13 +398,14 @@ void EmailListModel::AddData(
                 const bool is_starred = mail.contains("is_starred") && mail.at("is_starred").is_bool()
                                             ? mail.at("is_starred").as_bool()
                                             : false;
-
+                const bool is_seen = false; // Add to server response
                 server_data.push_back({id,
                                        is_inbox,
                                        is_starred,
                                        is_sent,
                                        is_draft,
                                        is_archive,
+                                        is_seen,
                                        display_subject,
                                        sender_email,
                                        recipient_email,
@@ -477,6 +478,7 @@ void EmailListModel::AddData(
             const bool is_archive = message.is_archive || message.status == Storage::MailMessageStatus::Archive;
             const bool is_sent = is_current_sender && !is_draft && !is_archive;
             const bool is_inbox = is_recipient && !is_current_sender && !is_draft && !is_archive;
+            const bool is_seen = message.is_seen;
 
             local_data.push_back({message.id,
                                   is_inbox,
@@ -484,6 +486,7 @@ void EmailListModel::AddData(
                                   is_sent,
                                   is_draft,
                                   is_archive,
+                                    is_seen,
                                   theme,
                                   sender_email,
                                   recipient_email,
