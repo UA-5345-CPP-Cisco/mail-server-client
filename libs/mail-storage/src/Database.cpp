@@ -52,8 +52,7 @@ void Database::Execute(const std::string& sql)
 {
   char* error_message = nullptr;
 
-  const int result =
-    sqlite3_exec(m_connection.get(), sql.c_str(), nullptr, nullptr, &error_message);
+  const int result = sqlite3_exec(m_connection.get(), sql.c_str(), nullptr, nullptr, &error_message);
 
   if (result != SQLITE_OK)
   {

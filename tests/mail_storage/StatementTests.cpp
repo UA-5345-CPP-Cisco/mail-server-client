@@ -19,8 +19,8 @@ class StatementTest : public testing::Test
   {
     const auto timestamp = std::chrono::steady_clock::now().time_since_epoch().count();
 
-    m_database_path = std::filesystem::temp_directory_path() /
-                      ("mail_statement_test_" + std::to_string(timestamp) + ".sqlite3");
+    m_database_path =
+      std::filesystem::temp_directory_path() / ("mail_statement_test_" + std::to_string(timestamp) + ".sqlite3");
 
     m_database = std::make_unique<Storage::Database>(m_database_path);
     m_database->Execute(

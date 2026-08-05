@@ -45,6 +45,16 @@ mail_client_configure_and_build() {
     cmake_args+=("-DCMAKE_PREFIX_PATH=${qt_prefix}")
   fi
 
+  if [[ -d "${project_root}/cmake-build-debug/_deps/boost-src" ]]; then
+    cmake_args+=("-DFETCHCONTENT_SOURCE_DIR_BOOST=${project_root}/cmake-build-debug/_deps/boost-src")
+  fi
+
+  if [[ -d "${project_root}/cmake-build-debug/_deps/cryptopp_modern-src" ]]; then
+    cmake_args+=(
+      "-DFETCHCONTENT_SOURCE_DIR_CRYPTOPP_MODERN=${project_root}/cmake-build-debug/_deps/cryptopp_modern-src"
+    )
+  fi
+
   cmake "${cmake_args[@]}"
   cmake --build "${build_dir}" --target appqtapptestmail --parallel "$(mail_client_parallel_arg)"
 }

@@ -1,23 +1,23 @@
 #pragma once
 
-#include <memory>
-#include <cstdint>
-#include <vector>
-
-#include <QObject>
 #include <QAbstractListModel>
-#include <QtMath>
+#include <QObject>
 #include <QString>
+#include <QtMath>
+
+#include <cstdint>
+#include <memory>
+#include <vector>
+#include <functional>
 
 
 #include "mail_storage/Database.h"
 #include "mail_storage/MailMessageRepository.h"
 #include "mail_storage/MessageRecipientRepository.h"
 
-namespace ISXMail
-{
+namespace ISXMail {
 
-Q_NAMESPACE;
+    Q_NAMESPACE;
 
 struct EmailData
 {
@@ -52,18 +52,18 @@ enum EmailRole
     TimeRole
 };
 
-Q_ENUM_NS(EmailRole);
+    Q_ENUM_NS(EmailRole);
 
-class EmailListModel : public QAbstractListModel
-{
-    Q_OBJECT;
+    class EmailListModel : public QAbstractListModel
+    {
+        Q_OBJECT;
 
-public:
-    explicit EmailListModel(QObject* parent = nullptr);
+    public:
+        explicit EmailListModel(QObject* parent = nullptr);
 
-    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex& index, int role) const override;
-    QHash<int, QByteArray> roleNames() const override;
+        int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+        QVariant data(const QModelIndex& index, int role) const override;
+        QHash<int, QByteArray> roleNames() const override;
 
     void RemoveData(int row);
     Q_INVOKABLE bool DeleteEmail(int row);
@@ -76,21 +76,24 @@ public:
     void AddData(const EmailData& item);
     bool UpdateSeen(int row, bool seen);
 
-    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
-    Qt::ItemFlags flags(const QModelIndex& index) const override;
+        bool setData(const QModelIndex& index, const QVariant& value, int role) override;
+        Qt::ItemFlags flags(const QModelIndex& index) const override;
 
-signals:
-    void dataAdded();
+    signals:
+        void dataAdded();
+        void inboxMessageReceived(const QString& sender, const QString& subject, const QString& preview);
 
-private:
-    void LoadFromDatabase();
-    QString MakePreview(const QString& text, int maxLen = 50);
-    QString DefaultDatabasePath() const;
+    private:
+        void LoadFromDatabase();
+        void ReplaceData(std::vector<EmailData> data);
+        QString MakePreview(const QString& text, int maxLen = 50);
+        QString DefaultDatabasePath() const;
 
-    Storage::Database m_database;
-    Storage::MailMessageRepository m_message_repository;
-    Storage::MessageRecipientRepository m_recipient_repository;
-    std::vector<EmailData> m_data;
-};
+        Storage::Database m_database;
+        Storage::MailMessageRepository m_message_repository;
+        Storage::MessageRecipientRepository m_recipient_repository;
+        std::vector<EmailData> m_data;
+        std::vector<InboxMessageCallback> m_inbox_callbacks;
+    };
 
 } // namespace ISXMail

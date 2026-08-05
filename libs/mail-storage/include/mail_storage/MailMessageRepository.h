@@ -29,9 +29,7 @@ class MailMessageRepository
 
   std::vector<MailMessageRecord> FindByStatus(MailMessageStatus status, int limit) const;
 
-  bool UpdateStatus(std::int64_t message_id,
-                    MailMessageStatus expected_status,
-                    MailMessageStatus new_status);
+  bool UpdateStatus(std::int64_t message_id, MailMessageStatus expected_status, MailMessageStatus new_status);
 
   bool FinalizeDelivery(std::int64_t message_id);
 

@@ -22,8 +22,8 @@ class UserRepositoryTest : public testing::Test
   {
     const auto timestamp = std::chrono::steady_clock::now().time_since_epoch().count();
 
-    m_database_path = std::filesystem::temp_directory_path() /
-                      ("mail_user_test_" + std::to_string(timestamp) + ".sqlite3");
+    m_database_path =
+      std::filesystem::temp_directory_path() / ("mail_user_test_" + std::to_string(timestamp) + ".sqlite3");
 
     m_database = std::make_unique<Storage::Database>(m_database_path);
 
@@ -51,12 +51,10 @@ class UserRepositoryTest : public testing::Test
 
 TEST_F(UserRepositoryTest, CreatesAndFindsUser)
 {
-  const std::int64_t user_id =
-    m_repository->CreateUser("alice", "alice@example.com", "password-hash");
+  const std::int64_t user_id = m_repository->CreateUser("alice", "alice@example.com", "password-hash");
 
   const std::optional<Storage::UserRecord> user_by_id = m_repository->FindById(user_id);
-  const std::optional<Storage::UserRecord> user_by_email =
-    m_repository->FindByEmail("alice@example.com");
+  const std::optional<Storage::UserRecord> user_by_email = m_repository->FindByEmail("alice@example.com");
   const std::optional<Storage::UserRecord> user_by_username = m_repository->FindByUsername("alice");
 
   ASSERT_TRUE(user_by_id.has_value());
@@ -82,8 +80,7 @@ TEST_F(UserRepositoryTest, ReturnsEmptyOptionalWhenUserDoesNotExist)
 
 TEST_F(UserRepositoryTest, UpdatesUserStatus)
 {
-  const std::int64_t user_id =
-    m_repository->CreateUser("alice", "alice@example.com", "password-hash");
+  const std::int64_t user_id = m_repository->CreateUser("alice", "alice@example.com", "password-hash");
 
   EXPECT_TRUE(m_repository->UpdateStatus(user_id, Storage::UserStatus::Disabled));
   EXPECT_FALSE(m_repository->UpdateStatus(user_id + 1, Storage::UserStatus::Active));
@@ -98,17 +95,14 @@ TEST_F(UserRepositoryTest, RejectsDuplicateUsernameAndEmail)
 {
   m_repository->CreateUser("alice", "alice@example.com", "password-hash");
 
-  EXPECT_THROW(m_repository->CreateUser("alice", "other@example.com", "password-hash"),
-               std::runtime_error);
-  EXPECT_THROW(m_repository->CreateUser("other", "alice@example.com", "password-hash"),
-               std::runtime_error);
+  EXPECT_THROW(m_repository->CreateUser("alice", "other@example.com", "password-hash"), std::runtime_error);
+  EXPECT_THROW(m_repository->CreateUser("other", "alice@example.com", "password-hash"), std::runtime_error);
 }
 
 TEST_F(UserRepositoryTest, TreatsInputAsBoundValues)
 {
   const std::string username = "user'); DROP TABLE users; --";
-  const std::int64_t user_id =
-    m_repository->CreateUser(username, "safe@example.com", "password-hash");
+  const std::int64_t user_id = m_repository->CreateUser(username, "safe@example.com", "password-hash");
 
   const std::optional<Storage::UserRecord> user = m_repository->FindByUsername(username);
 

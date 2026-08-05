@@ -6,87 +6,78 @@
 
 namespace ISXMail {
 
-EmailListCache::EmailListCache(Storage::CacheStore& store) :
-	m_store(store)
-{
-	 ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListCache: constructed");
-}
+    EmailListCache::EmailListCache(Storage::CacheStore& store)
+        : m_store(store)
+    {
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListCache: constructed");
+    }
 
-void EmailListCache::Save(
-	const QString& folder,
-	const QString& search_text,
-	const QString& payload,
-	std::chrono::seconds ttl,
-	std::int64_t version
-)
-{
-	{
-	std::ostringstream oss;
-	oss << "EmailListCache::Save: folder=" << folder.toStdString() << " search=" << search_text.toStdString() << " version=" << version << " ttl=" << ttl.count();
-	 ISXService::Service::Logger().Log(Logging::LogLevel::Debug, oss.str());
+    void EmailListCache::Save(const QString& folder,
+                              const QString& search_text,
+                              const QString& payload,
+                              std::chrono::seconds ttl,
+                              std::int64_t version)
+    {
+        {
+            std::ostringstream oss;
+            oss << "EmailListCache::Save: folder=" << folder.toStdString() << " search=" << search_text.toStdString()
+                << " version=" << version << " ttl=" << ttl.count();
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug, oss.str());
 
-	m_store.Put(
-		MakeNamespace(folder).toStdString(),
-		MakeKey(folder, search_text).toStdString(),
-		payload.toStdString(),
-		ttl,
-		version
-	);
-		}}
+            m_store.Put(MakeNamespace(folder).toStdString(),
+                        MakeKey(folder, search_text).toStdString(),
+                        payload.toStdString(),
+                        ttl,
+                        version);
+        }
+    }
 
-std::optional<CachedEmailList> EmailListCache::Load(
-	const QString& folder,
-	const QString& search_text,
-	bool allow_stale
-) const
-{
-	const auto entry = m_store.Get(
-		MakeNamespace(folder).toStdString(),
-		MakeKey(folder, search_text).toStdString(),
-		allow_stale
-	);
-		if (!entry.has_value())
-		{
-			 ISXService::Service::Logger().Log(Logging::LogLevel::Debug, (std::string("EmailListCache::Load: miss folder=") + folder.toStdString() + " search=" + search_text.toStdString()));
-			return std::nullopt;
-		}
+    std::optional<CachedEmailList>
+    EmailListCache::Load(const QString& folder, const QString& search_text, bool allow_stale) const
+    {
+        const auto entry =
+            m_store.Get(MakeNamespace(folder).toStdString(), MakeKey(folder, search_text).toStdString(), allow_stale);
+        if (!entry.has_value()) {
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                              (std::string("EmailListCache::Load: miss folder=") +
+                                               folder.toStdString() + " search=" + search_text.toStdString()));
+            return std::nullopt;
+        }
 
-		 ISXService::Service::Logger().Log(Logging::LogLevel::Debug, (std::string("EmailListCache::Load: hit folder=") + folder.toStdString() + " search=" + search_text.toStdString() + " version=" + std::to_string(entry->version)));
-		return CachedEmailList
-		{
-			folder,
-			search_text,
-			QString::fromStdString(entry->payload),
-			entry->version
-		};
-}
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                          (std::string("EmailListCache::Load: hit folder=") + folder.toStdString() +
+                                           " search=" + search_text.toStdString() +
+                                           " version=" + std::to_string(entry->version)));
+        return CachedEmailList{folder, search_text, QString::fromStdString(entry->payload), entry->version};
+    }
 
-void EmailListCache::InvalidateFolder(const QString& folder)
-{
-	 ISXService::Service::Logger().Log(Logging::LogLevel::Debug, (std::string("EmailListCache::InvalidateFolder: folder=") + folder.toStdString()));
-	m_store.InvalidateNamespace(MakeNamespace(folder).toStdString());
-}
+    void EmailListCache::InvalidateFolder(const QString& folder)
+    {
+        ISXService::Service::Logger().Log(
+            Logging::LogLevel::Debug,
+            (std::string("EmailListCache::InvalidateFolder: folder=") + folder.toStdString()));
+        m_store.InvalidateNamespace(MakeNamespace(folder).toStdString());
+    }
 
+    void EmailListCache::InvalidateAll()
+    {
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListCache::InvalidateAll");
+        m_store.InvalidateNamespacePrefix(Namespace().toStdString());
+    }
 
-void EmailListCache::InvalidateAll()
-{
-	 ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListCache::InvalidateAll");
-	m_store.InvalidateNamespacePrefix(Namespace().toStdString());
-}
+    QString EmailListCache::Namespace() const
+    {
+        return QStringLiteral("email-list");
+    }
 
-QString EmailListCache::Namespace() const
-{
-	return QStringLiteral("email-list");
-}
+    QString EmailListCache::MakeKey(const QString& folder, const QString& search_text) const
+    {
+        return folder.trimmed().toLower() + QStringLiteral("|") + search_text.trimmed().toLower();
+    }
 
-QString EmailListCache::MakeKey(const QString& folder, const QString& search_text) const
-{
-	return folder.trimmed().toLower() + QStringLiteral("|") + search_text.trimmed().toLower();
-}
+    QString EmailListCache::MakeNamespace(const QString& folder) const
+    {
+        return Namespace() + QStringLiteral(":") + folder.trimmed().toLower();
+    }
 
-QString EmailListCache::MakeNamespace(const QString& folder) const
-{
-	return Namespace() + QStringLiteral(":") + folder.trimmed().toLower();
-}
-
-}
+} // namespace ISXMail

@@ -19,8 +19,7 @@ class MigrationRunnerTest : public testing::Test
     const auto timestamp = std::chrono::steady_clock::now().time_since_epoch().count();
     const std::string test_name = std::to_string(timestamp);
 
-    m_database_path =
-      std::filesystem::temp_directory_path() / ("mail_migration_test_" + test_name + ".sqlite3");
+    m_database_path = std::filesystem::temp_directory_path() / ("mail_migration_test_" + test_name + ".sqlite3");
     m_migrations_path = std::filesystem::temp_directory_path() / ("mail_migrations_" + test_name);
 
     std::filesystem::create_directories(m_migrations_path);
@@ -131,8 +130,7 @@ TEST_F(MigrationRunnerTest, AppliesMigrationsByNumericVersion)
   Storage::MigrationRunner migration_runner(database, m_migrations_path);
 
   EXPECT_NO_THROW(migration_runner.Run());
-  EXPECT_THROW(database.Execute("INSERT INTO migration_order (value) VALUES ('created');"),
-               std::runtime_error);
+  EXPECT_THROW(database.Execute("INSERT INTO migration_order (value) VALUES ('created');"), std::runtime_error);
 }
 
 TEST_F(MigrationRunnerTest, RejectsDuplicateMigrationVersions)

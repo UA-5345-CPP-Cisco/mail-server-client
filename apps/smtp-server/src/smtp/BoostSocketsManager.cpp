@@ -51,8 +51,8 @@ struct BoostSocketsManager::Implementation
 
     if (config.tls.enabled)
     {
-      sslContext.set_options(ssl::context::default_workarounds | ssl::context::no_sslv2 |
-                             ssl::context::no_sslv3 | ssl::context::single_dh_use);
+      sslContext.set_options(ssl::context::default_workarounds | ssl::context::no_sslv2 | ssl::context::no_sslv3 |
+                             ssl::context::single_dh_use);
       sslContext.use_certificate_chain_file(config.tls.certificatePath);
       sslContext.use_private_key_file(config.tls.privateKeyPath, ssl::context::pem);
     }
@@ -155,8 +155,7 @@ struct BoostSocketsManager::Implementation
     }
     else
     {
-      asio::async_read_until(
-        connection->stream->next_layer(), connection->readBuffer, '\n', std::move(handler));
+      asio::async_read_until(connection->stream->next_layer(), connection->readBuffer, '\n', std::move(handler));
     }
   }
 
@@ -257,20 +256,20 @@ struct BoostSocketsManager::Implementation
     }
 
     connection->tlsHandshakePending = false;
-    connection->stream->async_handshake(
-      ssl::stream_base::server,
-      [this, connection](const boost::system::error_code& error)
-      {
-        if (error)
-        {
-          QueueEvent(SmtpEvent{SmtpEventType::TlsFailed, connection->id, error.message()});
-          FinishClose(connection, true);
-          return;
-        }
+    connection->stream->async_handshake(ssl::stream_base::server,
+                                        [this, connection](const boost::system::error_code& error)
+                                        {
+                                          if (error)
+                                          {
+                                            QueueEvent(
+                                              SmtpEvent{SmtpEventType::TlsFailed, connection->id, error.message()});
+                                            FinishClose(connection, true);
+                                            return;
+                                          }
 
-        connection->tlsEnabled = true;
-        QueueEvent(SmtpEvent{SmtpEventType::TlsSucceeded, connection->id, {}});
-      });
+                                          connection->tlsEnabled = true;
+                                          QueueEvent(SmtpEvent{SmtpEventType::TlsSucceeded, connection->id, {}});
+                                        });
   }
 
   void Close(ConnectionId connectionId)

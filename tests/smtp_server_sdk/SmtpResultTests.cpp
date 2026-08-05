@@ -15,8 +15,7 @@ TEST(SmtpResultTest, SuccessIsOk)
 
 TEST(SmtpResultTest, FailIsNotOk)
 {
-  const Smtp::SmtpResult result =
-    Smtp::SmtpResult::Fail(Smtp::SmtpError::ConnectionFailed, "Connection refused", 0);
+  const Smtp::SmtpResult result = Smtp::SmtpResult::Fail(Smtp::SmtpError::ConnectionFailed, "Connection refused", 0);
 
   EXPECT_FALSE(result.ok());
   EXPECT_EQ(result.error, Smtp::SmtpError::ConnectionFailed);
@@ -25,8 +24,7 @@ TEST(SmtpResultTest, FailIsNotOk)
 
 TEST(SmtpResultTest, FailPreservesSmtpCode)
 {
-  const Smtp::SmtpResult result =
-    Smtp::SmtpResult::Fail(Smtp::SmtpError::RecipientRejected, "No such user", 550);
+  const Smtp::SmtpResult result = Smtp::SmtpResult::Fail(Smtp::SmtpError::RecipientRejected, "No such user", 550);
 
   EXPECT_FALSE(result.ok());
   EXPECT_EQ(result.error, Smtp::SmtpError::RecipientRejected);

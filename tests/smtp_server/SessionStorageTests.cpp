@@ -84,8 +84,7 @@ class SessionStorageTest : public testing::Test
 
   void Send(const std::string& line)
   {
-    m_handler.HandleEvent(
-      {smtp::SmtpEventType::MessageReceived, m_connectionId, line}, m_state, m_context);
+    m_handler.HandleEvent({smtp::SmtpEventType::MessageReceived, m_connectionId, line}, m_state, m_context);
   }
 
   std::string GetLastErrorMessage()
@@ -281,8 +280,7 @@ TEST_F(SessionStorageTest, CheckCloseStatementWithQUIT)
 TEST_F(SessionStorageTest, CheckCloseStatementWithDirectEvent)
 {
   Send("HELO client.test");
-  m_handler.HandleEvent(
-    {smtp::SmtpEventType::Disconnected, m_connectionId, ""}, m_state, m_context);
+  m_handler.HandleEvent({smtp::SmtpEventType::Disconnected, m_connectionId, ""}, m_state, m_context);
 
   EXPECT_EQ(m_state.phase, smtp::SmtpSessionPhase::Closed);
 }
@@ -367,8 +365,7 @@ TEST_F(SessionStorageTest, SuccessfulTlsEventHandle)
   m_config.tls.enabled = true;
 
   Send("STARTTLS");
-  m_handler.HandleEvent(
-    {smtp::SmtpEventType::TlsSucceeded, m_connectionId, ""}, m_state, m_context);
+  m_handler.HandleEvent({smtp::SmtpEventType::TlsSucceeded, m_connectionId, ""}, m_state, m_context);
   EXPECT_TRUE(m_state.tlsActive);
   EXPECT_FALSE(m_state.tlsHandshakePending);
 }

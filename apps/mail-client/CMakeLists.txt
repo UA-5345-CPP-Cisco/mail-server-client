@@ -7,22 +7,26 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
 set(WINDOWS_DEV_CONSOLE ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2)
+find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2 Widgets)
 #find_package(SQLite3 REQUIRED)
 
 qt_standard_project_setup(REQUIRES 6.10)
 
 include(FetchContent)
-# --- Crypto++ (cryptopp-modern) ---
-FetchContent_Declare(
-		cryptopp_modern
-		GIT_REPOSITORY https://github.com/cryptopp-modern/cryptopp-modern/
-		GIT_TAG 2026.3.0
-)
-set(CRYPTOPP_BUILD_TESTING OFF CACHE BOOL "" FORCE)
-set(CRYPTOPP_INSTALL OFF CACHE BOOL "" FORCE)
 
-FetchContent_MakeAvailable(cryptopp_modern)
+if(NOT TARGET Boost::asio)
+	set(BOOST_INCLUDE_LIBRARIES asio beast date_time json property_tree system)
+	set(BOOST_ENABLE_MPI OFF)
+	set(BOOST_ENABLE_PYTHON OFF)
+	set(BUILD_TESTING OFF)
+
+	FetchContent_Declare(
+			Boost
+			URL https://github.com/boostorg/boost/releases/download/boost-1.88.0/boost-1.88.0-cmake.tar.xz
+			DOWNLOAD_EXTRACT_TIMESTAMP ON
+	)
+	FetchContent_MakeAvailable(Boost)
+endif()
 
 if(NOT TARGET mail_storage)
 	add_subdirectory(
@@ -42,9 +46,24 @@ if(NOT TARGET Threads::Threads)
 	find_package(Threads REQUIRED)
 endif()
 
+if(NOT TARGET mail_thread_pool)
+	add_subdirectory(
+			${CMAKE_CURRENT_SOURCE_DIR}/../../libs/thread_pool
+			${CMAKE_CURRENT_BINARY_DIR}/libs/thread_pool
+	)
+endif()
+
+if(NOT TARGET mail_server_sdk)
+	add_subdirectory(
+			${CMAKE_CURRENT_SOURCE_DIR}/../../libs/mail-server-sdk
+			${CMAKE_CURRENT_BINARY_DIR}/libs/mail-server-sdk
+	)
+endif()
+
 qt_add_qml_module(qtappmail_core
 		URI qtapptestmail.core
 		VERSION 1.0
+		OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/qtapptestmail/core
 		STATIC
 		SOURCES
 		headers/database/CacheStore.h
@@ -53,6 +72,7 @@ qt_add_qml_module(qtappmail_core
 		headers/mail/EmailFilterProxy.h
 		headers/mail/EmailListModel.h
 		headers/mail/EmailPageProxy.h
+		headers/mail/NotificationsModel.h
 		headers/mail/MessageComposer.h
 		headers/search/MessageSearchModel.h
 		headers/users/CurrentUser.h
@@ -72,6 +92,7 @@ qt_add_qml_module(qtappmail_core
 		models/mail/EmailFilterProxy.cpp
 		models/mail/EmailListModel.cpp
 		models/mail/EmailPageProxy.cpp
+		models/mail/NotificationsModel.cpp
 		models/mail/MessageComposer.cpp
 		models/search/MessageSearchModel.cpp
 		models/users/CurrentUser.cpp
@@ -98,7 +119,8 @@ target_link_libraries(qtappmail_core
 		Qt6::Sql
 		Qt6::Core
 		Qt6::QuickControls2
-		cryptopp
+		Qt6::Widgets
+		mail_server_sdk
 )
 
 target_compile_definitions(qtappmail_core PUBLIC
@@ -117,6 +139,7 @@ endforeach()
 
 qt_add_qml_module(appqtapptestmail
 		URI qtapptestmail
+		OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/qtapptestmail
 		QML_FILES
 		Main.qml
 		screens/navigation/NavigationQML.qml
@@ -163,7 +186,8 @@ target_link_libraries(appqtapptestmail
 		Qt6::Quick
 		Qt6::Sql
 		Qt6::QuickControls2
-		cryptopp
+		mail_server_sdk
+		Qt6::Widgets
 )
 
 target_include_directories(appqtapptestmail

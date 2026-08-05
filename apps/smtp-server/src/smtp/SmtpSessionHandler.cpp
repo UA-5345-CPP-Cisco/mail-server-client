@@ -32,8 +32,7 @@ std::string ToUpper(std::string value)
   std::transform(value.begin(),
                  value.end(),
                  value.begin(),
-                 [](unsigned char character)
-                 { return static_cast<char>(std::toupper(character)); });
+                 [](unsigned char character) { return static_cast<char>(std::toupper(character)); });
   return value;
 }
 
@@ -178,9 +177,7 @@ void MarkAuthenticated(SmtpSessionState& state, const AuthResult& result)
 
 } // namespace
 
-void SmtpSessionHandler::HandleEvent(const SmtpEvent& event,
-                                     SmtpSessionState& state,
-                                     SmtpSessionContext& context)
+void SmtpSessionHandler::HandleEvent(const SmtpEvent& event, SmtpSessionState& state, SmtpSessionContext& context)
 {
   switch (event.type)
   {
@@ -208,9 +205,7 @@ void SmtpSessionHandler::HandleEvent(const SmtpEvent& event,
   }
 }
 
-void SmtpSessionHandler::HandleConnected(const SmtpEvent&,
-                                         SmtpSessionState& state,
-                                         SmtpSessionContext& context)
+void SmtpSessionHandler::HandleConnected(const SmtpEvent&, SmtpSessionState& state, SmtpSessionContext& context)
 {
   state.phase = SmtpSessionPhase::WaitingForGreeting;
   SendReply(context, state.connectionId, 220, context.config.serverName + " ESMTP ready");
@@ -233,8 +228,7 @@ void SmtpSessionHandler::HandleMessageReceived(const SmtpEvent& event,
       return;
     }
 
-    MarkAuthenticated(state,
-                      context.authService.Authenticate(AuthRequest{"PLAIN", username, secret}));
+    MarkAuthenticated(state, context.authService.Authenticate(AuthRequest{"PLAIN", username, secret}));
     SendReply(context,
               state.connectionId,
               state.authenticated ? 235 : 535,
@@ -269,9 +263,8 @@ void SmtpSessionHandler::HandleMessageReceived(const SmtpEvent& event,
       return;
     }
 
-    MarkAuthenticated(
-      state,
-      context.authService.Authenticate(AuthRequest{"LOGIN", state.pendingAuthUsername, *secret}));
+    MarkAuthenticated(state,
+                      context.authService.Authenticate(AuthRequest{"LOGIN", state.pendingAuthUsername, *secret}));
     SendReply(context,
               state.connectionId,
               state.authenticated ? 235 : 535,
@@ -284,8 +277,7 @@ void SmtpSessionHandler::HandleMessageReceived(const SmtpEvent& event,
     if (line == ".")
     {
       const std::int64_t messageId = StoreMessage(state, context);
-      SendReply(
-        context, state.connectionId, 250, "Message accepted as " + std::to_string(messageId));
+      SendReply(context, state.connectionId, 250, "Message accepted as " + std::to_string(messageId));
       ResetMailTransaction(state);
       return;
     }
@@ -297,8 +289,7 @@ void SmtpSessionHandler::HandleMessageReceived(const SmtpEvent& event,
 
     if (state.messageBuffer.size() + line.size() + 2 > context.config.maxMessageSizeBytes)
     {
-      SendReply(
-        context, state.connectionId, 552, "Message size exceeds fixed maximum message size");
+      SendReply(context, state.connectionId, 552, "Message size exceeds fixed maximum message size");
       ResetMailTransaction(state);
       return;
     }
@@ -338,8 +329,7 @@ void SmtpSessionHandler::HandleMessageReceived(const SmtpEvent& event,
         context.socketsManager.Send(state.connectionId, "250-AUTH PLAIN LOGIN\r\n");
       }
       context.socketsManager.Send(state.connectionId,
-                                  "250 SIZE " + std::to_string(context.config.maxMessageSizeBytes) +
-                                    "\r\n");
+                                  "250 SIZE " + std::to_string(context.config.maxMessageSizeBytes) + "\r\n");
     }
     else
     {
@@ -386,10 +376,7 @@ void SmtpSessionHandler::HandleMessageReceived(const SmtpEvent& event,
     }
     if (!IsAuthAllowed(state, context))
     {
-      SendReply(context,
-                state.connectionId,
-                538,
-                "Encryption required for requested authentication mechanism");
+      SendReply(context, state.connectionId, 538, "Encryption required for requested authentication mechanism");
       return;
     }
 
@@ -416,8 +403,7 @@ void SmtpSessionHandler::HandleMessageReceived(const SmtpEvent& event,
         return;
       }
 
-      MarkAuthenticated(state,
-                        context.authService.Authenticate(AuthRequest{"PLAIN", username, secret}));
+      MarkAuthenticated(state, context.authService.Authenticate(AuthRequest{"PLAIN", username, secret}));
       SendReply(context,
                 state.connectionId,
                 state.authenticated ? 235 : 535,
@@ -564,30 +550,26 @@ void SmtpSessionHandler::HandleMessageReceived(const SmtpEvent& event,
   SendReply(context, state.connectionId, 500, "Command unrecognized");
 }
 
-void SmtpSessionHandler::HandleDisconnected(const SmtpEvent&,
-                                            SmtpSessionState& state,
-                                            SmtpSessionContext&)
+void SmtpSessionHandler::HandleDisconnected(const SmtpEvent&, SmtpSessionState& state, SmtpSessionContext&)
 {
   ResetMailTransaction(state);
   state.phase = SmtpSessionPhase::Closed;
 }
 
-std::int64_t SmtpSessionHandler::StoreMessage(const SmtpSessionState& state,
-                                              SmtpSessionContext& context)
+std::int64_t SmtpSessionHandler::StoreMessage(const SmtpSessionState& state, SmtpSessionContext& context)
 {
   std::lock_guard<std::mutex> lock(context.storageMutex);
   context.database.Execute("BEGIN IMMEDIATE;");
 
   try
   {
-    const std::int64_t messageId =
-      context.mailMessages.CreateMessage(std::nullopt,
-                                         state.sender,
-                                         std::nullopt,
-                                         state.messageBuffer,
-                                         std::nullopt,
-                                         true,
-                                         Storage::MailMessageStatus::Queued);
+    const std::int64_t messageId = context.mailMessages.CreateMessage(std::nullopt,
+                                                                      state.sender,
+                                                                      std::nullopt,
+                                                                      state.messageBuffer,
+                                                                      std::nullopt,
+                                                                      true,
+                                                                      Storage::MailMessageStatus::Queued);
 
     for (const std::string& recipient : state.recipients)
     {

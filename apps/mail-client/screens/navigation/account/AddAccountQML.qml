@@ -191,7 +191,13 @@ Rectangle {
 
         // Handle login submit
         function onLoginSubmitted(email, password) {
-            //rootWindow.close()
+            var success = authHandler.loginUser(email, password);
+
+            if (success) {
+                accountModel.AddAccount(CurrentUser.username, CurrentUser.email, "", Color.avatar, avatarInitial(CurrentUser.username), true);
+                showInboxForCurrentUser();
+                closeAuthWindow();
+            }
         }
 
         // Handle registration submit
@@ -202,7 +208,7 @@ Rectangle {
                 var firstLetter = avatarInitial(name);
 
                 accountModel.AddAccount(name, email, "", Color.avatar, firstLetter, true);
-                CurrentUser.Authorize(name, email, "");
+                showInboxForCurrentUser();
 
                 closeAuthWindow();
             } else {

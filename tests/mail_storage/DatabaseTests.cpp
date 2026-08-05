@@ -16,8 +16,8 @@ class DatabaseTest : public testing::Test
   {
     const auto timestamp = std::chrono::steady_clock::now().time_since_epoch().count();
 
-    m_database_path = std::filesystem::temp_directory_path() /
-                      ("mail_database_test_" + std::to_string(timestamp) + ".sqlite3");
+    m_database_path =
+      std::filesystem::temp_directory_path() / ("mail_database_test_" + std::to_string(timestamp) + ".sqlite3");
   }
 
   void TearDown() override
@@ -73,8 +73,7 @@ TEST_F(DatabaseTest, EnablesForeignKeyConstraints)
 			);
 		)SQL");
 
-  EXPECT_THROW(database.Execute("INSERT INTO child_records (parent_id) VALUES (42);"),
-               std::runtime_error);
+  EXPECT_THROW(database.Execute("INSERT INTO child_records (parent_id) VALUES (42);"), std::runtime_error);
 }
 
 TEST_F(DatabaseTest, ClosesConnectionAndPreservesData)
@@ -94,8 +93,7 @@ TEST_F(DatabaseTest, ClosesConnectionAndPreservesData)
 
   Storage::Database reopened_database(m_database_path);
 
-  EXPECT_THROW(reopened_database.Execute("INSERT INTO settings (name) VALUES ('smtp_port');"),
-               std::runtime_error);
+  EXPECT_THROW(reopened_database.Execute("INSERT INTO settings (name) VALUES ('smtp_port');"), std::runtime_error);
 }
 
 TEST_F(DatabaseTest, TransfersConnectionOwnershipWhenMoved)
@@ -103,8 +101,7 @@ TEST_F(DatabaseTest, TransfersConnectionOwnershipWhenMoved)
   Storage::Database database(m_database_path);
   Storage::Database moved_database(std::move(database));
 
-  EXPECT_NO_THROW(
-    moved_database.Execute("CREATE TABLE moved_connection (id INTEGER PRIMARY KEY);"));
+  EXPECT_NO_THROW(moved_database.Execute("CREATE TABLE moved_connection (id INTEGER PRIMARY KEY);"));
 }
 
 TEST_F(DatabaseTest, ThrowsWhenDatabaseCannotBeOpened)

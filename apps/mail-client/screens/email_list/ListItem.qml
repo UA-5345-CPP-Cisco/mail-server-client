@@ -217,7 +217,7 @@ Rectangle {
                 height: 20
 
                 Rectangle {
-                    id: nameContainer
+                    id: themeContainer
 
                     anchors.left: parent.left
                     anchors.right: timeContainer.left
@@ -226,7 +226,7 @@ Rectangle {
                     height: 20
 
                     Text {
-                        id: nameText
+                        id: themeText
 
                         color: Color.primaryText
                         elide: Text.ElideRight
@@ -238,20 +238,20 @@ Rectangle {
                         lineHeight: 20
                         lineHeightMode: Text.FixedHeight
                         maximumLineCount: 1
-                        text: searchModel ? searchModel.HighlightAllFoundWords(name, searchModel.SearchedText) : name
+                        text: searchModel ? searchModel.HighlightAllFoundWords(theme, searchModel.SearchedText) : theme
                         textFormat: Text.RichText
                         verticalAlignment: Text.AlignVCenter
                         width: parent.width
                         wrapMode: Text.NoWrap
                     }
                     HoverHandler {
-                        id: nameHover
+                        id: themeHover
                     }
                     EmailToolTip {
-                        text: name
-                        visible: nameHover.hovered && (nameText.contentWidth > nameText.width)
+                        text: theme
+                        visible: themeHover.hovered && (themeText.contentWidth > themeText.width)
                         x: 0
-                        y: nameContainer.height + 4
+                        y: themeContainer.height + 4
                     }
                 }
                 Rectangle {
@@ -303,7 +303,7 @@ Rectangle {
             }
 
             Rectangle {
-                id: themeContainer
+                id: nameContainer
 
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -313,7 +313,7 @@ Rectangle {
                 y: 22
 
                 Text {
-                    id: themeText
+                    id: nameText
 
                     color: Color.primaryText
                     elide: Text.ElideRight
@@ -325,20 +325,20 @@ Rectangle {
                     lineHeight: 20
                     lineHeightMode: Text.FixedHeight
                     maximumLineCount: 1
-                    text: searchModel ? searchModel.HighlightAllFoundWords(theme, searchModel.SearchedText) : theme
+                    text: searchModel ? searchModel.HighlightAllFoundWords(name, searchModel.SearchedText) : name
                     textFormat: Text.RichText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
                     wrapMode: Text.NoWrap
                 }
                 HoverHandler {
-                    id: themeHover
+                    id: nameHover
                 }
                 EmailToolTip {
-                    text: theme
-                    visible: themeHover.hovered && (themeText.contentWidth > themeText.width)
+                    text: name
+                    visible: nameHover.hovered && (nameText.contentWidth > nameText.width)
                     x: 0
-                    y: themeContainer.height + 4
+                    y: nameContainer.height + 4
                 }
             }
             Rectangle {

@@ -4,16 +4,24 @@
 
 #include "EmailListModel.h"
 
-namespace ISXMail{
+namespace ISXMail {
 
     class EmailFilterProxy : public QSortFilterProxyModel
     {
         Q_OBJECT;
+
     public:
-        enum FolderType { Inbox, Sent, Starred, Draft,  Archive};
+        enum FolderType
+        {
+            Inbox,
+            Sent,
+            Starred,
+            Draft,
+            Archive
+        };
         Q_ENUM(FolderType);
 
-        explicit EmailFilterProxy(FolderType type, QObject *parent = nullptr);
+        explicit EmailFilterProxy(FolderType type, QObject* parent = nullptr);
 
     protected:
         bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override;
@@ -22,4 +30,4 @@ namespace ISXMail{
         FolderType m_type;
     };
 
-}
+} // namespace ISXMail
