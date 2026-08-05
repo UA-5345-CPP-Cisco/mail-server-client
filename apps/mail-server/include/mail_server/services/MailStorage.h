@@ -32,6 +32,10 @@ class MailStorage
                                                const std::string& password_hash);
   [[nodiscard]] std::optional<Storage::UserRecord> FindUserByEmail(const std::string& email);
 
+  [[nodiscard]] bool SetStarred(std::int64_t message_id, bool starred);
+  [[nodiscard]] bool SetArchived(std::int64_t message_id, bool archived);
+  [[nodiscard]] bool DeleteMail(std::int64_t message_id);
+
   private:
   Storage::Database m_database;
   Storage::MailMessageRepository m_messages;

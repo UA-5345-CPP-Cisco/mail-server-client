@@ -52,6 +52,24 @@ std::optional<Storage::UserRecord> MailStorage::FindUserByEmail(const std::strin
   return m_users.FindByEmail(email);
 }
 
+bool MailStorage::SetStarred(std::int64_t message_id, bool starred)
+{
+  std::lock_guard<std::mutex> lock(m_mutex);
+  return m_messages.UpdateStarred(message_id, starred);
+}
+
+bool MailStorage::SetArchived(std::int64_t message_id, bool archived)
+{
+  std::lock_guard<std::mutex> lock(m_mutex);
+  return m_messages.UpdateArchive(message_id, archived);
+}
+
+bool MailStorage::DeleteMail(std::int64_t message_id)
+{
+  std::lock_guard<std::mutex> lock(m_mutex);
+  return m_messages.DeleteMessage(message_id);
+}
+
 boost::json::object MailStorage::SerializeMessage(const Storage::MailMessageRecord& message)
 {
   boost::json::array recipients;
