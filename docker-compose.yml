@@ -1,12 +1,27 @@
 services:
+  reverse-proxy:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    depends_on:
+      - mail-server
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - mail-network
+
   mail-server:
     build:
       context: .
       dockerfile: apps/mail-server/Dockerfile
+    restart: unless-stopped
     depends_on:
       - smtp-server
-    ports:
-      - "8081:8080"
+
+    expose:
+      - "8080"
+
     volumes:
       - ./data:/app/data
     networks:
@@ -16,6 +31,7 @@ services:
     build:
       context: .
       dockerfile: apps/smtp-server/Dockerfile
+    restart: unless-stopped
     ports:
       - "2525:2525"
     volumes:
