@@ -14,6 +14,8 @@ class AccountListModelTests : public ::testing::Test
     std::filesystem::remove(ISXDatabaseManager::DatabaseManager::DatabasePath());
     ISXDatabaseManager::DatabaseManager::EnsureInitialized();
     ISXCurrentUser::CurrentUser::GetInstance().Logout();
+    QSettings settings("ISX", "MailClient");
+    settings.clear();
   }
 
   void TearDown() override

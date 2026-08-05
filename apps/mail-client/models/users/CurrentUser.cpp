@@ -73,6 +73,10 @@ namespace ISXCurrentUser {
         m_avatar_path.clear();
         m_is_authorized = false;
 
+        QSettings settings("ISX", "MailClient");
+        settings.remove("accounts");
+        settings.remove("active_user_email");
+
         emit profileChanged();
         emit authorizationChanged();
     }
