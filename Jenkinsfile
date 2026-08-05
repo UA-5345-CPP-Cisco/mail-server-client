@@ -94,7 +94,14 @@ pipeline {
 
                         tar \
                             --exclude='.git' \
+                            --exclude='.github' \
+                            --exclude='.idea' \
+                            --exclude='.vscode' \
+                            --exclude='.DS_Store' \
+                            --exclude='cmake-build-*' \
+                            --exclude='build' \
                             --exclude='data' \
+                            --exclude='*.log' \
                             -czf - . |
                         ssh "${SSH_OPTIONS[@]}" "$TARGET" \
                             "cd '${DEPLOY_DIR}' && tar -xzf -"
@@ -114,8 +121,10 @@ pipeline {
                             "cd '${DEPLOY_DIR}' &&
                              echo 'Validating Compose configuration...' &&
                              docker compose config --quiet &&
-                             echo 'Building and starting services...' &&
-                             docker compose up --detach --build --remove-orphans &&
+                             echo 'Building services with Docker BuildKit...' &&
+                             DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 docker compose build &&
+                             echo 'Starting services...' &&
+                             DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 docker compose up --detach --remove-orphans &&
                              echo 'Service status:' &&
                              docker compose ps"
                     '''
