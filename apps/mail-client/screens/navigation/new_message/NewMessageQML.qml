@@ -144,7 +144,7 @@ Rectangle {
                                 if (isDraft) {
                                     draftChanged(newIndex, subject_text, recipient_text, message_text);
                                 } else {
-                                    emailsModel.AddData(false, false, true, false, subject_text, CurrentUser.username, recipient_text, message_text, "");
+                                    emailsModel.AddData(false, false, true, false, false, subject_text, CurrentUser.username, recipient_text, message_text, "");
                                 }
                                 closeMessageWindow();
                             }

@@ -19,36 +19,38 @@ namespace ISXMail {
 
     Q_NAMESPACE;
 
-    struct EmailData
-    {
-        std::int64_t id{-1};
-        bool is_inbox;
-        bool is_starred;
-        bool is_sent;
-        bool is_draft;
-        bool is_archive;
-        QString theme;
-        QString name;
-        QString send_to;
-        QString preview;
-        QString content;
-        QString time;
-    };
+struct EmailData
+{
+    std::int64_t id{-1};
+    bool is_inbox;
+    bool is_starred;
+    bool is_sent;
+    bool is_draft;
+    bool is_archive;
+    bool is_seen;
+    QString theme;
+    QString name;
+    QString send_to;
+    QString preview;
+    QString content;
+    QString time;
+};
 
-    enum EmailRole
-    {
-        StarredRole = Qt::UserRole + 1,
-        SentRole,
-        DraftRole,
-        ArchiveRole,
-        InboxRole,
-        ThemeRole,
-        NameRole,
-        SendToRole,
-        PreviewRole,
-        ContentRole,
-        TimeRole
-    };
+enum EmailRole
+{
+    StarredRole = Qt::UserRole + 1,
+    SentRole,
+    DraftRole,
+    ArchiveRole,
+    SeenRole,
+    InboxRole,
+    ThemeRole,
+    NameRole,
+    SendToRole,
+    PreviewRole,
+    ContentRole,
+    TimeRole
+};
 
     Q_ENUM_NS(EmailRole);
 
@@ -68,24 +70,16 @@ namespace ISXMail {
         QVariant data(const QModelIndex& index, int role) const override;
         QHash<int, QByteArray> roleNames() const override;
 
-        void RemoveData(int row);
-        Q_INVOKABLE bool DeleteEmail(int row);
-        Q_INVOKABLE void AddData(bool is_starred,
-                                 bool is_sent,
-                                 bool is_draft,
-                                 bool is_archive,
-                                 const QString& theme,
-                                 const QString& name,
-                                 const QString& send_to,
-                                 const QString& content,
-                                 const QString& time,
-                                 bool is_inbox = false);
-        using InboxMessageCallback = std::function<void(const QString& sender, const QString& subject, const QString& preview)>;
-        void registerInboxMessageCallback(InboxMessageCallback callback);
-        Q_INVOKABLE bool SetStarred(int row, bool starred);
-        Q_INVOKABLE bool RefreshFromServer();
-        bool ToggleArchive(int row);
-        void AddData(const EmailData& item);
+    void RemoveData(int row);
+    Q_INVOKABLE bool DeleteEmail(int row);
+    Q_INVOKABLE void AddData(bool is_starred, bool is_sent, bool is_draft,
+                             bool is_archive, bool is_seen, const QString& theme, const QString& name,
+                             const QString& send_to, const QString& content, const QString& time,
+                             bool is_inbox = false);
+    Q_INVOKABLE bool SetStarred(int row, bool starred);
+    bool ToggleArchive(int row);
+    void AddData(const EmailData& item);
+    bool UpdateSeen(int row, bool seen);
 
         bool setData(const QModelIndex& index, const QVariant& value, int role) override;
         Qt::ItemFlags flags(const QModelIndex& index) const override;

@@ -38,6 +38,14 @@ ApplicationWindow {
         settingsLoader.active = false;
         settingsLoader.source = "";
     }
+    function showInboxForCurrentUser()
+    {
+        emailsModel.RefreshFromServer();
+        emailList.isDraftMode = false;
+        emailList.sourceModel = inboxModel;
+        window.selectedEmail = null;
+        window.selectedFolder = "inbox";
+    }
     function formatEmailTime(input_time) {
         let message_date = parseDatabaseTimestamp(input_time);
         if (!message_date)
@@ -77,8 +85,7 @@ ApplicationWindow {
         if (raw === "") {
             return null;
         }
-
-        // SQLite CURRENT_TIMESTAMP is stored as UTC text: "YYYY-MM-DD HH:MM:SS".
+        
         let utcMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})(?:\.\d+)?$/);
         if (utcMatch) {
             return new Date(Date.UTC(parseInt(utcMatch[1]), parseInt(utcMatch[2]) - 1, parseInt(utcMatch[3]), parseInt(utcMatch[4]), parseInt(utcMatch[5]), parseInt(utcMatch[6])));
@@ -188,6 +195,7 @@ ApplicationWindow {
             function onDraftFinished(index, subject, recipient, text) {
                 if (newMessageLoader.selectedItem != null) {
                     draftModel.RemoveEmailData(parseInt(index));
+                    emailsModel.AddData(false, true, false, false, false, subject, CurrentUser.username, recipient, text, "");
                 }
 
                 showPopup("Email is sent");

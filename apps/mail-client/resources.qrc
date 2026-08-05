@@ -32,5 +32,7 @@
         <file>assets/theme/LightColorScheme.json</file>
         <file>assets/ic_eye_closed.svg</file>
         <file>assets/ic_eye_open.svg</file>
+        <file>assets/ic_view_uncheck.svg</file>
+        <file>assets/ic_view_check.svg</file>
     </qresource>
 </RCC>

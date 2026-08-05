@@ -53,6 +53,9 @@ namespace ISXMail {
 
             case ArchiveRole:
                 return QStringLiteral("ArchiveRole");
+                
+            case SeenRole: 
+                return QStringLiteral("SeenRole");
 
             default:
                 return QStringLiteral("UnknownRole");
@@ -170,6 +173,8 @@ namespace ISXMail {
             return item.is_draft;
         case ArchiveRole:
             return item.is_archive;
+        case SeenRole:
+	          return item.is_seen;
         case ThemeRole:
             return item.theme;
         case NameRole:
@@ -194,6 +199,7 @@ namespace ISXMail {
                 {SentRole, "emailsSent"},
                 {DraftRole, "emailsDraft"},
                 {ArchiveRole, "emailsArchive"},
+                {SeenRole, "emailsSeen"},
                 {ThemeRole, "emailsTheme"},
                 {NameRole, "emailsName"},
                 {SendToRole, "emailsSendTo"},
@@ -243,6 +249,7 @@ namespace ISXMail {
                                  bool is_sent,
                                  bool is_draft,
                                  bool is_archive,
+                                 bool is_seen,
                                  const QString& theme,
                                  const QString& name,
                                  const QString& send_to,
@@ -600,6 +607,31 @@ namespace ISXMail {
                              .arg(m_data[row].is_archive ? "true" : "false")));
 
         return m_data[row].is_archive;
+    }
+  
+    bool EmailListModel::UpdateSeen(int row, bool seen)
+    {
+      if (row < 0 || row >= static_cast<int>(m_data.size()))
+      {
+        return false;
+      }
+    
+      const std::int64_t message_id = m_data[row].id;
+      if (message_id >= 0 && !m_message_repository.UpdateSeen(message_id, seen))
+      {
+        return false;
+      }
+    
+      m_data[row].is_seen = seen;
+      const QModelIndex idx = index(row, 0);
+      emit dataChanged(idx, idx, {SeenRole});
+    
+      Logging::Logger::Instance().Log(Logging::LogLevel::Debug, GetStdString(QString("EmailListModel::UpdateSeen: data at %1 changed %2 field to %3")
+        .arg(row)
+        .arg(GetEnumString(SeenRole))
+        .arg(m_data[row].is_seen ? "true" : "false")));
+    
+      return m_data[row].is_seen;
     }
 
     Qt::ItemFlags EmailListModel::flags(const QModelIndex& index) const
