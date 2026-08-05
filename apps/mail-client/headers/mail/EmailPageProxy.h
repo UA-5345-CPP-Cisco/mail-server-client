@@ -33,9 +33,9 @@ namespace ISXMail {
 
         EmailListModel* GetParentModel(QModelIndex idx);
 
-        void setSourceModel(QAbstractItemModel *source_model) override;
-        signals:
-            void currentPageChanged();
+        void setSourceModel(QAbstractItemModel* source_model) override;
+    signals:
+        void currentPageChanged();
         void pageCountChanged();
         void totalEmailsCountChanged();
         void pageAmountTextChanged();

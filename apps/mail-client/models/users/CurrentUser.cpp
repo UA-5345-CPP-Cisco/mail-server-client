@@ -2,8 +2,8 @@
 
 #include <QDir>
 #include <QFile>
-#include <QStandardPaths>
 #include <QSettings>
+#include <QStandardPaths>
 
 namespace ISXCurrentUser {
 

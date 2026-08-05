@@ -1,8 +1,5 @@
-#include <QDir>
 #include <QApplication>
-#include <QQmlApplicationEngine>
-#include <QQuickWindow>
-#include <QQuickStyle>
+#include <QDir>
 #include <QIcon>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -18,11 +15,9 @@
 #include "headers/mail/EmailListModel.h"
 #include "headers/mail/EmailPageProxy.h"
 #include "headers/mail/MessageComposer.h"
+#include "headers/mail/NotificationsModel.h"
 #include "headers/search/MessageSearchModel.h"
 #include "headers/service/Service.h"
-#include "headers/mail/NotificationsModel.h"
-
-#include "mail_storage/UserRepository.h"
 #include "headers/users/AccountListModel.h"
 #include "headers/users/CurrentUser.h"
 #include "logger/Logger.h"
@@ -124,8 +119,10 @@ int main(int argc, char* argv[])
     auto* notifications = new ISXMail::NotificationsModel(&app);
     engine.rootContext()->setContextProperty("notificationsModel", notifications);
 
-    QObject::connect(model, &ISXMail::EmailListModel::inboxMessageReceived,
-                     notifications, &ISXMail::NotificationsModel::onNewInboxMessage);
+    QObject::connect(model,
+                     &ISXMail::EmailListModel::inboxMessageReceived,
+                     notifications,
+                     &ISXMail::NotificationsModel::onNewInboxMessage);
 
     qmlRegisterUncreatableMetaObject(ISXMail::staticMetaObject, "ISXMail", 1, 0, "EmailRole", "Not creatable");
 
