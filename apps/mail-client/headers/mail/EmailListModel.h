@@ -57,9 +57,14 @@ enum EmailRole
     class EmailListModel : public QAbstractListModel
     {
         Q_OBJECT;
+        Q_PROPERTY(bool isLoading READ isLoading NOTIFY isLoadingChanged)
+        Q_PROPERTY(bool serverError READ serverError NOTIFY serverErrorChanged)
 
     public:
         explicit EmailListModel(QObject* parent = nullptr);
+
+        bool isLoading() const;
+        bool serverError() const;
 
         int rowCount(const QModelIndex& parent = QModelIndex()) const override;
         QVariant data(const QModelIndex& index, int role) const override;
@@ -82,6 +87,8 @@ enum EmailRole
     signals:
         void dataAdded();
         void inboxMessageReceived(const QString& sender, const QString& subject, const QString& preview);
+        void isLoadingChanged();
+        void serverErrorChanged();
 
     private:
         void LoadFromDatabase();
@@ -94,6 +101,8 @@ enum EmailRole
         Storage::MessageRecipientRepository m_recipient_repository;
         std::vector<EmailData> m_data;
         std::vector<InboxMessageCallback> m_inbox_callbacks;
+        bool m_isLoading{false};
+        bool m_serverError{false};
     };
 
 } // namespace ISXMail
