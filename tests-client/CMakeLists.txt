@@ -55,7 +55,7 @@ add_executable(model_tests
 		model_tests/DatabaseManagerTests.cpp
 		model_tests/MessageComposerTests.cpp
 		model_tests/MessageSearchModelTests.cpp
-		model_tests/RegistrationHandlerTests.cpp
+		model_tests/AuthHandlerTests.cpp
 		state_tests/main.cpp
 )
 
@@ -74,5 +74,5 @@ gtest_add_tests(TARGET model_tests SOURCES
 		model_tests/DatabaseManagerTests.cpp
 		model_tests/MessageComposerTests.cpp
 		model_tests/MessageSearchModelTests.cpp
-		model_tests/RegistrationHandlerTests.cpp
+		model_tests/AuthHandlerTests.cpp
 )

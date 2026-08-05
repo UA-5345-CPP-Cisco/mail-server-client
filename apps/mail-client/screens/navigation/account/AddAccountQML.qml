@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Shapes
 import QtQuick.Effects
+import com.auth.system 1.0
 
 Rectangle {
     id: rootWindow
@@ -13,7 +14,32 @@ Rectangle {
     radius: 14
     visible: true
 
-    function getValidationError(type, text) 
+    function getAuthErrorMessage(errorCode) 
+    {
+        if (errorCode === AuthHandler.AuthResult.UserNotFound || errorCode === AuthHandler.AuthResult.WrongPasswordOREmail) 
+        {
+            return "Invalid email or password";
+        }
+    
+        if (errorCode === AuthHandler.AuthResult.DatabaseError) 
+        {
+            return "Internal database error";
+        }
+
+        if (errorCode === AuthHandler.AuthResult.InternalError) 
+        {
+            return "System error";
+        }
+
+        if (errorCode === AuthHandler.AuthResult.UserAlreadyExists)
+        {
+            return "User already exists";
+        }
+
+        return "An unknown error occurred";
+    }
+
+    function getRegisterValidationError(type, text) 
     {
         var value = text.trim();
         var value_lower = text.trim().toLowerCase()
@@ -29,17 +55,8 @@ Rectangle {
         {
             if (value.length === 0) 
             {
-                return "Name cannot be empty"
+                return "Cannot be empty"
             }
-            if (value.split(/\s+/).length !== 2)
-            {
-                return "Please enter your first and last name"
-            }
-            if (!/^[A-Z][a-z]+ [A-Z][a-z]+$/.test(value))
-            {
-                return "Each name must start with a capital letter"
-            }
-
             return ""
         }
 
@@ -47,7 +64,7 @@ Rectangle {
         {
             if (value.length === 0)
             {
-                return "Email cannot be empty"
+                return "Cannot be empty"
             }
 
             var email_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -63,7 +80,7 @@ Rectangle {
         {
             if (value.length === 0) 
             {
-                return "Password cannot be empty"
+                return "Cannot be empty"
             }
 
             if (value.length < 6) 
@@ -110,9 +127,8 @@ Rectangle {
 
             return ""
         }
-        return ""
+        return "An unknown error occurred"
     }
-
 
     Rectangle {
         id: backgroundRectangle
@@ -136,6 +152,8 @@ Rectangle {
         scale: closeClickArea.containsMouse ? 1.3 : 1.0
         width: 40
         z: 10
+
+        visible: !initialSetupRequired
 
         Behavior on scale {
             id: closeScaleBehavior
@@ -185,40 +203,53 @@ Rectangle {
         id: loaderConnections
 
         // Handle back navigation
-        function onBackRequested() {
+        function onBackRequested() 
+        {
             contentLoader.sourceComponent = choiceScreenComponent;
         }
 
         // Handle login submit
-        function onLoginSubmitted(email, password) {
-            var success = authHandler.loginUser(email, password);
+        function onLoginSubmitted(email, password) 
+        {
+            var result = authHandler.LoginUser(email, password);
 
-            if (success) {
+            if (result === AuthHandler.AuthResult.Success) 
+            {
                 accountModel.AddAccount(CurrentUser.username, CurrentUser.email, "", Color.avatar, avatarInitial(CurrentUser.username), true);
                 showInboxForCurrentUser();
                 closeAuthWindow();
             }
+            else 
+            {
+                contentLoader.item.generalError = getAuthErrorMessage(result);
+            }
         }
 
         // Handle registration submit
-        function onRegisterSubmitted(name, email, password) {
-            var success = authHandler.registerUser(name, email, password);
+        function onRegisterSubmitted(name, email, password) 
+        {
+            var result = authHandler.RegisterUser(name, email, password);
 
-            if (success) {
+            if (result === AuthHandler.AuthResult.Success)
+            {
                 var firstLetter = avatarInitial(name);
 
                 accountModel.AddAccount(name, email, "", Color.avatar, firstLetter, true);
+                //CurrentUser.Authorize(name, email, "");
                 showInboxForCurrentUser();
 
                 closeAuthWindow();
-            } else {
-                return -1;
+            } 
+            else 
+            {
+                contentLoader.item.generalError = getAuthErrorMessage(result);
             }
         }
 
         ignoreUnknownSignals: true
         target: contentLoader.item
     }
+
     Component {
         id: choiceScreenComponent
 
@@ -241,7 +272,7 @@ Rectangle {
                     font.family: "Segoe UI"
                     font.pixelSize: 32
                     font.weight: Font.Bold
-                    text: "Add an Account"
+                    text: "Welcome!"
                 }
                 Row {
                     id: optionsRow

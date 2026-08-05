@@ -159,16 +159,15 @@ namespace ISXMail {
                     repo.UpdateStatus(user_record->id, db_status);
                 }
 
-                // Notify Qt views that the active role has changed to trigger a UI repaint
                 const QModelIndex idx = index(static_cast<int>(i));
                 emit dataChanged(idx, idx, {IsActiveRole});
             }
 
-            // Synchronize the global application context with the newly activated user
-            if (should_be_active) {
-                ISXCurrentUser::CurrentUser::GetInstance().Authorize(
-                    m_data[i].account_name, m_data[i].account_email, m_data[i].avatar_url);
-            }
+                // Synchronize the global application context with the newly activated user
+                if (should_be_active) {
+                    ISXCurrentUser::CurrentUser::GetInstance().Authorize(
+                        m_data[i].account_name, m_data[i].account_email, m_data[i].avatar_url);
+                }
         }
 
         SaveToSettings();
