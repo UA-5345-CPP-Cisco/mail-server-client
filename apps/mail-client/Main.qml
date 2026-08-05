@@ -98,13 +98,6 @@ ApplicationWindow {
 
         return null;
     }
-    function showInboxForCurrentUser() {
-        emailsModel.RefreshFromServer();
-        emailList.isDraftMode = false;
-        emailList.sourceModel = inboxModel;
-        window.selectedEmail = null;
-        window.selectedFolder = "inbox";
-    }
     function showPopup(msg) {
         navMenu.showPopup(String(msg));
     }
