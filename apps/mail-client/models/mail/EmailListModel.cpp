@@ -1,6 +1,7 @@
 #include "headers/mail/EmailListModel.h"
 
 #include <QTime>
+#include <QThread>
 
 #include <boost/json.hpp>
 
@@ -128,6 +129,16 @@ namespace ISXMail {
         , m_recipient_repository(m_database)
     {
         ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel: constructed");
+    }
+
+    bool EmailListModel::isLoading() const
+    {
+        return m_isLoading;
+    }
+
+    bool EmailListModel::serverError() const
+    {
+        return m_serverError;
     }
 
     int EmailListModel::rowCount(const QModelIndex& parent) const
@@ -325,17 +336,39 @@ void EmailListModel::AddData(
             return false;
         }
 
-        try {
-            const auto response = ISXService::Service::MailServerClient().GetMails(current_email.toStdString());
-            if (!response.is_success() || !response.body.is_object()) {
-                return false;
-            }
+        if (m_isLoading) {
+            return false;
+        }
 
-            const json::object& object = response.body.as_object();
-            const json::value* mails_value = object.if_contains("mails");
-            if (mails_value == nullptr || !mails_value->is_array()) {
-                return false;
-            }
+        m_isLoading = true;
+        m_serverError = false;
+        emit isLoadingChanged();
+        emit serverErrorChanged();
+
+        QThread* thread = QThread::create([this, current_email]() {
+            try {
+                const auto response = ISXService::Service::MailServerClient().GetMails(current_email.toStdString());
+                if (!response.is_success() || !response.body.is_object()) {
+                    QMetaObject::invokeMethod(this, [this]() {
+                        m_isLoading = false;
+                        m_serverError = true;
+                        emit isLoadingChanged();
+                        emit serverErrorChanged();
+                    }, Qt::QueuedConnection);
+                    return;
+                }
+
+                const json::object& object = response.body.as_object();
+                const json::value* mails_value = object.if_contains("mails");
+                if (mails_value == nullptr || !mails_value->is_array()) {
+                    QMetaObject::invokeMethod(this, [this]() {
+                        m_isLoading = false;
+                        m_serverError = true;
+                        emit isLoadingChanged();
+                        emit serverErrorChanged();
+                    }, Qt::QueuedConnection);
+                    return;
+                }
 
             std::vector<EmailData> server_data;
             for (const json::value& mail_value : mails_value->as_array()) {
@@ -414,13 +447,31 @@ void EmailListModel::AddData(
                                        QString::fromStdString(created_at)});
             }
 
-            ReplaceData(std::move(server_data));
-            return true;
-        } catch (const std::exception& exception) {
-            ISXService::Service::Logger().Log(
-                Logging::LogLevel::Error, std::string("EmailListModel::RefreshFromServer failed: ") + exception.what());
-            return false;
-        }
+                QMetaObject::invokeMethod(this, [this, server_data = std::move(server_data)]() mutable {
+                    ReplaceData(std::move(server_data));
+                    m_isLoading = false;
+                    m_serverError = false;
+                    emit isLoadingChanged();
+                    emit serverErrorChanged();
+                }, Qt::QueuedConnection);
+
+            } catch (const std::exception& exception) {
+                std::string error_message = exception.what();
+                QMetaObject::invokeMethod(this, [this, error_message]() {
+                    ISXService::Service::Logger().Log(
+                        Logging::LogLevel::Error, std::string("EmailListModel::RefreshFromServer failed: ") + error_message);
+                    m_isLoading = false;
+                    m_serverError = true;
+                    emit isLoadingChanged();
+                    emit serverErrorChanged();
+                }, Qt::QueuedConnection);
+            }
+        });
+
+        connect(thread, &QThread::finished, thread, &QObject::deleteLater);
+        thread->start();
+
+        return true;
     }
 
     void EmailListModel::ReplaceData(std::vector<EmailData> data)
