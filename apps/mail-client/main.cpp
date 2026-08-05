@@ -29,6 +29,9 @@ int main(int argc, char* argv[])
     qputenv("QT_QUICK_BACKEND", "software");
     QQuickStyle::setStyle(QStringLiteral("Fusion"));
     QApplication app(argc, argv);
+    app.setApplicationName("Mail Client");
+    app.setApplicationDisplayName("Mail Client");
+    app.setOrganizationName("ISX");
     app.setQuitOnLastWindowClosed(false);
     app.setWindowIcon(QIcon(":/pngs/assets/Icon.png"));
 

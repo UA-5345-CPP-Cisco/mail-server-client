@@ -89,7 +89,7 @@ namespace ISXMail {
         bool ToggleArchive(int row);
         void AddData(const EmailData& item);
         bool UpdateSeen(int row, bool seen);
-        Q_INVOKABLE bool RefreshFromServer();
+        Q_INVOKABLE bool RefreshFromServer(bool silent = false);
 
         bool setData(const QModelIndex& index, const QVariant& value, int role) override;
         Qt::ItemFlags flags(const QModelIndex& index) const override;
@@ -113,6 +113,8 @@ namespace ISXMail {
         std::vector<InboxMessageCallback> m_inbox_callbacks;
         bool m_isLoading{false};
         bool m_serverError{false};
+        bool m_isFirstSync{true};
+        QString m_lastFetchedEmail;
     };
 
 } // namespace ISXMail

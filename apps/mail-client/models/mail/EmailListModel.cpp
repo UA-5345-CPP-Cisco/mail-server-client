@@ -329,7 +329,7 @@ namespace ISXMail {
         return true;
     }
 
-    bool EmailListModel::RefreshFromServer()
+    bool EmailListModel::RefreshFromServer(bool silent)
     {
         const QString current_email = ISXCurrentUser::CurrentUser::GetInstance().email();
         if (current_email.trimmed().isEmpty()) {
@@ -340,22 +340,26 @@ namespace ISXMail {
             return false;
         }
 
-        m_isLoading = true;
-        m_serverError = false;
-        emit isLoadingChanged();
-        emit serverErrorChanged();
+        if (!silent) {
+            m_isLoading = true;
+            m_serverError = false;
+            emit isLoadingChanged();
+            emit serverErrorChanged();
+        }
 
-        QThread* thread = QThread::create([this, current_email]() {
+        QThread* thread = QThread::create([this, current_email, silent]() {
             try {
                 const auto response = ISXService::Service::MailServerClient().GetMails(current_email.toStdString());
                 if (!response.is_success() || !response.body.is_object()) {
                     QMetaObject::invokeMethod(
                         this,
-                        [this]() {
-                            m_isLoading = false;
-                            m_serverError = true;
-                            emit isLoadingChanged();
-                            emit serverErrorChanged();
+                        [this, silent]() {
+                            if (!silent) {
+                                m_isLoading = false;
+                                m_serverError = true;
+                                emit isLoadingChanged();
+                                emit serverErrorChanged();
+                            }
                         },
                         Qt::QueuedConnection);
                     return;
@@ -366,11 +370,13 @@ namespace ISXMail {
                 if (mails_value == nullptr || !mails_value->is_array()) {
                     QMetaObject::invokeMethod(
                         this,
-                        [this]() {
-                            m_isLoading = false;
-                            m_serverError = true;
-                            emit isLoadingChanged();
-                            emit serverErrorChanged();
+                        [this, silent]() {
+                            if (!silent) {
+                                m_isLoading = false;
+                                m_serverError = true;
+                                emit isLoadingChanged();
+                                emit serverErrorChanged();
+                            }
                         },
                         Qt::QueuedConnection);
                     return;
@@ -458,12 +464,14 @@ namespace ISXMail {
 
                 QMetaObject::invokeMethod(
                     this,
-                    [this, server_data = std::move(server_data)]() mutable {
+                    [this, silent, server_data = std::move(server_data)]() mutable {
                         ReplaceData(std::move(server_data));
-                        m_isLoading = false;
-                        m_serverError = false;
-                        emit isLoadingChanged();
-                        emit serverErrorChanged();
+                        if (!silent) {
+                            m_isLoading = false;
+                            m_serverError = false;
+                            emit isLoadingChanged();
+                            emit serverErrorChanged();
+                        }
                     },
                     Qt::QueuedConnection);
 
@@ -471,14 +479,16 @@ namespace ISXMail {
                 std::string error_message = exception.what();
                 QMetaObject::invokeMethod(
                     this,
-                    [this, error_message]() {
+                    [this, silent, error_message]() {
                         ISXService::Service::Logger().Log(Logging::LogLevel::Error,
                                                           std::string("EmailListModel::RefreshFromServer failed: ") +
                                                               error_message);
-                        m_isLoading = false;
-                        m_serverError = true;
-                        emit isLoadingChanged();
-                        emit serverErrorChanged();
+                        if (!silent) {
+                            m_isLoading = false;
+                            m_serverError = true;
+                            emit isLoadingChanged();
+                            emit serverErrorChanged();
+                        }
                     },
                     Qt::QueuedConnection);
             }
@@ -492,6 +502,34 @@ namespace ISXMail {
 
     void EmailListModel::ReplaceData(std::vector<EmailData> data)
     {
+        const QString current_email = ISXCurrentUser::CurrentUser::GetInstance().email();
+        const bool is_user_changed = (current_email != m_lastFetchedEmail);
+
+        if (!m_isFirstSync && !is_user_changed) {
+            for (const auto& item : data) {
+                if (item.is_inbox) {
+                    bool found = false;
+                    for (const auto& existing : m_data) {
+                        if (existing.id == item.id) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        emit inboxMessageReceived(item.name, item.theme, item.preview);
+                        for (const auto& callback : m_inbox_callbacks) {
+                            if (callback) {
+                                callback(item.name, item.theme, item.preview);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        m_isFirstSync = false;
+        m_lastFetchedEmail = current_email;
+
         beginResetModel();
         m_data = std::move(data);
         endResetModel();

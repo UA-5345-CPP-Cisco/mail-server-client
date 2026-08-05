@@ -37,7 +37,7 @@ namespace ISXMail {
         if (!trayIcon) {
             trayIcon = new QSystemTrayIcon(QCoreApplication::instance());
             // Try to load the app icon, otherwise use default
-            QIcon icon(":/pngs/assets/Icon.png");
+            QIcon icon(":/pngs/assets/ic_mail.svg");
             if (icon.isNull()) {
                 icon = QIcon(":/pngs/assets/ic_inbox.svg");
             }
