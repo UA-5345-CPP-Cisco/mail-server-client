@@ -50,8 +50,7 @@ Response DeleteMailHandler(Request const& request)
 
     ServiceRegistry::Logger().Log(LogLevel::Info, "Message " + std::to_string(message_id) + " deleted");
 
-    return MakeJsonResponse(
-      request, http::status::ok, json::object{{"id", message_id}, {"status", "deleted"}});
+    return MakeJsonResponse(request, http::status::ok, json::object{{"id", message_id}, {"status", "deleted"}});
   }
   catch (const std::exception& exception)
   {

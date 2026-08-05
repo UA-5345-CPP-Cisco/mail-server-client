@@ -61,13 +61,10 @@ Response StarHandler(Request const& request)
     }
 
     ServiceRegistry::Logger().Log(LogLevel::Info,
-                                  "Message " + std::to_string(message_id) +
-                                    (starred ? " starred" : " unstarred"));
+                                  "Message " + std::to_string(message_id) + (starred ? " starred" : " unstarred"));
 
     return MakeJsonResponse(
-      request,
-      http::status::ok,
-      json::object{{"id", message_id}, {"starred", starred}, {"status", "ok"}});
+      request, http::status::ok, json::object{{"id", message_id}, {"starred", starred}, {"status", "ok"}});
   }
   catch (const std::exception& exception)
   {

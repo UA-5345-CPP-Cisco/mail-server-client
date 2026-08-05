@@ -61,13 +61,10 @@ Response ArchiveHandler(Request const& request)
     }
 
     ServiceRegistry::Logger().Log(LogLevel::Info,
-                                  "Message " + std::to_string(message_id) +
-                                    (archived ? " archived" : " unarchived"));
+                                  "Message " + std::to_string(message_id) + (archived ? " archived" : " unarchived"));
 
     return MakeJsonResponse(
-      request,
-      http::status::ok,
-      json::object{{"id", message_id}, {"archived", archived}, {"status", "ok"}});
+      request, http::status::ok, json::object{{"id", message_id}, {"archived", archived}, {"status", "ok"}});
   }
   catch (const std::exception& exception)
   {
