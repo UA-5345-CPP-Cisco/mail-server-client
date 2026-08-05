@@ -1,5 +1,6 @@
 #include <QTemporaryFile>
 #include <gtest/gtest.h>
+#include <QSettings>
 
 #include "mail_storage/UserRepository.h"
 #include "database/DatabaseManager.h"
