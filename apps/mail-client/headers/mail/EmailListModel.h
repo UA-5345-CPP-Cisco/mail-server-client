@@ -58,7 +58,7 @@ namespace ISXMail {
         Q_OBJECT;
         Q_PROPERTY(bool isLoading READ isLoading NOTIFY isLoadingChanged)
         Q_PROPERTY(bool serverError READ serverError NOTIFY serverErrorChanged)
-
+        using InboxMessageCallback = std::function<void(const QString& sender, const QString& subject, const QString& preview)>;
     public:
         explicit EmailListModel(QObject* parent = nullptr);
 
@@ -91,6 +91,9 @@ namespace ISXMail {
         bool UpdateSeen(int row, bool seen);
         Q_INVOKABLE bool RefreshFromServer(bool silent = false);
 
+        Q_INVOKABLE bool RefreshFromServer();
+
+        void registerInboxMessageCallback(InboxMessageCallback callback);
         bool setData(const QModelIndex& index, const QVariant& value, int role) override;
         Qt::ItemFlags flags(const QModelIndex& index) const override;
 
