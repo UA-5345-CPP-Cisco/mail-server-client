@@ -1,7 +1,7 @@
 #include "headers/mail/EmailListModel.h"
 
-#include <QTime>
 #include <QThread>
+#include <QTime>
 
 #include <boost/json.hpp>
 
@@ -15,12 +15,8 @@ namespace ISXMail {
 
     namespace {
         QString GetEnumString(int role)
-
         {
-
-            switch (role)
-
-            {
+            switch (role) {
             case InboxRole:
                 return QStringLiteral("InboxRole");
 
@@ -162,33 +158,32 @@ namespace ISXMail {
 
         const auto& item = m_data[index.row()];
 
-	switch (role)
-	{
-	case InboxRole:
-		return item.is_inbox;
-	case StarredRole:
-		return item.is_starred;
-	case SentRole:
-		return item.is_sent;
-	case DraftRole:
-		return item.is_draft;
-	case ArchiveRole:
-	  return item.is_archive;
-	case SeenRole:
-	  return item.is_seen;
-	case ThemeRole:
-		return item.theme;
-	case NameRole:
-		return item.name;
-	case SendToRole:
-		return item.send_to;
-	case PreviewRole:
-		return item.preview;
-	case ContentRole:
-		return item.content;
-	case TimeRole:
-		return item.time;
-	}
+        switch (role) {
+        case InboxRole:
+            return item.is_inbox;
+        case StarredRole:
+            return item.is_starred;
+        case SentRole:
+            return item.is_sent;
+        case DraftRole:
+            return item.is_draft;
+        case ArchiveRole:
+            return item.is_archive;
+        case SeenRole:
+            return item.is_seen;
+        case ThemeRole:
+            return item.theme;
+        case NameRole:
+            return item.name;
+        case SendToRole:
+            return item.send_to;
+        case PreviewRole:
+            return item.preview;
+        case ContentRole:
+            return item.content;
+        case TimeRole:
+            return item.time;
+        }
 
         return {};
     }
@@ -290,13 +285,10 @@ void EmailListModel::AddData(
         ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::AddData: data was added");
         emit dataAdded();
 
-        if (item.is_inbox)
-        {
+        if (item.is_inbox) {
             emit inboxMessageReceived(item.name, item.theme, item.preview);
-            for (const auto& callback : m_inbox_callbacks)
-            {
-                if (callback)
-                {
+            for (const auto& callback : m_inbox_callbacks) {
+                if (callback) {
                     callback(item.name, item.theme, item.preview);
                 }
             }
@@ -329,7 +321,7 @@ void EmailListModel::AddData(
         return true;
     }
 
-    bool EmailListModel::RefreshFromServer()
+    bool EmailListModel::RefreshFromServer(bool silent)
     {
         const QString current_email = ISXCurrentUser::CurrentUser::GetInstance().email();
         if (current_email.trimmed().isEmpty()) {
@@ -340,33 +332,45 @@ void EmailListModel::AddData(
             return false;
         }
 
-        m_isLoading = true;
-        m_serverError = false;
-        emit isLoadingChanged();
-        emit serverErrorChanged();
+        if (!silent) {
+            m_isLoading = true;
+            m_serverError = false;
+            emit isLoadingChanged();
+            emit serverErrorChanged();
+        }
 
-        QThread* thread = QThread::create([this, current_email]() {
+        QThread* thread = QThread::create([this, current_email, silent]() {
             try {
                 const auto response = ISXService::Service::MailServerClient().GetMails(current_email.toStdString());
                 if (!response.is_success() || !response.body.is_object()) {
-                    QMetaObject::invokeMethod(this, [this]() {
-                        m_isLoading = false;
-                        m_serverError = true;
-                        emit isLoadingChanged();
-                        emit serverErrorChanged();
-                    }, Qt::QueuedConnection);
+                    QMetaObject::invokeMethod(
+                        this,
+                        [this, silent]() {
+                            if (!silent) {
+                                m_isLoading = false;
+                                m_serverError = true;
+                                emit isLoadingChanged();
+                                emit serverErrorChanged();
+                            }
+                        },
+                        Qt::QueuedConnection);
                     return;
                 }
 
                 const json::object& object = response.body.as_object();
                 const json::value* mails_value = object.if_contains("mails");
                 if (mails_value == nullptr || !mails_value->is_array()) {
-                    QMetaObject::invokeMethod(this, [this]() {
-                        m_isLoading = false;
-                        m_serverError = true;
-                        emit isLoadingChanged();
-                        emit serverErrorChanged();
-                    }, Qt::QueuedConnection);
+                    QMetaObject::invokeMethod(
+                        this,
+                        [this, silent]() {
+                            if (!silent) {
+                                m_isLoading = false;
+                                m_serverError = true;
+                                emit isLoadingChanged();
+                                emit serverErrorChanged();
+                            }
+                        },
+                        Qt::QueuedConnection);
                     return;
                 }
 
@@ -459,14 +463,20 @@ void EmailListModel::AddData(
 
             } catch (const std::exception& exception) {
                 std::string error_message = exception.what();
-                QMetaObject::invokeMethod(this, [this, error_message]() {
-                    ISXService::Service::Logger().Log(
-                        Logging::LogLevel::Error, std::string("EmailListModel::RefreshFromServer failed: ") + error_message);
-                    m_isLoading = false;
-                    m_serverError = true;
-                    emit isLoadingChanged();
-                    emit serverErrorChanged();
-                }, Qt::QueuedConnection);
+                QMetaObject::invokeMethod(
+                    this,
+                    [this, silent, error_message]() {
+                        ISXService::Service::Logger().Log(Logging::LogLevel::Error,
+                                                          std::string("EmailListModel::RefreshFromServer failed: ") +
+                                                              error_message);
+                        if (!silent) {
+                            m_isLoading = false;
+                            m_serverError = true;
+                            emit isLoadingChanged();
+                            emit serverErrorChanged();
+                        }
+                    },
+                    Qt::QueuedConnection);
             }
         });
 
@@ -478,6 +488,34 @@ void EmailListModel::AddData(
 
     void EmailListModel::ReplaceData(std::vector<EmailData> data)
     {
+        const QString current_email = ISXCurrentUser::CurrentUser::GetInstance().email();
+        const bool is_user_changed = (current_email != m_lastFetchedEmail);
+
+        if (!m_isFirstSync && !is_user_changed) {
+            for (const auto& item : data) {
+                if (item.is_inbox) {
+                    bool found = false;
+                    for (const auto& existing : m_data) {
+                        if (existing.id == item.id) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        emit inboxMessageReceived(item.name, item.theme, item.preview);
+                        for (const auto& callback : m_inbox_callbacks) {
+                            if (callback) {
+                                callback(item.name, item.theme, item.preview);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        m_isFirstSync = false;
+        m_lastFetchedEmail = current_email;
+
         beginResetModel();
         m_data = std::move(data);
         endResetModel();

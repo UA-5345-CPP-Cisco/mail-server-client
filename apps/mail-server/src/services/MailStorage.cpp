@@ -68,7 +68,7 @@ boost::json::object MailStorage::SerializeMessage(const Storage::MailMessageReco
                              {"created_at", message.created_at},
                              {"is_inbox", message.is_inbox},
                              {"is_starred", message.is_starred},
-                              {"is_seen", message.is_seen},
+                             {"is_seen", message.is_seen},
                              {"status", StatusToString(message.status)}};
 }
 
