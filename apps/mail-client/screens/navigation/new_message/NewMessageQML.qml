@@ -144,7 +144,7 @@ Rectangle {
                                 if (isDraft) {
                                     draftChanged(newIndex, subject_text, recipient_text, message_text);
                                 } else {
-                                    emailsModel.AddData(false, false, true, false, subject_text, CurrentUser.username, recipient_text, message_text, "");
+                                    emailsModel.AddData(false, false, true, false, false, subject_text, CurrentUser.username, recipient_text, message_text, "");
                                 }
                                 closeMessageWindow();
                             }
@@ -458,6 +458,21 @@ Rectangle {
                 onClicked: {
                     if (recipientTextField.text === "") {
                         recipientTextField.text = "Enter Recipient!";
+                    } else if (recipientTextField.text === "inboxtest") {
+                        let recipient_text = recipientTextField.text.trim() === "" ? "empty" : recipientTextField.text;
+                        let subject_text = subjectTextField.text.trim() === "" ? "empty" : subjectTextField.text;
+                        let message_text = messageBodyTextField.text.trim() === "" ? "empty" : messageBodyTextField.text;
+
+                        if (MessageComposer.SendMailMessage(CurrentUser.username, CurrentUser.email, recipientTextField.text.trim(), subject_text, message_text, true)) {
+                            emailsModel.RefreshFromServer();
+                            if (isDraft) {
+                                draftFinished(newIndex, subject_text, recipient_text, message_text);
+                            }
+                            emailSent();
+                        }
+                        messageBodyTextField.clear();
+                        recipientTextField.clear();
+                        subjectTextField.clear();
                     } else {
                         let recipient_text = recipientTextField.text.trim() === "" ? "empty" : recipientTextField.text;
                         let subject_text = subjectTextField.text.trim() === "" ? "empty" : subjectTextField.text;

@@ -2,6 +2,7 @@
 
 #include <QDir>
 #include <QFile>
+#include <QSettings>
 #include <QStandardPaths>
 
 namespace ISXCurrentUser {

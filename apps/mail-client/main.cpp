@@ -1,8 +1,5 @@
-#include <QDir>
 #include <QApplication>
-#include <QQmlApplicationEngine>
-#include <QQuickWindow>
-#include <QQuickStyle>
+#include <QDir>
 #include <QIcon>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -18,6 +15,7 @@
 #include "headers/mail/EmailListModel.h"
 #include "headers/mail/EmailPageProxy.h"
 #include "headers/mail/MessageComposer.h"
+#include "headers/mail/NotificationsModel.h"
 #include "headers/search/MessageSearchModel.h"
 #include "headers/service/Service.h"
 #include "headers/mail/NotificationsModel.h"
@@ -26,13 +24,15 @@
 #include "headers/users/CurrentUser.h"
 #include "logger/Logger.h"
 #include "mail_server_sdk/MailServerClient.h"
-#include "mail_storage/UserRepository.h"
 
 int main(int argc, char* argv[])
 {
     qputenv("QT_QUICK_BACKEND", "software");
     QQuickStyle::setStyle(QStringLiteral("Fusion"));
     QApplication app(argc, argv);
+    app.setApplicationName("Mail Client");
+    app.setApplicationDisplayName("Mail Client");
+    app.setOrganizationName("ISX");
     app.setQuitOnLastWindowClosed(false);
     app.setWindowIcon(QIcon(":/pngs/assets/Icon.png"));
 
@@ -146,8 +146,10 @@ int main(int argc, char* argv[])
     auto* notifications = new ISXMail::NotificationsModel(&app);
     engine.rootContext()->setContextProperty("notificationsModel", notifications);
 
-    QObject::connect(model, &ISXMail::EmailListModel::inboxMessageReceived,
-                     notifications, &ISXMail::NotificationsModel::onNewInboxMessage);
+    QObject::connect(model,
+                     &ISXMail::EmailListModel::inboxMessageReceived,
+                     notifications,
+                     &ISXMail::NotificationsModel::onNewInboxMessage);
 
     qmlRegisterUncreatableMetaObject(ISXMail::staticMetaObject, "ISXMail", 1, 0, "EmailRole", "Not creatable");
 

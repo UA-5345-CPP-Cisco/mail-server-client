@@ -29,6 +29,7 @@ struct MailMessageRecord
   bool is_starred{false};
   bool is_draft{false}; // move into status
   bool is_archive{false};
+  bool is_seen{false};
   MailMessageStatus status{MailMessageStatus::Queued};
 };
 

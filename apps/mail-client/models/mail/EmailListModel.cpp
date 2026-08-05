@@ -1,5 +1,6 @@
 #include "headers/mail/EmailListModel.h"
 
+#include <QThread>
 #include <QTime>
 
 #include <boost/json.hpp>
@@ -14,12 +15,8 @@ namespace ISXMail {
 
     namespace {
         QString GetEnumString(int role)
-
         {
-
-            switch (role)
-
-            {
+            switch (role) {
             case InboxRole:
                 return QStringLiteral("InboxRole");
 
@@ -52,6 +49,9 @@ namespace ISXMail {
 
             case ArchiveRole:
                 return QStringLiteral("ArchiveRole");
+
+            case SeenRole:
+                return QStringLiteral("SeenRole");
 
             default:
                 return QStringLiteral("UnknownRole");
@@ -127,6 +127,16 @@ namespace ISXMail {
         ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel: constructed");
     }
 
+    bool EmailListModel::isLoading() const
+    {
+        return m_isLoading;
+    }
+
+    bool EmailListModel::serverError() const
+    {
+        return m_serverError;
+    }
+
     int EmailListModel::rowCount(const QModelIndex& parent) const
     {
         if (parent.isValid()) {
@@ -159,6 +169,8 @@ namespace ISXMail {
             return item.is_draft;
         case ArchiveRole:
             return item.is_archive;
+        case SeenRole:
+            return item.is_seen;
         case ThemeRole:
             return item.theme;
         case NameRole:
@@ -183,6 +195,7 @@ namespace ISXMail {
                 {SentRole, "emailsSent"},
                 {DraftRole, "emailsDraft"},
                 {ArchiveRole, "emailsArchive"},
+                {SeenRole, "emailsSeen"},
                 {ThemeRole, "emailsTheme"},
                 {NameRole, "emailsName"},
                 {SendToRole, "emailsSendTo"},
@@ -232,6 +245,7 @@ namespace ISXMail {
                                  bool is_sent,
                                  bool is_draft,
                                  bool is_archive,
+                                 bool is_seen,
                                  const QString& theme,
                                  const QString& name,
                                  const QString& send_to,
@@ -241,7 +255,19 @@ namespace ISXMail {
     {
         const QString t = time.isEmpty() ? QTime::currentTime().toString("hh:mm") : time;
         const QString preview = MakePreview(content, 30);
-        AddData({-1, is_inbox, is_starred, is_sent, is_draft, is_archive, theme, name, send_to, preview, content, t});
+        AddData({-1,
+                 is_inbox,
+                 is_starred,
+                 is_sent,
+                 is_draft,
+                 is_archive,
+                 is_seen,
+                 theme,
+                 name,
+                 send_to,
+                 preview,
+                 content,
+                 t});
     }
 
     QString EmailListModel::MakePreview(const QString& text, int maxLen)
@@ -267,13 +293,10 @@ namespace ISXMail {
         ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::AddData: data was added");
         emit dataAdded();
 
-        if (item.is_inbox)
-        {
+        if (item.is_inbox) {
             emit inboxMessageReceived(item.name, item.theme, item.preview);
-            for (const auto& callback : m_inbox_callbacks)
-            {
-                if (callback)
-                {
+            for (const auto& callback : m_inbox_callbacks) {
+                if (callback) {
                     callback(item.name, item.theme, item.preview);
                 }
             }
@@ -306,112 +329,207 @@ namespace ISXMail {
         return true;
     }
 
-    bool EmailListModel::RefreshFromServer()
+    bool EmailListModel::RefreshFromServer(bool silent)
     {
         const QString current_email = ISXCurrentUser::CurrentUser::GetInstance().email();
         if (current_email.trimmed().isEmpty()) {
             return false;
         }
 
-        try {
-            const auto response = ISXService::Service::MailServerClient().GetMails(current_email.toStdString());
-            if (!response.is_success() || !response.body.is_object()) {
-                return false;
-            }
-
-            const json::object& object = response.body.as_object();
-            const json::value* mails_value = object.if_contains("mails");
-            if (mails_value == nullptr || !mails_value->is_array()) {
-                return false;
-            }
-
-            std::vector<EmailData> server_data;
-            for (const json::value& mail_value : mails_value->as_array()) {
-                if (!mail_value.is_object()) {
-                    continue;
-                }
-
-                const json::object& mail = mail_value.as_object();
-                const std::string from = mail.contains("from") && mail.at("from").is_string()
-                                             ? std::string(mail.at("from").as_string().c_str())
-                                             : "";
-                const std::string subject = mail.contains("subject") && mail.at("subject").is_string()
-                                                ? std::string(mail.at("subject").as_string().c_str())
-                                                : "";
-                const std::string body = mail.contains("body") && mail.at("body").is_string()
-                                             ? std::string(mail.at("body").as_string().c_str())
-                                             : "";
-                const std::string created_at = mail.contains("created_at") && mail.at("created_at").is_string()
-                                                   ? std::string(mail.at("created_at").as_string().c_str())
-                                                   : "";
-                const std::string status = mail.contains("status") && mail.at("status").is_string()
-                                               ? std::string(mail.at("status").as_string().c_str())
-                                               : "";
-
-                QString recipient_email;
-                bool is_recipient = false;
-                const json::value* to_value = mail.if_contains("to");
-                if (to_value != nullptr && to_value->is_array()) {
-                    for (const json::value& recipient_value : to_value->as_array()) {
-                        if (!recipient_value.is_string()) {
-                            continue;
-                        }
-
-                        const QString recipient =
-                            QString::fromStdString(std::string(recipient_value.as_string().c_str()));
-                        if (recipient_email.isEmpty()) {
-                            recipient_email = recipient;
-                        }
-
-                        if (recipient.compare(current_email, Qt::CaseInsensitive) == 0) {
-                            is_recipient = true;
-                        }
-                    }
-                }
-
-                const QString sender_email = QString::fromStdString(from);
-                const bool is_current_sender = sender_email.compare(current_email, Qt::CaseInsensitive) == 0;
-                if (!is_current_sender && !is_recipient) {
-                    continue;
-                }
-
-                const QString raw_content = QString::fromStdString(body);
-                const QString content = StripMessageHeaders(raw_content);
-                const QString display_subject = DisplaySubject(QString::fromStdString(subject), raw_content);
-                const bool is_draft = status == "draft";
-                const bool is_archive = status == "archive";
-                const bool is_sent = is_current_sender && !is_draft && !is_archive;
-                const bool is_inbox = is_recipient && !is_current_sender && !is_draft && !is_archive;
-                const std::int64_t id = mail.contains("id") && mail.at("id").is_int64() ? mail.at("id").as_int64() : -1;
-                const bool is_starred = mail.contains("is_starred") && mail.at("is_starred").is_bool()
-                                            ? mail.at("is_starred").as_bool()
-                                            : false;
-
-                server_data.push_back({id,
-                                       is_inbox,
-                                       is_starred,
-                                       is_sent,
-                                       is_draft,
-                                       is_archive,
-                                       display_subject,
-                                       sender_email,
-                                       recipient_email,
-                                       MakePreview(content, 30),
-                                       content,
-                                       QString::fromStdString(created_at)});
-            }
-
-            ReplaceData(std::move(server_data));
-            return true;
-        } catch (const std::exception& exception) {
-            ISXService::Service::Logger().Log(
-                Logging::LogLevel::Error, std::string("EmailListModel::RefreshFromServer failed: ") + exception.what());
+        if (m_isLoading) {
             return false;
         }
+
+        if (!silent) {
+            m_isLoading = true;
+            m_serverError = false;
+            emit isLoadingChanged();
+            emit serverErrorChanged();
+        }
+
+        QThread* thread = QThread::create([this, current_email, silent]() {
+            try {
+                const auto response = ISXService::Service::MailServerClient().GetMails(current_email.toStdString());
+                if (!response.is_success() || !response.body.is_object()) {
+                    QMetaObject::invokeMethod(
+                        this,
+                        [this, silent]() {
+                            if (!silent) {
+                                m_isLoading = false;
+                                m_serverError = true;
+                                emit isLoadingChanged();
+                                emit serverErrorChanged();
+                            }
+                        },
+                        Qt::QueuedConnection);
+                    return;
+                }
+
+                const json::object& object = response.body.as_object();
+                const json::value* mails_value = object.if_contains("mails");
+                if (mails_value == nullptr || !mails_value->is_array()) {
+                    QMetaObject::invokeMethod(
+                        this,
+                        [this, silent]() {
+                            if (!silent) {
+                                m_isLoading = false;
+                                m_serverError = true;
+                                emit isLoadingChanged();
+                                emit serverErrorChanged();
+                            }
+                        },
+                        Qt::QueuedConnection);
+                    return;
+                }
+
+                std::vector<EmailData> server_data;
+                for (const json::value& mail_value : mails_value->as_array()) {
+                    if (!mail_value.is_object()) {
+                        continue;
+                    }
+
+                    const json::object& mail = mail_value.as_object();
+                    const std::string from = mail.contains("from") && mail.at("from").is_string()
+                                                 ? std::string(mail.at("from").as_string().c_str())
+                                                 : "";
+                    const std::string subject = mail.contains("subject") && mail.at("subject").is_string()
+                                                    ? std::string(mail.at("subject").as_string().c_str())
+                                                    : "";
+                    const std::string body = mail.contains("body") && mail.at("body").is_string()
+                                                 ? std::string(mail.at("body").as_string().c_str())
+                                                 : "";
+                    const std::string created_at = mail.contains("created_at") && mail.at("created_at").is_string()
+                                                       ? std::string(mail.at("created_at").as_string().c_str())
+                                                       : "";
+                    const std::string status = mail.contains("status") && mail.at("status").is_string()
+                                                   ? std::string(mail.at("status").as_string().c_str())
+                                                   : "";
+
+                    QString recipient_email;
+                    bool is_recipient = false;
+                    const json::value* to_value = mail.if_contains("to");
+                    if (to_value != nullptr && to_value->is_array()) {
+                        for (const json::value& recipient_value : to_value->as_array()) {
+                            if (!recipient_value.is_string()) {
+                                continue;
+                            }
+
+                            const QString recipient =
+                                QString::fromStdString(std::string(recipient_value.as_string().c_str()));
+                            if (recipient_email.isEmpty()) {
+                                recipient_email = recipient;
+                            }
+
+                            if (recipient.compare(current_email, Qt::CaseInsensitive) == 0) {
+                                is_recipient = true;
+                            }
+                        }
+                    }
+
+                    const QString sender_email = QString::fromStdString(from);
+                    const bool is_current_sender = sender_email.compare(current_email, Qt::CaseInsensitive) == 0;
+                    if (!is_current_sender && !is_recipient) {
+                        continue;
+                    }
+
+                    const QString raw_content = QString::fromStdString(body);
+                    const QString content = StripMessageHeaders(raw_content);
+                    const QString display_subject = DisplaySubject(QString::fromStdString(subject), raw_content);
+                    const bool is_draft = status == "draft";
+                    const bool is_archive = status == "archive";
+                    const bool is_sent = is_current_sender && !is_draft && !is_archive;
+                    const bool is_inbox = is_recipient && !is_current_sender && !is_draft && !is_archive;
+                    const std::int64_t id =
+                        mail.contains("id") && mail.at("id").is_int64() ? mail.at("id").as_int64() : -1;
+                    const bool is_starred = mail.contains("is_starred") && mail.at("is_starred").is_bool()
+                                                ? mail.at("is_starred").as_bool()
+                                                : false;
+                    const bool is_seen =
+                        mail.contains("is_seen") && mail.at("is_seen").is_bool() ? mail.at("is_seen").as_bool() : false;
+
+                    server_data.push_back({id,
+                                           is_inbox,
+                                           is_starred,
+                                           is_sent,
+                                           is_draft,
+                                           is_archive,
+                                           is_seen,
+                                           display_subject,
+                                           sender_email,
+                                           recipient_email,
+                                           MakePreview(content, 30),
+                                           content,
+                                           QString::fromStdString(created_at)});
+                }
+
+                QMetaObject::invokeMethod(
+                    this,
+                    [this, silent, server_data = std::move(server_data)]() mutable {
+                        ReplaceData(std::move(server_data));
+                        if (!silent) {
+                            m_isLoading = false;
+                            m_serverError = false;
+                            emit isLoadingChanged();
+                            emit serverErrorChanged();
+                        }
+                    },
+                    Qt::QueuedConnection);
+
+            } catch (const std::exception& exception) {
+                std::string error_message = exception.what();
+                QMetaObject::invokeMethod(
+                    this,
+                    [this, silent, error_message]() {
+                        ISXService::Service::Logger().Log(Logging::LogLevel::Error,
+                                                          std::string("EmailListModel::RefreshFromServer failed: ") +
+                                                              error_message);
+                        if (!silent) {
+                            m_isLoading = false;
+                            m_serverError = true;
+                            emit isLoadingChanged();
+                            emit serverErrorChanged();
+                        }
+                    },
+                    Qt::QueuedConnection);
+            }
+        });
+
+        connect(thread, &QThread::finished, thread, &QObject::deleteLater);
+        thread->start();
+
+        return true;
     }
 
     void EmailListModel::ReplaceData(std::vector<EmailData> data)
     {
+        const QString current_email = ISXCurrentUser::CurrentUser::GetInstance().email();
+        const bool is_user_changed = (current_email != m_lastFetchedEmail);
+
+        if (!m_isFirstSync && !is_user_changed) {
+            for (const auto& item : data) {
+                if (item.is_inbox) {
+                    bool found = false;
+                    for (const auto& existing : m_data) {
+                        if (existing.id == item.id) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        emit inboxMessageReceived(item.name, item.theme, item.preview);
+                        for (const auto& callback : m_inbox_callbacks) {
+                            if (callback) {
+                                callback(item.name, item.theme, item.preview);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        m_isFirstSync = false;
+        m_lastFetchedEmail = current_email;
+
         beginResetModel();
         m_data = std::move(data);
         endResetModel();
@@ -472,6 +590,7 @@ namespace ISXMail {
                                   is_sent,
                                   is_draft,
                                   is_archive,
+                                  message.is_seen,
                                   theme,
                                   sender_email,
                                   recipient_email,
@@ -549,6 +668,31 @@ namespace ISXMail {
                              .arg(m_data[row].is_archive ? "true" : "false")));
 
         return m_data[row].is_archive;
+    }
+
+    bool EmailListModel::UpdateSeen(int row, bool seen)
+    {
+        if (row < 0 || row >= static_cast<int>(m_data.size())) {
+            return false;
+        }
+
+        const std::int64_t message_id = m_data[row].id;
+        if (message_id >= 0 && !m_message_repository.UpdateSeen(message_id, seen)) {
+            return false;
+        }
+
+        m_data[row].is_seen = seen;
+        const QModelIndex idx = index(row, 0);
+        emit dataChanged(idx, idx, {SeenRole});
+
+        Logging::Logger::Instance().Log(
+            Logging::LogLevel::Debug,
+            GetStdString(QString("EmailListModel::UpdateSeen: data at %1 changed %2 field to %3")
+                             .arg(row)
+                             .arg(GetEnumString(SeenRole))
+                             .arg(m_data[row].is_seen ? "true" : "false")));
+
+        return m_data[row].is_seen;
     }
 
     Qt::ItemFlags EmailListModel::flags(const QModelIndex& index) const

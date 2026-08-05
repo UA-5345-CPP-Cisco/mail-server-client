@@ -98,7 +98,8 @@ std::optional<MailMessageRecord> MailMessageRepository::FindById(std::int64_t me
 				is_starred,
 				is_draft,
         is_archive,
-				status
+				status,
+				is_seen
 			FROM mail_messages
 			WHERE id = ?
 			LIMIT 1;
@@ -130,7 +131,8 @@ std::vector<MailMessageRecord> MailMessageRepository::FindAll() const
 				is_starred,
 				is_draft,
         is_archive,
-				status
+				status,
+				is_seen
 			FROM mail_messages
 			ORDER BY created_at DESC, id DESC;
 		)SQL");
@@ -166,7 +168,8 @@ std::vector<MailMessageRecord> MailMessageRepository::FindByStatus(MailMessageSt
 				is_starred,
 				is_draft,
         is_archive,
-				status
+				status,
+				is_seen
 			FROM mail_messages
 			WHERE status = ?
 			ORDER BY created_at ASC, id ASC
@@ -237,6 +240,23 @@ bool MailMessageRepository::UpdateArchive(std::int64_t message_id, bool archive)
 		)SQL");
 
   statement.BindInt(1, archive ? 1 : 0);
+  statement.BindInt64(2, message_id);
+  statement.Step();
+
+  return statement.ChangedRowCount() > 0;
+}
+
+bool MailMessageRepository::UpdateSeen(std::int64_t message_id, bool seen)
+{
+  Statement statement(m_database,
+                      R"SQL(
+			UPDATE mail_messages
+			SET is_seen = ?
+			WHERE id = ?
+				AND is_inbox = 1;
+		)SQL");
+
+  statement.BindInt(1, seen ? 1 : 0);
   statement.BindInt64(2, message_id);
   statement.Step();
 
@@ -351,6 +371,7 @@ MailMessageRecord MailMessageRepository::ReadMessage(const Statement& statement)
   message.is_draft = statement.ColumnInt64(9) != 0;
   message.is_archive = statement.ColumnInt64(10) != 0;
   message.status = StatusFromString(statement.ColumnText(11));
+  message.is_seen = statement.ColumnInt64(12) != 0;
 
   return message;
 }
