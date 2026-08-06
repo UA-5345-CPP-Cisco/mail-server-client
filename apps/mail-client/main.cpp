@@ -10,7 +10,6 @@
 #include "headers/client_logger/ClientProxyLogger.h"
 #include "headers/color/ColorProvider.h"
 #include "headers/database/AuthHandler.h"
-#include "headers/database/DatabaseManager.h"
 #include "headers/mail/EmailFilterProxy.h"
 #include "headers/mail/EmailListModel.h"
 #include "headers/mail/EmailPageProxy.h"
@@ -19,7 +18,6 @@
 #include "headers/search/MessageSearchModel.h"
 #include "headers/service/Service.h"
 #include "headers/mail/NotificationsModel.h"
-#include "mail_storage/UserRepository.h"
 #include "headers/users/AccountListModel.h"
 #include "headers/users/CurrentUser.h"
 #include "logger/Logger.h"
@@ -50,9 +48,6 @@ int main(int argc, char* argv[])
 
     ISXService::Service::Initialize(logger, mail_server_client);
 
-    ISXDatabaseManager::DatabaseManager::EnsureInitialized();
-    auto dbPath = ISXDatabaseManager::DatabaseManager::DatabasePath();
-    Storage::Database database(dbPath);
     QQmlApplicationEngine engine;
 
   (void)Logging::Logger::Instance();
@@ -129,15 +124,15 @@ int main(int argc, char* argv[])
   auto* colorProvider = new ISXMail::ColorProvider(&app);
   engine.rootContext()->setContextProperty("Color", colorProvider);
 
-    auto* notifications = new ISXMail::NotificationsModel(&app);
-    engine.rootContext()->setContextProperty("notificationsModel", notifications);
+  auto* notifications = new ISXMail::NotificationsModel(&app);
+  engine.rootContext()->setContextProperty("notificationsModel", notifications);
 
     QObject::connect(model,
                      &ISXMail::EmailListModel::inboxMessageReceived,
                      notifications,
                      &ISXMail::NotificationsModel::onNewInboxMessage);
 
-    qmlRegisterUncreatableMetaObject(ISXMail::staticMetaObject, "ISXMail", 1, 0, "EmailRole", "Not creatable");
+  qmlRegisterUncreatableMetaObject(ISXMail::staticMetaObject, "ISXMail", 1, 0, "EmailRole", "Not creatable");
 
   QObject::connect(
     &engine,

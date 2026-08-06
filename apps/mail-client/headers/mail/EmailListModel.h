@@ -10,9 +10,7 @@
 #include <memory>
 #include <vector>
 
-#include "mail_storage/Database.h"
-#include "mail_storage/MailMessageRepository.h"
-#include "mail_storage/MessageRecipientRepository.h"
+
 
 namespace ISXMail {
 
@@ -100,14 +98,9 @@ namespace ISXMail {
         void serverErrorChanged();
 
     private:
-        void LoadFromDatabase();
         void ReplaceData(std::vector<EmailData> data);
         QString MakePreview(const QString& text, int maxLen = 50);
-        QString DefaultDatabasePath() const;
 
-        Storage::Database m_database;
-        Storage::MailMessageRepository m_message_repository;
-        Storage::MessageRecipientRepository m_recipient_repository;
         std::vector<EmailData> m_data;
         std::vector<InboxMessageCallback> m_inbox_callbacks;
         bool m_isLoading{false};

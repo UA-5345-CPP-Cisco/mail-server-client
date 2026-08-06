@@ -51,7 +51,7 @@ namespace ISXConfig {
 
     std::string ClientConfigReader::ConfigPath()
     {
-        std::string path = std::string(CONFIG_DIR) + "/config.json";
+        std::string path =(QCoreApplication::applicationDirPath() + "/config/config.json").toStdString();
         return path;
     }
 

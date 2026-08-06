@@ -3,9 +3,6 @@
 #include <QObject>
 #include <QString>
 
-#include "mail_storage/Database.h"
-#include "mail_storage/MailMessageRepository.h"
-#include "mail_storage/MessageRecipientRepository.h"
 
 namespace ISXMail {
 
@@ -28,12 +25,7 @@ namespace ISXMail {
                                    const QString& subject,
                                    const QString& body);
 
-    private:
-        Storage::Database m_database;
-        Storage::MailMessageRepository m_repository;
-        Storage::MessageRecipientRepository m_recipient_repository;
 
-        void EnsureSchema();
     };
 
 } // namespace ISXMail
