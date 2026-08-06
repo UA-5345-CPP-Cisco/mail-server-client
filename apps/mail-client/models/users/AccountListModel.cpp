@@ -1,9 +1,9 @@
-#include "headers/users/AccountListModel.h"
+#include "users/AccountListModel.h"
 
 #include <QSettings>
 
-#include "headers/database/DatabaseManager.h"
-#include "headers/users/CurrentUser.h"
+#include "database/DatabaseManager.h"
+#include "users/CurrentUser.h"
 #include "mail_storage/UserRepository.h"
 #include "service/Service.h"
 

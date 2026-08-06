@@ -1,4 +1,4 @@
-#include "headers/users/CurrentUser.h"
+#include "users/CurrentUser.h"
 
 #include <QDir>
 #include <QFile>

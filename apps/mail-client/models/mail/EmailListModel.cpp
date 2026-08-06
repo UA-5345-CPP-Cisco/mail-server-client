@@ -1,13 +1,13 @@
-#include "headers/mail/EmailListModel.h"
+#include "mail/EmailListModel.h"
 
 #include <QThread>
 #include <QTime>
 
 #include <boost/json.hpp>
 
-#include "headers/database/DatabaseManager.h"
-#include "headers/service/Service.h"
-#include "headers/users/CurrentUser.h"
+#include "database/DatabaseManager.h"
+#include "service/Service.h"
+#include "users/CurrentUser.h"
 
 namespace json = boost::json;
 

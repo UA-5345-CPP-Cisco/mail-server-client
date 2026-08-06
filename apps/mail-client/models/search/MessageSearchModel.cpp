@@ -1,8 +1,8 @@
-#include "headers/search/MessageSearchModel.h"
+#include "search/MessageSearchModel.h"
 
 #include <QVariant>
 
-#include "headers/mail/EmailListModel.h"
+#include "mail/EmailListModel.h"
 #include "service/Service.h"
 
 namespace ISXMail {

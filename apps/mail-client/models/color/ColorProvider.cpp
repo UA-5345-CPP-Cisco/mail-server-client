@@ -1,10 +1,10 @@
-#include "headers/color/ColorProvider.h"
+#include "color/ColorProvider.h"
 
 #include <QSettings>
 
 #include <string>
 
-#include "headers/service/Service.h"
+#include "service/Service.h"
 
 namespace ISXMail {
 

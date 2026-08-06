@@ -1,10 +1,10 @@
-#include "headers/color/ColorModel.h"
+#include "color/ColorModel.h"
 
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonValue>
 
-#include "headers/service/Service.h"
+#include "service/Service.h"
 
 namespace ISXMail {
 

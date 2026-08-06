@@ -1,9 +1,9 @@
-#include "headers/mail/MessageComposer.h"
+#include "mail/MessageComposer.h"
 
 #include <optional>
 
-#include "headers/database/DatabaseManager.h"
-#include "headers/service/Service.h"
+#include "database/DatabaseManager.h"
+#include "service/Service.h"
 
 namespace ISXMail {
 

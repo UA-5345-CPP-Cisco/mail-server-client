@@ -1,6 +1,6 @@
-#include "headers/mail/EmailPageProxy.h"
+#include "mail/EmailPageProxy.h"
 
-#include "headers/service/Service.h"
+#include "service/Service.h"
 
 namespace ISXMail {
 

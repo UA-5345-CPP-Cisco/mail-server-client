@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <optional>
 
-#include "headers/database/CacheStore.h"
+#include "database/CacheStore.h"
 
 namespace ISXCurrentUser {
 
