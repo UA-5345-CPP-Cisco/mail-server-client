@@ -10,7 +10,10 @@ Item {
     property string nameError: ""
     property string emailError: ""
     property string passwordError: ""
+    property string confirmPasswordError: ""
     property bool passwordVisible: false
+    property string generalError: ""
+    property bool confirmPasswordVisible: false
 
     implicitHeight: 350
     implicitWidth: 400
@@ -66,7 +69,7 @@ Item {
         id: mainContentColumn
 
         anchors.centerIn: parent
-        spacing: 20
+        spacing: 15
         width: 320
 
         Text {
@@ -99,7 +102,7 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 14
             leftPadding: 16
-            placeholderText: "Full name"
+            placeholderText: "Name"
             placeholderTextColor: Color.secondaryText
             rightPadding: 16
             topPadding: 12
@@ -107,15 +110,12 @@ Item {
 
             background: Rectangle {
                 id: fullNameBackgroundRectangle
-
-                //border.color: fullNameTextField.activeFocus ? Color.hover : Color.outline
                 border.color: rootItem.nameError !== "" ? "#fda29b" : (fullNameTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
                 border.width: fullNameTextField.activeFocus ? 2 : 1
                 color: Color.background
                 radius: 8
             }
-            cursorDelegate: Item {
-            }
+            cursorDelegate: Item {}
 
             Rectangle {
                 id: nameCustomCursorRectangle
@@ -189,15 +189,12 @@ Item {
 
             background: Rectangle {
                 id: emailBackgroundRectangle
-
-                //border.color: emailTextField.activeFocus ? Color.hover : Color.outline
-                 border.color: rootItem.emailError !== "" ? "#fda29b" : (emailTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
+                border.color: rootItem.emailError !== "" ? "#fda29b" : (emailTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
                 border.width: emailTextField.activeFocus ? 2 : 1
                 color: Color.background
                 radius: 8
             }
-            cursorDelegate: Item {
-            }
+            cursorDelegate: Item {}
 
             Rectangle {
                 id: emailCustomCursorRectangle
@@ -254,7 +251,7 @@ Item {
             topPadding: -14
         }
 
-        // Pasword field for register screen
+        // Password field for register screen
         TextField {
             id: passwordTextField
 
@@ -269,7 +266,6 @@ Item {
             rightPadding: 16
             topPadding: 12
             width: parent.width
-
 
             Image {
                 id: eyeIcon
@@ -290,12 +286,9 @@ Item {
                 }
             }
 
-
-
             background: Rectangle {
                 id: passwordBackgroundRectangle
 
-                //border.color: passwordTextField.activeFocus ? Color.hover : Color.outline
                 border.color: rootItem.passwordError !== "" ? "#fda29b" : (passwordTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
                 border.width: passwordTextField.activeFocus ? 2 : 1
                 color: Color.background
@@ -358,6 +351,106 @@ Item {
             topPadding: -14
         }
 
+        // Password field for password confirmation
+        TextField {
+            id: passwordConfirmationTextField
+
+            bottomPadding: 12
+            color: Color.primaryText
+            echoMode: confirmPasswordVisible ? TextInput.Normal : TextInput.Password
+            font.family: "Segoe UI"
+            font.pixelSize: 14
+            leftPadding: 16
+            placeholderText: "Confirm Password"
+            placeholderTextColor: Color.secondaryText
+            rightPadding: 16
+            topPadding: 12
+            width: parent.width
+
+            Image {
+                id: confirmEyeIcon
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin: 12
+                source: confirmPasswordVisible ? "qrc:/pngs/assets/ic_eye_open.svg" : "qrc:/pngs/assets/ic_eye_closed.svg"
+                width: 20
+                height: 20
+                sourceSize.width: width * Screen.devicePixelRatio
+                sourceSize.height: height * Screen.devicePixelRatio
+                fillMode: Image.PreserveAspectFit
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: confirmPasswordVisible = !confirmPasswordVisible
+                }
+            }
+
+            background: Rectangle {
+                id: confirmBackgroundRectangle
+
+                border.color: rootItem.confirmPasswordError !== "" ? "#fda29b" : (passwordConfirmationTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
+                border.width: passwordConfirmationTextField.activeFocus ? 2 : 1
+                color: Color.background
+                radius: 8
+            }
+            cursorDelegate: Item {}
+
+            Rectangle {
+                id: confirmCustomCursorRectangle
+
+                anchors.verticalCenter: parent.verticalCenter
+                color: Color.secondaryText
+                height: parent.font.pixelSize + 4
+                visible: parent.activeFocus
+                width: 1.5
+                x: parent.length > 0 ? parent.cursorRectangle.x : 14
+
+                SequentialAnimation on opacity {
+                    id: confirmCursorOpacityAnimation
+
+                    loops: Animation.Infinite
+                    running: parent.activeFocus
+
+                    NumberAnimation {
+                        id: confirmCursorFadeOut
+
+                        duration: 400
+                        easing.type: Easing.InOutSine
+                        to: 0
+                    }
+                    NumberAnimation {
+                        id: confirmCursorFadeIn
+
+                        duration: 400
+                        easing.type: Easing.InOutSine
+                        to: 1
+                    }
+                }
+                Behavior on x {
+                    id: confirmCursorXBehavior
+
+                    NumberAnimation {
+                        id: confirmCursorXAnimation
+
+                        duration: 80
+                        easing.type: Easing.OutCubic
+                    }
+                }
+            }
+            onTextChanged: rootItem.confirmPasswordError = ""
+        }
+
+        // Error message for password confirmation field
+        Text {
+            text: rootItem.confirmPasswordError
+            color: "#f04438"
+            font.family: "Segoe UI"
+            font.pixelSize: 12
+            visible: confirmPasswordError !== ""
+            topPadding: -14
+        }
+
         // Basic register
         Rectangle {
             id: registerButtonRectangle
@@ -406,90 +499,36 @@ Item {
                 hoverEnabled: true
 
                 onClicked: {
-                    var nameErr = rootWindow.getValidationError("name", fullNameTextField.text)
-                    var emailErr = rootWindow.getValidationError("email", emailTextField.text)
-                    var pwdErr = rootWindow.getValidationError("password", passwordTextField.text)
-                    emailError = emailErr
-                    passwordError = pwdErr
-                    nameError = nameErr
-                    if(nameError === "" && emailError === "" && passwordError === "")
-                    {
-                        rootItem.registerSubmitted(fullNameTextField.text, emailTextField.text, passwordTextField.text)
+                    rootItem.generalError = "";
+                    var name_error = rootWindow.getRegisterValidationError("name", fullNameTextField.text);
+                    var email_error = rootWindow.getRegisterValidationError("email", emailTextField.text);
+                    var password_error = rootWindow.getRegisterValidationError("password", passwordTextField.text);
+                    var confirm_password_error = "";
+                    if (passwordConfirmationTextField.text === "") {
+                        confirm_password_error = "Please confirm your password";
+                    } else if (passwordTextField.text !== passwordConfirmationTextField.text) {
+                        confirm_password_error = "Passwords do not match";
+                    }
+
+                    nameError = name_error;
+                    emailError = email_error;
+                    passwordError = password_error;
+                    confirmPasswordError = confirm_password_error;
+                    if (nameError === "" && emailError === "" && passwordError === "" && confirmPasswordError === "") {
+                        rootItem.registerSubmitted(fullNameTextField.text, emailTextField.text, passwordTextField.text);
                     }
                 }
             }
         }
 
-        // Button for registration through Google
-        Rectangle {
-            id: googleRegisterButtonRectangle
-
-            border.color: Color.outline
-            border.width: 1
-            color: googleClickArea.containsMouse ? Color.button : Color.highlight
-            height: 44
-            radius: 8
-            scale: googleClickArea.containsMouse ? 1.03 : 1.0
-            width: parent.width
-
-            Behavior on color {
-                id: googleColorBehavior
-
-                ColorAnimation {
-                    id: googleColorAnimation
-
-                    duration: 150
-                }
-            }
-            Behavior on scale {
-                id: googleScaleBehavior
-
-                NumberAnimation {
-                    id: googleScaleAnimation
-
-                    duration: 150
-                    easing.type: Easing.InOutQuad
-                }
-            }
-
-            Row {
-                id: googleContentRow
-
-                anchors.centerIn: parent
-                spacing: 10
-
-                Image {
-                    id: googleIconImage
-
-                    fillMode: Image.PreserveAspectFit
-                    height: 20
-                    source: "qrc:/pngs/assets/ic_google_logo.svg"
-                    sourceSize.height: height * Screen.devicePixelRatio
-                    sourceSize.width: width * Screen.devicePixelRatio
-                    width: 20
-                }
-                Text {
-                    id: googleButtonText
-
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: Color.secondaryText
-                    font.family: "Segoe UI"
-                    font.pixelSize: 16
-                    font.weight: Font.Medium
-                    text: "Register with Google"
-                }
-            }
-            MouseArea {
-                id: googleClickArea
-
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                hoverEnabled: true
-
-                onClicked: {
-                    // method
-                }
-            }
+        Text {
+            id: generalErrorText
+            text: rootItem.generalError
+            color: "#f04438"
+            font.family: "Segoe UI"
+            font.pixelSize: 12
+            visible: rootItem.generalError !== ""
+            anchors.horizontalCenter: parent.horizontalCenter
         }
     }
 }

@@ -31,15 +31,13 @@ Rectangle {
     color: Color.background
 
     //header
-    Rectangle
-    {
+    Rectangle {
         id: header
 
         color: Color.background
         height: 124
 
-        anchors
-        {
+        anchors {
             left: parent.left
             right: parent.right
             top: parent.top
@@ -54,8 +52,7 @@ Rectangle {
                 right: parent.right
             }
         }
-        ColumnLayout
-        {
+        ColumnLayout {
             anchors.fill: parent
             anchors.margins: 24
             spacing: 12
@@ -64,8 +61,7 @@ Rectangle {
             // SUBJECT
             //
 
-            Text
-            {
+            Text {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 28
                 color: Color.primaryText
@@ -92,15 +88,13 @@ Rectangle {
                 // Avatar
                 //
 
-                Rectangle
-                {
+                Rectangle {
                     Layout.preferredHeight: 36
                     Layout.preferredWidth: 36
                     color: Color.avatar
                     radius: 18
 
-                    Text
-                    {
+                    Text {
                         anchors.centerIn: parent
                         color: Color.background
                         font.family: "Segoe UI"

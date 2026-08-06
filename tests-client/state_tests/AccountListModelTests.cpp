@@ -1,5 +1,6 @@
 #include <QTemporaryFile>
 #include <gtest/gtest.h>
+#include <QSettings>
 
 #include "mail_storage/UserRepository.h"
 #include "database/DatabaseManager.h"
@@ -14,6 +15,8 @@ class AccountListModelTests : public ::testing::Test
     std::filesystem::remove(ISXDatabaseManager::DatabaseManager::DatabasePath());
     ISXDatabaseManager::DatabaseManager::EnsureInitialized();
     ISXCurrentUser::CurrentUser::GetInstance().Logout();
+    QSettings settings("ISX", "MailClient");
+    settings.clear();
   }
 
   void TearDown() override

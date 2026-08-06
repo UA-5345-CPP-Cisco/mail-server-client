@@ -219,7 +219,7 @@ Rectangle {
         onExited: root.state = 0
         onPressed: mouse => {
             if (mouse.button === Qt.LeftButton) {
-                root.state = 1
+                root.state = 1;
             }
         }
         onReleased: {

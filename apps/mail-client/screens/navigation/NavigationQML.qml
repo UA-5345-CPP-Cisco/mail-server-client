@@ -4,23 +4,21 @@ import QtQuick
 Rectangle {
     id: navigationQML
 
-        signal draftClicked
-        signal inboxClicked
-        signal sentClicked
-        signal starredClicked
-        signal archiveClicked
-        signal accountChanged
+    signal draftClicked
+    signal inboxClicked
+    signal sentClicked
+    signal starredClicked
+    signal archiveClicked
+    signal accountChanged
 
     color: Color.background
 
-    function showPopup(msg)
-    {
+    function showPopup(msg) {
         statePopup.message = String(msg);
         statePopup.show();
     }
 
-    function closeAccountMenu()
-    {
+    function closeAccountMenu() {
         accountChangeLoader.source = "";
     }
     // headerNavigation
@@ -105,7 +103,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 20
                     lineHeightMode: Text.FixedHeight
-                    text: CurrentUser.username
+                    text: CurrentUser.isAuthorized ? CurrentUser.username : "Sign in"
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
@@ -133,7 +131,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: CurrentUser.email
+                    text: CurrentUser.isAuthorized ? CurrentUser.email : "No account active"
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
@@ -808,7 +806,6 @@ Rectangle {
         }
     }
 
-
     // Footer: Settings button
     Rectangle {
         id: footerNavigation
@@ -946,14 +943,12 @@ Rectangle {
             target: accountChangeLoader.item
             ignoreUnknownSignals: true
 
-            function onAccountSelected()
-            {
+            function onAccountSelected() {
                 closeAccountMenu();
                 accountChanged();
             }
 
-            function onAddAccountRequested()
-            {
+            function onAddAccountRequested() {
                 closeAccountMenu();
             }
         }

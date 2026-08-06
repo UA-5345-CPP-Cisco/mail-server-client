@@ -1,0 +1,2 @@
+ALTER TABLE mail_messages
+    ADD COLUMN is_seen INTEGER NOT NULL DEFAULT 0;

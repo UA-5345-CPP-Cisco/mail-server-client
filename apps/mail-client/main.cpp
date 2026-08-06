@@ -1,5 +1,5 @@
+#include <QApplication>
 #include <QDir>
-#include <QGuiApplication>
 #include <QIcon>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -15,6 +15,7 @@
 #include "headers/mail/EmailListModel.h"
 #include "headers/mail/EmailPageProxy.h"
 #include "headers/mail/MessageComposer.h"
+#include "headers/mail/NotificationsModel.h"
 #include "headers/search/MessageSearchModel.h"
 #include "headers/service/Service.h"
 #include "headers/users/AccountListModel.h"
@@ -27,7 +28,11 @@ int main(int argc, char* argv[])
 {
     qputenv("QT_QUICK_BACKEND", "software");
     QQuickStyle::setStyle(QStringLiteral("Fusion"));
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
+    app.setApplicationName("Mail Client");
+    app.setApplicationDisplayName("Mail Client");
+    app.setOrganizationName("ISX");
+    app.setQuitOnLastWindowClosed(false);
     app.setWindowIcon(QIcon(":/pngs/assets/Icon.png"));
 
     ISXConfig::ClientConfigReader reader;
@@ -50,14 +55,21 @@ int main(int argc, char* argv[])
     QQmlApplicationEngine engine;
 
     (void)Logging::Logger::Instance();
+
+    qmlRegisterUncreatableType<AuthHandler>("com.auth.system",
+                                            1,
+                                            0,
+                                            "AuthHandler",
+                                            "AuthHandler cannot be instantiated, used only as a namespace for enums");
+    // AuthHandler authHandler(database);
     AuthHandler authHandler;
     engine.rootContext()->setContextProperty("authHandler", &authHandler);
-
-    engine.rootContext()->setContextProperty("initialSetupRequired", true);
 
     auto* model = new ISXMail::EmailListModel(&app);
     auto* message_composer = new ISXMail::MessageComposer(&app);
     auto* account_model = new ISXMail::AccountListModel(&app);
+
+    engine.rootContext()->setContextProperty("initialSetupRequired", account_model->rowCount() == 0);
 
     auto* inboxFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Inbox, &app);
     auto* sentFilter = new ISXMail::EmailFilterProxy(ISXMail::EmailFilterProxy::Sent, &app);
@@ -113,6 +125,14 @@ int main(int argc, char* argv[])
 
     auto* colorProvider = new ISXMail::ColorProvider(&app);
     engine.rootContext()->setContextProperty("Color", colorProvider);
+
+    auto* notifications = new ISXMail::NotificationsModel(&app);
+    engine.rootContext()->setContextProperty("notificationsModel", notifications);
+
+    QObject::connect(model,
+                     &ISXMail::EmailListModel::inboxMessageReceived,
+                     notifications,
+                     &ISXMail::NotificationsModel::onNewInboxMessage);
 
     qmlRegisterUncreatableMetaObject(ISXMail::staticMetaObject, "ISXMail", 1, 0, "EmailRole", "Not creatable");
 

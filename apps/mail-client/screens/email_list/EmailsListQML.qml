@@ -84,6 +84,7 @@ Rectangle {
             starred: parent.pStarred
             theme: parent.pTheme
             time: formatEmailTime(parent.pTime)
+            seen: parent.pSeen
             width: parent.width
 
             onDeleteClicked: {
@@ -96,6 +97,9 @@ Rectangle {
             onStarredClicked: {
                 sourceModel.SetStarred(parent.pIndex, starred);
                 starredItemClicked(starred);
+            }
+            onClicked: {
+                sourceModel.UpdateSeen(parent.pIndex, true);
             }
         }
     }
@@ -191,7 +195,7 @@ Rectangle {
 
                         anchors.fill: parent
                         bottomPadding: 0
-                        color:Color.hover
+                        color: Color.hover
                         font.family: "Segoe UI"
                         font.pixelSize: 14
                         font.weight: Font.Normal
@@ -204,8 +208,7 @@ Rectangle {
                         background: Rectangle {
                             color: Color.transparent
                         }
-                        cursorDelegate: Item {
-                        }
+                        cursorDelegate: Item {}
 
                         onTextChanged: {
                             var searchProxy = emailsListQML.activeSearchModel();
@@ -496,6 +499,7 @@ Rectangle {
             property bool pStarred: emailsStarred
             property string pTheme: emailsTheme
             property string pTime: emailsTime
+            property bool pSeen: emailsSeen
 
             sourceComponent: isDraftMode ? draftDelegate : emailsDelegate
             width: listView.width

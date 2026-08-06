@@ -2,6 +2,7 @@
 
 #include <QDir>
 #include <QFile>
+#include <QSettings>
 #include <QStandardPaths>
 
 namespace ISXCurrentUser {
@@ -71,6 +72,9 @@ namespace ISXCurrentUser {
         m_email.clear();
         m_avatar_path.clear();
         m_is_authorized = false;
+
+        QSettings settings("ISX", "MailClient");
+        settings.remove("active_user_email");
 
         emit profileChanged();
         emit authorizationChanged();

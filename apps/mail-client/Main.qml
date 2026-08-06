@@ -10,10 +10,10 @@ ApplicationWindow {
     id: window
 
     property string amountText: emailList.sourceModel ? emailList.sourceModel.pageAmountText : "0-0 of 0"
+    property int archiveCount: archiveModel.totalEmailsCount
     property alias authLoader: authLoader
     property int draftsCount: draftModel.totalEmailsCount
     property int inboxCount: inboxModel.totalEmailsCount
-    property int archiveCount: archiveModel.totalEmailsCount
     property var selectedEmail: null
     //properties
     property string selectedFolder: "inbox"
@@ -25,37 +25,27 @@ ApplicationWindow {
         var trimmedName = String(name).trim();
         return trimmedName.length > 0 ? trimmedName.charAt(0).toUpperCase() : "?";
     }
-    function closeAuthWindow()
-    {
+    function closeAuthWindow() {
         authLoader.active = false;
         authLoader.source = "";
     }
-
-    function showPopup(msg)
-    {
-        navMenu.showPopup(String(msg));
-    }
     //FunctionSorter
-    function closeMessageWindow()
-    {
+    function closeMessageWindow() {
         newMessageLoader.active = false;
         newMessageLoader.source = "";
     }
-    function closeSettingsWindow()
-    {
+    function closeSettingsWindow() {
         settingsLoader.active = false;
         settingsLoader.source = "";
     }
-    function showInboxForCurrentUser()
-    {
+    function showInboxForCurrentUser() {
         emailsModel.RefreshFromServer();
         emailList.isDraftMode = false;
         emailList.sourceModel = inboxModel;
         window.selectedEmail = null;
         window.selectedFolder = "inbox";
     }
-    function formatEmailTime(input_time)
-    {
+    function formatEmailTime(input_time) {
         let message_date = parseDatabaseTimestamp(input_time);
         if (!message_date)
             return String(input_time);
@@ -64,17 +54,13 @@ ApplicationWindow {
 
         let is_same_day = (message_date.getDate() === current_date.getDate() && message_date.getMonth() === current_date.getMonth() && message_date.getFullYear() === current_date.getFullYear());
 
-        if (is_same_day)
-        {
+        if (is_same_day) {
             return Qt.formatDateTime(message_date, "hh:mm");
-        }
-        else
-        {
+        } else {
             return Qt.formatDateTime(message_date, "MMMM dd").toLowerCase();
         }
     }
-    function formatEmailTimeFull(input_time)
-    {
+    function formatEmailTimeFull(input_time) {
         let message_date = parseDatabaseTimestamp(input_time);
         if (!message_date)
             return String(input_time);
@@ -85,38 +71,34 @@ ApplicationWindow {
 
         return time_formatted + ", " + date_formatted;
     }
-    function parseDatabaseTimestamp(input_time)
-    {
-        if (!input_time)
-        {
+    function parseDatabaseTimestamp(input_time) {
+        if (!input_time) {
             return null;
         }
 
-        if (input_time instanceof Date)
-        {
+        if (input_time instanceof Date) {
             return input_time;
         }
 
         let raw = String(input_time).trim();
-        if (raw === "")
-        {
+        if (raw === "") {
             return null;
         }
 
-        // SQLite CURRENT_TIMESTAMP is stored as UTC text: "YYYY-MM-DD HH:MM:SS".
         let utcMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})(?:\.\d+)?$/);
-        if (utcMatch)
-        {
+        if (utcMatch) {
             return new Date(Date.UTC(parseInt(utcMatch[1]), parseInt(utcMatch[2]) - 1, parseInt(utcMatch[3]), parseInt(utcMatch[4]), parseInt(utcMatch[5]), parseInt(utcMatch[6])));
         }
 
         let parsed = new Date(raw);
-        if (!isNaN(parsed.getTime()))
-        {
+        if (!isNaN(parsed.getTime())) {
             return parsed;
         }
 
         return null;
+    }
+    function showPopup(msg) {
+        navMenu.showPopup(String(msg));
     }
 
     height: 768
@@ -126,18 +108,35 @@ ApplicationWindow {
     visible: true
     width: 1024
 
+    Component.onCompleted: {
+        if (!initialSetupRequired) {
+            showInboxForCurrentUser();
+        }
+    }
+
+    Timer {
+        id: autoRefreshTimer
+        interval: 10000
+        running: CurrentUser.isAuthorized
+        repeat: true
+        triggeredOnStart: false
+        onTriggered: {
+            if (!emailsModel.isLoading) {
+                emailsModel.RefreshFromServer(true);
+            }
+        }
+    }
+
     MouseArea {
         anchors.fill: parent
 
-        onClicked:
-        {
+        onClicked: {
             window.contentItem.forceActiveFocus();
         }
     }
 
     //new message loader
-    Loader
-    {
+    Loader {
         id: newMessageLoader
 
         property var selectedItem: null
@@ -153,16 +152,13 @@ ApplicationWindow {
         width: item ? item.implicitWidth : 0
         z: 999
 
-        Behavior on opacity
-        {
-            NumberAnimation
-            {
+        Behavior on opacity {
+            NumberAnimation {
                 duration: 200
             }
         }
 
-        onLoaded:
-        {
+        onLoaded: {
             connections.target = item;
             if (item && selectedItem) {
                 item.newRecipient = selectedItem.sendTo;
@@ -175,9 +171,7 @@ ApplicationWindow {
                 item.isForward = selectedItem.isForward === true || selectedItem.IsForward === true;
 
                 item.newTitle = selectedItem.newTitle !== undefined ? selectedItem.newTitle : selectedItem.title;
-            }
-            else
-            {
+            } else {
                 item.newRecipient = "";
                 item.newSubject = "";
                 item.newText = "";
@@ -189,18 +183,11 @@ ApplicationWindow {
             }
         }
 
-        Connections
-        {
+        Connections {
             id: connections
 
-            function onEmailSent()
-            {
-                showPopup("Email is sent")
-            }
-            function onDraftChanged(index, subject, recipient, text)
-            {
-                if (newMessageLoader.selectedItem != null)
-                {
+            function onDraftChanged(index, subject, recipient, text) {
+                if (newMessageLoader.selectedItem != null) {
                     draftModel.SetEmailData(parseInt(index), recipient, parseInt(EmailRole.SendToRole));
                     draftModel.SetEmailData(parseInt(index), subject, parseInt(EmailRole.ThemeRole));
                     draftModel.SetEmailData(parseInt(index), text, parseInt(EmailRole.ContentRole));
@@ -210,49 +197,46 @@ ApplicationWindow {
                 showPopup("Draft is saved");
                 newMessageLoader.selectedItem = null;
             }
-            function onDraftFinished(index, subject, recipient, text)
-            {
-                if (newMessageLoader.selectedItem != null)
-                {
+            function onDraftFinished(index, subject, recipient, text) {
+                if (newMessageLoader.selectedItem != null) {
                     draftModel.RemoveEmailData(parseInt(index));
+                    emailsModel.AddData(false, true, false, false, false, subject, CurrentUser.username, recipient, text, "");
                 }
 
                 showPopup("Email is sent");
                 newMessageLoader.selectedItem = null;
             }
+            function onEmailSent() {
+                showPopup("Email is sent");
+            }
 
             target: null
         }
     }
-    RowLayout
-    {
+    RowLayout {
         anchors.fill: parent
         spacing: 0
 
-        SplitView
-        {
+        SplitView {
             id: splitView
 
             Layout.fillHeight: true
             Layout.fillWidth: true
             orientation: Qt.Horizontal
 
-            handle: Rectangle
-            {
+            handle: Rectangle {
                 id: handleDelegate
 
                 color: Color.transparent
 
-                containmentMask: Item
-                {
+                containmentMask: Item {
                     height: splitView.height
                     width: 5
                     x: (handleDelegate.width - width) / 2
                 }
             }
 
-            NavigationQML
-            {
+            NavigationQML {
                 id: navMenu
 
                 Layout.fillHeight: true
@@ -262,12 +246,8 @@ ApplicationWindow {
                 SplitView.minimumWidth: 180
                 SplitView.preferredWidth: 250
 
-                onDraftClicked:
-                {
-                    emailList.isDraftMode = true;
-                    emailList.sourceModel = draftModel;
-                    window.selectedEmail = null;
-                    selectedFolder = "drafts";
+                onAccountChanged: {
+                    showInboxForCurrentUser();
                 }
                 onArchiveClicked: {
                     emailList.isDraftMode = false;
@@ -275,34 +255,32 @@ ApplicationWindow {
                     window.selectedEmail = null;
                     selectedFolder = "archive";
                 }
-                onAccountChanged:
-                {
-                    showInboxForCurrentUser();
+                onDraftClicked: {
+                    emailList.isDraftMode = true;
+                    emailList.sourceModel = draftModel;
+                    window.selectedEmail = null;
+                    selectedFolder = "drafts";
                 }
-                onInboxClicked:
-                {
+                onInboxClicked: {
                     emailList.isDraftMode = false;
                     emailList.sourceModel = inboxModel;
                     window.selectedEmail = null;
                     selectedFolder = "inbox";
                 }
-                onSentClicked:
-                {
+                onSentClicked: {
                     emailList.isDraftMode = false;
                     emailList.sourceModel = sentModel;
                     window.selectedEmail = null;
                     selectedFolder = "sent";
                 }
-                onStarredClicked:
-                {
+                onStarredClicked: {
                     emailList.isDraftMode = false;
                     emailList.sourceModel = starredModel;
                     window.selectedEmail = null;
                     selectedFolder = "starred";
                 }
             }
-            EmailsListQML
-            {
+            EmailsListQML {
                 id: emailList
 
                 SplitView.fillHeight: true
@@ -310,8 +288,7 @@ ApplicationWindow {
                 SplitView.preferredWidth: 350
 
                 onEmailOpenRequested: function (index, theme, name, sendTo, content, time, starred) {
-                    window.selectedEmail =
-                    {
+                    window.selectedEmail = {
                         "index": index,
                         "theme": theme,
                         "name": name,
@@ -321,27 +298,23 @@ ApplicationWindow {
                         "starred": starred
                     };
                 }
-                onStarredItemClicked: function (starred)
-                    {
-                        if(starred)
-                            showPopup("Email is starred")
-                        else
-                            showPopup("Email is unstarred")
-                    }
+                onStarredItemClicked: function (starred) {
+                    if (starred)
+                        showPopup("Email is starred");
+                    else
+                        showPopup("Email is unstarred");
+                }
             }
-            Item
-            {
+            Item {
                 SplitView.fillHeight: true
                 SplitView.fillWidth: true
                 SplitView.minimumWidth: 250
 
-                ContentBlankPageQML
-                {
+                ContentBlankPageQML {
                     anchors.fill: parent
                     visible: window.selectedEmail === null
                 }
-                ContentPageLetterQML
-                {
+                ContentPageLetterQML {
                     anchors.fill: parent
                     letterContent: window.selectedEmail ? window.selectedEmail.content : ""
                     letterIndex: window.selectedEmail ? window.selectedEmail.index : ""
@@ -352,30 +325,26 @@ ApplicationWindow {
                     letterTime: window.selectedEmail ? window.selectedEmail.time : ""
                     visible: window.selectedEmail !== null
 
-                    onDeleteClicked:
-                    {
-                        if (emailList.sourceModel)
-                            emailList.sourceModel.RemoveEmailData(parseInt(letterIndex));
-                        window.selectedEmail = null;
-                        showPopup("Email is deleted")
-                    }
                     onArchiveClicked: {
                         if (emailList.sourceModel) {
                             let state = emailList.sourceModel.ToggleArchive(parseInt(letterIndex));
                             if (state)
-                                showPopup("Email is archived")
+                                showPopup("Email is archived");
                             else
-                                showPopup("Email is unarchived")
+                                showPopup("Email is unarchived");
                         }
                     }
-                    onStarClicked:
-                    {
+                    onDeleteClicked: {
+                        if (emailList.sourceModel)
+                            emailList.sourceModel.RemoveEmailData(parseInt(letterIndex));
+                        window.selectedEmail = null;
+                        showPopup("Email is deleted");
+                    }
+                    onStarClicked: {
                         if (emailList.sourceModel)
                             emailList.sourceModel.SetStarred(parseInt(letterIndex), starred);
-                        if (window.selectedEmail)
-                        {
-                            window.selectedEmail =
-                                {
+                        if (window.selectedEmail) {
+                            window.selectedEmail = {
                                 "index": window.selectedEmail.index,
                                 "theme": window.selectedEmail.theme,
                                 "name": window.selectedEmail.name,
@@ -385,10 +354,10 @@ ApplicationWindow {
                                 "starred": starred
                             };
                         }
-                        if(starred)
-                            showPopup("Email is starred")
+                        if (starred)
+                            showPopup("Email is starred");
                         else
-                            showPopup("Email is unstarred")
+                            showPopup("Email is unstarred");
                     }
                 }
             }
@@ -396,16 +365,14 @@ ApplicationWindow {
     }
 
     //blocker
-    Rectangle
-    {
+    Rectangle {
         anchors.fill: parent
         color: "#000000"
         opacity: settingsLoader.opacity * 0.4
         visible: settingsLoader.active
         z: 998
 
-        MouseArea
-        {
+        MouseArea {
             anchors.fill: parent
             enabled: parent.visible
             hoverEnabled: true
@@ -416,22 +383,19 @@ ApplicationWindow {
             onPositionChanged: mouse => mouse.accepted = true
             onPressed: mouse => mouse.accepted = true
             onReleased: mouse => mouse.accepted = true
-            onWheel: wheel =>
-            {
+            onWheel: wheel => {
                 wheel.accepted = true;
             }
         }
     }
-    Rectangle
-    {
+    Rectangle {
         anchors.fill: parent
         color: "#000000"
         opacity: authLoader.opacity * 0.4
         visible: authLoader.active
         z: 998
 
-        MouseArea
-        {
+        MouseArea {
             anchors.fill: parent
             enabled: parent.visible
             hoverEnabled: true
@@ -442,16 +406,14 @@ ApplicationWindow {
             onPositionChanged: mouse => mouse.accepted = true
             onPressed: mouse => mouse.accepted = true
             onReleased: mouse => mouse.accepted = true
-            onWheel: wheel =>
-                {
+            onWheel: wheel => {
                 wheel.accepted = true;
             }
         }
     }
 
     //settings loader
-    Loader
-    {
+    Loader {
         id: settingsLoader
 
         active: false
@@ -461,29 +423,24 @@ ApplicationWindow {
         width: item ? item.implicitWidth : 0
         z: 1000
 
-        Behavior on opacity
-        {
-            NumberAnimation
-            {
+        Behavior on opacity {
+            NumberAnimation {
                 duration: 200
             }
         }
 
-        Shortcut
-        {
+        Shortcut {
             enabled: settingsLoader.active
             sequence: "Escape"
 
-            onActivated:
-            {
+            onActivated: {
                 closeSettingsWindow();
             }
         }
     }
 
     // Loader for account change
-    Loader
-    {
+    Loader {
         id: authLoader
 
         active: initialSetupRequired
@@ -494,22 +451,83 @@ ApplicationWindow {
         width: item ? item.implicitWidth : 0
         z: 1000
 
-        Behavior on opacity
-        {
-            NumberAnimation
-            {
+        Behavior on opacity {
+            NumberAnimation {
                 duration: 200
             }
         }
 
-        Shortcut
-        {
-            enabled: authLoader.active
+        Shortcut {
+            //enabled: authLoader.active
             sequence: "Escape"
+            enabled: !initialSetupRequired
 
-            onActivated:
-            {
+            onActivated: {
                 closeAuthWindow();
+            }
+        }
+    }
+
+    // Server status blocker overlay
+    Rectangle {
+        id: serverStatusOverlay
+
+        anchors.fill: parent
+        color: "#000000"
+        opacity: (emailsModel.isLoading || emailsModel.serverError) ? 0.7 : 0.0
+        visible: opacity > 0
+        z: 9998
+
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 200
+            }
+        }
+
+        BusyIndicator {
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            running: emailsModel.isLoading
+        }
+        MouseArea {
+            anchors.fill: parent
+            enabled: parent.visible
+            hoverEnabled: true
+            preventStealing: true
+
+            onClicked: mouse => {
+                mouse.accepted = true;
+                if (emailsModel.serverError) {
+                    emailsModel.RefreshFromServer();
+                }
+            }
+            onDoubleClicked: mouse => mouse.accepted = true
+            onPositionChanged: mouse => mouse.accepted = true
+            onPressed: mouse => mouse.accepted = true
+            onReleased: mouse => mouse.accepted = true
+            onWheel: wheel => {
+                wheel.accepted = true;
+            }
+        }
+        Column {
+            anchors.centerIn: parent
+            spacing: 8
+
+            Text {
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: "#ffffff"
+                font.family: "Segoe UI"
+                font.pixelSize: 28
+                font.weight: Font.Bold
+                text: emailsModel.isLoading ? "server loading" : "server failed"
+            }
+            Text {
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: "#cccccc"
+                font.family: "Segoe UI"
+                font.pixelSize: 14
+                text: "click to retry"
+                visible: emailsModel.serverError
             }
         }
     }

@@ -9,6 +9,7 @@
         <file>assets/ic_compose.svg</file>
         <file>assets/ic_drafts.svg</file>
         <file>assets/ic_inbox.svg</file>
+        <file>assets/ic_mail.svg</file>
         <file>assets/ic_sent.svg</file>
         <file>assets/ic_select_email.svg</file>
         <file>assets/ic_dark_mode.svg</file>
@@ -32,5 +33,7 @@
         <file>assets/theme/LightColorScheme.json</file>
         <file>assets/ic_eye_closed.svg</file>
         <file>assets/ic_eye_open.svg</file>
+        <file>assets/ic_view_uncheck.svg</file>
+        <file>assets/ic_view_check.svg</file>
     </qresource>
 </RCC>
