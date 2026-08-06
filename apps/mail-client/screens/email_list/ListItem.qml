@@ -19,7 +19,7 @@ Rectangle {
     property int state: 0
 
         signal deleteClicked
-    signal openRequested(string theme, string name, string sendTo, string content, string time, bool starred)
+        signal openRequested(string theme, string name, string sendTo, string content, string time, bool starred)
         signal starredClicked
         signal clicked
 
@@ -239,7 +239,7 @@ Rectangle {
                         lineHeightMode: Text.FixedHeight
                         maximumLineCount: 1
                         text: searchModel ? searchModel.HighlightAllFoundWords(theme, searchModel.SearchedText) : theme
-                        textFormat: Text.RichText
+                        textFormat: searchModel && searchModel.SearchedText.length > 0 ? Text.RichText : Text.PlainText
                         verticalAlignment: Text.AlignVCenter
                         width: parent.width
                         wrapMode: Text.NoWrap
@@ -326,7 +326,7 @@ Rectangle {
                     lineHeightMode: Text.FixedHeight
                     maximumLineCount: 1
                     text: searchModel ? searchModel.HighlightAllFoundWords(name, searchModel.SearchedText) : name
-                    textFormat: Text.RichText
+                    textFormat: searchModel && searchModel.SearchedText.length > 0 ? Text.RichText : Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
                     wrapMode: Text.NoWrap
@@ -365,7 +365,7 @@ Rectangle {
                     lineHeightMode: Text.FixedHeight
                     maximumLineCount: 1
                     text: searchModel ? searchModel.HighlightAllFoundWords(preview, searchModel.SearchedText) : preview
-                    textFormat: Text.RichText
+                    textFormat: searchModel && searchModel.SearchedText.length > 0 ? Text.RichText : Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
                     wrapMode: Text.NoWrap

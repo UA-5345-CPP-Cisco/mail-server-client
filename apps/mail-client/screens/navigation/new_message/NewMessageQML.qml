@@ -357,62 +357,64 @@ Rectangle {
             anchors.fill: parent
             anchors.margins: 12
             color: "transparent"
-
-            TextArea {
-                id: messageBodyTextField
-
+            
+            ScrollView {
                 anchors.fill: parent
-                bottomPadding: 0
-                color: "#1f2937"
-                font.family: "Segoe UI"
-                font.pixelSize: 14
-                leftPadding: 0
-                placeholderText: "Write your message..."
-                placeholderTextColor: "#99a1af"
-                text: newText
-                topPadding: 0
-                wrapMode: Text.Wrap
+                clip: true
 
-                background: Item {
-                }
-                cursorDelegate: Item {
-                }
+                TextArea {
+                    id: messageBodyTextField
 
-                Rectangle {
-                    id: customCursorMessageBody
-
+                    bottomPadding: 0
                     color: "#1f2937"
-                    height: messageBodyTextField.cursorRectangle.height
-                    visible: messageBodyTextField.activeFocus
-                    width: 1
-                    x: messageBodyTextField.cursorRectangle.x
-                    y: messageBodyTextField.cursorRectangle.y
+                    font.family: "Segoe UI"
+                    font.pixelSize: 14
+                    leftPadding: 0
+                    placeholderText: "Write your message..."
+                    placeholderTextColor: "#99a1af"
+                    text: newText
+                    topPadding: 0
+                    wrapMode: Text.Wrap
 
-                    SequentialAnimation on opacity {
-                        loops: Animation.Infinite
-                        running: parent.activeFocus
+                    background: Item {}
+                    cursorDelegate: Item {}
 
-                        NumberAnimation {
-                            duration: 500
-                            easing.type: Easing.InOutSine
-                            to: 0
+                    Rectangle {
+                        id: customCursorMessageBody
+
+                        color: "#1f2937"
+                        height: messageBodyTextField.cursorRectangle.height
+                        visible: messageBodyTextField.activeFocus
+                        width: 1
+                        x: messageBodyTextField.cursorRectangle.x
+                        y: messageBodyTextField.cursorRectangle.y
+
+                        SequentialAnimation on opacity {
+                            loops: Animation.Infinite
+                            running: parent.activeFocus
+
+                            NumberAnimation {
+                                duration: 500
+                                easing.type: Easing.InOutSine
+                                to: 0
+                            }
+                            NumberAnimation {
+                                duration: 500
+                                easing.type: Easing.InOutSine
+                                to: 1
+                            }
                         }
-                        NumberAnimation {
-                            duration: 500
-                            easing.type: Easing.InOutSine
-                            to: 1
+                        Behavior on x {
+                            NumberAnimation {
+                                duration: 80
+                                easing.type: Easing.OutCubic
+                            }
                         }
-                    }
-                    Behavior on x {
-                        NumberAnimation {
-                            duration: 80
-                            easing.type: Easing.OutCubic
-                        }
-                    }
-                    Behavior on y {
-                        NumberAnimation {
-                            duration: 80
-                            easing.type: Easing.OutCubic
+                        Behavior on y {
+                            NumberAnimation {
+                                duration: 80
+                                easing.type: Easing.OutCubic
+                            }
                         }
                     }
                 }
@@ -457,7 +459,7 @@ Rectangle {
 
                 onClicked: {
                     if (recipientTextField.text === "") {
-                        recipientTextField.text = "Enter Recipient!";
+                        recipientTextField.placeholderText = "Enter Recipient!";
                     } else if (recipientTextField.text === "inboxtest") {
                         let recipient_text = recipientTextField.text.trim() === "" ? "empty" : recipientTextField.text;
                         let subject_text = subjectTextField.text.trim() === "" ? "empty" : subjectTextField.text;
