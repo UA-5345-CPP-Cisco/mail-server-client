@@ -1,4 +1,4 @@
-#include "headers/database/CacheStore.h"
+#include "database/CacheStore.h"
 
 #include <chrono>
 #include <ctime>
@@ -7,7 +7,7 @@
 #include <sstream>
 #include <stdexcept>
 
-#include "headers/service/Service.h"
+#include "service/Service.h"
 #include "mail_storage/Statement.h"
 
 namespace Storage {

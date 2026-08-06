@@ -1,10 +1,10 @@
-#include "headers/color/ColorModel.h"
+#include "color/ColorModel.h"
 
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonValue>
 
-#include "headers/service/Service.h"
+#include "service/Service.h"
 
 namespace ISXMail {
 
@@ -17,15 +17,21 @@ namespace ISXMail {
         QFile file(path);
         if (!file.open(QIODevice::ReadOnly)) {
             ISXService::Service::Logger().Log(Logging::LogLevel::Info,
-                                              "ColorModel::LoadFromFile: Failed to open theme JSON file: " +
+                                              "ColorModel::LoadFromFile: failed to open theme JSON file: " +
                                                   path.toStdString());
             return false;
         }
 
         const QJsonDocument document = QJsonDocument::fromJson(file.readAll());
         if (!document.isObject()) {
+            ISXService::Service::Logger().Log(Logging::LogLevel::Info,
+                                              "ColorModel::LoadFromFile: failed to read JSON file: " +
+                                                  path.toStdString());
             return false;
         }
+
+        ISXService::Service::Logger().Log(Logging::LogLevel::Info,
+                                              "ColorModel::LoadFromFile: JSON file was read successfully");
 
         return LoadFromJson(document.object());
     }
@@ -54,6 +60,8 @@ namespace ISXMail {
             loaded = true;
         }
 
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                                 std::string("ColorModel::LoadFromJson: file was loaded from JSON"));
         return loaded;
     }
 

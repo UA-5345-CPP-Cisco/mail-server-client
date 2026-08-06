@@ -1,8 +1,8 @@
-#include "headers/mail/EmailCache.h"
+#include "mail/EmailCache.h"
 
 #include <sstream>
 
-#include "headers/service/Service.h"
+#include "service/Service.h"
 
 namespace ISXMail {
 

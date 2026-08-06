@@ -1,4 +1,4 @@
-#include "headers/client_logger/ClientProxyLogger.h"
+#include "client_logger/ClientProxyLogger.h"
 
 namespace ISXClientLogger {
 

@@ -1,4 +1,4 @@
-#include "headers/database/DatabaseManager.h"
+#include "database/DatabaseManager.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <string>
 
-#include "headers/service/Service.h"
+#include "service/Service.h"
 #include "mail_storage/Database.h"
 #include "mail_storage/MigrationRunner.h"
 
