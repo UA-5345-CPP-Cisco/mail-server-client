@@ -41,21 +41,18 @@ jobs:
           clang-format-22 --version
 
       - name: Install Qt formatting tools
-        uses: jurplel/install-qt-action@v4
-        with:
-          version: '6.11.1'
-          host: linux
-          target: desktop
-          arch: gcc_64
-          cache: true
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install PySide6==6.11.1
+          pyside6-qmlformat --version
 
       - name: Show formatter versions
         run: |
           clang-format-22 --version
-          qmlformat --version
+          pyside6-qmlformat --version
 
       - name: Check formatting
-        run: CLANG_FORMAT=clang-format-22 QMLFORMAT=qmlformat scripts/check-format.sh
+        run: CLANG_FORMAT=clang-format-22 QMLFORMAT=pyside6-qmlformat scripts/check-format.sh
 
       - name: Configure CMake
         run: >
