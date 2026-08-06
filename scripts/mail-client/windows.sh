@@ -61,7 +61,10 @@ for dll in libstdc++-6.dll libgcc_s_seh-1.dll libwinpthread-1.dll; do
 done
 
 if command -v windeployqt.exe >/dev/null 2>&1; then
-  windeployqt.exe "${executable}"
+  windeployqt.exe \
+      --release \
+      --qmldir="${source_dir}" \
+      "${executable}"
 fi
 
 if [[ "${mode}" == "build" ]]; then

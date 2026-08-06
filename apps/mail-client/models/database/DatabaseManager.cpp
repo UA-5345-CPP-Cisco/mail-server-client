@@ -30,7 +30,7 @@ namespace ISXDatabaseManager {
 
     std::filesystem::path DatabaseManager::DatabasePath()
     {
-        auto path = ResolveAppDataDirectory() / "qtapptestmail.sqlite";
+        auto path = "";
         ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
                                           std::string("DatabaseManager::DatabasePath: ") + path.string());
         return path;
@@ -38,7 +38,7 @@ namespace ISXDatabaseManager {
 
     std::filesystem::path DatabaseManager::MigrationsPath()
     {
-        const std::filesystem::path relative_path = std::filesystem::path("libs") / "mail-storage" / "migrations";
+        const std::filesystem::path relative_path = "";
         const std::filesystem::path current_path = std::filesystem::current_path() / relative_path;
 
         if (std::filesystem::exists(current_path)) {
