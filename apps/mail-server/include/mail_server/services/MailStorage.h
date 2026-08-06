@@ -34,6 +34,7 @@ class MailStorage
 
   [[nodiscard]] bool SetStarred(std::int64_t message_id, const std::string& actor_email, bool starred);
   [[nodiscard]] bool SetArchived(std::int64_t message_id, const std::string& actor_email, bool archived);
+  [[nodiscard]] bool SetRead(std::int64_t message_id, const std::string& actor_email, bool read);
   [[nodiscard]] bool DeleteMail(std::int64_t message_id, const std::string& actor_email);
 
   private:

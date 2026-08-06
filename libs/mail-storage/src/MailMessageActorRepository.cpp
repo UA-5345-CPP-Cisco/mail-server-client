@@ -366,6 +366,30 @@ bool MailMessageActorRepository::SetArchived(std::int64_t message_id, const std:
   return statement.ChangedRowCount() > 0;
 }
 
+bool MailMessageActorRepository::SetRead(std::int64_t message_id, const std::string& actor_email, bool read)
+{
+  Statement statement(m_database,
+                      R"SQL(
+			UPDATE mail_message_actors
+			SET read_at = CASE
+				WHEN ?1 = 1 THEN COALESCE(read_at, CURRENT_TIMESTAMP)
+				ELSE NULL
+			END
+			WHERE
+				message_id = ?2
+				AND actor_email = ?3
+				AND actor_type IN ('TO', 'CC', 'BCC')
+				AND deleted_at IS NULL;
+		)SQL");
+
+  statement.BindInt(1, read ? 1 : 0);
+  statement.BindInt64(2, message_id);
+  statement.BindText(3, actor_email);
+  statement.Step();
+
+  return statement.ChangedRowCount() > 0;
+}
+
 bool MailMessageActorRepository::MarkDeleted(std::int64_t message_id, const std::string& actor_email)
 {
   Statement statement(m_database,

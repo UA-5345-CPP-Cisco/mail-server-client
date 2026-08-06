@@ -82,6 +82,12 @@ bool MailStorage::SetArchived(std::int64_t message_id, const std::string& actor_
   return m_actors.SetArchived(message_id, actor_email, archived);
 }
 
+bool MailStorage::SetRead(std::int64_t message_id, const std::string& actor_email, bool read)
+{
+  std::lock_guard<std::mutex> lock(m_mutex);
+  return m_actors.SetRead(message_id, actor_email, read);
+}
+
 bool MailStorage::DeleteMail(std::int64_t message_id, const std::string& actor_email)
 {
   std::lock_guard<std::mutex> lock(m_mutex);

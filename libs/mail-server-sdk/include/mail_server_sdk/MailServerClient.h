@@ -33,6 +33,10 @@ class MailServerClient
 
   [[nodiscard]] http::HttpResponse UnarchiveMail(std::int64_t message_id, std::string user_email) const;
 
+  [[nodiscard]] http::HttpResponse ReadMail(std::int64_t message_id, std::string user_email) const;
+
+  [[nodiscard]] http::HttpResponse UnreadMail(std::int64_t message_id, std::string user_email) const;
+
   [[nodiscard]] http::HttpResponse DeleteMail(std::int64_t message_id, std::string user_email) const;
 
   private:

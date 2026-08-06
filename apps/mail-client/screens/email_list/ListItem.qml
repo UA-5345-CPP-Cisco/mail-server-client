@@ -9,6 +9,8 @@ Rectangle {
     property string content: preview
     property string name: "NameHolder"
     property string preview: "TextHolderTextHolderTextHolderTextHolde...."
+    property bool read: false
+    property bool readControlsEnabled: true
     property var searchModel: null
     property string sendTo: ""
     property bool starred: false
@@ -18,6 +20,7 @@ Rectangle {
 
     signal deleteClicked
     signal openRequested(string theme, string name, string sendTo, string content, string time, bool starred)
+    signal readClicked(bool read)
     signal starredClicked
 
     color: state === 2 ? Color.highlight : state === 1 ? Color.surface : Color.background
@@ -30,8 +33,7 @@ Rectangle {
         }
     }
 
-    MouseArea
-    {
+    MouseArea {
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         anchors.fill: parent
         hoverEnabled: true
@@ -56,7 +58,6 @@ Rectangle {
                 root.state = 1;
             }
         }
-
     }
     Menu {
         id: contextMenu
@@ -100,6 +101,12 @@ Rectangle {
             text: "Copy"
 
             onTriggered: {}
+        }
+        MenuItem {
+            visible: root.readControlsEnabled
+            text: root.read ? "Mark as unread" : "Mark as read"
+
+            onTriggered: root.readClicked(!root.read)
         }
         MenuSeparator {
             padding: 4
@@ -224,7 +231,7 @@ Rectangle {
                         elide: Text.ElideRight
                         font.family: "Segoe UI"
                         font.pixelSize: 14
-                        font.weight: Font.Black
+                        font.weight: read ? Font.Normal : Font.Black
                         height: 20
                         horizontalAlignment: Text.AlignLeft
                         lineHeight: 20
@@ -263,7 +270,7 @@ Rectangle {
                         color: Color.secondaryText
                         font.family: "Segoe UI"
                         font.pixelSize: 12
-                        font.weight: Font.Normal
+                        font.weight: read ? Font.Normal : Font.DemiBold
                         horizontalAlignment: Text.AlignRight
                         text: time
                         textFormat: Text.PlainText
@@ -288,7 +295,7 @@ Rectangle {
                     elide: Text.ElideRight
                     font.family: "Segoe UI"
                     font.pixelSize: 14
-                    font.weight: Font.Black
+                    font.weight: read ? Font.Normal : Font.Black
                     height: 20
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 20

@@ -20,6 +20,8 @@ Router MakeRouter()
   router.Post("/mails/unstar", UnstarHandler);
   router.Post("/mails/archive", ArchiveHandler);
   router.Post("/mails/unarchive", UnarchiveHandler);
+  router.Post("/mails/read", ReadHandler);
+  router.Post("/mails/unread", UnreadHandler);
   router.Post("/mails/delete", DeleteMailHandler);
 
   return router;

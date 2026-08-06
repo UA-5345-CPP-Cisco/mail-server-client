@@ -75,6 +75,18 @@ http::HttpResponse MailServerClient::UnarchiveMail(std::int64_t message_id, std:
     "/mails/unarchive", boost::json::object{{"id", message_id}}, {{"X-User-Email", std::move(user_email)}});
 }
 
+http::HttpResponse MailServerClient::ReadMail(std::int64_t message_id, std::string user_email) const
+{
+  return m_http_client.post_json(
+    "/mails/read", boost::json::object{{"id", message_id}}, {{"X-User-Email", std::move(user_email)}});
+}
+
+http::HttpResponse MailServerClient::UnreadMail(std::int64_t message_id, std::string user_email) const
+{
+  return m_http_client.post_json(
+    "/mails/unread", boost::json::object{{"id", message_id}}, {{"X-User-Email", std::move(user_email)}});
+}
+
 http::HttpResponse MailServerClient::DeleteMail(std::int64_t message_id, std::string user_email) const
 {
   return m_http_client.post_json(

@@ -13,6 +13,7 @@ add_executable(mail_server
     src/handlers/SendMailHandler.cpp
     src/handlers/StarHandler.cpp
     src/handlers/ArchiveHandler.cpp
+    src/handlers/ReadHandler.cpp
     src/handlers/DeleteMailHandler.cpp
 )
 

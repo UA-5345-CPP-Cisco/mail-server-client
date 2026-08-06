@@ -45,6 +45,8 @@ class MailMessageActorRepository
 
   bool SetArchived(std::int64_t message_id, const std::string& actor_email, bool archived);
 
+  bool SetRead(std::int64_t message_id, const std::string& actor_email, bool read);
+
   bool MarkDeleted(std::int64_t message_id, const std::string& actor_email);
 
   private:

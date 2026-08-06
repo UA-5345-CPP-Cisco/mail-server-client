@@ -184,6 +184,10 @@ TEST_F(MailDeliveryRepositoryTest, UpdatesMailboxStateForSingleActor)
   const std::int64_t second_actor_id =
     m_actor_repository->CreateActor(message_id, "second@example.com", Storage::MailMessageActorType::To);
 
+  EXPECT_TRUE(m_actor_repository->SetRead(message_id, "first@example.com", true));
+  EXPECT_TRUE(m_actor_repository->SetRead(message_id, "first@example.com", false));
+  EXPECT_TRUE(m_actor_repository->SetRead(message_id, "first@example.com", true));
+  EXPECT_FALSE(m_actor_repository->SetRead(message_id, "sender@example.com", true));
   EXPECT_TRUE(m_actor_repository->SetStarred(message_id, "first@example.com", true));
   EXPECT_TRUE(m_actor_repository->SetArchived(message_id, "first@example.com", true));
   EXPECT_TRUE(m_actor_repository->MarkDeleted(message_id, "first@example.com"));
@@ -193,9 +197,11 @@ TEST_F(MailDeliveryRepositoryTest, UpdatesMailboxStateForSingleActor)
 
   ASSERT_TRUE(first_actor.has_value());
   ASSERT_TRUE(second_actor.has_value());
+  EXPECT_TRUE(first_actor->read_at.has_value());
   EXPECT_TRUE(first_actor->starred_at.has_value());
   EXPECT_TRUE(first_actor->archived_at.has_value());
   EXPECT_TRUE(first_actor->deleted_at.has_value());
+  EXPECT_FALSE(second_actor->read_at.has_value());
   EXPECT_FALSE(second_actor->starred_at.has_value());
   EXPECT_FALSE(second_actor->archived_at.has_value());
   EXPECT_FALSE(second_actor->deleted_at.has_value());

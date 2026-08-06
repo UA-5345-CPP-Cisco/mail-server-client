@@ -4,8 +4,8 @@
 #include <QString>
 #include <gtest/gtest.h>
 
-#include "mail/EmailListModel.h"
 #include "database/DatabaseManager.h"
+#include "mail/EmailListModel.h"
 
 using namespace ISXMail;
 
@@ -65,8 +65,9 @@ TEST_F(EmailListModelTest, DataTest)
 TEST_F(EmailListModelTest, RoleNamesTest)
 {
   const auto roles = model->roleNames();
-  EXPECT_EQ(roles.size(), 10);
+  EXPECT_EQ(roles.size(), 12);
   EXPECT_EQ(roles[InboxRole], QByteArray("emailsInbox"));
+  EXPECT_EQ(roles[ReadRole], QByteArray("emailsRead"));
   EXPECT_EQ(roles[ThemeRole], QByteArray("emailsTheme"));
   EXPECT_EQ(roles[TimeRole], QByteArray("emailsTime"));
 }
@@ -115,18 +116,17 @@ TEST_F(EmailListModelTest, DeleteEmailTest)
 TEST_F(EmailListModelTest, MakePreviewLogicTest)
 {
   QString shortContent = "Short text";
-  model->AddData(false, false, false, "Theme", "Name", "To", shortContent, "", true);
+  model->AddData(false, false, false, false, "Theme", "Name", "To", shortContent, "", true);
   QModelIndex index0 = model->index(0, 0);
   EXPECT_EQ(model->data(index0, PreviewRole).toString().toStdString(), "Short text");
   QString contentWithSpace = "1234567890 1234567890 1234567890 long text";
-  model->AddData(false, false, false, "Theme", "Name", "To", contentWithSpace, "", true);
+  model->AddData(false, false, false, false, "Theme", "Name", "To", contentWithSpace, "", true);
   QModelIndex index1 = model->index(0, 0);
   EXPECT_EQ(model->data(index1, PreviewRole).toString().toStdString(), "1234567890 1234567890...");
   QString contentNoSpace = "12345678901234567890123456789012345";
-  model->AddData(false, false, false, "Theme", "Name", "To", contentNoSpace, "", true);
+  model->AddData(false, false, false, false, "Theme", "Name", "To", contentNoSpace, "", true);
   QModelIndex index2 = model->index(0, 0);
-  EXPECT_EQ(model->data(index2, PreviewRole).toString().toStdString(),
-            "123456789012345678901234567890...");
+  EXPECT_EQ(model->data(index2, PreviewRole).toString().toStdString(), "123456789012345678901234567890...");
 }
 
 TEST_F(EmailListModelTest, SetStarredTest)
@@ -146,6 +146,20 @@ TEST_F(EmailListModelTest, SetStarredTest)
   EXPECT_TRUE(model->data(index, StarredRole).toBool());
 }
 
+TEST_F(EmailListModelTest, SetReadTest)
+{
+  EXPECT_FALSE(model->SetRead(-1, true));
+  EmailData item;
+  item.id = -1;
+  item.is_read = false;
+  model->AddData(item);
+  QModelIndex index = model->index(0, 0);
+  EXPECT_TRUE(model->SetRead(index.row(), true));
+  EXPECT_TRUE(model->data(index, ReadRole).toBool());
+  EXPECT_TRUE(model->SetRead(index.row(), false));
+  EXPECT_FALSE(model->data(index, ReadRole).toBool());
+}
+
 TEST_F(EmailListModelTest, SetDataTest)
 {
   EXPECT_FALSE(model->setData(QModelIndex(), "Test", ThemeRole));
@@ -163,6 +177,8 @@ TEST_F(EmailListModelTest, SetDataTest)
   QModelIndex index_success = model->index(0, 0);
   EXPECT_TRUE(model->setData(index_success, true, StarredRole));
   EXPECT_TRUE(model->data(index_success, StarredRole).toBool());
+  EXPECT_TRUE(model->setData(index_success, true, ReadRole));
+  EXPECT_TRUE(model->data(index_success, ReadRole).toBool());
   EXPECT_TRUE(model->setData(index_success, "New Theme", ThemeRole));
   EXPECT_EQ(model->data(index_success, ThemeRole).toString().toStdString(), "New Theme");
   EXPECT_TRUE(model->setData(index_success, "admin@test.com", SendToRole));

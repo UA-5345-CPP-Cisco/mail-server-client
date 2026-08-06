@@ -79,6 +79,8 @@ Rectangle {
             content: parent.pContent
             name: parent.pName
             preview: parent.pPreview
+            read: parent.pRead
+            readControlsEnabled: !parent.pDraft && !parent.pSent
             searchModel: parent.pSearchModel
             sendTo: parent.pSendTo
             starred: parent.pStarred
@@ -91,7 +93,13 @@ Rectangle {
                     sourceModel.RemoveEmailData(parent.pIndex);
             }
             onOpenRequested: function (theme, name, sendTo, content, time, starred) {
+                if (sourceModel)
+                    sourceModel.SetRead(parent.pIndex, true);
                 emailsListQML.emailOpenRequested(parent.pIndex, theme, name, sendTo, content, parent.pTime, starred);
+            }
+            onReadClicked: function (read) {
+                if (sourceModel)
+                    sourceModel.SetRead(parent.pIndex, read);
             }
             onStarredClicked: {
                 sourceModel.SetStarred(parent.pIndex, starred);
@@ -191,7 +199,7 @@ Rectangle {
 
                         anchors.fill: parent
                         bottomPadding: 0
-                        color:Color.hover
+                        color: Color.hover
                         font.family: "Segoe UI"
                         font.pixelSize: 14
                         font.weight: Font.Normal
@@ -204,8 +212,7 @@ Rectangle {
                         background: Rectangle {
                             color: Color.transparent
                         }
-                        cursorDelegate: Item {
-                        }
+                        cursorDelegate: Item {}
 
                         onTextChanged: {
                             var searchProxy = emailsListQML.activeSearchModel();
@@ -491,8 +498,11 @@ Rectangle {
             property int pIndex: index
             property string pName: emailsName
             property string pPreview: emailsPreview
+            property bool pDraft: emailsDraft
+            property bool pRead: emailsRead
             property var pSearchModel: emailsListQML.activeSearchModel()
             property string pSendTo: emailsSendTo
+            property bool pSent: emailsSent
             property bool pStarred: emailsStarred
             property string pTheme: emailsTheme
             property string pTime: emailsTime

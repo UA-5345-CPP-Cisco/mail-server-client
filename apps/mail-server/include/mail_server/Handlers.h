@@ -5,5 +5,6 @@
 #include <mail_server/handlers/DeleteMailHandler.h>
 #include <mail_server/handlers/GetMailsHandler.h>
 #include <mail_server/handlers/HelloHandler.h>
+#include <mail_server/handlers/ReadHandler.h>
 #include <mail_server/handlers/SendMailHandler.h>
 #include <mail_server/handlers/StarHandler.h>

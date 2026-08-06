@@ -20,11 +20,12 @@ namespace ISXMail {
     struct EmailData
     {
         std::int64_t id{-1};
-        bool is_inbox;
-        bool is_starred;
-        bool is_sent;
-        bool is_draft;
-        bool is_archive;
+        bool is_inbox{false};
+        bool is_starred{false};
+        bool is_sent{false};
+        bool is_draft{false};
+        bool is_archive{false};
+        bool is_read{false};
         QString theme;
         QString name;
         QString send_to;
@@ -45,7 +46,8 @@ namespace ISXMail {
         SendToRole,
         PreviewRole,
         ContentRole,
-        TimeRole
+        TimeRole,
+        ReadRole
     };
 
     Q_ENUM_NS(EmailRole);
@@ -74,6 +76,7 @@ namespace ISXMail {
                                  const QString& time,
                                  bool is_inbox = false);
         Q_INVOKABLE bool SetStarred(int row, bool starred);
+        Q_INVOKABLE bool SetRead(int row, bool read);
         Q_INVOKABLE bool RefreshFromServer();
         bool ToggleArchive(int row);
         void AddData(const EmailData& item);
@@ -88,6 +91,7 @@ namespace ISXMail {
         bool DeleteFromStorage(const EmailData& item);
         bool SetStarredInStorage(const EmailData& item, bool starred);
         bool SetArchivedInStorage(const EmailData& item, bool archived);
+        bool SetReadInStorage(const EmailData& item, bool read);
         void LoadFromDatabase();
         void ReplaceData(std::vector<EmailData> data);
         QString MakePreview(const QString& text, int maxLen = 50);

@@ -143,6 +143,11 @@ namespace ISXMail {
         return SetEmailData(proxyRow, starred, StarredRole);
     }
 
+    bool EmailPageProxy::SetRead(int proxyRow, bool read)
+    {
+        return SetEmailData(proxyRow, read, ReadRole);
+    }
+
     void EmailPageProxy::RemoveEmailData(int proxyRow)
     {
         ISXService::Service::Logger().Log(Logging::LogLevel::Debug,

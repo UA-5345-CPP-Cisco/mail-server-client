@@ -55,6 +55,9 @@ namespace ISXMail {
             case ArchiveRole:
                 return QStringLiteral("ArchiveRole");
 
+            case ReadRole:
+                return QStringLiteral("ReadRole");
+
             default:
                 return QStringLiteral("UnknownRole");
             }
@@ -172,6 +175,8 @@ namespace ISXMail {
             return item.is_draft;
         case ArchiveRole:
             return item.is_archive;
+        case ReadRole:
+            return item.is_read;
         case ThemeRole:
             return item.theme;
         case NameRole:
@@ -196,6 +201,7 @@ namespace ISXMail {
                 {SentRole, "emailsSent"},
                 {DraftRole, "emailsDraft"},
                 {ArchiveRole, "emailsArchive"},
+                {ReadRole, "emailsRead"},
                 {ThemeRole, "emailsTheme"},
                 {NameRole, "emailsName"},
                 {SendToRole, "emailsSendTo"},
@@ -241,7 +247,19 @@ namespace ISXMail {
     {
         const QString t = time.isEmpty() ? QTime::currentTime().toString("hh:mm") : time;
         const QString preview = MakePreview(content, 30);
-        AddData({-1, is_inbox, is_starred, is_sent, is_draft, is_archive, theme, name, send_to, preview, content, t});
+        AddData({-1,
+                 is_inbox,
+                 is_starred,
+                 is_sent,
+                 is_draft,
+                 is_archive,
+                 false,
+                 theme,
+                 name,
+                 send_to,
+                 preview,
+                 content,
+                 t});
     }
 
     QString EmailListModel::MakePreview(const QString& text, int maxLen)
@@ -285,6 +303,32 @@ namespace ISXMail {
                              .arg(row)
                              .arg(GetEnumString(StarredRole))
                              .arg(starred ? "true" : "false")));
+        return true;
+    }
+
+    bool EmailListModel::SetRead(int row, bool read)
+    {
+        if (row < 0 || row >= static_cast<int>(m_data.size()))
+            return false;
+
+        if (m_data[row].is_read == read)
+            return true;
+
+        if (m_data[row].is_sent || m_data[row].is_draft)
+            return false;
+
+        if (!SetReadInStorage(m_data[row], read))
+            return false;
+
+        m_data[row].is_read = read;
+        const QModelIndex idx = index(row, 0);
+        emit dataChanged(idx, idx, {ReadRole});
+        ISXService::Service::Logger().Log(
+            Logging::LogLevel::Debug,
+            GetStdString(QString("EmailListModel::SetRead: data at %1 changed %2 field to %3")
+                             .arg(row)
+                             .arg(GetEnumString(ReadRole))
+                             .arg(read ? "true" : "false")));
         return true;
     }
 
@@ -376,6 +420,9 @@ namespace ISXMail {
                 const bool is_starred = mail.contains("is_starred") && mail.at("is_starred").is_bool()
                                             ? mail.at("is_starred").as_bool()
                                             : false;
+                const bool is_read =
+                    is_sent || is_draft ||
+                    (mail.contains("is_read") && mail.at("is_read").is_bool() ? mail.at("is_read").as_bool() : false);
 
                 server_data.push_back({id,
                                        is_inbox,
@@ -383,6 +430,7 @@ namespace ISXMail {
                                        is_sent,
                                        is_draft,
                                        is_archive,
+                                       is_read,
                                        display_subject,
                                        sender_email,
                                        recipient_email,
@@ -459,6 +507,7 @@ namespace ISXMail {
             const bool is_current_sender = current_actor->actor_type == Storage::MailMessageActorType::From;
             const bool is_sent = is_current_sender && !is_draft && !is_archive;
             const bool is_inbox = !is_current_sender && !is_draft && !is_archive;
+            const bool is_read = is_current_sender || is_draft || current_actor->read_at.has_value();
 
             local_data.push_back({message.id,
                                   is_inbox,
@@ -466,6 +515,7 @@ namespace ISXMail {
                                   is_sent,
                                   is_draft,
                                   is_archive,
+                                  is_read,
                                   theme,
                                   sender_email,
                                   recipient_email,
@@ -493,6 +543,8 @@ namespace ISXMail {
         switch (role) {
         case StarredRole:
             return SetStarred(index.row(), value.toBool());
+        case ReadRole:
+            return SetRead(index.row(), value.toBool());
         case ThemeRole:
             m_data[index.row()].theme = value.toString();
             break;
@@ -618,6 +670,37 @@ namespace ISXMail {
             ISXService::Service::Logger().Log(Logging::LogLevel::Error,
                                               std::string("EmailListModel::SetArchivedInStorage failed: ") +
                                                   exception.what());
+            return false;
+        }
+    }
+
+    bool EmailListModel::SetReadInStorage(const EmailData& item, bool read)
+    {
+        if (item.id < 0) {
+            return true;
+        }
+
+        if (item.is_sent || item.is_draft) {
+            return false;
+        }
+
+        const QString current_email = ISXCurrentUser::CurrentUser::GetInstance().email();
+        if (current_email.trimmed().isEmpty()) {
+            return false;
+        }
+
+        if (!IsServerBacked(item)) {
+            return m_actor_repository.SetRead(item.id, current_email.toStdString(), read);
+        }
+
+        try {
+            const std::string user_email = current_email.toStdString();
+            const auto response = read ? ISXService::Service::MailServerClient().ReadMail(item.id, user_email)
+                                       : ISXService::Service::MailServerClient().UnreadMail(item.id, user_email);
+            return response.is_success();
+        } catch (const std::exception& exception) {
+            ISXService::Service::Logger().Log(
+                Logging::LogLevel::Error, std::string("EmailListModel::SetReadInStorage failed: ") + exception.what());
             return false;
         }
     }
