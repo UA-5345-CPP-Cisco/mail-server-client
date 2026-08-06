@@ -163,11 +163,11 @@ namespace ISXMail {
                 emit dataChanged(idx, idx, {IsActiveRole});
             }
 
-                // Synchronize the global application context with the newly activated user
-                if (should_be_active) {
-                    ISXCurrentUser::CurrentUser::GetInstance().Authorize(
-                        m_data[i].account_name, m_data[i].account_email, m_data[i].avatar_url);
-                }
+            // Synchronize the global application context with the newly activated user
+            if (should_be_active) {
+                ISXCurrentUser::CurrentUser::GetInstance().Authorize(
+                    m_data[i].account_name, m_data[i].account_email, m_data[i].avatar_url);
+            }
         }
 
         SaveToSettings();

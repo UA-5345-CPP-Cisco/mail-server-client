@@ -58,7 +58,8 @@ namespace ISXMail {
         Q_OBJECT;
         Q_PROPERTY(bool isLoading READ isLoading NOTIFY isLoadingChanged)
         Q_PROPERTY(bool serverError READ serverError NOTIFY serverErrorChanged)
-        using InboxMessageCallback = std::function<void(const QString& sender, const QString& subject, const QString& preview)>;
+        using InboxMessageCallback =
+            std::function<void(const QString& sender, const QString& subject, const QString& preview)>;
 
     public:
         explicit EmailListModel(QObject* parent = nullptr);

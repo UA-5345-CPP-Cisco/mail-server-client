@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstdio>
 #include <exception>
 #include <functional>
@@ -5,7 +6,6 @@
 #include <mutex>
 #include <string>
 #include <string_view>
-#include <algorithm>
 
 #include <gtest/gtest.h>
 
