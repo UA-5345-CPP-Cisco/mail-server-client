@@ -18,10 +18,10 @@ Rectangle {
     property bool is_inbox: sourceModel === inboxModel
     property int state: 0
 
-        signal deleteClicked
+    signal deleteClicked
     signal openRequested(string theme, string name, string sendTo, string content, string time, bool starred)
-        signal starredClicked
-        signal clicked
+    signal starredClicked
+    signal clicked
 
     color: state === 2 ? Color.highlight : state === 1 ? Color.surface : Color.background
     height: 92
@@ -33,8 +33,7 @@ Rectangle {
         }
     }
 
-    MouseArea
-    {
+    MouseArea {
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         anchors.fill: parent
         hoverEnabled: true
@@ -47,8 +46,7 @@ Rectangle {
                 var inStarZone = (mouse.x >= starPos.x - 8 && mouse.x <= starPos.x + favouriteButtonContainer.width + 8 && mouse.y >= starPos.y - 8 && mouse.y <= starPos.y + favouriteButtonContainer.height + 8);
                 if (!inStarZone) {
                     root.openRequested(root.theme, root.name, root.sendTo, root.content, root.time, root.starred);
-                    if(is_inbox)
-                    {
+                    if (is_inbox) {
                         root.seen = true;
                         root.clicked();
                     }
@@ -64,7 +62,6 @@ Rectangle {
                 root.state = 1;
             }
         }
-
     }
     Menu {
         id: contextMenu
@@ -280,18 +277,16 @@ Rectangle {
                 }
             }
 
-            Rectangle
-            {
-                id:viewContainer
+            Rectangle {
+                id: viewContainer
                 anchors.bottom: parent.bottom
                 anchors.right: parent.right
                 color: Color.transparent
                 height: 16
                 width: 16
                 visible: is_inbox
-                Image
-                {
-                    id:viewImage
+                Image {
+                    id: viewImage
                     anchors.fill: viewContainer
                     fillMode: Image.PreserveAspectFit
                     width: 16

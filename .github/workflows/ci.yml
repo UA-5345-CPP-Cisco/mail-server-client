@@ -41,6 +41,8 @@ jobs:
 
       - name: Check formatting
         run: CLANG_FORMAT=clang-format-22 scripts/check-clang-format.sh
+      - name: Check QT formatting
+        run: QMLFORMAT=qmlformat scripts/check-qml-format.sh
 
       - name: Configure CMake
         run: >

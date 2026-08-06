@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-QMLFORMAT="${QMLFORMAT:-qmlformat}"
+if [[ -n "${QT_ROOT:-}" && -x "$QT_ROOT/6.11.1/mingw_64/bin/qmlformat.exe" ]]; then
+    QMLFORMAT="$QT_ROOT/6.11.1/mingw_64/bin/qmlformat.exe"
+fi
 
 if ! command -v "$QMLFORMAT" >/dev/null 2>&1; then
   echo "Error: qmlformat not found."

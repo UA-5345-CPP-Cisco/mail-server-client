@@ -16,7 +16,7 @@ Rectangle {
 
     signal draftChanged(string index, string subject, string recipient, string text)
     signal draftFinished(string index, string subject, string recipient, string text)
-    signal emailSent()
+    signal emailSent
 
     border.color: Color.border
     clip: true
@@ -219,10 +219,8 @@ Rectangle {
                 text: newRecipient
                 topPadding: 0
 
-                background: Item {
-                }
-                cursorDelegate: Item {
-                }
+                background: Item {}
+                cursorDelegate: Item {}
 
                 Rectangle {
                     id: customCursorRecipient
@@ -298,10 +296,8 @@ Rectangle {
                 text: newSubject
                 topPadding: 0
 
-                background: Item {
-                }
-                cursorDelegate: Item {
-                }
+                background: Item {}
+                cursorDelegate: Item {}
 
                 Rectangle {
                     id: custonCursorSubject
@@ -373,10 +369,8 @@ Rectangle {
                 topPadding: 0
                 wrapMode: Text.Wrap
 
-                background: Item {
-                }
-                cursorDelegate: Item {
-                }
+                background: Item {}
+                cursorDelegate: Item {}
 
                 Rectangle {
                     id: customCursorMessageBody
@@ -483,7 +477,7 @@ Rectangle {
                             if (isDraft) {
                                 draftFinished(newIndex, subject_text, recipient_text, message_text);
                             }
-                            emailSent()
+                            emailSent();
                         }
                         messageBodyTextField.clear();
                         recipientTextField.clear();

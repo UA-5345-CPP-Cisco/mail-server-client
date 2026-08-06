@@ -115,8 +115,7 @@ Item {
                 color: Color.background
                 radius: 8
             }
-            cursorDelegate: Item {
-            }
+            cursorDelegate: Item {}
 
             Rectangle {
                 id: nameCustomCursorRectangle
@@ -195,8 +194,7 @@ Item {
                 color: Color.background
                 radius: 8
             }
-            cursorDelegate: Item {
-            }
+            cursorDelegate: Item {}
 
             Rectangle {
                 id: emailCustomCursorRectangle
@@ -269,7 +267,6 @@ Item {
             topPadding: 12
             width: parent.width
 
-
             Image {
                 id: eyeIcon
                 anchors.verticalCenter: parent.verticalCenter
@@ -289,11 +286,9 @@ Item {
                 }
             }
 
-
-
             background: Rectangle {
                 id: passwordBackgroundRectangle
-                
+
                 border.color: rootItem.passwordError !== "" ? "#fda29b" : (passwordTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
                 border.width: passwordTextField.activeFocus ? 2 : 1
                 color: Color.background
@@ -393,7 +388,7 @@ Item {
 
             background: Rectangle {
                 id: confirmBackgroundRectangle
-                
+
                 border.color: rootItem.confirmPasswordError !== "" ? "#fda29b" : (passwordConfirmationTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
                 border.width: passwordConfirmationTextField.activeFocus ? 2 : 1
                 color: Color.background
@@ -504,40 +499,36 @@ Item {
                 hoverEnabled: true
 
                 onClicked: {
-                    rootItem.generalError = ""
-                    var name_error = rootWindow.getRegisterValidationError("name", fullNameTextField.text)
-                    var email_error = rootWindow.getRegisterValidationError("email", emailTextField.text)
-                    var password_error = rootWindow.getRegisterValidationError("password", passwordTextField.text)
-                    var confirm_password_error = ""
-                    if (passwordConfirmationTextField.text === "") 
-                    {
-                        confirm_password_error = "Please confirm your password"
-                    } 
-                    else if (passwordTextField.text !== passwordConfirmationTextField.text) 
-                    {
-                        confirm_password_error = "Passwords do not match"
+                    rootItem.generalError = "";
+                    var name_error = rootWindow.getRegisterValidationError("name", fullNameTextField.text);
+                    var email_error = rootWindow.getRegisterValidationError("email", emailTextField.text);
+                    var password_error = rootWindow.getRegisterValidationError("password", passwordTextField.text);
+                    var confirm_password_error = "";
+                    if (passwordConfirmationTextField.text === "") {
+                        confirm_password_error = "Please confirm your password";
+                    } else if (passwordTextField.text !== passwordConfirmationTextField.text) {
+                        confirm_password_error = "Passwords do not match";
                     }
 
-                    nameError = name_error
-                    emailError = email_error
-                    passwordError = password_error
-                    confirmPasswordError = confirm_password_error
-                    if(nameError === "" && emailError === "" && passwordError === "" && confirmPasswordError === "")
-                    {
-                        rootItem.registerSubmitted(fullNameTextField.text, emailTextField.text, passwordTextField.text)
+                    nameError = name_error;
+                    emailError = email_error;
+                    passwordError = password_error;
+                    confirmPasswordError = confirm_password_error;
+                    if (nameError === "" && emailError === "" && passwordError === "" && confirmPasswordError === "") {
+                        rootItem.registerSubmitted(fullNameTextField.text, emailTextField.text, passwordTextField.text);
                     }
                 }
             }
         }
 
         Text {
-         id: generalErrorText
-         text: rootItem.generalError
-         color: "#f04438"
-         font.family: "Segoe UI"
-         font.pixelSize: 12
-         visible: rootItem.generalError !== ""
-         anchors.horizontalCenter: parent.horizontalCenter
+            id: generalErrorText
+            text: rootItem.generalError
+            color: "#f04438"
+            font.family: "Segoe UI"
+            font.pixelSize: 12
+            visible: rootItem.generalError !== ""
+            anchors.horizontalCenter: parent.horizontalCenter
         }
     }
 }

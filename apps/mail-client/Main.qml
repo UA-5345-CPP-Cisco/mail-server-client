@@ -38,8 +38,7 @@ ApplicationWindow {
         settingsLoader.active = false;
         settingsLoader.source = "";
     }
-    function showInboxForCurrentUser()
-    {
+    function showInboxForCurrentUser() {
         emailsModel.RefreshFromServer();
         emailList.isDraftMode = false;
         emailList.sourceModel = inboxModel;
@@ -85,7 +84,7 @@ ApplicationWindow {
         if (raw === "") {
             return null;
         }
-        
+
         let utcMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})(?:\.\d+)?$/);
         if (utcMatch) {
             return new Date(Date.UTC(parseInt(utcMatch[1]), parseInt(utcMatch[2]) - 1, parseInt(utcMatch[3]), parseInt(utcMatch[4]), parseInt(utcMatch[5]), parseInt(utcMatch[6])));
