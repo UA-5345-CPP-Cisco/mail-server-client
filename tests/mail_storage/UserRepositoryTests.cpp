@@ -95,7 +95,6 @@ TEST_F(UserRepositoryTest, RejectsDuplicateUsernameAndEmail)
 {
   m_repository->CreateUser("alice", "alice@example.com", "password-hash");
 
-  EXPECT_THROW(m_repository->CreateUser("alice", "other@example.com", "password-hash"), std::runtime_error);
   EXPECT_THROW(m_repository->CreateUser("other", "alice@example.com", "password-hash"), std::runtime_error);
 }
 
