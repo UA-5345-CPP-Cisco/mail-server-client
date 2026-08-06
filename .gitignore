@@ -44,6 +44,7 @@ compile_commands.json
 *.cache
 *.lastbuildstate
 
+
 *.db
 *.db-wal
 *.db-shm
@@ -62,4 +63,4 @@ data/*
 *.sln
 *.vcxproj*
 
-.nsi
+*.zip
