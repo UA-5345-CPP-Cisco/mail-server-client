@@ -195,7 +195,7 @@ Rectangle {
             horizontalAlignment: Text.AlignLeft
             lineHeight: 16
             lineHeightMode: Text.FixedHeight
-            text: "Draft"
+            text: qsTr("Draft")
             textFormat: Text.PlainText
             verticalAlignment: Text.AlignVCenter
             width: 28
@@ -268,7 +268,7 @@ Rectangle {
             text: Color.secondaryText
         }
         MenuItem {
-            text: "Copy"
+            text: qsTr("Copy")
 
             onTriggered: {}
         }
@@ -282,7 +282,7 @@ Rectangle {
             }
         }
         MenuItem {
-            text: "Delete"
+            text: qsTr("Delete")
 
             onTriggered: root.deleteClicked()
         }

@@ -133,7 +133,7 @@ Rectangle {
                         elide: Text.ElideRight
                         font.family: "Segoe UI"
                         font.pixelSize: 12
-                        text: contentPageLetterQML.letterSendTo.length ? "to " + contentPageLetterQML.letterSendTo : "to me"
+                        text: contentPageLetterQML.letterSendTo.length ? qsTr("to ") + contentPageLetterQML.letterSendTo : qsTr("to me")
                         wrapMode: Text.NoWrap
                     }
                 }
@@ -332,7 +332,7 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 lineHeight: 20
                 lineHeightMode: Text.FixedHeight
-                text: "Reply"
+                text: qsTr("Reply")
                 textFormat: Text.PlainText
                 verticalAlignment: Text.AlignVCenter
                 width: 35
@@ -400,7 +400,7 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 lineHeight: 20
                 lineHeightMode: Text.FixedHeight
-                text: "Forward"
+                text: qsTr("Forward")
                 textFormat: Text.PlainText
                 verticalAlignment: Text.AlignVCenter
                 width: 52

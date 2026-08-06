@@ -147,7 +147,7 @@ Rectangle {
     // cancel button
     Text {
         id: timeText
-        text: hideTimer.repeatCycles + "s"
+        text: hideTimer.repeatCycles + qsTr("s")
         anchors.left: parent.left
         anchors.right: messageText.left
         anchors.top: parent.top

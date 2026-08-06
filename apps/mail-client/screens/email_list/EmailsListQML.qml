@@ -23,6 +23,17 @@ Rectangle {
         return inboxSearchModel;
     }
 
+    function selectedFolderTranslate(folder)
+    {
+        if(selectedFolder === "inbox") return qsTr("inbox");
+        if(selectedFolder === "sent") return qsTr("sent");
+        if(selectedFolder === "drafts") return qsTr("drafts");
+        if(selectedFolder === "starred") return qsTr("starred");
+        if(selectedFolder === "archive") return qsTr("archive");
+
+        return "default";
+    }
+
     color: Color.background
 
     onSourceModelChanged: {
@@ -197,7 +208,7 @@ Rectangle {
                         font.weight: Font.Normal
                         horizontalAlignment: Text.AlignLeft
                         leftPadding: 0
-                        placeholderText: "Search mail"
+                        placeholderText: qsTr("Search mail")
                         placeholderTextColor: Color.secondaryText
                         topPadding: 0
 
@@ -321,7 +332,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: selectedFolder
+                    text: selectedFolderTranslate(selectedFolder)
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                 }
