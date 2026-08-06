@@ -33,24 +33,29 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget gnupg lsb-release software-properties-common libsqlite3-dev libssl-dev qt6-declarative-dev-tools
+          sudo apt-get install -y wget gnupg lsb-release software-properties-common libsqlite3-dev libssl-dev
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
           sudo ./llvm.sh 22
           sudo apt-get install -y clang-format-22
           clang-format-22 --version
-          if command -v qmlformat >/dev/null 2>&1; then
-            qmlformat --version
-          elif [[ -x /usr/lib/qt6/bin/qmlformat ]]; then
-            echo "/usr/lib/qt6/bin" >> "$GITHUB_PATH"
-            /usr/lib/qt6/bin/qmlformat --version
-          else
-            echo "qmlformat not found"
-            exit 1
-          fi
+
+      - name: Install Qt formatting tools
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.11.1'
+          host: linux
+          target: desktop
+          arch: gcc_64
+          cache: true
+
+      - name: Show formatter versions
+        run: |
+          clang-format-22 --version
+          qmlformat --version
 
       - name: Check formatting
-        run: CLANG_FORMAT=clang-format-22 scripts/check-format.sh
+        run: CLANG_FORMAT=clang-format-22 QMLFORMAT=qmlformat scripts/check-format.sh
 
       - name: Configure CMake
         run: >
