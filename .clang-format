@@ -99,22 +99,3 @@ IndentPPDirectives: None
 # Comments
 ReflowComments: true
 
-#QT
-StatementMacros:
-  - Q_OBJECT
-  - Q_GADGET
-  - Q_NAMESPACE
-  - QML_ELEMENT
-  - QML_NAMED_ELEMENT
-  - QML_SINGLETON
-  - Q_DECLARE_METATYPE
-  - Q_DECLARE_FLAGS
-  - Q_DECLARE_OPERATORS_FOR_FLAGS
-
-AttributeMacros:
-  - Q_PROPERTY
-  - Q_SIGNAL
-  - Q_SIGNALS
-  - Q_SLOT
-  - Q_SLOTS
-  - Q_INVOKABLE
