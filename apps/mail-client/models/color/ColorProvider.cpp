@@ -8,6 +8,22 @@
 
 namespace ISXMail {
 
+    namespace
+    {
+        std::string RoleToString(Theme theme)
+        {
+            switch (theme)
+            {
+                case Theme::Light:
+                    return "light";
+                case Theme::Dark:
+                    return "dark";
+                default:
+                    return "unknown";
+            }
+        }
+    }
+
     // CONSTRUCTORS
     ColorProvider::ColorProvider(QObject* parent)
         : QObject(parent)
@@ -17,6 +33,8 @@ namespace ISXMail {
         const QString theme = settings.value("theme", "Light").toString();
 
         SetTheme(theme);
+
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, std::string("ColorProvider: constructed"));
     }
 
     // METHODS
@@ -95,13 +113,14 @@ namespace ISXMail {
     bool ColorProvider::LoadScheme(const QString& path)
     {
         if (!m_model.LoadFromFile(path)) {
-            ISXService::Service::Logger().Log(Logging::LogLevel::Debug, std::string("Couldn't load from file ' "));
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug, std::string("ColorProvider::LoadScheme: couldn't load from file ") + path.toStdString());
             return false;
         }
 
         updateFromModel();
         emit colorsChanged();
 
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, std::string("ColorProvider::LoadScheme: loaded from file ") + path.toStdString());
         return true;
     }
 
@@ -120,6 +139,7 @@ namespace ISXMail {
         }
 
         if (!m_model.LoadFromFile(path)) {
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug, std::string("ColorProvider::SetTheme(Theme): failed to read file ") + path.toStdString());
             return false;
         }
 
@@ -128,6 +148,7 @@ namespace ISXMail {
         QSettings settings("ISX", "MailClient");
         settings.setValue("theme", theme == Theme::Dark ? "Dark" : "Light");
 
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, std::string("ColorProvider::SetTheme(Theme): theme was changed to ") + RoleToString(theme));
         emit colorsChanged();
         return true;
     }
@@ -137,11 +158,18 @@ namespace ISXMail {
         const QString theme = theme_name.trimmed().toLower();
 
         if (theme == "dark")
+        {
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug, std::string("ColorProvider::SetTheme(const QString&): theme was changed to ") + theme_name.toStdString());
             return SetTheme(Theme::Dark);
+        }
 
         if (theme == "light")
+        {
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug, std::string("ColorProvider::SetTheme(const QString&): theme was changed to ") + theme_name.toStdString());
             return SetTheme(Theme::Light);
+        }
 
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, std::string("ColorProvider::SetTheme(const QString&): failed to determine theme"));
         return false;
     }
 
@@ -168,6 +196,8 @@ namespace ISXMail {
         m_highlight = m_model.Color(ColorModel::Role::Highlight);
         m_border = m_model.Color(ColorModel::Role::Border);
         m_transparent = m_model.Color(ColorModel::Role::Transparent);
+
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, std::string("ColorProvider::updateFromModel: updated successfully!"));
     }
 
 } // namespace ISXMail

@@ -67,7 +67,7 @@ namespace ISXMail {
             return true;
         } catch (const std::exception& exception) {
             ISXService::Service::Logger().Log(
-                Logging::LogLevel::Error, std::string("MessageComposer::SendMailMessage failed: ") + exception.what());
+                Logging::LogLevel::Error, std::string("MessageComposer::SendMailMessage: failed: ") + exception.what());
             return false;
         }
     }
@@ -81,6 +81,8 @@ namespace ISXMail {
         Q_UNUSED(sender_name);
 
         if (recipient_email.trimmed().isEmpty() && subject.trimmed().isEmpty() && body.trimmed().isEmpty()) {
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                              "MessageComposer::SaveDraft: not enough data for saving the draft..");
             return false;
         }
 
@@ -102,6 +104,9 @@ namespace ISXMail {
                                                        Storage::DeliveryStatus::Pending);
             }
             m_database.Execute("COMMIT;");
+
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                              "MessageComposer::SaveDraft: draft was saved successfully!");
             return true;
         } catch (...) {
             ISXService::Service::Logger().Log(Logging::LogLevel::Error,
