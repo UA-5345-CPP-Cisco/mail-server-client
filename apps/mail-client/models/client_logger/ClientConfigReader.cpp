@@ -38,12 +38,12 @@ namespace ISXConfig {
         ClientConfig config;
         config.logLevel = static_cast<Logging::LogLevel>(obj_logLevel["log_level"].toInt());
 
-        config.mailServerHost = "127.0.0.1";
-        config.mailServerPort = "8080";
+        config.mailServerHost = "10.26.0.53";
+        config.mailServerPort = "80";
         if (obj.contains("mail_server") && obj["mail_server"].isObject()) {
             const QJsonObject mail_server = obj["mail_server"].toObject();
-            config.mailServerHost = mail_server["host"].toString("127.0.0.1").toStdString();
-            config.mailServerPort = QString::number(mail_server["port"].toInt(8080)).toStdString();
+            config.mailServerHost = mail_server["host"].toString("10.26.0.53").toStdString();
+            config.mailServerPort = QString::number(mail_server["port"].toInt(80)).toStdString();
         }
 
         return config;
