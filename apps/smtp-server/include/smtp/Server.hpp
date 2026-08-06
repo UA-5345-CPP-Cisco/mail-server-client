@@ -8,8 +8,8 @@
 
 #include "logger/Logger.h"
 #include "mail_storage/Database.h"
+#include "mail_storage/MailMessageActorRepository.h"
 #include "mail_storage/MailMessageRepository.h"
-#include "mail_storage/MessageRecipientRepository.h"
 #include "smtp/AuthService.hpp"
 #include "smtp/Event.hpp"
 #include "smtp/QueueDispatcher.hpp"
@@ -30,7 +30,7 @@ struct SmtpServerDependencies
   IAuthService& authService;
   Storage::Database& database;
   Storage::MailMessageRepository& mailMessages;
-  Storage::MessageRecipientRepository& messageRecipients;
+  Storage::MailMessageActorRepository& messageActors;
   std::mutex& storageMutex;
   QueueDispatcher& queueDispatcher;
   Logging::ILogger& logger;

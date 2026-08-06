@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <optional>
 #include <utility>
 
 #include <mail_server/services/MailStorage.h>
@@ -6,10 +7,20 @@
 
 namespace ISXMailServer {
 
+namespace {
+
+bool IsRecipientActor(Storage::MailMessageActorType actor_type)
+{
+  return actor_type == Storage::MailMessageActorType::To || actor_type == Storage::MailMessageActorType::Cc ||
+         actor_type == Storage::MailMessageActorType::Bcc;
+}
+
+} // namespace
+
 MailStorage::MailStorage(const DatabaseConfiguration& configuration) :
   m_database(configuration.storage_path),
   m_messages(m_database),
-  m_recipients(m_database),
+  m_actors(m_database),
   m_users(m_database)
 {
   Storage::MigrationRunner runner(m_database, configuration.migrations_path);
@@ -23,9 +34,16 @@ boost::json::array MailStorage::FindMailsForUser(const std::string& user_email)
   boost::json::array mails;
   for (const Storage::MailMessageRecord& message : m_messages.FindAll())
   {
-    if (message.sender_email == user_email || HasRecipient(message, user_email))
+    const std::vector<Storage::MailMessageActorRecord> actors = m_actors.FindByMessageId(message.id);
+    const auto current_actor =
+      std::find_if(actors.begin(),
+                   actors.end(),
+                   [&user_email](const Storage::MailMessageActorRecord& actor)
+                   { return actor.actor_email == user_email && !actor.deleted_at.has_value(); });
+
+    if (current_actor != actors.end())
     {
-      mails.push_back(SerializeMessage(message));
+      mails.push_back(SerializeMessage(message, *current_actor, actors));
     }
   }
 
@@ -52,41 +70,65 @@ std::optional<Storage::UserRecord> MailStorage::FindUserByEmail(const std::strin
   return m_users.FindByEmail(email);
 }
 
-bool MailStorage::SetStarred(std::int64_t message_id, bool starred)
+bool MailStorage::SetStarred(std::int64_t message_id, const std::string& actor_email, bool starred)
 {
   std::lock_guard<std::mutex> lock(m_mutex);
-  return m_messages.UpdateStarred(message_id, starred);
+  return m_actors.SetStarred(message_id, actor_email, starred);
 }
 
-bool MailStorage::SetArchived(std::int64_t message_id, bool archived)
+bool MailStorage::SetArchived(std::int64_t message_id, const std::string& actor_email, bool archived)
 {
   std::lock_guard<std::mutex> lock(m_mutex);
-  return m_messages.UpdateArchive(message_id, archived);
+  return m_actors.SetArchived(message_id, actor_email, archived);
 }
 
-bool MailStorage::DeleteMail(std::int64_t message_id)
+bool MailStorage::DeleteMail(std::int64_t message_id, const std::string& actor_email)
 {
   std::lock_guard<std::mutex> lock(m_mutex);
-  return m_messages.DeleteMessage(message_id);
+  return m_actors.MarkDeleted(message_id, actor_email);
 }
 
-boost::json::object MailStorage::SerializeMessage(const Storage::MailMessageRecord& message)
+boost::json::object MailStorage::SerializeMessage(const Storage::MailMessageRecord& message,
+                                                  const Storage::MailMessageActorRecord& current_actor,
+                                                  const std::vector<Storage::MailMessageActorRecord>& actors)
 {
   boost::json::array recipients;
-  for (const Storage::MessageRecipientRecord& recipient : m_recipients.FindByMessageId(message.id))
+  std::string sender_email;
+
+  for (const Storage::MailMessageActorRecord& actor : actors)
   {
-    recipients.push_back(boost::json::string(recipient.recipient_email));
+    if (actor.actor_type == Storage::MailMessageActorType::From)
+    {
+      sender_email = actor.actor_email;
+      continue;
+    }
+
+    if (IsRecipientActor(actor.actor_type))
+    {
+      recipients.push_back(boost::json::string(actor.actor_email));
+    }
   }
 
+  const bool is_sender = current_actor.actor_type == Storage::MailMessageActorType::From;
+  const bool is_draft = message.message_status == Storage::MailMessageStatus::Draft;
+  const bool is_archive = current_actor.archived_at.has_value();
+
   return boost::json::object{{"id", message.id},
-                             {"from", message.sender_email},
+                             {"from", sender_email},
                              {"to", std::move(recipients)},
                              {"subject", message.subject.value_or("")},
                              {"body", message.body},
                              {"created_at", message.created_at},
-                             {"is_inbox", message.is_inbox},
-                             {"is_starred", message.is_starred},
-                             {"status", StatusToString(message.status)}};
+                             {"is_inbox", !is_sender && !is_draft && !is_archive},
+                             {"is_sent", is_sender && !is_draft && !is_archive},
+                             {"is_draft", is_draft},
+                             {"is_starred", current_actor.starred_at.has_value()},
+                             {"is_archive", is_archive},
+                             {"is_read", current_actor.read_at.has_value()},
+                             {"read_at", current_actor.read_at.value_or("")},
+                             {"starred_at", current_actor.starred_at.value_or("")},
+                             {"archived_at", current_actor.archived_at.value_or("")},
+                             {"status", StatusToString(message.message_status)}};
 }
 
 std::string MailStorage::StatusToString(Storage::MailMessageStatus status) const
@@ -101,22 +143,11 @@ std::string MailStorage::StatusToString(Storage::MailMessageStatus status) const
     return "sending";
   case Storage::MailMessageStatus::Sent:
     return "sent";
-  case Storage::MailMessageStatus::Archive:
-    return "archive";
   case Storage::MailMessageStatus::Failed:
     return "failed";
   }
 
   return "unknown";
-}
-
-bool MailStorage::HasRecipient(const Storage::MailMessageRecord& message, const std::string& user_email)
-{
-  const std::vector<Storage::MessageRecipientRecord> recipients = m_recipients.FindByMessageId(message.id);
-  return std::any_of(recipients.begin(),
-                     recipients.end(),
-                     [&user_email](const Storage::MessageRecipientRecord& recipient)
-                     { return recipient.recipient_email == user_email; });
 }
 
 } // namespace ISXMailServer

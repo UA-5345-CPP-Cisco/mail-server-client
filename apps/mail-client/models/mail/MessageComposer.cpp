@@ -26,7 +26,7 @@ namespace ISXMail {
         : QObject(parent)
         , m_database(ISXDatabaseManager::DatabaseManager::DatabasePath())
         , m_repository(m_database)
-        , m_recipient_repository(m_database)
+        , m_actor_repository(m_database)
     {
         ISXService::Service::Logger().Log(Logging::LogLevel::Info,
                                           std::string("MessageComposer: opened DB at ") +
@@ -87,19 +87,17 @@ namespace ISXMail {
         m_database.Execute("BEGIN IMMEDIATE;");
 
         try {
-            const std::int64_t message_id = m_repository.CreateMessage(std::nullopt,
-                                                                       sender_email.toStdString(),
-                                                                       ToOptionalString(subject),
-                                                                       body.toStdString(),
-                                                                       std::nullopt,
-                                                                       false,
-                                                                       Storage::MailMessageStatus::Draft);
+            const std::int64_t message_id = m_repository.CreateMessage(
+                ToOptionalString(subject), body.toStdString(), std::nullopt, Storage::MailMessageStatus::Draft);
+
+            m_actor_repository.CreateActor(
+                message_id, sender_email.toStdString(), Storage::MailMessageActorType::From, std::nullopt);
 
             if (!recipient_email.trimmed().isEmpty()) {
-                m_recipient_repository.CreateRecipient(message_id,
-                                                       recipient_email.toStdString(),
-                                                       Storage::RecipientType::To,
-                                                       Storage::DeliveryStatus::Pending);
+                m_actor_repository.CreateActor(message_id,
+                                               recipient_email.toStdString(),
+                                               Storage::MailMessageActorType::To,
+                                               Storage::DeliveryStatus::Pending);
             }
             m_database.Execute("COMMIT;");
             return true;

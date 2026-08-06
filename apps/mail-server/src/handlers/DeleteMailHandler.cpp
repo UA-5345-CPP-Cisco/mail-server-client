@@ -20,6 +20,17 @@ std::int64_t ReadRequiredInt64(const json::object& object, std::string_view fiel
   return value->is_int64() ? value->as_int64() : static_cast<std::int64_t>(value->as_uint64());
 }
 
+std::string ReadRequiredUserEmail(Request const& request)
+{
+  const auto user_email_header = request.find("X-User-Email");
+  if (user_email_header == request.end() || user_email_header->value().empty())
+  {
+    throw std::runtime_error("X-User-Email header is required");
+  }
+
+  return std::string{user_email_header->value()};
+}
+
 } // namespace
 
 Response DeleteMailHandler(Request const& request)
@@ -41,11 +52,12 @@ Response DeleteMailHandler(Request const& request)
   {
     const json::object& object = input.as_object();
     const std::int64_t message_id = ReadRequiredInt64(object, "id");
+    const std::string user_email = ReadRequiredUserEmail(request);
 
-    const bool deleted = ServiceRegistry::Storage().DeleteMail(message_id);
+    const bool deleted = ServiceRegistry::Storage().DeleteMail(message_id, user_email);
     if (!deleted)
     {
-      return MakeError(request, http::status::not_found, "Message not found");
+      return MakeError(request, http::status::not_found, "Message not found for user");
     }
 
     ServiceRegistry::Logger().Log(LogLevel::Info, "Message " + std::to_string(message_id) + " deleted");
