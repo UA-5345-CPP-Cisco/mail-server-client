@@ -1,0 +1,35 @@
+# Auto-detect text files and normalize line endings to LF on commit.
+# Binary files are left alone.
+* text=auto eol=lf
+
+# Explicit text files
+*.cpp   text eol=lf
+*.hpp   text eol=lf
+*.h     text eol=lf
+*.c     text eol=lf
+*.cmake text eol=lf
+*.txt   text eol=lf
+*.md    text eol=lf
+*.json  text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.sql   text eol=lf
+*.sh    text eol=lf
+*.qml   text eol=lf
+
+# Shell scripts must be LF even on Windows
+*.sh    text eol=lf
+
+# Windows-native files keep CRLF
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+
+# Binaries — never touch
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.pdf   binary
+*.db    binary
+*.zip   binary

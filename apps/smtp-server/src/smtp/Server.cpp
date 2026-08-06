@@ -133,7 +133,7 @@ std::shared_ptr<SmtpSession> SmtpServer::GetOrCreateSession(ConnectionId connect
                              dependencies_.authService,
                              dependencies_.database,
                              dependencies_.mailMessages,
-                             dependencies_.messageRecipients,
+                             dependencies_.messageActors,
                              dependencies_.storageMutex,
                              dependencies_.logger};
 

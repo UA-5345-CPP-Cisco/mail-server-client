@@ -563,18 +563,15 @@ std::int64_t SmtpSessionHandler::StoreMessage(const SmtpSessionState& state, Smt
 
   try
   {
-    const std::int64_t messageId = context.mailMessages.CreateMessage(std::nullopt,
-                                                                      state.sender,
-                                                                      std::nullopt,
-                                                                      state.messageBuffer,
-                                                                      std::nullopt,
-                                                                      true,
-                                                                      Storage::MailMessageStatus::Queued);
+    const std::int64_t messageId = context.mailMessages.CreateMessage(
+      std::nullopt, state.messageBuffer, std::nullopt, Storage::MailMessageStatus::Queued);
+
+    context.messageActors.CreateActor(messageId, state.sender, Storage::MailMessageActorType::From, std::nullopt);
 
     for (const std::string& recipient : state.recipients)
     {
-      context.messageRecipients.CreateRecipient(
-        messageId, recipient, Storage::RecipientType::To, Storage::DeliveryStatus::Queued);
+      context.messageActors.CreateActor(
+        messageId, recipient, Storage::MailMessageActorType::To, Storage::DeliveryStatus::Queued);
     }
 
     context.database.Execute("COMMIT;");

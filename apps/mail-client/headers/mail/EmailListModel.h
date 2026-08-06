@@ -10,8 +10,8 @@
 #include <vector>
 
 #include "mail_storage/Database.h"
+#include "mail_storage/MailMessageActorRepository.h"
 #include "mail_storage/MailMessageRepository.h"
-#include "mail_storage/MessageRecipientRepository.h"
 
 namespace ISXMail {
 
@@ -85,6 +85,9 @@ namespace ISXMail {
         void dataAdded();
 
     private:
+        bool DeleteFromStorage(const EmailData& item);
+        bool SetStarredInStorage(const EmailData& item, bool starred);
+        bool SetArchivedInStorage(const EmailData& item, bool archived);
         void LoadFromDatabase();
         void ReplaceData(std::vector<EmailData> data);
         QString MakePreview(const QString& text, int maxLen = 50);
@@ -92,7 +95,7 @@ namespace ISXMail {
 
         Storage::Database m_database;
         Storage::MailMessageRepository m_message_repository;
-        Storage::MessageRecipientRepository m_recipient_repository;
+        Storage::MailMessageActorRepository m_actor_repository;
         std::vector<EmailData> m_data;
     };
 

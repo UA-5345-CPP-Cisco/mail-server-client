@@ -4,8 +4,8 @@
 #include <QString>
 
 #include "mail_storage/Database.h"
+#include "mail_storage/MailMessageActorRepository.h"
 #include "mail_storage/MailMessageRepository.h"
-#include "mail_storage/MessageRecipientRepository.h"
 
 namespace ISXMail {
 
@@ -31,7 +31,7 @@ namespace ISXMail {
     private:
         Storage::Database m_database;
         Storage::MailMessageRepository m_repository;
-        Storage::MessageRecipientRepository m_recipient_repository;
+        Storage::MailMessageActorRepository m_actor_repository;
 
         void EnsureSchema();
     };
