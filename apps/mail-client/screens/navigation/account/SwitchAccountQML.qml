@@ -2,8 +2,7 @@ import QtQuick
 import QtQuick.Effects
 import QtQuick.Shapes
 
-Rectangle
-{
+Rectangle {
     id: switchAccountRectangle
 
     implicitWidth: 250
@@ -13,23 +12,20 @@ Rectangle
     color: Color.background
     radius: 14
 
-    signal accountSelected()
-    signal addAccountRequested()
+    signal accountSelected
+    signal addAccountRequested
 
-    MouseArea
-    {
+    MouseArea {
         id: rootClickArea
         anchors.fill: parent
 
-        onClicked:
-        {
-            switchAccountRectangle.forceActiveFocus()
+        onClicked: {
+            switchAccountRectangle.forceActiveFocus();
         }
     }
 
     // Header
-    Rectangle
-    {
+    Rectangle {
         id: headerRectangle
         anchors.top: parent.top
         anchors.left: parent.left
@@ -37,8 +33,7 @@ Rectangle
         height: 52
         color: Color.transparent
 
-        Text
-        {
+        Text {
             id: headerTitleText
             x: 16
             y: 16
@@ -51,8 +46,7 @@ Rectangle
             verticalAlignment: Text.AlignVCenter
         }
 
-        Rectangle
-        {
+        Rectangle {
             id: closeButtonWrapperRectangle
             anchors.right: parent.right
             anchors.rightMargin: 16
@@ -61,8 +55,7 @@ Rectangle
             height: 16
             color: Color.transparent
 
-            Image
-            {
+            Image {
                 id: closeIconImage
                 anchors.centerIn: parent
                 source: "qrc:/pngs/assets/ic_close_window_black.svg"
@@ -75,29 +68,29 @@ Rectangle
 
             scale: closeClickArea.containsMouse ? 1.3 : 1.0
 
-            Behavior on scale
-            {
+            Behavior on scale {
                 id: closeScaleBehavior
-                NumberAnimation { id: closeScaleAnimation; duration: 150; easing.type: Easing.InOutQuad }
+                NumberAnimation {
+                    id: closeScaleAnimation
+                    duration: 150
+                    easing.type: Easing.InOutQuad
+                }
             }
 
-            MouseArea
-            {
+            MouseArea {
                 id: closeClickArea
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
 
-                onClicked:
-                {
-                    switchAccountRectangle.parent.source = ""
+                onClicked: {
+                    switchAccountRectangle.parent.source = "";
                 }
             }
         }
     }
 
     // Divider after header
-    Rectangle
-    {
+    Rectangle {
         id: headerDividerRectangle
         anchors.top: headerRectangle.bottom
         anchors.left: parent.left
@@ -109,8 +102,7 @@ Rectangle
     }
 
     // Account list
-    ListView
-    {
+    ListView {
         id: accountListView
 
         property int maxHeight: 214
@@ -133,8 +125,7 @@ Rectangle
     }
 
     // Divider before button
-    Rectangle
-    {
+    Rectangle {
         id: listDividerRectangle
         anchors.top: accountListView.bottom
         anchors.left: parent.left
@@ -146,8 +137,7 @@ Rectangle
     }
 
     // "Add account" button
-    Rectangle
-    {
+    Rectangle {
         id: addButtonRectangle
         anchors.top: listDividerRectangle.bottom
         anchors.left: parent.left
@@ -155,10 +145,9 @@ Rectangle
         height: 72
         color: Color.transparent
 
-        signal addAccountRequested()
+        signal addAccountRequested
 
-        Rectangle
-        {
+        Rectangle {
             id: innerButtonBlockRectangle
             x: 8
             y: 8
@@ -167,8 +156,7 @@ Rectangle
             radius: 10
             color: addClickArea.containsMouse ? Color.surface : Color.transparent
 
-            Rectangle
-            {
+            Rectangle {
                 id: avatarWrapperRectangle
                 x: 12
                 y: 10
@@ -179,8 +167,7 @@ Rectangle
                 border.color: Color.outline
                 border.width: 1
 
-                Image
-                {
+                Image {
                     id: plusIconImage
                     source: "qrc:/pngs/assets/ic_plus.svg"
                     width: 12
@@ -191,16 +178,18 @@ Rectangle
                     anchors.centerIn: parent
                     scale: addClickArea.containsMouse ? 1.3 : 1.0
 
-                    Behavior on scale
-                    {
+                    Behavior on scale {
                         id: plusScaleBehavior
-                        NumberAnimation { id: plusScaleAnimation; duration: 150; easing.type: Easing.InOutQuad }
+                        NumberAnimation {
+                            id: plusScaleAnimation
+                            duration: 150
+                            easing.type: Easing.InOutQuad
+                        }
                     }
                 }
             }
 
-            Text
-            {
+            Text {
                 id: addButtonText
                 x: 60
                 y: 18
@@ -213,23 +202,19 @@ Rectangle
                 verticalAlignment: Text.AlignVCenter
             }
 
-            MouseArea
-            {
+            MouseArea {
                 id: addClickArea
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
 
-                onClicked:
-                {
-                    switchAccountRectangle.addAccountRequested()
-                    authLoader.active = true
-                    if (String( authLoader.source) === "")
-                    {
-                        authLoader.source = "screens/navigation/account/AddAccountQML.qml"
-                    } else
-                    {
-                        authLoader.source = ""
+                onClicked: {
+                    switchAccountRectangle.addAccountRequested();
+                    authLoader.active = true;
+                    if (String(authLoader.source) === "") {
+                        authLoader.source = "screens/navigation/account/AddAccountQML.qml";
+                    } else {
+                        authLoader.source = "";
                     }
                 }
             }
@@ -237,8 +222,7 @@ Rectangle
     }
 
     // Background padding block
-    Rectangle
-    {
+    Rectangle {
         id: bottomSpacerRectangle
         anchors.top: addButtonRectangle.bottom
         anchors.left: parent.left
@@ -246,14 +230,12 @@ Rectangle
         height: 300
         color: Color.background
 
-        MouseArea
-        {
+        MouseArea {
             id: spacerIgnoreClickArea
             anchors.fill: parent
             hoverEnabled: true
 
-            onClicked:
-            {
+            onClicked: {
                 // Intentional no-op to capture background clicks
             }
         }

@@ -8,8 +8,8 @@ Rectangle {
     // how far below the resting position the popup starts/ends, i.e. how deep "into" the footer it sits when hidden
     property real footerOffset: 8
 
-    signal cancelClicked()
-    signal closeRequested()
+    signal cancelClicked
+    signal closeRequested
 
     // shows the popup by playing the entrance animation (can be called again and again)
     function show() {
@@ -24,7 +24,8 @@ Rectangle {
     function hide() {
         hideTimer.stop();
         hideTimer.repeatCycles = 0;
-        if (!visible) return;
+        if (!visible)
+            return;
         entranceAnimation.stop();
         exitAnimation.restart();
     }
@@ -116,11 +117,11 @@ Rectangle {
         property int repeatCycles: 4
 
         onTriggered: {
-            repeatCycles--
+            repeatCycles--;
 
             if (repeatCycles <= 0) {
-                stop()
-                hide()
+                stop();
+                hide();
             }
         }
     }
@@ -261,5 +262,4 @@ Rectangle {
             }
         }
     }
-
 }

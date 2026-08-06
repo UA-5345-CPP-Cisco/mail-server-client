@@ -9,6 +9,7 @@ on:
       - 'apps/**/*.cpp'
       - 'apps/**/*.h'
       - 'apps/**/*.hpp'
+      - 'apps/**/*.qml'
       - 'libs/**/*.cpp'
       - 'libs/**/*.h'
       - 'libs/**/*.hpp'
@@ -32,15 +33,24 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget gnupg lsb-release software-properties-common libsqlite3-dev libssl-dev
+          sudo apt-get install -y wget gnupg lsb-release software-properties-common libsqlite3-dev libssl-dev qt6-declarative-dev-tools
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
           sudo ./llvm.sh 22
           sudo apt-get install -y clang-format-22
           clang-format-22 --version
+          if command -v qmlformat >/dev/null 2>&1; then
+            qmlformat --version
+          elif [[ -x /usr/lib/qt6/bin/qmlformat ]]; then
+            echo "/usr/lib/qt6/bin" >> "$GITHUB_PATH"
+            /usr/lib/qt6/bin/qmlformat --version
+          else
+            echo "qmlformat not found"
+            exit 1
+          fi
 
       - name: Check formatting
-        run: CLANG_FORMAT=clang-format-22 scripts/check-clang-format.sh
+        run: CLANG_FORMAT=clang-format-22 scripts/check-format.sh
 
       - name: Configure CMake
         run: >

@@ -2,8 +2,7 @@ import QtQuick
 import QtQuick.Effects
 import QtQuick.Shapes
 
-Rectangle
-{
+Rectangle {
     id: rootRectangle
     height: 72
     color: Color.transparent
@@ -18,10 +17,9 @@ Rectangle
     required property bool isActive
     required property int index
 
-    signal selected()
+    signal selected
 
-    Rectangle
-    {
+    Rectangle {
         id: selectAccountButtonRectangle
         x: 8
         y: 8
@@ -31,8 +29,7 @@ Rectangle
         color: delegateClickArea.containsMouse ? Color.surface : Color.transparent
 
         // Avatar wrapper for added users
-        Rectangle
-        {
+        Rectangle {
             id: avatarContainerRectangle
             x: 12
             y: 10
@@ -41,8 +38,7 @@ Rectangle
             radius: 18
             color: avatarUrl !== "" ? Color.transparent : avatarColor
 
-            Image
-            {
+            Image {
                 id: avatarIcon
                 anchors.fill: parent
                 source: avatarUrl !== "" ? avatarUrl : ""
@@ -50,20 +46,16 @@ Rectangle
                 fillMode: Image.PreserveAspectCrop
                 layer.enabled: true
 
-                layer.effect: Component
-                {
+                layer.effect: Component {
                     id: maskComponent
 
-                    MultiEffect
-                    {
+                    MultiEffect {
                         id: roundMaskEffect
                         maskEnabled: true
 
-                        maskSource: ShaderEffectSource
-                        {
+                        maskSource: ShaderEffectSource {
                             id: maskShaderSource
-                            sourceItem: Rectangle
-                            {
+                            sourceItem: Rectangle {
                                 id: maskShapeRectangle
                                 width: avatarContainerRectangle.width
                                 height: avatarContainerRectangle.height
@@ -75,8 +67,7 @@ Rectangle
             }
 
             // Text letter (shown if no image)
-            Text
-            {
+            Text {
                 id: fallbackInitialText
                 anchors.centerIn: parent
                 visible: avatarUrl === ""
@@ -89,16 +80,14 @@ Rectangle
         }
 
         // User informations
-        Column
-        {
+        Column {
             id: accountTextDataColumn
             x: 60
             y: 10
             width: parent.width - 88
             spacing: 0
 
-            Text
-            {
+            Text {
                 id: accountNameText
                 width: parent.width
                 height: 20
@@ -111,8 +100,7 @@ Rectangle
                 elide: Text.ElideRight
             }
 
-            Text
-            {
+            Text {
                 id: accountEmailText
                 width: parent.width
                 height: 16
@@ -127,8 +115,7 @@ Rectangle
         }
 
         // Checkmark for active account
-        Image
-        {
+        Image {
             id: activeCheckmarkIcon
             x: parent.width - 28
             y: 20
@@ -142,17 +129,15 @@ Rectangle
         }
 
         // Handles account selection clicks and hover effects
-        MouseArea
-        {
+        MouseArea {
             id: delegateClickArea
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
 
-            onClicked:
-            {
+            onClicked: {
                 if (accountModel.SetActiveAccount(index)) {
-                    rootRectangle.selected()
+                    rootRectangle.selected();
                 }
             }
         }

@@ -30,8 +30,7 @@ Rectangle {
         }
     }
 
-    MouseArea
-    {
+    MouseArea {
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         anchors.fill: parent
         hoverEnabled: true
@@ -56,7 +55,6 @@ Rectangle {
                 root.state = 1;
             }
         }
-
     }
     Menu {
         id: contextMenu
