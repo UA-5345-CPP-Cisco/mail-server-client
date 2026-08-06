@@ -109,7 +109,8 @@ Rectangle {
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
-                    wrapMode: Text.Wrap
+                    wrapMode: Text.NoWrap
+                    elide: Text.ElideRight
                 }
             }
             Rectangle {
@@ -137,7 +138,8 @@ Rectangle {
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
-                    wrapMode: Text.Wrap
+                    wrapMode: Text.NoWrap
+                    elide: Text.ElideRight
                 }
             }
         }
