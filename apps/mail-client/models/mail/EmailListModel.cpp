@@ -119,11 +119,7 @@ namespace ISXMail {
             return item.id >= 0 && !item.is_draft;
         }
 
-        bool IsRecipientActor(Storage::MailMessageActorType actor_type)
-        {
-            return actor_type == Storage::MailMessageActorType::To || actor_type == Storage::MailMessageActorType::Cc ||
-                   actor_type == Storage::MailMessageActorType::Bcc;
-        }
+
     } // namespace
 
     EmailListModel::EmailListModel(QObject* parent)
@@ -616,7 +612,7 @@ namespace ISXMail {
         }
 
         if (!IsServerBacked(item)) {
-            return m_message_repository.DeleteMessage(item.id);
+            return true;
         }
 
         try {
@@ -647,7 +643,7 @@ namespace ISXMail {
         }
 
         if (!IsServerBacked(item)) {
-            return m_actor_repository.SetStarred(item.id, current_email.toStdString(), starred);
+            return true;
         }
 
         try {
@@ -675,7 +671,7 @@ namespace ISXMail {
         }
 
         if (!IsServerBacked(item)) {
-            return m_actor_repository.SetArchived(item.id, current_email.toStdString(), archived);
+            return true;
         }
 
         try {

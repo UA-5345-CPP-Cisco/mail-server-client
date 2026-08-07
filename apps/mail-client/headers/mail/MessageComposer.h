@@ -4,6 +4,7 @@
 #include <QString>
 
 
+
 namespace ISXMail {
 
     class MessageComposer : public QObject
@@ -25,10 +26,7 @@ namespace ISXMail {
                                    const QString& subject,
                                    const QString& body);
 
-    private:
-        Storage::Database m_database;
-        Storage::MailMessageRepository m_repository;
-        Storage::MailMessageActorRepository m_actor_repository;
+
 
     };
 

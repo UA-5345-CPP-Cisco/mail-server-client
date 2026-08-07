@@ -105,9 +105,7 @@ namespace ISXMail {
         void ReplaceData(std::vector<EmailData> data);
         QString MakePreview(const QString& text, int maxLen = 50);
 
-        Storage::Database m_database;
-        Storage::MailMessageRepository m_message_repository;
-        Storage::MailMessageActorRepository m_actor_repository;
+
         std::vector<EmailData> m_data;
         std::vector<InboxMessageCallback> m_inbox_callbacks;
         bool m_isLoading{false};

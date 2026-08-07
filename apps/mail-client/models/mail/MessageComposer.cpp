@@ -24,9 +24,6 @@ namespace ISXMail {
 
     MessageComposer::MessageComposer(QObject* parent)
         : QObject(parent)
-        , m_database(ISXDatabaseManager::DatabaseManager::DatabasePath())
-        , m_repository(m_database)
-        , m_actor_repository(m_database)
     {
         ISXService::Service::Logger().Log(Logging::LogLevel::Info,
                                           "MessageComposer: initialized without DB");
@@ -83,37 +80,8 @@ namespace ISXMail {
             return false;
         }
 
-        m_database.Execute("BEGIN IMMEDIATE;");
-
-        try {
-            const std::int64_t message_id = m_repository.CreateMessage(
-                ToOptionalString(subject), body.toStdString(), std::nullopt, Storage::MailMessageStatus::Draft);
-
-            m_actor_repository.CreateActor(
-                message_id, sender_email.toStdString(), Storage::MailMessageActorType::From, std::nullopt);
-
-            if (!recipient_email.trimmed().isEmpty()) {
-                m_actor_repository.CreateActor(message_id,
-                                               recipient_email.toStdString(),
-                                               Storage::MailMessageActorType::To,
-                                               Storage::DeliveryStatus::Pending);
-            }
-            m_database.Execute("COMMIT;");
-            return true;
-        } catch (...) {
-            ISXService::Service::Logger().Log(Logging::LogLevel::Error,
-                                              "MessageComposer::SaveDraft: exception occurred, attempting ROLLBACK");
-            try {
-                m_database.Execute("ROLLBACK;");
-                ISXService::Service::Logger().Log(Logging::LogLevel::Info,
-                                                  "MessageComposer::SaveDraft: rollback succeeded");
-            } catch (...) {
-                ISXService::Service::Logger().Log(Logging::LogLevel::Error,
-                                                  "MessageComposer::SaveDraft: rollback failed");
-            }
-
-            throw;
-        }
+        // Local draft saving is not supported as there is no local DB.
+        return false;
     }
 
 } // namespace ISXMail
