@@ -13,106 +13,80 @@ Rectangle {
     radius: 14
     visible: true
 
-    function getValidationError(type, text) 
-    {
+    function getValidationError(type, text) {
         var value = text.trim();
-        var value_lower = text.trim().toLowerCase()
-        const layouts = 
-        [
-            "qwertyuiop", 
-            "asdfghjkl", 
-            "zxcvbnm", 
-            "1234567890"
-        ];
+        var value_lower = text.trim().toLowerCase();
+        const layouts = ["qwertyuiop", "asdfghjkl", "zxcvbnm", "1234567890"];
 
-        if (type === "name") 
-        {
-            if (value.length === 0) 
-            {
-                return "Name cannot be empty"
+        if (type === "name") {
+            if (value.length === 0) {
+                return "Name cannot be empty";
             }
-            if (value.split(/\s+/).length !== 2)
-            {
-                return "Please enter your first and last name"
+            if (value.split(/\s+/).length !== 2) {
+                return "Please enter your first and last name";
             }
-            if (!/^[A-Z][a-z]+ [A-Z][a-z]+$/.test(value))
-            {
-                return "Each name must start with a capital letter"
+            if (!/^[A-Z][a-z]+ [A-Z][a-z]+$/.test(value)) {
+                return "Each name must start with a capital letter";
             }
 
-            return ""
+            return "";
         }
 
-        if (type === "email") 
-        {
-            if (value.length === 0)
-            {
-                return "Email cannot be empty"
+        if (type === "email") {
+            if (value.length === 0) {
+                return "Email cannot be empty";
             }
 
-            var email_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-            if (!email_regex.test(value)) 
-            {
-                return "Invalid email format"
+            var email_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email_regex.test(value)) {
+                return "Invalid email format";
             }
 
-            return ""
+            return "";
         }
 
-        if (type === "password") 
-        {
-            if (value.length === 0) 
-            {
-                return "Password cannot be empty"
+        if (type === "password") {
+            if (value.length === 0) {
+                return "Password cannot be empty";
             }
 
-            if (value.length < 6) 
-            {
-                return "Password must be at least 6 characters long"
+            if (value.length < 6) {
+                return "Password must be at least 6 characters long";
             }
 
-            if (value.length < 10) 
-            {
-                for (let layout of layouts) 
-                {
-                    for (let i = 0; i <= layout.length - 5; i++) 
-                    {
+            if (value.length < 10) {
+                for (let layout of layouts) {
+                    for (let i = 0; i <= layout.length - 5; i++) {
                         let forward = layout.substring(i, i + 5);
                         let backward = forward.split("").reverse().join("");
-            
-                        if (value_lower.includes(forward) || value_lower.includes(backward)) 
-                        {
+
+                        if (value_lower.includes(forward) || value_lower.includes(backward)) {
                             return "Password cannot contain simple sequences";
                         }
                     }
                 }
             }
 
-            if (/(.)\1{4,}/.test(value)) 
-            {
+            if (/(.)\1{4,}/.test(value)) {
                 return "Password cannot contain repeated characters";
             }
 
-            if (!/[A-Z]/.test(value)) 
-            {
-                return "Password must contain at least one uppercase letter"
+            if (!/[A-Z]/.test(value)) {
+                return "Password must contain at least one uppercase letter";
             }
 
-            if (!/\d/.test(value)) 
-            {
-                return "Password must contain at least one number"
+            if (!/\d/.test(value)) {
+                return "Password must contain at least one number";
             }
 
-            if (!/[!@#$%^&*(),.?":{}|<>\-_]/.test(value))
-            {
-                return "Password must contain at least one special character"
+            if (!/[!@#$%^&*(),.?":{}|<>\-_]/.test(value)) {
+                return "Password must contain at least one special character";
             }
 
-            return ""
+            return "";
         }
-        return ""
+        return "";
     }
-
 
     Rectangle {
         id: backgroundRectangle

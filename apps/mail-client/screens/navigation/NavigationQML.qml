@@ -4,23 +4,21 @@ import QtQuick
 Rectangle {
     id: navigationQML
 
-        signal draftClicked
-        signal inboxClicked
-        signal sentClicked
-        signal starredClicked
-        signal archiveClicked
-        signal accountChanged
+    signal draftClicked
+    signal inboxClicked
+    signal sentClicked
+    signal starredClicked
+    signal archiveClicked
+    signal accountChanged
 
     color: Color.background
 
-    function showPopup(msg)
-    {
+    function showPopup(msg) {
         statePopup.message = String(msg);
         statePopup.show();
     }
 
-    function closeAccountMenu()
-    {
+    function closeAccountMenu() {
         accountChangeLoader.source = "";
     }
     // headerNavigation
@@ -808,7 +806,6 @@ Rectangle {
         }
     }
 
-
     // Footer: Settings button
     Rectangle {
         id: footerNavigation
@@ -946,14 +943,12 @@ Rectangle {
             target: accountChangeLoader.item
             ignoreUnknownSignals: true
 
-            function onAccountSelected()
-            {
+            function onAccountSelected() {
                 closeAccountMenu();
                 accountChanged();
             }
 
-            function onAddAccountRequested()
-            {
+            function onAddAccountRequested() {
                 closeAccountMenu();
             }
         }

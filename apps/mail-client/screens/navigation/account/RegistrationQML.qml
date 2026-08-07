@@ -114,8 +114,7 @@ Item {
                 color: Color.background
                 radius: 8
             }
-            cursorDelegate: Item {
-            }
+            cursorDelegate: Item {}
 
             Rectangle {
                 id: nameCustomCursorRectangle
@@ -191,13 +190,12 @@ Item {
                 id: emailBackgroundRectangle
 
                 //border.color: emailTextField.activeFocus ? Color.hover : Color.outline
-                 border.color: rootItem.emailError !== "" ? "#fda29b" : (emailTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
+                border.color: rootItem.emailError !== "" ? "#fda29b" : (emailTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
                 border.width: emailTextField.activeFocus ? 2 : 1
                 color: Color.background
                 radius: 8
             }
-            cursorDelegate: Item {
-            }
+            cursorDelegate: Item {}
 
             Rectangle {
                 id: emailCustomCursorRectangle
@@ -270,7 +268,6 @@ Item {
             topPadding: 12
             width: parent.width
 
-
             Image {
                 id: eyeIcon
                 anchors.verticalCenter: parent.verticalCenter
@@ -289,8 +286,6 @@ Item {
                     onClicked: passwordVisible = !passwordVisible
                 }
             }
-
-
 
             background: Rectangle {
                 id: passwordBackgroundRectangle
@@ -406,15 +401,14 @@ Item {
                 hoverEnabled: true
 
                 onClicked: {
-                    var nameErr = rootWindow.getValidationError("name", fullNameTextField.text)
-                    var emailErr = rootWindow.getValidationError("email", emailTextField.text)
-                    var pwdErr = rootWindow.getValidationError("password", passwordTextField.text)
-                    emailError = emailErr
-                    passwordError = pwdErr
-                    nameError = nameErr
-                    if(nameError === "" && emailError === "" && passwordError === "")
-                    {
-                        rootItem.registerSubmitted(fullNameTextField.text, emailTextField.text, passwordTextField.text)
+                    var nameErr = rootWindow.getValidationError("name", fullNameTextField.text);
+                    var emailErr = rootWindow.getValidationError("email", emailTextField.text);
+                    var pwdErr = rootWindow.getValidationError("password", passwordTextField.text);
+                    emailError = emailErr;
+                    passwordError = pwdErr;
+                    nameError = nameErr;
+                    if (nameError === "" && emailError === "" && passwordError === "") {
+                        rootItem.registerSubmitted(fullNameTextField.text, emailTextField.text, passwordTextField.text);
                     }
                 }
             }

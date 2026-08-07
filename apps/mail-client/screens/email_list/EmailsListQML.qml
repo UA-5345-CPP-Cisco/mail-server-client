@@ -191,7 +191,7 @@ Rectangle {
 
                         anchors.fill: parent
                         bottomPadding: 0
-                        color:Color.hover
+                        color: Color.hover
                         font.family: "Segoe UI"
                         font.pixelSize: 14
                         font.weight: Font.Normal
@@ -204,8 +204,7 @@ Rectangle {
                         background: Rectangle {
                             color: Color.transparent
                         }
-                        cursorDelegate: Item {
-                        }
+                        cursorDelegate: Item {}
 
                         onTextChanged: {
                             var searchProxy = emailsListQML.activeSearchModel();

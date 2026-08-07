@@ -9,6 +9,7 @@ on:
       - 'apps/**/*.cpp'
       - 'apps/**/*.h'
       - 'apps/**/*.hpp'
+      - 'apps/**/*.qml'
       - 'libs/**/*.cpp'
       - 'libs/**/*.h'
       - 'libs/**/*.hpp'
@@ -39,8 +40,19 @@ jobs:
           sudo apt-get install -y clang-format-22
           clang-format-22 --version
 
+      - name: Install Qt formatting tools
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install PySide6==6.11.1
+          pyside6-qmlformat --version
+
+      - name: Show formatter versions
+        run: |
+          clang-format-22 --version
+          pyside6-qmlformat --version
+
       - name: Check formatting
-        run: CLANG_FORMAT=clang-format-22 scripts/check-clang-format.sh
+        run: CLANG_FORMAT=clang-format-22 QMLFORMAT=pyside6-qmlformat scripts/check-format.sh
 
       - name: Configure CMake
         run: >

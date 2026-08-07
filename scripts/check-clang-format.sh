@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+script_dir="$(cd "$(dirname "$0")" && pwd)"
 sources=()
 
 while IFS= read -r -d '' source_file; do
   sources+=("${source_file}")
-done < <("$(dirname "$0")/list-clang-format-files.sh")
+done < <("${script_dir}/list-clang-format-files.sh")
 
-if [[ "${#sources[@]}" -eq 0 ]]; then
-  exit 0
+if [[ "${#sources[@]}" -gt 0 ]]; then
+  "${CLANG_FORMAT:-clang-format}" --style=file --dry-run --Werror "${sources[@]}"
 fi
-
-"${CLANG_FORMAT:-clang-format}" --style=file --dry-run --Werror "${sources[@]}"

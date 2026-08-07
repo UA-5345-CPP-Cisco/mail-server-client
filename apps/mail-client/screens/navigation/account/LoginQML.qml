@@ -112,8 +112,7 @@ Item {
                 color: Color.background
                 radius: 8
             }
-            cursorDelegate: Item {
-            }
+            cursorDelegate: Item {}
 
             Rectangle {
                 id: emailCustomCursorRectangle
@@ -186,7 +185,7 @@ Item {
             topPadding: 12
             width: parent.width
 
-            Image { 
+            Image {
                 id: eyeIcon
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
@@ -248,8 +247,7 @@ Item {
                 Behavior on x {
                     id: passwordCursorXBehavior
 
-                    NumberAnimation 
-                    {
+                    NumberAnimation {
                         id: passwordCursorXAnimation
 
                         duration: 80
@@ -309,10 +307,10 @@ Item {
                 hoverEnabled: true
 
                 onClicked: {
-                    var emailErr = rootWindow.getValidationError("email", emailTextField.text)
-                    var pwdErr = rootWindow.getValidationError("password", passwordTextField.text)
-                    emailError = emailErr
-                    passwordError = pwdErr
+                    var emailErr = rootWindow.getValidationError("email", emailTextField.text);
+                    var pwdErr = rootWindow.getValidationError("password", passwordTextField.text);
+                    emailError = emailErr;
+                    passwordError = pwdErr;
                     if (emailError === "" && passwordError === "") {
                         rootItem.loginSubmitted(emailTextField.text, passwordTextField.text);
                     }
