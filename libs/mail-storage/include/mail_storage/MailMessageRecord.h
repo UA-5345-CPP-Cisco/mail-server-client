@@ -12,25 +12,17 @@ enum class MailMessageStatus
   Queued,
   Sending,
   Sent,
-  Archive,
   Failed
 };
 
 struct MailMessageRecord
 {
   std::int64_t id{};
-  std::optional<std::int64_t> sender_user_id;
-  std::string sender_email;
   std::optional<std::string> subject;
   std::string body;
   std::optional<std::int64_t> reply_to_message_id;
   std::string created_at;
-  bool is_inbox{false};
-  bool is_starred{false};
-  bool is_draft{false}; // move into status
-  bool is_archive{false};
-  bool is_seen{false};
-  MailMessageStatus status{MailMessageStatus::Queued};
+  MailMessageStatus message_status{MailMessageStatus::Queued};
 };
 
 } // namespace Storage

@@ -11,7 +11,6 @@ namespace ISXMail {
         LoadFromSettings();
     }
 
-
     int AccountListModel::rowCount(const QModelIndex& parent) const
     {
         if (parent.isValid())

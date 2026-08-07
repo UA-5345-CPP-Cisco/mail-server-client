@@ -1,16 +1,16 @@
 add_library(mail_storage
         src/Database.cpp
         src/MailMessageRepository.cpp
+        src/MailMessageActorRepository.cpp
         src/MigrationRunner.cpp
-        src/MessageRecipientRepository.cpp
         src/Statement.cpp
         src/UserRepository.cpp
         include/mail_storage/Database.h
         include/mail_storage/MailMessageRecord.h
         include/mail_storage/MailMessageRepository.h
+        include/mail_storage/MailMessageActorRecord.h
+        include/mail_storage/MailMessageActorRepository.h
         include/mail_storage/MigrationRunner.h
-        include/mail_storage/MessageRecipientRecord.h
-        include/mail_storage/MessageRecipientRepository.h
         include/mail_storage/Statement.h
         include/mail_storage/UserRecord.h
         include/mail_storage/UserRepository.h

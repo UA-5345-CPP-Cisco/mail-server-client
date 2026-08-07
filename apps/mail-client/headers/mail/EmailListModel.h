@@ -98,9 +98,16 @@ namespace ISXMail {
         void serverErrorChanged();
 
     private:
+        bool DeleteFromStorage(const EmailData& item);
+        bool SetStarredInStorage(const EmailData& item, bool starred);
+        bool SetArchivedInStorage(const EmailData& item, bool archived);
+        void LoadFromDatabase();
         void ReplaceData(std::vector<EmailData> data);
         QString MakePreview(const QString& text, int maxLen = 50);
 
+        Storage::Database m_database;
+        Storage::MailMessageRepository m_message_repository;
+        Storage::MailMessageActorRepository m_actor_repository;
         std::vector<EmailData> m_data;
         std::vector<InboxMessageCallback> m_inbox_callbacks;
         bool m_isLoading{false};

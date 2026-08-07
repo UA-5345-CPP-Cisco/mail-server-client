@@ -14,69 +14,43 @@ MailMessageRepository::MailMessageRepository(Database& database) : m_database(da
 {
 }
 
-std::int64_t MailMessageRepository::CreateMessage(const std::optional<std::int64_t>& sender_user_id,
-                                                  const std::string& sender_email,
-                                                  const std::optional<std::string>& subject,
+std::int64_t MailMessageRepository::CreateMessage(const std::optional<std::string>& subject,
                                                   const std::string& body,
                                                   const std::optional<std::int64_t>& reply_to_message_id,
-                                                  bool is_inbox,
                                                   MailMessageStatus status)
 {
   Statement statement(m_database,
                       R"SQL(
 			INSERT INTO mail_messages (
-				sender_user_id,
-				sender_email,
 				subject,
 				body,
 				reply_to_message_id,
-				is_inbox,
-				is_starred,
-				is_draft,
-        is_archive,
-				status,
-				archived_at
+				message_status
 			)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CASE WHEN ? = 1 THEN CURRENT_TIMESTAMP ELSE NULL END);
+			VALUES (?, ?, ?, ?);
 		)SQL");
 
-  if (sender_user_id.has_value())
+  if (subject.has_value())
   {
-    statement.BindInt64(1, *sender_user_id);
+    statement.BindText(1, *subject);
   }
   else
   {
     statement.BindNull(1);
   }
 
-  statement.BindText(2, sender_email);
+  statement.BindText(2, body);
 
-  if (subject.has_value())
+  if (reply_to_message_id.has_value())
   {
-    statement.BindText(3, *subject);
+    statement.BindInt64(3, *reply_to_message_id);
   }
   else
   {
     statement.BindNull(3);
   }
 
-  statement.BindText(4, body);
-
-  if (reply_to_message_id.has_value())
-  {
-    statement.BindInt64(5, *reply_to_message_id);
-  }
-  else
-  {
-    statement.BindNull(5);
-  }
-
-  statement.BindInt(6, is_inbox ? 1 : 0);
-  statement.BindInt(7, 0);
-  statement.BindInt(8, status == MailMessageStatus::Draft ? 1 : 0);
-  statement.BindInt(9, status == MailMessageStatus::Archive ? 1 : 0);
-  statement.BindText(10, StatusToString(status));
-  statement.BindInt(11, status == MailMessageStatus::Archive ? 1 : 0);
+  statement.BindText(4, StatusToString(status));
   statement.Step();
 
   return statement.LastInsertRowId();
@@ -88,18 +62,11 @@ std::optional<MailMessageRecord> MailMessageRepository::FindById(std::int64_t me
                       R"SQL(
 			SELECT
 				id,
-				sender_user_id,
-				sender_email,
 				subject,
 				body,
 				reply_to_message_id,
 				created_at,
-				is_inbox,
-				is_starred,
-				is_draft,
-        is_archive,
-				status,
-				is_seen
+				message_status
 			FROM mail_messages
 			WHERE id = ?
 			LIMIT 1;
@@ -121,18 +88,11 @@ std::vector<MailMessageRecord> MailMessageRepository::FindAll() const
                       R"SQL(
 			SELECT
 				id,
-				sender_user_id,
-				sender_email,
 				subject,
 				body,
 				reply_to_message_id,
 				created_at,
-				is_inbox,
-				is_starred,
-				is_draft,
-        is_archive,
-				status,
-				is_seen
+				message_status
 			FROM mail_messages
 			ORDER BY created_at DESC, id DESC;
 		)SQL");
@@ -158,20 +118,13 @@ std::vector<MailMessageRecord> MailMessageRepository::FindByStatus(MailMessageSt
                       R"SQL(
 			SELECT
 				id,
-				sender_user_id,
-				sender_email,
 				subject,
 				body,
 				reply_to_message_id,
 				created_at,
-				is_inbox,
-				is_starred,
-				is_draft,
-        is_archive,
-				status,
-				is_seen
+				message_status
 			FROM mail_messages
-			WHERE status = ?
+			WHERE message_status = ?
 			ORDER BY created_at ASC, id ASC
 			LIMIT ?;
 		)SQL");
@@ -196,9 +149,9 @@ bool MailMessageRepository::UpdateStatus(std::int64_t message_id,
   Statement statement(m_database,
                       R"SQL(
 			UPDATE mail_messages
-			SET status = ?
+			SET message_status = ?
 			WHERE id = ?
-				AND status = ?;
+				AND message_status = ?;
 		)SQL");
 
   statement.BindText(1, StatusToString(new_status));
@@ -207,83 +160,6 @@ bool MailMessageRepository::UpdateStatus(std::int64_t message_id,
   statement.Step();
 
   return statement.ChangedRowCount() > 0;
-}
-
-bool MailMessageRepository::UpdateStarred(std::int64_t message_id, bool starred)
-{
-  Statement statement(m_database,
-                      R"SQL(
-			UPDATE mail_messages
-			SET is_starred = ?
-			WHERE id = ?;
-		)SQL");
-
-  statement.BindInt(1, starred ? 1 : 0);
-  statement.BindInt64(2, message_id);
-  statement.Step();
-
-  return statement.ChangedRowCount() > 0;
-}
-
-bool MailMessageRepository::UpdateArchive(std::int64_t message_id, bool archive)
-{
-  Statement statement(m_database,
-                      R"SQL(
-			UPDATE mail_messages
-			SET
-				is_archive = ?1,
-				archived_at = CASE
-					WHEN ?1 = 1 THEN COALESCE(archived_at, CURRENT_TIMESTAMP)
-					ELSE NULL
-				END
-			WHERE id = ?2;
-		)SQL");
-
-  statement.BindInt(1, archive ? 1 : 0);
-  statement.BindInt64(2, message_id);
-  statement.Step();
-
-  return statement.ChangedRowCount() > 0;
-}
-
-bool MailMessageRepository::UpdateSeen(std::int64_t message_id, bool seen)
-{
-  Statement statement(m_database,
-                      R"SQL(
-			UPDATE mail_messages
-			SET is_seen = ?
-			WHERE id = ?
-				AND is_inbox = 1;
-		)SQL");
-
-  statement.BindInt(1, seen ? 1 : 0);
-  statement.BindInt64(2, message_id);
-  statement.Step();
-
-  return statement.ChangedRowCount() > 0;
-}
-
-int MailMessageRepository::DeleteArchivedOlderThanDays(int days)
-{
-  if (days <= 0)
-  {
-    return 0;
-  }
-
-  Statement statement(m_database,
-                      R"SQL(
-			DELETE FROM mail_messages
-			WHERE
-				is_archive = 1
-				AND archived_at IS NOT NULL
-				AND archived_at < datetime('now', ?);
-		)SQL");
-
-  const std::string modifier = "-" + std::to_string(days) + " days";
-  statement.BindText(1, modifier);
-  statement.Step();
-
-  return statement.ChangedRowCount();
 }
 
 bool MailMessageRepository::DeleteMessage(std::int64_t message_id)
@@ -305,12 +181,13 @@ bool MailMessageRepository::FinalizeDelivery(std::int64_t message_id)
   Statement statement(m_database,
                       R"SQL(
 			UPDATE mail_messages
-			SET status = CASE
+			SET message_status = CASE
 				WHEN EXISTS (
 					SELECT 1
-					FROM message_recipients
+					FROM mail_message_actors
 					WHERE
 						message_id = ?
+						AND actor_type IN ('TO', 'CC', 'BCC')
 						AND delivery_status = 'delivered'
 				)
 				THEN 'sent'
@@ -318,12 +195,13 @@ bool MailMessageRepository::FinalizeDelivery(std::int64_t message_id)
 			END
 			WHERE
 				id = ?
-				AND status IN ('queued', 'sending')
+				AND message_status IN ('queued', 'sending')
 				AND NOT EXISTS (
 					SELECT 1
-					FROM message_recipients
+					FROM mail_message_actors
 					WHERE
 						message_id = ?
+						AND actor_type IN ('TO', 'CC', 'BCC')
 						AND delivery_status IN (
 							'pending',
 							'queued',
@@ -348,30 +226,18 @@ MailMessageRecord MailMessageRepository::ReadMessage(const Statement& statement)
 
   if (!statement.ColumnIsNull(1))
   {
-    message.sender_user_id = statement.ColumnInt64(1);
+    message.subject = statement.ColumnText(1);
   }
 
-  message.sender_email = statement.ColumnText(2);
+  message.body = statement.ColumnText(2);
 
   if (!statement.ColumnIsNull(3))
   {
-    message.subject = statement.ColumnText(3);
+    message.reply_to_message_id = statement.ColumnInt64(3);
   }
 
-  message.body = statement.ColumnText(4);
-
-  if (!statement.ColumnIsNull(5))
-  {
-    message.reply_to_message_id = statement.ColumnInt64(5);
-  }
-
-  message.created_at = statement.ColumnText(6);
-  message.is_inbox = statement.ColumnInt64(7) != 0;
-  message.is_starred = statement.ColumnInt64(8) != 0;
-  message.is_draft = statement.ColumnInt64(9) != 0;
-  message.is_archive = statement.ColumnInt64(10) != 0;
-  message.status = StatusFromString(statement.ColumnText(11));
-  message.is_seen = statement.ColumnInt64(12) != 0;
+  message.created_at = statement.ColumnText(4);
+  message.message_status = StatusFromString(statement.ColumnText(5));
 
   return message;
 }
@@ -382,8 +248,6 @@ std::string MailMessageRepository::StatusToString(MailMessageStatus status) cons
   {
   case MailMessageStatus::Draft:
     return "draft";
-  case MailMessageStatus::Archive:
-    return "archive";
   case MailMessageStatus::Queued:
     return "queued";
   case MailMessageStatus::Sending:
@@ -402,11 +266,6 @@ MailMessageStatus MailMessageRepository::StatusFromString(const std::string& sta
   if (status == "draft")
   {
     return MailMessageStatus::Draft;
-  }
-
-  if (status == "archive")
-  {
-    return MailMessageStatus::Archive;
   }
 
   if (status == "queued")

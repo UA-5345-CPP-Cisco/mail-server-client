@@ -14,19 +14,19 @@ Rectangle {
     radius: 14
     visible: true
 
-    function getAuthErrorMessage(errorCode) 
+    function getAuthErrorMessage(errorCode)
     {
-        if (errorCode === AuthHandler.AuthResult.UserNotFound || errorCode === AuthHandler.AuthResult.WrongPasswordOREmail) 
+        if (errorCode === AuthHandler.AuthResult.UserNotFound || errorCode === AuthHandler.AuthResult.WrongPasswordOREmail)
         {
             return "Invalid email or password";
         }
-    
-        if (errorCode === AuthHandler.AuthResult.DatabaseError) 
+
+        if (errorCode === AuthHandler.AuthResult.DatabaseError)
         {
             return "Internal database error";
         }
 
-        if (errorCode === AuthHandler.AuthResult.InternalError) 
+        if (errorCode === AuthHandler.AuthResult.InternalError)
         {
             return "System error";
         }
@@ -39,7 +39,7 @@ Rectangle {
         return "An unknown error occurred";
     }
 
-    function getRegisterValidationError(type, text) 
+    function getRegisterValidationError(type, text)
     {
         var value = text.trim();
         var value_lower = text.trim().toLowerCase()
@@ -203,30 +203,30 @@ Rectangle {
         id: loaderConnections
 
         // Handle back navigation
-        function onBackRequested() 
+        function onBackRequested()
         {
             contentLoader.sourceComponent = choiceScreenComponent;
         }
 
         // Handle login submit
-        function onLoginSubmitted(email, password) 
+        function onLoginSubmitted(email, password)
         {
             var result = authHandler.LoginUser(email, password);
 
-            if (result === AuthHandler.AuthResult.Success) 
+            if (result === AuthHandler.AuthResult.Success)
             {
                 accountModel.AddAccount(CurrentUser.username, CurrentUser.email, "", Color.avatar, avatarInitial(CurrentUser.username), true);
                 showInboxForCurrentUser();
                 closeAuthWindow();
             }
-            else 
+            else
             {
                 contentLoader.item.generalError = getAuthErrorMessage(result);
             }
         }
 
         // Handle registration submit
-        function onRegisterSubmitted(name, email, password) 
+        function onRegisterSubmitted(name, email, password)
         {
             var result = authHandler.RegisterUser(name, email, password);
 
@@ -239,8 +239,8 @@ Rectangle {
                 showInboxForCurrentUser();
 
                 closeAuthWindow();
-            } 
-            else 
+            }
+            else
             {
                 contentLoader.item.generalError = getAuthErrorMessage(result);
             }

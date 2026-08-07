@@ -113,6 +113,17 @@ namespace ISXMail {
 
             return display_subject.isEmpty() ? QStringLiteral("(No subject)") : display_subject;
         }
+
+        bool IsServerBacked(const EmailData& item)
+        {
+            return item.id >= 0 && !item.is_draft;
+        }
+
+        bool IsRecipientActor(Storage::MailMessageActorType actor_type)
+        {
+            return actor_type == Storage::MailMessageActorType::To || actor_type == Storage::MailMessageActorType::Cc ||
+                   actor_type == Storage::MailMessageActorType::Bcc;
+        }
     } // namespace
 
     EmailListModel::EmailListModel(QObject* parent)
@@ -200,22 +211,16 @@ namespace ISXMail {
 
     void EmailListModel::RemoveData(int row)
     {
-        if (row < 0 || row >= static_cast<int>(m_data.size())) {
-            return;
-        }
-
-        beginRemoveRows(QModelIndex(), row, row);
-        m_data.erase(m_data.begin() + row);
-        endRemoveRows();
-
-        ISXService::Service::Logger().Log(
-            Logging::LogLevel::Debug,
-            GetStdString(QString("EmailListModel::RemoveData: data was removed at %1").arg(QString::number(row))));
+        DeleteEmail(row);
     }
 
     bool EmailListModel::DeleteEmail(int row)
     {
         if (row < 0 || row >= static_cast<int>(m_data.size())) {
+            return false;
+        }
+
+        if (!DeleteFromStorage(m_data[row])) {
             return false;
         }
 
@@ -298,6 +303,9 @@ namespace ISXMail {
     bool EmailListModel::SetStarred(int row, bool starred)
     {
         if (row < 0 || row >= static_cast<int>(m_data.size()))
+            return false;
+
+        if (!SetStarredInStorage(m_data[row], starred))
             return false;
 
         m_data[row].is_starred = starred;
@@ -415,20 +423,26 @@ namespace ISXMail {
                         continue;
                     }
 
-                    const QString raw_content = QString::fromStdString(body);
-                    const QString content = StripMessageHeaders(raw_content);
-                    const QString display_subject = DisplaySubject(QString::fromStdString(subject), raw_content);
-                    const bool is_draft = status == "draft";
-                    const bool is_archive = status == "archive";
-                    const bool is_sent = is_current_sender && !is_draft && !is_archive;
-                    const bool is_inbox = is_recipient && !is_current_sender && !is_draft && !is_archive;
-                    const std::int64_t id =
-                        mail.contains("id") && mail.at("id").is_int64() ? mail.at("id").as_int64() : -1;
-                    const bool is_starred = mail.contains("is_starred") && mail.at("is_starred").is_bool()
-                                                ? mail.at("is_starred").as_bool()
-                                                : false;
-                    const bool is_seen =
-                        mail.contains("is_seen") && mail.at("is_seen").is_bool() ? mail.at("is_seen").as_bool() : false;
+                const QString raw_content = QString::fromStdString(body);
+                const QString content = StripMessageHeaders(raw_content);
+                const QString display_subject = DisplaySubject(QString::fromStdString(subject), raw_content);
+                const bool is_draft = mail.contains("is_draft") && mail.at("is_draft").is_bool()
+                                          ? mail.at("is_draft").as_bool()
+                                          : status == "draft";
+                const bool is_archive = mail.contains("is_archive") && mail.at("is_archive").is_bool()
+                                            ? mail.at("is_archive").as_bool()
+                                            : false;
+                const bool is_sent = mail.contains("is_sent") && mail.at("is_sent").is_bool()
+                                         ? mail.at("is_sent").as_bool()
+                                         : is_current_sender && !is_draft && !is_archive;
+                const bool is_inbox = mail.contains("is_inbox") && mail.at("is_inbox").is_bool()
+                                          ? mail.at("is_inbox").as_bool()
+                                          : is_recipient && !is_current_sender && !is_draft && !is_archive;
+                const std::int64_t id = mail.contains("id") && mail.at("id").is_int64() ? mail.at("id").as_int64() : -1;
+                const bool is_starred = mail.contains("is_starred") && mail.at("is_starred").is_bool()
+                                            ? mail.at("is_starred").as_bool()
+                                            : false;
+                const bool is_seen = mail.contains("is_seen") && mail.at("is_seen").is_bool() ? mail.at("is_seen").as_bool() : false;
 
                     server_data.push_back({id,
                                            is_inbox,
@@ -527,8 +541,7 @@ namespace ISXMail {
         }
         switch (role) {
         case StarredRole:
-            m_data[index.row()].is_starred = value.toBool();
-            break;
+            return SetStarred(index.row(), value.toBool());
         case ThemeRole:
             m_data[index.row()].theme = value.toString();
             break;
@@ -557,7 +570,12 @@ namespace ISXMail {
             return false;
         }
 
-        m_data[row].is_archive = !m_data[row].is_archive;
+        const bool archived = !m_data[row].is_archive;
+        if (!SetArchivedInStorage(m_data[row], archived)) {
+            return false;
+        }
+
+        m_data[row].is_archive = archived;
         const QModelIndex idx = index(row, 0);
         emit dataChanged(idx, idx, {ArchiveRole});
 
@@ -589,6 +607,88 @@ namespace ISXMail {
                              .arg(m_data[row].is_seen ? "true" : "false")));
 
         return m_data[row].is_seen;
+    }
+
+    bool EmailListModel::DeleteFromStorage(const EmailData& item)
+    {
+        if (item.id < 0) {
+            return true;
+        }
+
+        if (!IsServerBacked(item)) {
+            return m_message_repository.DeleteMessage(item.id);
+        }
+
+        try {
+            const QString current_email = ISXCurrentUser::CurrentUser::GetInstance().email();
+            if (current_email.trimmed().isEmpty()) {
+                return false;
+            }
+
+            const auto response =
+                ISXService::Service::MailServerClient().DeleteMail(item.id, current_email.toStdString());
+            return response.is_success();
+        } catch (const std::exception& exception) {
+            ISXService::Service::Logger().Log(
+                Logging::LogLevel::Error, std::string("EmailListModel::DeleteFromStorage failed: ") + exception.what());
+            return false;
+        }
+    }
+
+    bool EmailListModel::SetStarredInStorage(const EmailData& item, bool starred)
+    {
+        if (item.id < 0) {
+            return true;
+        }
+
+        const QString current_email = ISXCurrentUser::CurrentUser::GetInstance().email();
+        if (current_email.trimmed().isEmpty()) {
+            return false;
+        }
+
+        if (!IsServerBacked(item)) {
+            return m_actor_repository.SetStarred(item.id, current_email.toStdString(), starred);
+        }
+
+        try {
+            const std::string user_email = current_email.toStdString();
+            const auto response = starred ? ISXService::Service::MailServerClient().StarMail(item.id, user_email)
+                                          : ISXService::Service::MailServerClient().UnstarMail(item.id, user_email);
+            return response.is_success();
+        } catch (const std::exception& exception) {
+            ISXService::Service::Logger().Log(Logging::LogLevel::Error,
+                                              std::string("EmailListModel::SetStarredInStorage failed: ") +
+                                                  exception.what());
+            return false;
+        }
+    }
+
+    bool EmailListModel::SetArchivedInStorage(const EmailData& item, bool archived)
+    {
+        if (item.id < 0) {
+            return true;
+        }
+
+        const QString current_email = ISXCurrentUser::CurrentUser::GetInstance().email();
+        if (current_email.trimmed().isEmpty()) {
+            return false;
+        }
+
+        if (!IsServerBacked(item)) {
+            return m_actor_repository.SetArchived(item.id, current_email.toStdString(), archived);
+        }
+
+        try {
+            const std::string user_email = current_email.toStdString();
+            const auto response = archived ? ISXService::Service::MailServerClient().ArchiveMail(item.id, user_email)
+                                           : ISXService::Service::MailServerClient().UnarchiveMail(item.id, user_email);
+            return response.is_success();
+        } catch (const std::exception& exception) {
+            ISXService::Service::Logger().Log(Logging::LogLevel::Error,
+                                              std::string("EmailListModel::SetArchivedInStorage failed: ") +
+                                                  exception.what());
+            return false;
+        }
     }
 
     Qt::ItemFlags EmailListModel::flags(const QModelIndex& index) const
