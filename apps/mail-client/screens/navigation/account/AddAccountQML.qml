@@ -39,95 +39,90 @@ Rectangle {
         return "An unknown error occurred";
     }
 
-    function getRegisterValidationError(type, text) 
+    function getRegisterValidationError(type, text, emailText = "") 
     {
-        var value = text.trim();
-        var value_lower = text.trim().toLowerCase()
-        const layouts = 
-        [
-            "qwertyuiop", 
-            "asdfghjkl", 
-            "zxcvbnm", 
-            "1234567890"
-        ];
+        const value = text.trim();
+        const valueLower = value.toLowerCase();
 
-        if (type === "name") 
+        if (value.length === 0) 
         {
-            if (value.length === 0) 
-            {
-                return "Cannot be empty"
-            }
-            return ""
+            return "Cannot be empty";
         }
-
-        if (type === "email") 
+    
+        switch (type) 
         {
-            if (value.length === 0)
-            {
-                return "Cannot be empty"
-            }
+            case "name":
+               return "";
 
-            var email_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-            if (!email_regex.test(value)) 
+            case "email":
             {
-                return "Invalid email format"
-            }
-
-            return ""
-        }
-
-        if (type === "password") 
-        {
-            if (value.length === 0) 
-            {
-                return "Cannot be empty"
-            }
-
-            if (value.length < 6) 
-            {
-                return "Password must be at least 6 characters long"
-            }
-
-            if (value.length < 10) 
-            {
-                for (let layout of layouts) 
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(value)) 
                 {
-                    for (let i = 0; i <= layout.length - 5; i++) 
+                    return "Invalid email format";
+                }
+                return "";
+            }
+
+            case "password":
+            {
+                if (value.length < 6) 
+                {
+                    return "Password must be at least 6 characters long";
+                }
+
+                // Check if the password contains the email username
+                if (value.length < 10) 
+                {
+                    if (emailText && emailText.trim().length > 0) 
                     {
-                        let forward = layout.substring(i, i + 5);
-                        let backward = forward.split("").reverse().join("");
-            
-                        if (value_lower.includes(forward) || value_lower.includes(backward)) 
+                        const emailPrefix = emailText.trim().split("@")[0].toLowerCase();
+                        if (emailPrefix.length >= 3 && valueLower.includes(emailPrefix)) 
                         {
-                            return "Password cannot contain simple sequences";
+                            return "Password cannot contain your email username";
+                        }
+                    }
+
+                    // Check for simple keyboard sequences
+                    const layouts = ["qwertyuiop", "asdfghjkl", "zxcvbnm", "1234567890"];
+                    for (let i = 0; i < layouts.length; i++) 
+                    {
+                        const layout = layouts[i];
+                        for (let j = 0; j <= layout.length - 5; j++) 
+                        {
+                            const forward = layout.substring(j, j + 5);
+                            const backward = forward.split("").reverse().join("");
+            
+                            if (valueLower.includes(forward) || valueLower.includes(backward)) 
+                            {
+                                return "Password cannot contain simple sequences";
+                            }
+                        }
+                    }
+
+                    // Check for commonly used simple words
+                    const simpleWords = ["password", "admin", "login", "user", "guest", "root"];
+                    for (let i = 0; i < simpleWords.length; i++) 
+                    {
+                        if (valueLower.includes(simpleWords[i])) 
+                        {
+                            return "Password contains commonly used simple words";
                         }
                     }
                 }
+
+                // Check for repeated characters and required character types
+                if (/(.)\1{4,}/.test(value)) return "Password cannot contain repeated characters";
+                if (!/[A-Z]/.test(value)) return "Password must contain at least one uppercase letter";
+                if (!/\d/.test(value)) return "Password must contain at least one number";
+                if (!/[!@#$%^&*(),.?":{}|<>\-_]/.test(value)) return "Password must contain at least one special character";
+
+                return "";
             }
 
-            if (/(.)\1{4,}/.test(value)) 
-            {
-                return "Password cannot contain repeated characters";
-            }
-
-            if (!/[A-Z]/.test(value)) 
-            {
-                return "Password must contain at least one uppercase letter"
-            }
-
-            if (!/\d/.test(value)) 
-            {
-                return "Password must contain at least one number"
-            }
-
-            if (!/[!@#$%^&*(),.?":{}|<>\-_]/.test(value))
-            {
-                return "Password must contain at least one special character"
-            }
-
-            return ""
+            default:
+                return "An unknown error occurred";
         }
-        return "An unknown error occurred"
     }
 
     Rectangle {
