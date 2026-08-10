@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
 set(WINDOWS_DEV_CONSOLE ON)
+set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/app.rc")
 
 find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2 Widgets)
 #find_package(SQLite3 REQUIRED)
@@ -58,6 +59,12 @@ if(NOT TARGET mail_server_sdk)
 			${CMAKE_CURRENT_SOURCE_DIR}/../../libs/mail-server-sdk
 			${CMAKE_CURRENT_BINARY_DIR}/libs/mail-server-sdk
 	)
+endif()
+
+
+if(WIN32)
+	add_library(app_icon OBJECT app.rc)
+	set_target_properties(app_icon PROPERTIES LINKER_LANGUAGE RC)
 endif()
 
 qt_add_qml_module(qtappmail_core
@@ -160,6 +167,10 @@ qt_add_qml_module(appqtapptestmail
 		RESOURCES
 		resources.qrc
 )
+
+if(WIN32)
+	target_link_libraries(appqtapptestmail PRIVATE app_icon)
+endif()
 
 set_target_properties(appqtapptestmail PROPERTIES
 		MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
