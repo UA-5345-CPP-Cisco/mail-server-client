@@ -507,7 +507,7 @@ Item {
                     rootItem.generalError = ""
                     var name_error = rootWindow.getRegisterValidationError("name", fullNameTextField.text)
                     var email_error = rootWindow.getRegisterValidationError("email", emailTextField.text)
-                    var password_error = rootWindow.getRegisterValidationError("password", passwordTextField.text)
+                    var password_error = rootWindow.getRegisterValidationError("password", passwordTextField.text, emailTextField.text)
                     var confirm_password_error = ""
                     if (passwordConfirmationTextField.text === "") 
                     {
