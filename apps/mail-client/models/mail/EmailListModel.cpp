@@ -125,10 +125,9 @@ namespace ISXMail {
         , m_recipient_repository(m_database)
     {
         ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel: constructed");
-        // ДОДАЙ ЦЕЙ БЛОК: очищаємо листи, коли користувач виходить/видаляє акаунт
-        connect(&ISXCurrentUser::CurrentUser::GetInstance(), 
-                &ISXCurrentUser::CurrentUser::authorizationChanged, 
-                this, 
+        connect(&ISXCurrentUser::CurrentUser::GetInstance(),
+                &ISXCurrentUser::CurrentUser::authorizationChanged,
+                this,
                 [this]() {
                     if (!ISXCurrentUser::CurrentUser::GetInstance().is_authorized()) {
                         beginResetModel();
@@ -317,7 +316,8 @@ namespace ISXMail {
     void EmailListModel::registerInboxMessageCallback(InboxMessageCallback callback)
     {
         m_inbox_callbacks.push_back(callback);
-        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::registerInboxMessageCallback: callback was added");
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                          "EmailListModel::registerInboxMessageCallback: callback was added");
     }
 
     bool EmailListModel::SetStarred(int row, bool starred)
@@ -345,12 +345,14 @@ namespace ISXMail {
     {
         const QString current_email = ISXCurrentUser::CurrentUser::GetInstance().email();
         if (current_email.trimmed().isEmpty()) {
-            ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::RefreshFromServer: no current email was found!");
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                              "EmailListModel::RefreshFromServer: no current email was found!");
             return false;
         }
 
         if (m_isLoading) {
-            ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::RefreshFromServer: still loading....");
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                              "EmailListModel::RefreshFromServer: still loading....");
             return false;
         }
 
@@ -511,7 +513,8 @@ namespace ISXMail {
         connect(thread, &QThread::finished, thread, &QObject::deleteLater);
         thread->start();
 
-        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::RefreshFromServer: data was refreshed from server!");
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                          "EmailListModel::RefreshFromServer: data was refreshed from server!");
         return true;
     }
 
@@ -550,21 +553,24 @@ namespace ISXMail {
         endResetModel();
         emit dataAdded();
 
-        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::ReplaceData: data was replaced successfully!");
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                          "EmailListModel::ReplaceData: data was replaced successfully!");
     }
 
     void EmailListModel::LoadFromDatabase()
     {
         const QString current_email = ISXCurrentUser::CurrentUser::GetInstance().email();
         if (current_email.trimmed().isEmpty()) {
-            ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::LoadFromDatabase: current email is absent!");
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                              "EmailListModel::LoadFromDatabase: current email is absent!");
             return;
         }
 
         const auto messages = m_message_repository.FindAll();
 
         if (messages.empty()) {
-            ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::LoadFromDatabase: no message is found!");
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                              "EmailListModel::LoadFromDatabase: no message is found!");
             return;
         }
 
@@ -619,7 +625,8 @@ namespace ISXMail {
         }
 
         if (local_data.empty()) {
-            ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::LoadFromDatabase: no local data was added!");
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                              "EmailListModel::LoadFromDatabase: no local data was added!");
             return;
         }
 
