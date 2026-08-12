@@ -148,7 +148,7 @@ Rectangle {
         width: 40
         z: 10
 
-        visible: !initialSetupRequired
+        visible: !window.accountsRequired
 
         Behavior on scale {
             id: closeScaleBehavior

@@ -5,7 +5,8 @@
 #include "database/DatabaseManager.h"
 #include "users/CurrentUser.h"
 #include "mail_storage/UserRepository.h"
-#include "service/Service.h"
+//#include "service/Service.h"
+#include "headers/service/Service.h"
 
 namespace ISXMail {
 
@@ -169,12 +170,32 @@ namespace ISXMail {
             return false;
         }
 
+        bool was_active = m_data[row].is_active;
+        QString email_to_remove = m_data[row].account_email;
+
         beginRemoveRows(QModelIndex(), row, row);
         m_data.erase(m_data.begin() + row);
         endRemoveRows();
 
         ISXService::Service::Logger().Log(Logging::LogLevel::Debug, GetStdString("AccountListModel::RemoveAccount: data was removed at " + QString::number(row)));
         SaveToSettings();
+        
+        if (was_active) 
+        {
+            if (!m_data.empty()) 
+            {
+                SetActiveAccount(0);
+            } 
+            else 
+            {
+                emit activeAccountChanged(-1);
+                ISXCurrentUser::CurrentUser::GetInstance().Logout();
+                ISXCurrentUser::CurrentUser::GetInstance().NotifyNoAccountsLeft();
+            }
+        }
+
+        ISXService::Service::Logger().Log(Logging::LogLevel::Info, "Local account removed from QSettings: " + email_to_remove.toStdString());
+
         return true;
     }
 

@@ -33,10 +33,15 @@ namespace ISXCurrentUser {
         Q_INVOKABLE void Logout();
         Q_INVOKABLE void UpdateAvatarPath(const QString& new_path);
 
+
+        void NotifyNoAccountsLeft() { emit noAccountsLeft(); }
+
     signals:
         // SIGNALS
         void authorizationChanged();
         void profileChanged();
+
+        void noAccountsLeft(); 
 
     private:
         // CONSTRUCTORS

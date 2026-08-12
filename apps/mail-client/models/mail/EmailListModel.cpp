@@ -125,6 +125,17 @@ namespace ISXMail {
         , m_recipient_repository(m_database)
     {
         ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel: constructed");
+        // ДОДАЙ ЦЕЙ БЛОК: очищаємо листи, коли користувач виходить/видаляє акаунт
+        connect(&ISXCurrentUser::CurrentUser::GetInstance(), 
+                &ISXCurrentUser::CurrentUser::authorizationChanged, 
+                this, 
+                [this]() {
+                    if (!ISXCurrentUser::CurrentUser::GetInstance().is_authorized()) {
+                        beginResetModel();
+                        m_data.clear();
+                        endResetModel();
+                    }
+                });
     }
 
     bool EmailListModel::isLoading() const
