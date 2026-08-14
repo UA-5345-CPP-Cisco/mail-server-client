@@ -1,9 +1,8 @@
-#include "headers/mail/MessageComposer.h"
+#include "mail/MessageComposer.h"
 
 #include <optional>
 
-#include "headers/database/DatabaseManager.h"
-#include "headers/service/Service.h"
+#include "service/Service.h"
 
 namespace ISXMail {
 
@@ -24,13 +23,9 @@ namespace ISXMail {
 
     MessageComposer::MessageComposer(QObject* parent)
         : QObject(parent)
-        , m_database(ISXDatabaseManager::DatabaseManager::DatabasePath())
-        , m_repository(m_database)
-        , m_recipient_repository(m_database)
     {
         ISXService::Service::Logger().Log(Logging::LogLevel::Info,
-                                          std::string("MessageComposer: opened DB at ") +
-                                              ISXDatabaseManager::DatabaseManager::DatabasePath().string());
+                                          "MessageComposer: initialized without DB");
     }
 
     bool MessageComposer::SendMailMessage(const QString& sender_name,
@@ -67,7 +62,7 @@ namespace ISXMail {
             return true;
         } catch (const std::exception& exception) {
             ISXService::Service::Logger().Log(
-                Logging::LogLevel::Error, std::string("MessageComposer::SendMailMessage failed: ") + exception.what());
+                Logging::LogLevel::Error, std::string("MessageComposer::SendMailMessage: failed: ") + exception.what());
             return false;
         }
     }
@@ -81,42 +76,13 @@ namespace ISXMail {
         Q_UNUSED(sender_name);
 
         if (recipient_email.trimmed().isEmpty() && subject.trimmed().isEmpty() && body.trimmed().isEmpty()) {
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                              "MessageComposer::SaveDraft: not enough data for saving the draft..");
             return false;
         }
 
-        m_database.Execute("BEGIN IMMEDIATE;");
-
-        try {
-            const std::int64_t message_id = m_repository.CreateMessage(std::nullopt,
-                                                                       sender_email.toStdString(),
-                                                                       ToOptionalString(subject),
-                                                                       body.toStdString(),
-                                                                       std::nullopt,
-                                                                       false,
-                                                                       Storage::MailMessageStatus::Draft);
-
-            if (!recipient_email.trimmed().isEmpty()) {
-                m_recipient_repository.CreateRecipient(message_id,
-                                                       recipient_email.toStdString(),
-                                                       Storage::RecipientType::To,
-                                                       Storage::DeliveryStatus::Pending);
-            }
-            m_database.Execute("COMMIT;");
-            return true;
-        } catch (...) {
-            ISXService::Service::Logger().Log(Logging::LogLevel::Error,
-                                              "MessageComposer::SaveDraft: exception occurred, attempting ROLLBACK");
-            try {
-                m_database.Execute("ROLLBACK;");
-                ISXService::Service::Logger().Log(Logging::LogLevel::Info,
-                                                  "MessageComposer::SaveDraft: rollback succeeded");
-            } catch (...) {
-                ISXService::Service::Logger().Log(Logging::LogLevel::Error,
-                                                  "MessageComposer::SaveDraft: rollback failed");
-            }
-
-            throw;
-        }
+        // Local draft saving is not supported as there is no local DB.
+        return false;
     }
 
 } // namespace ISXMail

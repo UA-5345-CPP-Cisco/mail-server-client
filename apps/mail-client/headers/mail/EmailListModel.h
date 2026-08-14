@@ -6,14 +6,11 @@
 #include <QtMath>
 
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <vector>
-#include <functional>
 
 
-#include "mail_storage/Database.h"
-#include "mail_storage/MailMessageRepository.h"
-#include "mail_storage/MessageRecipientRepository.h"
 
 namespace ISXMail {
 
@@ -27,6 +24,7 @@ namespace ISXMail {
         bool is_sent;
         bool is_draft;
         bool is_archive;
+        bool is_seen;
         QString theme;
         QString name;
         QString send_to;
@@ -41,6 +39,7 @@ namespace ISXMail {
         SentRole,
         DraftRole,
         ArchiveRole,
+        SeenRole,
         InboxRole,
         ThemeRole,
         NameRole,
@@ -55,9 +54,15 @@ namespace ISXMail {
     class EmailListModel : public QAbstractListModel
     {
         Q_OBJECT;
+        Q_PROPERTY(bool isLoading READ isLoading NOTIFY isLoadingChanged)
+        Q_PROPERTY(bool serverError READ serverError NOTIFY serverErrorChanged)
+        using InboxMessageCallback = std::function<void(const QString& sender, const QString& subject, const QString& preview)>;
 
     public:
         explicit EmailListModel(QObject* parent = nullptr);
+
+        bool isLoading() const;
+        bool serverError() const;
 
         int rowCount(const QModelIndex& parent = QModelIndex()) const override;
         QVariant data(const QModelIndex& index, int role) const override;
@@ -69,18 +74,19 @@ namespace ISXMail {
                                  bool is_sent,
                                  bool is_draft,
                                  bool is_archive,
+                                 bool is_seen,
                                  const QString& theme,
                                  const QString& name,
                                  const QString& send_to,
                                  const QString& content,
                                  const QString& time,
                                  bool is_inbox = false);
-        using InboxMessageCallback = std::function<void(const QString& sender, const QString& subject, const QString& preview)>;
         void registerInboxMessageCallback(InboxMessageCallback callback);
         Q_INVOKABLE bool SetStarred(int row, bool starred);
-        Q_INVOKABLE bool RefreshFromServer();
         bool ToggleArchive(int row);
         void AddData(const EmailData& item);
+        bool UpdateSeen(int row, bool seen);
+        Q_INVOKABLE bool RefreshFromServer(bool silent = false);
 
         bool setData(const QModelIndex& index, const QVariant& value, int role) override;
         Qt::ItemFlags flags(const QModelIndex& index) const override;
@@ -88,18 +94,24 @@ namespace ISXMail {
     signals:
         void dataAdded();
         void inboxMessageReceived(const QString& sender, const QString& subject, const QString& preview);
+        void isLoadingChanged();
+        void serverErrorChanged();
 
     private:
+        bool DeleteFromStorage(const EmailData& item);
+        bool SetStarredInStorage(const EmailData& item, bool starred);
+        bool SetArchivedInStorage(const EmailData& item, bool archived);
         void LoadFromDatabase();
         void ReplaceData(std::vector<EmailData> data);
         QString MakePreview(const QString& text, int maxLen = 50);
-        QString DefaultDatabasePath() const;
 
-        Storage::Database m_database;
-        Storage::MailMessageRepository m_message_repository;
-        Storage::MessageRecipientRepository m_recipient_repository;
+
         std::vector<EmailData> m_data;
         std::vector<InboxMessageCallback> m_inbox_callbacks;
+        bool m_isLoading{false};
+        bool m_serverError{false};
+        bool m_isFirstSync{true};
+        QString m_lastFetchedEmail;
     };
 
 } // namespace ISXMail

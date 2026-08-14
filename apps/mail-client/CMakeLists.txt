@@ -5,7 +5,8 @@ project(qtapptestmail VERSION 0.1 LANGUAGES CXX C)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
-set(WINDOWS_DEV_CONSOLE ON)
+set(WINDOWS_DEV_CONSOLE OFF)
+set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/app.rc")
 
 find_package(Qt6 REQUIRED COMPONENTS Quick Sql QuickControls2 Widgets LinguistTools)
 #find_package(SQLite3 REQUIRED)
@@ -60,15 +61,18 @@ if(NOT TARGET mail_server_sdk)
 	)
 endif()
 
+
+if(WIN32)
+	add_library(app_icon OBJECT app.rc)
+	set_target_properties(app_icon PROPERTIES LINKER_LANGUAGE RC)
+endif()
+
 qt_add_qml_module(qtappmail_core
 		URI qtapptestmail.core
 		VERSION 1.0
 		OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/qtapptestmail/core
 		STATIC
 		SOURCES
-		headers/database/CacheStore.h
-		headers/database/DatabaseManager.h
-		headers/mail/EmailCache.h
 		headers/mail/EmailFilterProxy.h
 		headers/mail/EmailListModel.h
 		headers/mail/EmailPageProxy.h
@@ -76,7 +80,6 @@ qt_add_qml_module(qtappmail_core
 		headers/mail/MessageComposer.h
 		headers/search/MessageSearchModel.h
 		headers/users/CurrentUser.h
-		headers/users/UserCache.h
 		headers/database/AuthHandler.h
 		headers/users/AccountListModel.h
 		headers/service/Service.h
@@ -87,9 +90,6 @@ qt_add_qml_module(qtappmail_core
 		headers/localization/LocalizationManager.h
 
 		models/database/AuthHandler.cpp
-		models/database/CacheStore.cpp
-		models/database/DatabaseManager.cpp
-		models/mail/EmailCache.cpp
 		models/mail/EmailFilterProxy.cpp
 		models/mail/EmailListModel.cpp
 		models/mail/EmailPageProxy.cpp
@@ -97,7 +97,6 @@ qt_add_qml_module(qtappmail_core
 		models/mail/MessageComposer.cpp
 		models/search/MessageSearchModel.cpp
 		models/users/CurrentUser.cpp
-		models/users/UserCache.cpp
 		models/users/AccountListModel.cpp
 		models/service/Service.cpp
 		models/client_logger/ClientProxyLogger.cpp
@@ -116,7 +115,6 @@ target_include_directories(qtappmail_core
 target_link_libraries(qtappmail_core
 		PUBLIC
 		mail_logger
-		mail_storage
 		Qt6::Quick
 		Qt6::Sql
 		Qt6::Core
@@ -125,8 +123,10 @@ target_link_libraries(qtappmail_core
 		mail_server_sdk
 )
 
-target_compile_definitions(qtappmail_core PUBLIC
-		CONFIG_DIR="${CMAKE_CURRENT_SOURCE_DIR}/config"
+add_custom_command(TARGET qtappmail_core POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		"${CMAKE_CURRENT_SOURCE_DIR}/config"
+		"$<TARGET_FILE_DIR:appqtapptestmail>/config"
 )
 
 qt_add_executable(appqtapptestmail
@@ -163,6 +163,10 @@ qt_add_qml_module(appqtapptestmail
 		resources.qrc
 )
 
+if(WIN32)
+	target_link_libraries(appqtapptestmail PRIVATE app_icon)
+endif()
+
 set_target_properties(appqtapptestmail PROPERTIES
 		MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
 		MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
@@ -182,7 +186,6 @@ endif()
 target_link_libraries(appqtapptestmail
 	PUBLIC
 		mail_logger
-		mail_storage
 	PRIVATE
 		qtappmail_core
 		Qt6::Quick

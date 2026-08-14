@@ -1,15 +1,45 @@
-#include "headers/users/AccountListModel.h"
+#include "users/AccountListModel.h"
 
-#include "headers/database/DatabaseManager.h"
-#include "headers/users/CurrentUser.h"
-#include "mail_storage/UserRepository.h"
+#include <QSettings>
+
+#include "users/CurrentUser.h"
+#include "service/Service.h"
 
 namespace ISXMail {
+
+    namespace {
+        QString GetEnumString(int role)
+        {
+            switch (role) {
+            case AccountNameRole:
+                return QStringLiteral("AccountNameRole");
+            case AccountEmailRole:
+                return QStringLiteral("AccountEmailRole");
+            case AvatarUrlRole:
+                return QStringLiteral("AvatarUrlRole");
+            case AvatarColorRole:
+                return QStringLiteral("AvatarColorRole");
+            case AvatarInitialRole:
+                return QStringLiteral("AvatarInitialRole");
+            case IsActiveRole:
+                return QStringLiteral("AvatarInitialRole");
+            default:
+                return QStringLiteral("UnknownRole");
+            }
+        }
+
+        std::string GetStdString(const QString& str)
+        {
+            return str.toStdString();
+        }
+    }
+
     AccountListModel::AccountListModel(QObject* parent)
         : QAbstractListModel(parent)
-        , m_database(ISXDatabaseManager::DatabaseManager::DatabasePath())
     {
-        LoadFromDatabase();
+        LoadFromSettings();
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                      "AccountListModel: constructed");
     }
 
     int AccountListModel::rowCount(const QModelIndex& parent) const
@@ -84,6 +114,10 @@ namespace ISXMail {
             return false;
         }
 
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+    GetStdString(QString("AccountListModel::setData: data at %1 changed value of role %2")
+                     .arg(QString::number(index.row()))
+                     .arg(GetEnumString(role))));
         emit dataChanged(index, index, {role});
         return true;
     }
@@ -95,6 +129,8 @@ namespace ISXMail {
         m_data.push_back(item);
         endInsertRows();
         emit accountAdded();
+
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, GetStdString("AccountListModel::AddData: data was added"));
     }
 
     void AccountListModel::AddAccount(const QString& name,
@@ -116,6 +152,8 @@ namespace ISXMail {
 
         if (isActive)
             SetActiveAccount(static_cast<int>(m_data.size()) - 1);
+
+        SaveToSettings();
     }
 
     bool AccountListModel::RemoveAccount(int row)
@@ -127,6 +165,9 @@ namespace ISXMail {
         beginRemoveRows(QModelIndex(), row, row);
         m_data.erase(m_data.begin() + row);
         endRemoveRows();
+
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, GetStdString("AccountListModel::RemoveAccount: data was removed at " + QString::number(row)));
+        SaveToSettings();
         return true;
     }
 
@@ -136,34 +177,26 @@ namespace ISXMail {
             return false;
         }
 
-        Storage::UserRepository repo(m_database);
-
         for (size_t i = 0; i < m_data.size(); ++i) {
             const bool should_be_active = (static_cast<int>(i) == row);
 
             if (m_data[i].is_active != should_be_active) {
                 m_data[i].is_active = should_be_active;
 
-                std::string std_email = m_data[i].account_email.toStdString();
-                auto user_record = repo.FindByEmail(std_email);
-
-                if (user_record.has_value()) {
-                    auto db_status = should_be_active ? Storage::UserStatus::Active : Storage::UserStatus::Disabled;
-                    repo.UpdateStatus(user_record->id, db_status);
-                }
+                const QModelIndex idx = index(static_cast<int>(i));
+                emit dataChanged(idx, idx, {IsActiveRole});
+            }
 
                 // Synchronize the global application context with the newly activated user
                 if (should_be_active) {
                     ISXCurrentUser::CurrentUser::GetInstance().Authorize(
                         m_data[i].account_name, m_data[i].account_email, m_data[i].avatar_url);
                 }
-
-                // Notify Qt views that the active role has changed to trigger a UI repaint
-                const QModelIndex idx = index(static_cast<int>(i));
-                emit dataChanged(idx, idx, {IsActiveRole});
-            }
         }
 
+        SaveToSettings();
+
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, GetStdString("AccountListModel::SetActiveAccount: account is active at " + QString::number(row)));
         emit activeAccountChanged(row);
         return true;
     }
@@ -176,50 +209,73 @@ namespace ISXMail {
         return -1;
     }
 
-    void AccountListModel::LoadFromDatabase()
+    QString AccountListModel::DefaultDatabasePath() const
     {
-        m_data.clear();
+        return QString();
+    }
 
-        Storage::UserRepository user_repo(m_database);
-        std::vector<Storage::UserRecord> db_users = user_repo.FindAll();
+    bool AccountListModel::LoadFromSettings()
+    {
+        QSettings settings("ISX", "MailClient");
+        int size = settings.beginReadArray("accounts");
+        if (size == 0) {
+            settings.endArray();
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug, GetStdString("AccountListModel::LoadFromSettings: no accounts in settings"));
+            return false;
+        }
 
         std::vector<AccountData> loaded_accounts;
-        int saved_active_row = -1;
-        int counter = 0;
-
-        for (const auto& user : db_users) {
+        int active_row = -1;
+        for (int i = 0; i < size; ++i) {
+            settings.setArrayIndex(i);
             AccountData account;
-            account.account_name = QString::fromStdString(user.username);
-            account.account_email = QString::fromStdString(user.email);
-            account.avatar_url = "";
-            account.avatar_color = "#3b82f6";
+            account.account_name = settings.value("account_name").toString();
+            account.account_email = settings.value("account_email").toString();
+            account.avatar_url = settings.value("avatar_url").toString();
+            account.avatar_color = settings.value("avatar_color").toString();
+            account.avatar_initial = settings.value("avatar_initial").toString();
+            account.is_active = settings.value("is_active").toBool();
 
-            account.avatar_initial = account.account_name.isEmpty() ? '?' : account.account_name.at(0).toUpper();
-            account.is_active = false;
-
-            if (user.status == Storage::UserStatus::Active) {
-                saved_active_row = static_cast<int>(loaded_accounts.size());
+            if (account.is_active) {
+                active_row = static_cast<int>(loaded_accounts.size());
             }
-
             loaded_accounts.push_back(account);
         }
+        settings.endArray();
 
         if (!loaded_accounts.empty()) {
             beginInsertRows(QModelIndex(), 0, static_cast<int>(loaded_accounts.size()) - 1);
             m_data = std::move(loaded_accounts);
             endInsertRows();
 
-            if (saved_active_row != -1) {
-                SetActiveAccount(saved_active_row);
+            if (active_row != -1) {
+                SetActiveAccount(active_row);
             } else {
                 SetActiveAccount(0);
             }
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug, GetStdString("AccountListModel::LoadFromSettings: account was loaded successfully!"));
+            return true;
         }
+
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, GetStdString("AccountListModel::LoadFromSettings: failed to load account from settings"));
+        return false;
     }
 
-    QString AccountListModel::DefaultDatabasePath() const
+    void AccountListModel::SaveToSettings()
     {
-        return QString();
+        QSettings settings("ISX", "MailClient");
+        settings.beginWriteArray("accounts");
+        for (int i = 0; i < static_cast<int>(m_data.size()); ++i) {
+            settings.setArrayIndex(i);
+            settings.setValue("account_name", m_data[i].account_name);
+            settings.setValue("account_email", m_data[i].account_email);
+            settings.setValue("avatar_url", m_data[i].avatar_url);
+            settings.setValue("avatar_color", m_data[i].avatar_color);
+            settings.setValue("avatar_initial", m_data[i].avatar_initial);
+            settings.setValue("is_active", m_data[i].is_active);
+        }
+        settings.endArray();
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, GetStdString("AccountListModel::SaveToSettings: data was saved into settings"));
     }
 
 } // namespace ISXMail

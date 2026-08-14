@@ -1,8 +1,11 @@
-#include "headers/users/CurrentUser.h"
+#include "users/CurrentUser.h"
 
 #include <QDir>
 #include <QFile>
+#include <QSettings>
 #include <QStandardPaths>
+
+#include "service/Service.h"
 
 namespace ISXCurrentUser {
 
@@ -18,6 +21,7 @@ namespace ISXCurrentUser {
     CurrentUser& CurrentUser::GetInstance()
     {
         static CurrentUser instance;
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, QString("CurrentUser::GetInstance: instance was returned").toStdString());
         return instance;
     }
 
@@ -59,6 +63,7 @@ namespace ISXCurrentUser {
         }
 
         emit authorizationChanged();
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, QString("CurrentUser::Authorize: new account was authorized").toStdString());
     }
 
     void CurrentUser::Logout()
@@ -72,8 +77,12 @@ namespace ISXCurrentUser {
         m_avatar_path.clear();
         m_is_authorized = false;
 
+        QSettings settings("ISX", "MailClient");
+        settings.remove("active_user_email");
+
         emit profileChanged();
         emit authorizationChanged();
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, QString("CurrentUser::Logout: user was logout").toStdString());
     }
 
     void CurrentUser::UpdateAvatarPath(const QString& new_path)
@@ -90,6 +99,7 @@ namespace ISXCurrentUser {
 #endif
 
         if (clean_path.isEmpty() || !QFile::exists(clean_path)) {
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug, QString("CurrentUser::UpdateAvatarPath: path is invalid").toStdString());
             return;
         }
 
@@ -114,6 +124,7 @@ namespace ISXCurrentUser {
         }
 
         emit profileChanged();
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, QString("CurrentUser::UpdateAvatarPath: avatar path was updated").toStdString());
     }
 
     void CurrentUser::SaveAvatarToSqlite(const QString& local_path)

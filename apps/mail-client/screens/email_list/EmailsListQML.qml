@@ -95,6 +95,7 @@ Rectangle {
             starred: parent.pStarred
             theme: parent.pTheme
             time: formatEmailTime(parent.pTime)
+            seen: parent.pSeen
             width: parent.width
 
             onDeleteClicked: {
@@ -107,6 +108,9 @@ Rectangle {
             onStarredClicked: {
                 sourceModel.SetStarred(parent.pIndex, starred);
                 starredItemClicked(starred);
+            }
+            onClicked: {
+                sourceModel.UpdateSeen(parent.pIndex, true);
             }
         }
     }
@@ -507,6 +511,7 @@ Rectangle {
             property bool pStarred: emailsStarred
             property string pTheme: emailsTheme
             property string pTime: emailsTime
+            property bool pSeen: emailsSeen
 
             sourceComponent: isDraftMode ? draftDelegate : emailsDelegate
             width: listView.width
