@@ -71,7 +71,7 @@ Rectangle {
                         horizontalAlignment: Text.AlignHCenter
                         lineHeight: 20
                         lineHeightMode: Text.FixedHeight
-                        text: "Select an email to read"
+                        text: qsTr("Select an email to read")
                         textFormat: Text.PlainText
                         verticalAlignment: Text.AlignVCenter
                         width: 142

@@ -133,7 +133,7 @@ Rectangle {
                         elide: Text.ElideRight
                         font.family: "Segoe UI"
                         font.pixelSize: 12
-                        text: contentPageLetterQML.letterSendTo.length ? "to " + contentPageLetterQML.letterSendTo : "to me"
+                        text: contentPageLetterQML.letterSendTo.length ? qsTr("to ") + contentPageLetterQML.letterSendTo : qsTr("to me")
                         wrapMode: Text.NoWrap
                     }
                 }
@@ -284,7 +284,7 @@ Rectangle {
             height: 38
             radius: 10
             scale: clickAreaReply.containsMouse ? 1.1 : 1.0
-            width: 66
+            width: Math.max(66, reply.implicitWidth + 24)
 
             Behavior on scale {
                 NumberAnimation {
@@ -332,10 +332,9 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 lineHeight: 20
                 lineHeightMode: Text.FixedHeight
-                text: "Reply"
+                text: qsTr("Reply")
                 textFormat: Text.PlainText
                 verticalAlignment: Text.AlignVCenter
-                width: 35
             }
         }
 
@@ -352,7 +351,7 @@ Rectangle {
             height: 38
             radius: 10
             scale: clickAreaForward.containsMouse ? 1.1 : 1.0
-            width: 85
+            width: Math.max(85, forward.implicitWidth + 24)
 
             Behavior on scale {
                 NumberAnimation {
@@ -400,10 +399,9 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 lineHeight: 20
                 lineHeightMode: Text.FixedHeight
-                text: "Forward"
+                text: qsTr("Forward")
                 textFormat: Text.PlainText
                 verticalAlignment: Text.AlignVCenter
-                width: 52
             }
         }
 

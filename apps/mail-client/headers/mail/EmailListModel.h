@@ -10,8 +10,6 @@
 #include <memory>
 #include <vector>
 
-
-
 namespace ISXMail {
 
     Q_NAMESPACE;
@@ -56,7 +54,8 @@ namespace ISXMail {
         Q_OBJECT;
         Q_PROPERTY(bool isLoading READ isLoading NOTIFY isLoadingChanged)
         Q_PROPERTY(bool serverError READ serverError NOTIFY serverErrorChanged)
-        using InboxMessageCallback = std::function<void(const QString& sender, const QString& subject, const QString& preview)>;
+        using InboxMessageCallback =
+            std::function<void(const QString& sender, const QString& subject, const QString& preview)>;
 
     public:
         explicit EmailListModel(QObject* parent = nullptr);
@@ -104,7 +103,6 @@ namespace ISXMail {
         void LoadFromDatabase();
         void ReplaceData(std::vector<EmailData> data);
         QString MakePreview(const QString& text, int maxLen = 50);
-
 
         std::vector<EmailData> m_data;
         std::vector<InboxMessageCallback> m_inbox_callbacks;

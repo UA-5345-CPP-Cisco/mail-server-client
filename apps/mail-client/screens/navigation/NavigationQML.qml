@@ -15,8 +15,9 @@ Rectangle {
 
     function showPopup(msg)
     {
-        statePopup.message = String(msg);
-        statePopup.show();
+        if (typeof rootWindow !== "undefined" && rootWindow.showPopup) {
+            rootWindow.showPopup(String(msg));
+        }
     }
 
     function closeAccountMenu()
@@ -105,7 +106,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 20
                     lineHeightMode: Text.FixedHeight
-                    text: CurrentUser.isAuthorized ? CurrentUser.username : "Sign in"
+                    text: CurrentUser.isAuthorized ? CurrentUser.username : qsTr("Sign in")
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
@@ -133,7 +134,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: CurrentUser.isAuthorized ? CurrentUser.email : "No account active"
+                    text: CurrentUser.isAuthorized ? CurrentUser.email : qsTr("No account active")
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
@@ -279,7 +280,7 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 lineHeight: 24
                 lineHeightMode: Text.FixedHeight
-                text: "Compose"
+                text: qsTr("Compose")
                 textFormat: Text.PlainText
                 verticalAlignment: Text.AlignVCenter
                 width: 69
@@ -363,7 +364,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 24
                     lineHeightMode: Text.FixedHeight
-                    text: "Inbox"
+                    text: qsTr("Inbox")
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
@@ -467,7 +468,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 24
                     lineHeightMode: Text.FixedHeight
-                    text: "Sent"
+                    text: qsTr("Sent")
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
@@ -569,7 +570,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 24
                     lineHeightMode: Text.FixedHeight
-                    text: "Starred"
+                    text: qsTr("Starred")
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
@@ -671,7 +672,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 24
                     lineHeightMode: Text.FixedHeight
-                    text: "Drafts"
+                    text: qsTr("Drafts")
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
@@ -771,7 +772,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 24
                     lineHeightMode: Text.FixedHeight
-                    text: "Archive"
+                    text: qsTr("Archive")
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
@@ -870,7 +871,7 @@ Rectangle {
                 horizontalAlignment: Text.AlignLeft
                 lineHeight: 20
                 lineHeightMode: Text.FixedHeight
-                text: "Settings"
+                text: qsTr("Settings")
                 textFormat: Text.PlainText
                 verticalAlignment: Text.AlignVCenter
 
@@ -908,18 +909,7 @@ Rectangle {
         }
     }
 
-    // State popup shown when Settings is clicked; slides up out of the footer, hovers, then slides back down and disappears
-    StatePopup {
-        id: statePopup
 
-        anchors.bottom: footerNavigation.top
-        anchors.bottomMargin: 8
-        anchors.left: navigationQML.left
-        anchors.right: navigationQML.right
-        anchors.leftMargin: 8
-        anchors.rightMargin: 8
-        z: 999
-    }
 
     // Loader for Account change popup
     Loader {

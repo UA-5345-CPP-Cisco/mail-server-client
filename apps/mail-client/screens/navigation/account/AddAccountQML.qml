@@ -18,25 +18,25 @@ Rectangle {
     {
         if (errorCode === AuthHandler.AuthResult.UserNotFound || errorCode === AuthHandler.AuthResult.WrongPasswordOREmail)
         {
-            return "Invalid email or password";
+            return qsTr("Invalid email or password");
         }
 
         if (errorCode === AuthHandler.AuthResult.DatabaseError)
         {
-            return "Internal database error";
+            return qsTr("Internal database error");
         }
 
         if (errorCode === AuthHandler.AuthResult.InternalError)
         {
-            return "System error";
+            return qsTr("System error");
         }
 
         if (errorCode === AuthHandler.AuthResult.UserAlreadyExists)
         {
-            return "User already exists";
+            return qsTr("User already exists");
         }
 
-        return "An unknown error occurred";
+        return qsTr("An unknown error occurred");
     }
 
     function getRegisterValidationError(type, text)
@@ -55,7 +55,7 @@ Rectangle {
         {
             if (value.length === 0)
             {
-                return "Cannot be empty"
+                return qsTr("Cannot be empty")
             }
             return ""
         }
@@ -64,13 +64,13 @@ Rectangle {
         {
             if (value.length === 0)
             {
-                return "Cannot be empty"
+                return qsTr("Cannot be empty")
             }
 
             var email_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
             if (!email_regex.test(value))
             {
-                return "Invalid email format"
+                return qsTr("Invalid email format")
             }
 
             return ""
@@ -80,12 +80,12 @@ Rectangle {
         {
             if (value.length === 0)
             {
-                return "Cannot be empty"
+                return qsTr("Cannot be empty")
             }
 
             if (value.length < 6)
             {
-                return "Password must be at least 6 characters long"
+                return qsTr("Password must be at least 6 characters long")
             }
 
             if (value.length < 10)
@@ -99,7 +99,7 @@ Rectangle {
             
                         if (value_lower.includes(forward) || value_lower.includes(backward))
                         {
-                            return "Password cannot contain simple sequences";
+                            return qsTr("Password cannot contain simple sequences");
                         }
                     }
                 }
@@ -107,27 +107,27 @@ Rectangle {
 
             if (/(.)\1{4,}/.test(value))
             {
-                return "Password cannot contain repeated characters";
+                return qsTr("Password cannot contain repeated characters");
             }
 
             if (!/[A-Z]/.test(value))
             {
-                return "Password must contain at least one uppercase letter"
+                return qsTr("Password must contain at least one uppercase letter")
             }
 
             if (!/\d/.test(value))
             {
-                return "Password must contain at least one number"
+                return qsTr("Password must contain at least one number")
             }
 
             if (!/[!@#$%^&*(),.?":{}|<>\-_]/.test(value))
             {
-                return "Password must contain at least one special character"
+                return qsTr("Password must contain at least one special character")
             }
 
             return ""
         }
-        return "An unknown error occurred"
+        return qsTr("An unknown error occurred")
     }
 
     Rectangle {
@@ -272,7 +272,7 @@ Rectangle {
                     font.family: "Segoe UI"
                     font.pixelSize: 32
                     font.weight: Font.Bold
-                    text: "Welcome!"
+                    text: qsTr("Welcome")
                 }
                 Row {
                     id: optionsRow
@@ -315,9 +315,12 @@ Rectangle {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 color: Color.primaryText
                                 font.family: "Segoe UI"
-                                font.pixelSize: 22
+                                font.pixelSize: 20
                                 font.weight: Font.Bold
-                                text: "Existing User?"
+                                horizontalAlignment: Text.AlignHCenter
+                                text: qsTr("Existing User?")
+                                width: parent.width
+                                wrapMode: Text.WordWrap
                             }
                             Rectangle {
                                 id: loginButton
@@ -348,7 +351,7 @@ Rectangle {
                                     font.family: "Segoe UI"
                                     font.pixelSize: 16
                                     font.weight: Font.Bold
-                                    text: "Log In"
+                                    text: qsTr("Log In")
                                 }
                                 MouseArea {
                                     id: loginClickArea
@@ -370,7 +373,7 @@ Rectangle {
                                 font.family: "Segoe UI"
                                 font.pixelSize: 14
                                 horizontalAlignment: Text.AlignHCenter
-                                text: "Access your personal \n or work profile"
+                                text: qsTr("Access your personal \n or work profile")
                             }
                         }
                     }
@@ -411,9 +414,12 @@ Rectangle {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 color: Color.primaryText
                                 font.family: "Segoe UI"
-                                font.pixelSize: 22
+                                font.pixelSize: 20
                                 font.weight: Font.Bold
-                                text: "New User?"
+                                horizontalAlignment: Text.AlignHCenter
+                                text: qsTr("New User?")
+                                width: parent.width
+                                wrapMode: Text.WordWrap
                             }
                             Rectangle {
                                 id: registerButton
@@ -444,7 +450,7 @@ Rectangle {
                                     font.family: "Segoe UI"
                                     font.pixelSize: 16
                                     font.weight: Font.Bold
-                                    text: "Register"
+                                    text: qsTr("Register")
                                 }
                                 MouseArea {
                                     id: registerClickArea
@@ -466,7 +472,7 @@ Rectangle {
                                 font.family: "Segoe UI"
                                 font.pixelSize: 14
                                 horizontalAlignment: Text.AlignHCenter
-                                text: "Create a new account"
+                                text: qsTr("Create a new account")
                             }
                         }
                     }

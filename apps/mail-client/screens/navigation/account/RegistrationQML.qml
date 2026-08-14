@@ -80,7 +80,7 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 28
             font.weight: Font.Bold
-            text: "Register"
+            text: qsTr("Register")
         }
         Text {
             id: descriptionText
@@ -90,7 +90,7 @@ Item {
             color: Color.secondaryText
             font.family: "Segoe UI"
             font.pixelSize: 14
-            text: "Please enter your details to create a new account"
+            text: qsTr("Please enter your details to create a new account")
         }
 
         // Name field for register screen
@@ -102,7 +102,7 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 14
             leftPadding: 16
-            placeholderText: "Name"
+            placeholderText: qsTr("Name")
             placeholderTextColor: Color.secondaryText
             rightPadding: 16
             topPadding: 12
@@ -170,6 +170,8 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 12
             visible: nameError !== ""
+            width: parent.width
+            wrapMode: Text.WordWrap
             topPadding: -14
         }
 
@@ -182,7 +184,7 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 14
             leftPadding: 16
-            placeholderText: "Email address"
+            placeholderText: qsTr("Email address")
             placeholderTextColor: Color.secondaryText
             rightPadding: 16
             topPadding: 12
@@ -250,6 +252,8 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 12
             visible: emailError !== ""
+            width: parent.width
+            wrapMode: Text.WordWrap
             topPadding: -14
         }
 
@@ -263,7 +267,7 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 14
             leftPadding: 16
-            placeholderText: "Password"
+            placeholderText: qsTr("Password")
             placeholderTextColor: Color.secondaryText
             rightPadding: 16
             topPadding: 12
@@ -293,7 +297,7 @@ Item {
 
             background: Rectangle {
                 id: passwordBackgroundRectangle
-                
+
                 border.color: rootItem.passwordError !== "" ? "#fda29b" : (passwordTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
                 border.width: passwordTextField.activeFocus ? 2 : 1
                 color: Color.background
@@ -353,6 +357,8 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 12
             visible: passwordError !== ""
+            width: parent.width
+            wrapMode: Text.WordWrap
             topPadding: -14
         }
 
@@ -366,7 +372,7 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 14
             leftPadding: 16
-            placeholderText: "Confirm Password"
+            placeholderText: qsTr("Confirm Password")
             placeholderTextColor: Color.secondaryText
             rightPadding: 16
             topPadding: 12
@@ -393,7 +399,7 @@ Item {
 
             background: Rectangle {
                 id: confirmBackgroundRectangle
-                
+
                 border.color: rootItem.confirmPasswordError !== "" ? "#fda29b" : (passwordConfirmationTextField.activeFocus ? "#1a66ff" : "#e5e7eb")
                 border.width: passwordConfirmationTextField.activeFocus ? 2 : 1
                 color: Color.background
@@ -453,6 +459,8 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 12
             visible: confirmPasswordError !== ""
+            width: parent.width
+            wrapMode: Text.WordWrap
             topPadding: -14
         }
 
@@ -494,7 +502,7 @@ Item {
                 font.family: "Segoe UI"
                 font.pixelSize: 16
                 font.weight: Font.Bold
-                text: "Register"
+                text: qsTr("Register")
             }
             MouseArea {
                 id: registerClickArea
@@ -509,13 +517,13 @@ Item {
                     var email_error = rootWindow.getRegisterValidationError("email", emailTextField.text)
                     var password_error = rootWindow.getRegisterValidationError("password", passwordTextField.text)
                     var confirm_password_error = ""
-                    if (passwordConfirmationTextField.text === "") 
+                    if (passwordConfirmationTextField.text === "")
                     {
-                        confirm_password_error = "Please confirm your password"
-                    } 
-                    else if (passwordTextField.text !== passwordConfirmationTextField.text) 
+                        confirm_password_error = qsTr("Please confirm your password")
+                    }
+                    else if (passwordTextField.text !== passwordConfirmationTextField.text)
                     {
-                        confirm_password_error = "Passwords do not match"
+                        confirm_password_error = qsTr("Passwords do not match")
                     }
 
                     nameError = name_error
@@ -538,6 +546,9 @@ Item {
          font.pixelSize: 12
          visible: rootItem.generalError !== ""
          anchors.horizontalCenter: parent.horizontalCenter
+         horizontalAlignment: Text.AlignHCenter
+         width: parent.width
+         wrapMode: Text.WordWrap
         }
     }
 }

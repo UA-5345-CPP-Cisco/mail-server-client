@@ -105,7 +105,7 @@ ApplicationWindow {
         return null;
     }
     function showPopup(msg) {
-        navMenu.showPopup(String(msg));
+        emailList.showPopup(String(msg));
     }
 
     height: 768
@@ -201,7 +201,7 @@ ApplicationWindow {
                     draftModel.SetEmailData(parseInt(index), text, parseInt(EmailRole.PreviewRole));
                 }
 
-                showPopup("Draft is saved");
+                showPopup(qsTr("Draft is saved"));
                 newMessageLoader.selectedItem = null;
             }
             function onDraftFinished(index, subject, recipient, text) {
@@ -210,11 +210,11 @@ ApplicationWindow {
                     emailsModel.AddData(false, true, false, false, false, subject, CurrentUser.username, recipient, text, "");
                 }
 
-                showPopup("Email is sent");
+                showPopup(qsTr("Email is sent"));
                 newMessageLoader.selectedItem = null;
             }
             function onEmailSent() {
-                showPopup("Email is sent");
+                showPopup(qsTr("Email is sent"));
             }
 
             target: null
@@ -307,9 +307,9 @@ ApplicationWindow {
                 }
                 onStarredItemClicked: function (starred) {
                     if (starred)
-                        showPopup("Email is starred");
+                        showPopup(qsTr("Email is starred"));
                     else
-                        showPopup("Email is unstarred");
+                        showPopup(qsTr("Email is unstarred"));
                 }
             }
             Item {
@@ -336,16 +336,16 @@ ApplicationWindow {
                         if (emailList.sourceModel) {
                             let state = emailList.sourceModel.ToggleArchive(parseInt(letterIndex));
                             if (state)
-                                showPopup("Email is archived");
+                                showPopup(qsTr("Email is archived"));
                             else
-                                showPopup("Email is unarchived");
+                                showPopup(qsTr("Email is unarchived"));
                         }
                     }
                     onDeleteClicked: {
                         if (emailList.sourceModel)
                             emailList.sourceModel.RemoveEmailData(parseInt(letterIndex));
                         window.selectedEmail = null;
-                        showPopup("Email is deleted");
+                        showPopup(qsTr("Email is deleted"));
                     }
                     onStarClicked: {
                         if (emailList.sourceModel)
@@ -362,9 +362,9 @@ ApplicationWindow {
                             };
                         }
                         if (starred)
-                            showPopup("Email is starred");
+                            showPopup(qsTr("Email is starred"));
                         else
-                            showPopup("Email is unstarred");
+                            showPopup(qsTr("Email is unstarred"));
                     }
                 }
             }
@@ -549,14 +549,14 @@ ApplicationWindow {
                 font.family: "Segoe UI"
                 font.pixelSize: 28
                 font.weight: Font.Bold
-                text: emailsModel.isLoading ? "server loading" : "server failed"
+                text: emailsModel.isLoading ? qsTr("server loading") : qsTr("server failed")
             }
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: "#cccccc"
                 font.family: "Segoe UI"
                 font.pixelSize: 14
-                text: "click to retry"
+                text: qsTr("click to retry")
                 visible: emailsModel.serverError
             }
         }

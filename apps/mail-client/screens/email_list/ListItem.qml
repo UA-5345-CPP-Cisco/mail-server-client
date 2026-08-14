@@ -105,7 +105,7 @@ Rectangle {
             text: Color.secondaryText
         }
         MenuItem {
-            text: "Copy"
+            text: qsTr("Copy")
 
             onTriggered: {}
         }
@@ -120,7 +120,7 @@ Rectangle {
         }
         MenuItem {
 
-            text: "Delete"
+            text: qsTr("Delete")
             onTriggered: root.deleteClicked()
         }
     }
