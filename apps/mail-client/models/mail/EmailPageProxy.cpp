@@ -1,6 +1,6 @@
-#include "headers/mail/EmailPageProxy.h"
+#include "mail/EmailPageProxy.h"
 
-#include "headers/service/Service.h"
+#include "service/Service.h"
 
 namespace ISXMail {
 
@@ -127,6 +127,8 @@ namespace ISXMail {
 
     bool EmailPageProxy::SetEmailData(int proxy_row, const QVariant& value, int role)
     {
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                          "EmailPageProxy::SetEmailData: was called");
         QModelIndex proxyIndex = index(proxy_row, 0);
         QModelIndex sourceIndex = mapToSource(proxyIndex);
 
@@ -135,18 +137,21 @@ namespace ISXMail {
             QModelIndex modelIndex = filterProxy->mapToSource(sourceIndex);
             return filterProxy->sourceModel()->setData(modelIndex, value, role);
         }
+
         return false;
     }
 
     bool EmailPageProxy::SetStarred(int proxy_row, bool starred)
     {
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                          "EmailPageProxy::SetStarred: was called");
         return SetEmailData(proxy_row, starred, StarredRole);
     }
 
     void EmailPageProxy::RemoveEmailData(int proxy_row)
     {
         ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
-                                          "EmailPageProxy::RemoveEmailData: source model was assigned successfully");
+                                          "EmailPageProxy::RemoveEmailData: was called");
         QModelIndex idx = index(proxy_row, 0);
 
         auto* model = GetParentModel(idx);
@@ -158,6 +163,8 @@ namespace ISXMail {
 
     bool EmailPageProxy::ToggleArchive(int proxy_row)
     {
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                          "EmailPageProxy::ToggleArchive: was called");
         QModelIndex idx = index(proxy_row, 0);
 
         auto* model = GetParentModel(idx);
@@ -171,6 +178,8 @@ namespace ISXMail {
 
     bool EmailPageProxy::UpdateSeen(int proxy_row, bool seen)
     {
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                          "EmailPageProxy::UpdateSeen: was called");
         QModelIndex idx = index(proxy_row, 0);
 
         auto* model = GetParentModel(idx);

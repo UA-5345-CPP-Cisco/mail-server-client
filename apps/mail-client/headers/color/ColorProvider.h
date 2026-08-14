@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QString>
 
-#include "headers/color/ColorModel.h"
+#include "color/ColorModel.h"
 
 namespace ISXMail {
 

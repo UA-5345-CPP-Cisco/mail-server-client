@@ -4,7 +4,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-#include <headers/client_logger/ClientConfigReader.h>
+#include <client_logger/ClientConfigReader.h>
 
 namespace ISXConfig {
 

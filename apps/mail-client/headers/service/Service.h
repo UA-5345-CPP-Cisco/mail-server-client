@@ -1,6 +1,6 @@
 #pragma once
 
-#include "headers/client_logger/ClientProxyLogger.h"
+#include "client_logger/ClientProxyLogger.h"
 #include "logger/Logger.h"
 #include "mail_server_sdk/MailServerClient.h"
 

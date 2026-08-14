@@ -1,9 +1,9 @@
-#include "headers/database/AuthHandler.h"
+#include "database/AuthHandler.h"
 
 #include <boost/json.hpp>
 
-#include "headers/service/Service.h"
-#include "headers/users/CurrentUser.h"
+#include "service/Service.h"
+#include "users/CurrentUser.h"
 
 namespace json = boost::json;
 

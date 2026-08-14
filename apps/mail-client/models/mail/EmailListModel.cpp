@@ -1,10 +1,10 @@
-#include "headers/mail/EmailListModel.h"
+#include "mail/EmailListModel.h"
 
 #include <QThread>
 #include <QTime>
 
-#include "headers/service/Service.h"
-#include "headers/users/CurrentUser.h"
+#include "service/Service.h"
+#include "users/CurrentUser.h"
 
 namespace json = boost::json;
 
@@ -294,6 +294,7 @@ namespace ISXMail {
     void EmailListModel::registerInboxMessageCallback(InboxMessageCallback callback)
     {
         m_inbox_callbacks.push_back(callback);
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::registerInboxMessageCallback: callback was added");
     }
 
     bool EmailListModel::SetStarred(int row, bool starred)
@@ -320,10 +321,12 @@ namespace ISXMail {
     {
         const QString current_email = ISXCurrentUser::CurrentUser::GetInstance().email();
         if (current_email.trimmed().isEmpty()) {
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::RefreshFromServer: no current email was found!");
             return false;
         }
 
         if (m_isLoading) {
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::RefreshFromServer: still loading....");
             return false;
         }
 
@@ -490,6 +493,7 @@ namespace ISXMail {
         connect(thread, &QThread::finished, thread, &QObject::deleteLater);
         thread->start();
 
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::RefreshFromServer: data was refreshed from server!");
         return true;
     }
 
@@ -527,6 +531,8 @@ namespace ISXMail {
         m_data = std::move(data);
         endResetModel();
         emit dataAdded();
+
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::ReplaceData: data was replaced successfully!");
     }
 
 

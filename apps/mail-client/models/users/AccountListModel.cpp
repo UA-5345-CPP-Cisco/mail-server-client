@@ -1,14 +1,45 @@
-#include "headers/users/AccountListModel.h"
+#include "users/AccountListModel.h"
 
 #include <QSettings>
 
-#include "headers/users/CurrentUser.h"
+#include "users/CurrentUser.h"
+#include "service/Service.h"
 
 namespace ISXMail {
+
+    namespace {
+        QString GetEnumString(int role)
+        {
+            switch (role) {
+            case AccountNameRole:
+                return QStringLiteral("AccountNameRole");
+            case AccountEmailRole:
+                return QStringLiteral("AccountEmailRole");
+            case AvatarUrlRole:
+                return QStringLiteral("AvatarUrlRole");
+            case AvatarColorRole:
+                return QStringLiteral("AvatarColorRole");
+            case AvatarInitialRole:
+                return QStringLiteral("AvatarInitialRole");
+            case IsActiveRole:
+                return QStringLiteral("AvatarInitialRole");
+            default:
+                return QStringLiteral("UnknownRole");
+            }
+        }
+
+        std::string GetStdString(const QString& str)
+        {
+            return str.toStdString();
+        }
+    }
+
     AccountListModel::AccountListModel(QObject* parent)
         : QAbstractListModel(parent)
     {
         LoadFromSettings();
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                      "AccountListModel: constructed");
     }
 
     int AccountListModel::rowCount(const QModelIndex& parent) const
@@ -83,6 +114,10 @@ namespace ISXMail {
             return false;
         }
 
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+    GetStdString(QString("AccountListModel::setData: data at %1 changed value of role %2")
+                     .arg(QString::number(index.row()))
+                     .arg(GetEnumString(role))));
         emit dataChanged(index, index, {role});
         return true;
     }
@@ -94,6 +129,8 @@ namespace ISXMail {
         m_data.push_back(item);
         endInsertRows();
         emit accountAdded();
+
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, GetStdString("AccountListModel::AddData: data was added"));
     }
 
     void AccountListModel::AddAccount(const QString& name,
@@ -128,6 +165,8 @@ namespace ISXMail {
         beginRemoveRows(QModelIndex(), row, row);
         m_data.erase(m_data.begin() + row);
         endRemoveRows();
+
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, GetStdString("AccountListModel::RemoveAccount: data was removed at " + QString::number(row)));
         SaveToSettings();
         return true;
     }
@@ -157,6 +196,7 @@ namespace ISXMail {
 
         SaveToSettings();
 
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, GetStdString("AccountListModel::SetActiveAccount: account is active at " + QString::number(row)));
         emit activeAccountChanged(row);
         return true;
     }
@@ -169,7 +209,10 @@ namespace ISXMail {
         return -1;
     }
 
-
+    QString AccountListModel::DefaultDatabasePath() const
+    {
+        return QString();
+    }
 
     bool AccountListModel::LoadFromSettings()
     {
@@ -177,6 +220,7 @@ namespace ISXMail {
         int size = settings.beginReadArray("accounts");
         if (size == 0) {
             settings.endArray();
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug, GetStdString("AccountListModel::LoadFromSettings: no accounts in settings"));
             return false;
         }
 
@@ -209,8 +253,11 @@ namespace ISXMail {
             } else {
                 SetActiveAccount(0);
             }
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug, GetStdString("AccountListModel::LoadFromSettings: account was loaded successfully!"));
             return true;
         }
+
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, GetStdString("AccountListModel::LoadFromSettings: failed to load account from settings"));
         return false;
     }
 
@@ -228,6 +275,7 @@ namespace ISXMail {
             settings.setValue("is_active", m_data[i].is_active);
         }
         settings.endArray();
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, GetStdString("AccountListModel::SaveToSettings: data was saved into settings"));
     }
 
 } // namespace ISXMail
