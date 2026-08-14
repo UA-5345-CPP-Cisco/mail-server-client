@@ -10,10 +10,10 @@
 #include <gtest/gtest.h>
 
 #include "mail_storage/Database.h"
+#include "mail_storage/MailMessageActorRecord.h"
+#include "mail_storage/MailMessageActorRepository.h"
 #include "mail_storage/MailMessageRecord.h"
 #include "mail_storage/MailMessageRepository.h"
-#include "mail_storage/MessageRecipientRecord.h"
-#include "mail_storage/MessageRecipientRepository.h"
 #include "mail_storage/MigrationRunner.h"
 #include "mail_storage/UserRepository.h"
 
@@ -36,12 +36,12 @@ class MailDeliveryRepositoryTest : public testing::Test
 
     m_user_repository = std::make_unique<Storage::UserRepository>(*m_database);
     m_message_repository = std::make_unique<Storage::MailMessageRepository>(*m_database);
-    m_recipient_repository = std::make_unique<Storage::MessageRecipientRepository>(*m_database);
+    m_actor_repository = std::make_unique<Storage::MailMessageActorRepository>(*m_database);
   }
 
   void TearDown() override
   {
-    m_recipient_repository.reset();
+    m_actor_repository.reset();
     m_message_repository.reset();
     m_user_repository.reset();
     m_database.reset();
@@ -59,24 +59,22 @@ class MailDeliveryRepositoryTest : public testing::Test
 
   std::int64_t CreateMessage(Storage::MailMessageStatus status = Storage::MailMessageStatus::Queued)
   {
-    return m_message_repository->CreateMessage(
-      std::nullopt, "sender@example.com", std::string("Subject"), "Body", std::nullopt, false, status);
+    return m_message_repository->CreateMessage(std::string("Subject"), "Body", std::nullopt, status);
   }
 
   std::filesystem::path m_database_path;
   std::unique_ptr<Storage::Database> m_database;
   std::unique_ptr<Storage::UserRepository> m_user_repository;
   std::unique_ptr<Storage::MailMessageRepository> m_message_repository;
-  std::unique_ptr<Storage::MessageRecipientRepository> m_recipient_repository;
+  std::unique_ptr<Storage::MailMessageActorRepository> m_actor_repository;
 };
 
 TEST_F(MailDeliveryRepositoryTest, CreatesAndFindsMessages)
 {
-  const std::int64_t user_id = CreateUser();
-  const std::int64_t parent_message_id = m_message_repository->CreateMessage(
-    user_id, "sender@example.com", std::nullopt, "Parent body", std::nullopt, false, Storage::MailMessageStatus::Draft);
-  const std::int64_t reply_message_id = m_message_repository->CreateMessage(
-    user_id, "sender@example.com", std::string("Reply"), "Reply body", parent_message_id, false);
+  const std::int64_t parent_message_id =
+    m_message_repository->CreateMessage(std::nullopt, "Parent body", std::nullopt, Storage::MailMessageStatus::Draft);
+  const std::int64_t reply_message_id =
+    m_message_repository->CreateMessage(std::string("Reply"), "Reply body", parent_message_id);
 
   const std::optional<Storage::MailMessageRecord> parent = m_message_repository->FindById(parent_message_id);
   const std::optional<Storage::MailMessageRecord> reply = m_message_repository->FindById(reply_message_id);
@@ -84,17 +82,15 @@ TEST_F(MailDeliveryRepositoryTest, CreatesAndFindsMessages)
   ASSERT_TRUE(parent.has_value());
   ASSERT_TRUE(reply.has_value());
 
-  EXPECT_EQ(parent->sender_user_id, user_id);
-  EXPECT_EQ(parent->sender_email, "sender@example.com");
   EXPECT_FALSE(parent->subject.has_value());
   EXPECT_EQ(parent->body, "Parent body");
   EXPECT_FALSE(parent->reply_to_message_id.has_value());
   EXPECT_FALSE(parent->created_at.empty());
-  EXPECT_EQ(parent->status, Storage::MailMessageStatus::Draft);
+  EXPECT_EQ(parent->message_status, Storage::MailMessageStatus::Draft);
 
   EXPECT_EQ(reply->subject, "Reply");
   EXPECT_EQ(reply->reply_to_message_id, parent_message_id);
-  EXPECT_EQ(reply->status, Storage::MailMessageStatus::Queued);
+  EXPECT_EQ(reply->message_status, Storage::MailMessageStatus::Queued);
   EXPECT_FALSE(m_message_repository->FindById(reply_message_id + 1).has_value());
 }
 
@@ -126,79 +122,95 @@ TEST_F(MailDeliveryRepositoryTest, FindsAndTransitionsMessagesByStatus)
 
 TEST_F(MailDeliveryRepositoryTest, EnforcesMessageRelationships)
 {
-  const std::int64_t user_id = CreateUser();
-  const std::int64_t message_id =
-    m_message_repository->CreateMessage(user_id, "sender@example.com", std::nullopt, "Body", std::nullopt, false);
+  const std::int64_t message_id = m_message_repository->CreateMessage(std::nullopt, "Body", std::nullopt);
 
-  EXPECT_THROW(
-    m_message_repository->CreateMessage(user_id + 1, "sender@example.com", std::nullopt, "Body", std::nullopt, false),
-    std::runtime_error);
-  EXPECT_THROW(
-    m_message_repository->CreateMessage(user_id, "sender@example.com", std::nullopt, "Body", message_id + 1, false),
-    std::runtime_error);
-
-  m_database->Execute("DELETE FROM users WHERE id = 1;");
-
-  const std::optional<Storage::MailMessageRecord> message = m_message_repository->FindById(message_id);
-
-  ASSERT_TRUE(message.has_value());
-  EXPECT_FALSE(message->sender_user_id.has_value());
-  EXPECT_EQ(message->sender_email, "sender@example.com");
+  EXPECT_THROW(m_message_repository->CreateMessage(std::nullopt, "Body", message_id + 1), std::runtime_error);
 }
 
-TEST_F(MailDeliveryRepositoryTest, CreatesAndFindsRecipients)
+TEST_F(MailDeliveryRepositoryTest, CreatesAndFindsActors)
 {
   const std::int64_t message_id = CreateMessage();
+  const std::int64_t from_actor_id =
+    m_actor_repository->CreateActor(message_id, "sender@example.com", Storage::MailMessageActorType::From);
   const std::int64_t to_recipient_id =
-    m_recipient_repository->CreateRecipient(message_id, "to@example.com", Storage::RecipientType::To);
-  const std::int64_t cc_recipient_id = m_recipient_repository->CreateRecipient(
-    message_id, "cc@example.com", Storage::RecipientType::Cc, Storage::DeliveryStatus::Queued);
-  m_recipient_repository->CreateRecipient(message_id, "bcc@example.com", Storage::RecipientType::Bcc);
+    m_actor_repository->CreateActor(message_id, "to@example.com", Storage::MailMessageActorType::To);
+  const std::int64_t cc_recipient_id = m_actor_repository->CreateActor(
+    message_id, "cc@example.com", Storage::MailMessageActorType::Cc, Storage::DeliveryStatus::Queued);
+  m_actor_repository->CreateActor(message_id, "bcc@example.com", Storage::MailMessageActorType::Bcc);
 
-  const std::optional<Storage::MessageRecipientRecord> to_recipient = m_recipient_repository->FindById(to_recipient_id);
-  const std::vector<Storage::MessageRecipientRecord> recipients = m_recipient_repository->FindByMessageId(message_id);
+  const std::optional<Storage::MailMessageActorRecord> to_recipient = m_actor_repository->FindById(to_recipient_id);
+  const std::vector<Storage::MailMessageActorRecord> recipients = m_actor_repository->FindByMessageId(message_id);
 
   ASSERT_TRUE(to_recipient.has_value());
   EXPECT_EQ(to_recipient->message_id, message_id);
-  EXPECT_EQ(to_recipient->recipient_email, "to@example.com");
-  EXPECT_EQ(to_recipient->recipient_type, Storage::RecipientType::To);
+  EXPECT_EQ(to_recipient->actor_email, "to@example.com");
+  EXPECT_EQ(to_recipient->actor_type, Storage::MailMessageActorType::To);
   EXPECT_EQ(to_recipient->delivery_status, Storage::DeliveryStatus::Pending);
   EXPECT_EQ(to_recipient->attempt_count, 0);
   EXPECT_FALSE(to_recipient->next_attempt_at.has_value());
   EXPECT_FALSE(to_recipient->last_error.has_value());
   EXPECT_FALSE(to_recipient->delivered_at.has_value());
 
-  ASSERT_EQ(recipients.size(), 3);
-  EXPECT_EQ(recipients[1].id, cc_recipient_id);
-  EXPECT_EQ(recipients[1].recipient_type, Storage::RecipientType::Cc);
-  EXPECT_EQ(recipients[1].delivery_status, Storage::DeliveryStatus::Queued);
+  ASSERT_EQ(recipients.size(), 4);
+  EXPECT_EQ(recipients[0].id, from_actor_id);
+  EXPECT_EQ(recipients[0].actor_type, Storage::MailMessageActorType::From);
+  EXPECT_FALSE(recipients[0].delivery_status.has_value());
+  EXPECT_EQ(recipients[2].id, cc_recipient_id);
+  EXPECT_EQ(recipients[2].actor_type, Storage::MailMessageActorType::Cc);
+  EXPECT_EQ(recipients[2].delivery_status, Storage::DeliveryStatus::Queued);
 }
 
-TEST_F(MailDeliveryRepositoryTest, EnforcesRecipientForeignKeyAndCascade)
+TEST_F(MailDeliveryRepositoryTest, EnforcesActorForeignKeyAndCascade)
 {
   const std::int64_t message_id = CreateMessage();
   const std::int64_t recipient_id =
-    m_recipient_repository->CreateRecipient(message_id, "recipient@example.com", Storage::RecipientType::To);
+    m_actor_repository->CreateActor(message_id, "recipient@example.com", Storage::MailMessageActorType::To);
 
   EXPECT_THROW(
-    m_recipient_repository->CreateRecipient(message_id + 1, "invalid@example.com", Storage::RecipientType::To),
+    m_actor_repository->CreateActor(message_id + 1, "invalid@example.com", Storage::MailMessageActorType::To),
     std::runtime_error);
 
   m_database->Execute("DELETE FROM mail_messages WHERE id = " + std::to_string(message_id) + ";");
 
-  EXPECT_FALSE(m_recipient_repository->FindById(recipient_id).has_value());
+  EXPECT_FALSE(m_actor_repository->FindById(recipient_id).has_value());
+}
+
+TEST_F(MailDeliveryRepositoryTest, UpdatesMailboxStateForSingleActor)
+{
+  const std::int64_t message_id = CreateMessage();
+  m_actor_repository->CreateActor(message_id, "sender@example.com", Storage::MailMessageActorType::From);
+  const std::int64_t first_actor_id =
+    m_actor_repository->CreateActor(message_id, "first@example.com", Storage::MailMessageActorType::To);
+  const std::int64_t second_actor_id =
+    m_actor_repository->CreateActor(message_id, "second@example.com", Storage::MailMessageActorType::To);
+
+  EXPECT_TRUE(m_actor_repository->SetStarred(message_id, "first@example.com", true));
+  EXPECT_TRUE(m_actor_repository->SetArchived(message_id, "first@example.com", true));
+  EXPECT_TRUE(m_actor_repository->MarkDeleted(message_id, "first@example.com"));
+
+  const std::optional<Storage::MailMessageActorRecord> first_actor = m_actor_repository->FindById(first_actor_id);
+  const std::optional<Storage::MailMessageActorRecord> second_actor = m_actor_repository->FindById(second_actor_id);
+
+  ASSERT_TRUE(first_actor.has_value());
+  ASSERT_TRUE(second_actor.has_value());
+  EXPECT_TRUE(first_actor->starred_at.has_value());
+  EXPECT_TRUE(first_actor->archived_at.has_value());
+  EXPECT_TRUE(first_actor->deleted_at.has_value());
+  EXPECT_FALSE(second_actor->starred_at.has_value());
+  EXPECT_FALSE(second_actor->archived_at.has_value());
+  EXPECT_FALSE(second_actor->deleted_at.has_value());
 }
 
 TEST_F(MailDeliveryRepositoryTest, ClaimsQueuedRecipientsOnlyOnce)
 {
   const std::int64_t message_id = CreateMessage();
-  const std::int64_t first_recipient_id = m_recipient_repository->CreateRecipient(
-    message_id, "first@example.com", Storage::RecipientType::To, Storage::DeliveryStatus::Queued);
-  const std::int64_t second_recipient_id = m_recipient_repository->CreateRecipient(
-    message_id, "second@example.com", Storage::RecipientType::To, Storage::DeliveryStatus::Queued);
-  m_recipient_repository->CreateRecipient(message_id, "pending@example.com", Storage::RecipientType::To);
+  const std::int64_t first_recipient_id = m_actor_repository->CreateActor(
+    message_id, "first@example.com", Storage::MailMessageActorType::To, Storage::DeliveryStatus::Queued);
+  const std::int64_t second_recipient_id = m_actor_repository->CreateActor(
+    message_id, "second@example.com", Storage::MailMessageActorType::To, Storage::DeliveryStatus::Queued);
+  m_actor_repository->CreateActor(message_id, "pending@example.com", Storage::MailMessageActorType::To);
 
-  const std::vector<Storage::MessageRecipientRecord> first_claim = m_recipient_repository->ClaimReadyRecipients(1);
+  const std::vector<Storage::MailMessageActorRecord> first_claim = m_actor_repository->ClaimReadyRecipients(1);
 
   ASSERT_EQ(first_claim.size(), 1);
   EXPECT_EQ(first_claim[0].id, first_recipient_id);
@@ -206,9 +218,9 @@ TEST_F(MailDeliveryRepositoryTest, ClaimsQueuedRecipientsOnlyOnce)
   EXPECT_EQ(first_claim[0].attempt_count, 1);
 
   Storage::Database second_database(m_database_path);
-  Storage::MessageRecipientRepository second_repository(second_database);
+  Storage::MailMessageActorRepository second_repository(second_database);
 
-  const std::vector<Storage::MessageRecipientRecord> second_claim = second_repository.ClaimReadyRecipients(10);
+  const std::vector<Storage::MailMessageActorRecord> second_claim = second_repository.ClaimReadyRecipients(10);
 
   ASSERT_EQ(second_claim.size(), 1);
   EXPECT_EQ(second_claim[0].id, second_recipient_id);
@@ -218,17 +230,17 @@ TEST_F(MailDeliveryRepositoryTest, ClaimsQueuedRecipientsOnlyOnce)
 TEST_F(MailDeliveryRepositoryTest, RetriesTemporaryFailuresWhenReady)
 {
   const std::int64_t message_id = CreateMessage();
-  const std::int64_t recipient_id = m_recipient_repository->CreateRecipient(
-    message_id, "recipient@example.com", Storage::RecipientType::To, Storage::DeliveryStatus::Queued);
+  const std::int64_t recipient_id = m_actor_repository->CreateActor(
+    message_id, "recipient@example.com", Storage::MailMessageActorType::To, Storage::DeliveryStatus::Queued);
 
-  std::vector<Storage::MessageRecipientRecord> claimed_recipients = m_recipient_repository->ClaimReadyRecipients(1);
+  std::vector<Storage::MailMessageActorRecord> claimed_recipients = m_actor_repository->ClaimReadyRecipients(1);
   ASSERT_EQ(claimed_recipients.size(), 1);
 
-  EXPECT_TRUE(m_recipient_repository->MarkTemporaryFailed(recipient_id, "2999-01-01 00:00:00", "temporary failure"));
-  EXPECT_TRUE(m_recipient_repository->ClaimReadyRecipients(1).empty());
-  EXPECT_TRUE(m_recipient_repository->QueueRecipient(recipient_id));
+  EXPECT_TRUE(m_actor_repository->MarkTemporaryFailed(recipient_id, "2999-01-01 00:00:00", "temporary failure"));
+  EXPECT_TRUE(m_actor_repository->ClaimReadyRecipients(1).empty());
+  EXPECT_TRUE(m_actor_repository->QueueActor(recipient_id));
 
-  claimed_recipients = m_recipient_repository->ClaimReadyRecipients(1);
+  claimed_recipients = m_actor_repository->ClaimReadyRecipients(1);
 
   ASSERT_EQ(claimed_recipients.size(), 1);
   EXPECT_EQ(claimed_recipients[0].id, recipient_id);
@@ -236,10 +248,10 @@ TEST_F(MailDeliveryRepositoryTest, RetriesTemporaryFailuresWhenReady)
   EXPECT_FALSE(claimed_recipients[0].next_attempt_at.has_value());
   EXPECT_FALSE(claimed_recipients[0].last_error.has_value());
 
-  EXPECT_TRUE(m_recipient_repository->MarkDelivered(recipient_id));
-  EXPECT_FALSE(m_recipient_repository->MarkDelivered(recipient_id));
+  EXPECT_TRUE(m_actor_repository->MarkDelivered(recipient_id));
+  EXPECT_FALSE(m_actor_repository->MarkDelivered(recipient_id));
 
-  const std::optional<Storage::MessageRecipientRecord> recipient = m_recipient_repository->FindById(recipient_id);
+  const std::optional<Storage::MailMessageActorRecord> recipient = m_actor_repository->FindById(recipient_id);
 
   ASSERT_TRUE(recipient.has_value());
   EXPECT_EQ(recipient->delivery_status, Storage::DeliveryStatus::Delivered);
@@ -250,22 +262,21 @@ TEST_F(MailDeliveryRepositoryTest, RetriesTemporaryFailuresWhenReady)
 TEST_F(MailDeliveryRepositoryTest, MarksRecipientsBouncedAndFailed)
 {
   const std::int64_t message_id = CreateMessage();
-  const std::int64_t bounced_recipient_id = m_recipient_repository->CreateRecipient(
-    message_id, "bounced@example.com", Storage::RecipientType::To, Storage::DeliveryStatus::Queued);
-  const std::int64_t failed_recipient_id = m_recipient_repository->CreateRecipient(
-    message_id, "failed@example.com", Storage::RecipientType::To, Storage::DeliveryStatus::Queued);
+  const std::int64_t bounced_recipient_id = m_actor_repository->CreateActor(
+    message_id, "bounced@example.com", Storage::MailMessageActorType::To, Storage::DeliveryStatus::Queued);
+  const std::int64_t failed_recipient_id = m_actor_repository->CreateActor(
+    message_id, "failed@example.com", Storage::MailMessageActorType::To, Storage::DeliveryStatus::Queued);
 
-  const std::vector<Storage::MessageRecipientRecord> claimed_recipients =
-    m_recipient_repository->ClaimReadyRecipients(10);
+  const std::vector<Storage::MailMessageActorRecord> claimed_recipients = m_actor_repository->ClaimReadyRecipients(10);
   ASSERT_EQ(claimed_recipients.size(), 2);
 
-  EXPECT_TRUE(m_recipient_repository->MarkBounced(bounced_recipient_id, "mailbox unavailable"));
-  EXPECT_TRUE(m_recipient_repository->MarkFailed(failed_recipient_id, "internal delivery failure"));
+  EXPECT_TRUE(m_actor_repository->MarkBounced(bounced_recipient_id, "mailbox unavailable"));
+  EXPECT_TRUE(m_actor_repository->MarkFailed(failed_recipient_id, "internal delivery failure"));
 
-  const std::optional<Storage::MessageRecipientRecord> bounced_recipient =
-    m_recipient_repository->FindById(bounced_recipient_id);
-  const std::optional<Storage::MessageRecipientRecord> failed_recipient =
-    m_recipient_repository->FindById(failed_recipient_id);
+  const std::optional<Storage::MailMessageActorRecord> bounced_recipient =
+    m_actor_repository->FindById(bounced_recipient_id);
+  const std::optional<Storage::MailMessageActorRecord> failed_recipient =
+    m_actor_repository->FindById(failed_recipient_id);
 
   ASSERT_TRUE(bounced_recipient.has_value());
   ASSERT_TRUE(failed_recipient.has_value());

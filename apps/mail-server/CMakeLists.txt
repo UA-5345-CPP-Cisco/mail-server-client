@@ -11,6 +11,9 @@ add_executable(mail_server
     src/handlers/AuthHandler.cpp
     src/handlers/HelloHandler.cpp
     src/handlers/SendMailHandler.cpp
+    src/handlers/StarHandler.cpp
+    src/handlers/ArchiveHandler.cpp
+    src/handlers/DeleteMailHandler.cpp
 )
 
 target_include_directories(mail_server

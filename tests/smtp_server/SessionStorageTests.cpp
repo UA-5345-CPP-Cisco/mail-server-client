@@ -8,8 +8,8 @@
 
 #include "logger/Logger.h"
 #include "mail_storage/Database.h"
+#include "mail_storage/MailMessageActorRepository.h"
 #include "mail_storage/MailMessageRepository.h"
-#include "mail_storage/MessageRecipientRepository.h"
 #include "mail_storage/MigrationRunner.h"
 #include "smtp/AuthService.hpp"
 #include "smtp/Session.hpp"
@@ -110,7 +110,7 @@ class SessionStorageTest : public testing::Test
 
   Storage::Database m_database{PrepareDatabasePath(m_databasePath)};
   Storage::MailMessageRepository m_mailMessages{m_database};
-  Storage::MessageRecipientRepository m_messageRecipients{m_database};
+  Storage::MailMessageActorRepository m_messageActors{m_database};
 
   std::mutex m_storageMutex;
   smtp::ServerConfig m_config;
@@ -118,14 +118,8 @@ class SessionStorageTest : public testing::Test
   smtp::AuthService m_authService;
   TestLogger m_logger;
 
-  smtp::SmtpSessionContext m_context{m_config,
-                                     m_socketsManager,
-                                     m_authService,
-                                     m_database,
-                                     m_mailMessages,
-                                     m_messageRecipients,
-                                     m_storageMutex,
-                                     m_logger};
+  smtp::SmtpSessionContext m_context{
+    m_config, m_socketsManager, m_authService, m_database, m_mailMessages, m_messageActors, m_storageMutex, m_logger};
 
   smtp::SmtpSessionState m_state{m_connectionId};
   smtp::SmtpSessionHandler m_handler;
@@ -136,7 +130,7 @@ class SessionStorageTest : public testing::Test
 class SmtpSessionQueueTest : public ::testing::Test
 {
   protected:
-  void SetUp()
+  void SetUp() override
   {
     Storage::MigrationRunner migrations(m_database, SMTP_SERVER_TEST_MIGRATIONS_DIR);
     migrations.Run();
@@ -169,7 +163,7 @@ class SmtpSessionQueueTest : public ::testing::Test
 
   Storage::Database m_database{PrepareDatabasePath(m_databasePath)};
   Storage::MailMessageRepository m_mailMessages{m_database};
-  Storage::MessageRecipientRepository m_messageRecipients{m_database};
+  Storage::MailMessageActorRepository m_messageActors{m_database};
 
   std::mutex m_storageMutex;
   smtp::ServerConfig m_config;
@@ -177,14 +171,8 @@ class SmtpSessionQueueTest : public ::testing::Test
   smtp::AuthService m_authService;
   TestLogger m_logger;
 
-  smtp::SmtpSessionContext m_context{m_config,
-                                     m_socketsManager,
-                                     m_authService,
-                                     m_database,
-                                     m_mailMessages,
-                                     m_messageRecipients,
-                                     m_storageMutex,
-                                     m_logger};
+  smtp::SmtpSessionContext m_context{
+    m_config, m_socketsManager, m_authService, m_database, m_mailMessages, m_messageActors, m_storageMutex, m_logger};
 
   smtp::SmtpSessionHandler m_handler;
 
@@ -204,14 +192,16 @@ TEST_F(SessionStorageTest, StoresAcceptedMessageAndQueuesRecipients)
   const std::vector<Storage::MailMessageRecord> queued_messages =
     m_mailMessages.FindByStatus(Storage::MailMessageStatus::Queued, 10);
   ASSERT_EQ(queued_messages.size(), 1);
-  EXPECT_EQ(queued_messages.front().sender_email, "sender@example.com");
   EXPECT_EQ(queued_messages.front().body, "Message body\r\n");
 
-  const std::vector<Storage::MessageRecipientRecord> recipients =
-    m_messageRecipients.FindByMessageId(queued_messages.front().id);
-  ASSERT_EQ(recipients.size(), 2);
-  EXPECT_EQ(recipients.front().delivery_status, Storage::DeliveryStatus::Queued);
-  EXPECT_EQ(recipients.back().delivery_status, Storage::DeliveryStatus::Queued);
+  const std::vector<Storage::MailMessageActorRecord> actors =
+    m_messageActors.FindByMessageId(queued_messages.front().id);
+  ASSERT_EQ(actors.size(), 3);
+  EXPECT_EQ(actors[0].actor_email, "sender@example.com");
+  EXPECT_EQ(actors[0].actor_type, Storage::MailMessageActorType::From);
+  EXPECT_FALSE(actors[0].delivery_status.has_value());
+  EXPECT_EQ(actors[1].delivery_status, Storage::DeliveryStatus::Queued);
+  EXPECT_EQ(actors[2].delivery_status, Storage::DeliveryStatus::Queued);
 }
 
 TEST_F(SessionStorageTest, RejectRCPTBeforeMAIL)

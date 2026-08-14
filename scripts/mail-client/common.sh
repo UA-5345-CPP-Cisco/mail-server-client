@@ -5,7 +5,7 @@ mail_client_init_paths() {
 
   project_root="$(cd "${caller_script_dir}/.." && pwd)"
   source_dir="${project_root}/apps/mail-client"
-  build_dir="${project_root}/cmake-build-mail-client"
+  build_dir="${project_root}/cmake-build-mail-client-release"
   qt_prefix="${QT_PREFIX:-}"
 }
 
@@ -36,7 +36,7 @@ mail_client_configure_and_build() {
     -S "${source_dir}"
     -B "${build_dir}"
     -G Ninja
-    -DCMAKE_BUILD_TYPE=Debug
+    -DCMAKE_BUILD_TYPE=Release
     -DCMAKE_CXX_STANDARD=17
     -DCMAKE_CXX_STANDARD_REQUIRED=ON
   )
@@ -45,13 +45,13 @@ mail_client_configure_and_build() {
     cmake_args+=("-DCMAKE_PREFIX_PATH=${qt_prefix}")
   fi
 
-  if [[ -d "${project_root}/cmake-build-debug/_deps/boost-src" ]]; then
-    cmake_args+=("-DFETCHCONTENT_SOURCE_DIR_BOOST=${project_root}/cmake-build-debug/_deps/boost-src")
+  if [[ -d "${project_root}/cmake-build-release/_deps/boost-src" ]]; then
+    cmake_args+=("-DFETCHCONTENT_SOURCE_DIR_BOOST=${project_root}/cmake-build-release/_deps/boost-src")
   fi
 
-  if [[ -d "${project_root}/cmake-build-debug/_deps/cryptopp_modern-src" ]]; then
+  if [[ -d "${project_root}/cmake-build-release/_deps/cryptopp_modern-src" ]]; then
     cmake_args+=(
-      "-DFETCHCONTENT_SOURCE_DIR_CRYPTOPP_MODERN=${project_root}/cmake-build-debug/_deps/cryptopp_modern-src"
+      "-DFETCHCONTENT_SOURCE_DIR_CRYPTOPP_MODERN=${project_root}/cmake-build-release/_deps/cryptopp_modern-src"
     )
   fi
 

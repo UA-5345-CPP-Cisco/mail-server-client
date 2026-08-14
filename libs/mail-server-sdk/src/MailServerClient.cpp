@@ -51,4 +51,34 @@ http::HttpResponse MailServerClient::SendMail(std::string from,
                                                      {"body", std::move(body)}});
 }
 
+http::HttpResponse MailServerClient::StarMail(std::int64_t message_id, std::string user_email) const
+{
+  return m_http_client.post_json(
+    "/mails/star", boost::json::object{{"id", message_id}}, {{"X-User-Email", std::move(user_email)}});
+}
+
+http::HttpResponse MailServerClient::UnstarMail(std::int64_t message_id, std::string user_email) const
+{
+  return m_http_client.post_json(
+    "/mails/unstar", boost::json::object{{"id", message_id}}, {{"X-User-Email", std::move(user_email)}});
+}
+
+http::HttpResponse MailServerClient::ArchiveMail(std::int64_t message_id, std::string user_email) const
+{
+  return m_http_client.post_json(
+    "/mails/archive", boost::json::object{{"id", message_id}}, {{"X-User-Email", std::move(user_email)}});
+}
+
+http::HttpResponse MailServerClient::UnarchiveMail(std::int64_t message_id, std::string user_email) const
+{
+  return m_http_client.post_json(
+    "/mails/unarchive", boost::json::object{{"id", message_id}}, {{"X-User-Email", std::move(user_email)}});
+}
+
+http::HttpResponse MailServerClient::DeleteMail(std::int64_t message_id, std::string user_email) const
+{
+  return m_http_client.post_json(
+    "/mails/delete", boost::json::object{{"id", message_id}}, {{"X-User-Email", std::move(user_email)}});
+}
+
 } // namespace ISXMailServerSDK
