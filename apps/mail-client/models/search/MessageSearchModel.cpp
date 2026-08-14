@@ -10,8 +10,7 @@ namespace ISXMail {
     MessageSearchModel::MessageSearchModel(QObject* parent)
         : QSortFilterProxyModel(parent)
     {
-        ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
-                                              "MessageSearchModel: constructed");
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "MessageSearchModel: constructed");
         setFilterCaseSensitivity(Qt::CaseInsensitive);
     }
 
@@ -32,7 +31,7 @@ namespace ISXMail {
         emit searchedTextChanged();
 
         ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
-                                              "MessageSearchModel::SetSearchedText: searched text was assigned");
+                                          "MessageSearchModel::SetSearchedText: searched text was assigned");
     }
 
     bool MessageSearchModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const
@@ -86,7 +85,7 @@ namespace ISXMail {
         result += text.mid(start).toHtmlEscaped();
 
         ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
-                                              "MessageSearchModel::HighlightAllFoundWords: result was found successfully!");
+                                          "MessageSearchModel::HighlightAllFoundWords: result was found successfully!");
         return result;
     }
 

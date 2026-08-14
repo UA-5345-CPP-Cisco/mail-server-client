@@ -24,8 +24,7 @@ namespace ISXMail {
     MessageComposer::MessageComposer(QObject* parent)
         : QObject(parent)
     {
-        ISXService::Service::Logger().Log(Logging::LogLevel::Info,
-                                          "MessageComposer: initialized without DB");
+        ISXService::Service::Logger().Log(Logging::LogLevel::Info, "MessageComposer: initialized without DB");
     }
 
     bool MessageComposer::SendMailMessage(const QString& sender_name,

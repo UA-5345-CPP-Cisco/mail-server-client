@@ -11,6 +11,11 @@ Rectangle {
     signal emailOpenRequested(int index, string theme, string name, string sendTo, string content, string time, bool starred)
     signal starredItemClicked(bool starred)
 
+    function showPopup(msg) {
+        statePopup.message = String(msg);
+        statePopup.show();
+    }
+
     function activeSearchModel() {
         if (sourceModel === inboxModel)
             return inboxSearchModel;
@@ -21,6 +26,17 @@ Rectangle {
         if (sourceModel === draftModel)
             return draftSearchModel;
         return inboxSearchModel;
+    }
+
+    function selectedFolderTranslate(folder)
+    {
+        if(selectedFolder === "inbox") return qsTr("inbox");
+        if(selectedFolder === "sent") return qsTr("sent");
+        if(selectedFolder === "drafts") return qsTr("drafts");
+        if(selectedFolder === "starred") return qsTr("starred");
+        if(selectedFolder === "archive") return qsTr("archive");
+
+        return qsTr("default");
     }
 
     color: Color.background
@@ -201,7 +217,7 @@ Rectangle {
                         font.weight: Font.Normal
                         horizontalAlignment: Text.AlignLeft
                         leftPadding: 0
-                        placeholderText: "Search mail"
+                        placeholderText: qsTr("Search mail")
                         placeholderTextColor: Color.secondaryText
                         topPadding: 0
 
@@ -325,7 +341,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: selectedFolder
+                    text: selectedFolderTranslate(selectedFolder)
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                 }
@@ -512,5 +528,14 @@ Rectangle {
             right: parent.right
             top: separatorLine.bottom
         }
+    }
+
+    StatePopup {
+        id: statePopup
+
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 16
+        anchors.horizontalCenter: parent.horizontalCenter
+        z: 999
     }
 }

@@ -139,8 +139,7 @@ TEST_F(UserRepositoryTest, FindActiveUserBehavior)
 {
   EXPECT_FALSE(m_repository->FindActiveUser().has_value());
 
-  const std::int64_t user_id =
-    m_repository->CreateUser("alice", "alice@example.com", "password-hash");
+  const std::int64_t user_id = m_repository->CreateUser("alice", "alice@example.com", "password-hash");
 
   const std::optional<Storage::UserRecord> active_user = m_repository->FindActiveUser();
   ASSERT_TRUE(active_user.has_value());

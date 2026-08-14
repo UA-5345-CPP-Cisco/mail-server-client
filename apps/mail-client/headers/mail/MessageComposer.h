@@ -3,8 +3,6 @@
 #include <QObject>
 #include <QString>
 
-
-
 namespace ISXMail {
 
     class MessageComposer : public QObject
@@ -25,9 +23,6 @@ namespace ISXMail {
                                    const QString& recipient_email,
                                    const QString& subject,
                                    const QString& body);
-
-
-
     };
 
 } // namespace ISXMail

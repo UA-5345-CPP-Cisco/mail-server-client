@@ -24,14 +24,13 @@ namespace ISXMail {
 
         const QJsonDocument document = QJsonDocument::fromJson(file.readAll());
         if (!document.isObject()) {
-            ISXService::Service::Logger().Log(Logging::LogLevel::Info,
-                                              "ColorModel::LoadFromFile: failed to read JSON file: " +
-                                                  path.toStdString());
+            ISXService::Service::Logger().Log(
+                Logging::LogLevel::Info, "ColorModel::LoadFromFile: failed to read JSON file: " + path.toStdString());
             return false;
         }
 
         ISXService::Service::Logger().Log(Logging::LogLevel::Info,
-                                              "ColorModel::LoadFromFile: JSON file was read successfully");
+                                          "ColorModel::LoadFromFile: JSON file was read successfully");
 
         return LoadFromJson(document.object());
     }
@@ -61,7 +60,7 @@ namespace ISXMail {
         }
 
         ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
-                                                 std::string("ColorModel::LoadFromJson: file was loaded from JSON"));
+                                          std::string("ColorModel::LoadFromJson: file was loaded from JSON"));
         return loaded;
     }
 
