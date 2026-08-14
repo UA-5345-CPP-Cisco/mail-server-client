@@ -234,11 +234,6 @@ namespace ISXMail {
         return -1;
     }
 
-    QString AccountListModel::DefaultDatabasePath() const
-    {
-        return QString();
-    }
-
     bool AccountListModel::LoadFromSettings()
     {
         QSettings settings("ISX", "MailClient");
