@@ -778,6 +778,8 @@ Rectangle {
                 id: languageComboBox
 
                 currentIndex: settingsContainer.languageIndex(Localization.currentLanguage)
+                displayText: currentIndex >= 0 ? settingsContainer.languageOptions[currentIndex].label : ""
+                implicitHeight: 32
                 model: settingsContainer.languageOptions
                 textRole: "label"
                 valueRole: "code"
@@ -785,20 +787,71 @@ Rectangle {
                 x: 200
                 y: 14
 
+                delegate: ItemDelegate {
+                    id: languageOption
+
+                    highlighted: languageComboBox.highlightedIndex === index
+                    implicitHeight: 36
+                    implicitWidth: languageComboBox.width
+                    padding: 0
+
+                    background: Rectangle {
+                        anchors.margins: 4
+                        color: languageOption.highlighted || languageOption.hovered
+                               || languageComboBox.currentIndex === index
+                               ? Color.highlight : Color.transparent
+                        radius: 4
+                    }
+                    contentItem: Text {
+                        color: Color.secondaryText
+                        font.family: "Segoe UI"
+                        font.pixelSize: 13
+                        leftPadding: 12
+                        text: modelData.label
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                }
                 contentItem: Text {
                     color: Color.primaryText
                     elide: Text.ElideRight
                     font.family: "Segoe UI"
                     font.pixelSize: 12
                     leftPadding: 10
+                    rightPadding: 30
                     text: languageComboBox.displayText
                     verticalAlignment: Text.AlignVCenter
+                }
+                indicator: Image {
+                    anchors.right: parent.right
+                    anchors.rightMargin: 10
+                    anchors.verticalCenter: parent.verticalCenter
+                    height: 16
+                    opacity: languageComboBox.enabled ? 1 : 0.4
+                    source: "qrc:/pngs/assets/ic_arrow_down.svg"
+                    width: 16
                 }
                 background: Rectangle {
                     border.color: Color.outline
                     border.width: 1
                     color: Color.background
                     radius: 8
+                }
+                popup: Popup {
+                    y: languageComboBox.height + 4
+                    width: languageComboBox.width
+
+                    contentItem: ListView {
+                        clip: true
+                        implicitHeight: contentHeight
+                        currentIndex: languageComboBox.highlightedIndex
+                        model: languageComboBox.popup.visible ? languageComboBox.delegateModel : null
+                    }
+                    background: Rectangle {
+                        border.color: Color.outline
+                        border.width: 1
+                        color: Color.background
+                        radius: 8
+                    }
                 }
 
                 onActivated: Localization.SetLanguage(currentValue)
