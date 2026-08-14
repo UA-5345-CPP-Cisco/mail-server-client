@@ -339,6 +339,18 @@ lub służbowego</translation>
         <source>Enter Recipient!</source>
         <translation>Wprowadź odbiorcę!</translation>
     </message>
+    <message>
+        <source>Edit Draft</source>
+        <translation>Edytuj wersję roboczą</translation>
+    </message>
+    <message>
+        <source>Reply</source>
+        <translation>Odpowiedz</translation>
+    </message>
+    <message>
+        <source>Forward</source>
+        <translation>Przekaż dalej</translation>
+    </message>
 </context>
 <context>
     <name>RegistrationQML</name>

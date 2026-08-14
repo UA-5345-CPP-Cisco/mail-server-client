@@ -774,22 +774,23 @@ Rectangle {
                 height: 16
                 text: qsTr("Choose the interface language")
                 verticalAlignment: Text.AlignVCenter
-                width: 170
+                width: languageComboBox.x - x - 8
                 x: 46
                 y: 31
             }
             ComboBox {
                 id: languageComboBox
 
+                anchors.right: parent.right
+                anchors.rightMargin: 12
+                anchors.verticalCenter: parent.verticalCenter
                 currentIndex: settingsContainer.languageIndex(Localization.currentLanguage)
                 displayText: currentIndex >= 0 ? settingsContainer.languageOptions[currentIndex].label : ""
                 implicitHeight: 32
                 model: settingsContainer.languageOptions
                 textRole: "label"
                 valueRole: "code"
-                width: 140
-                x: 200
-                y: 14
+                width: 130
 
                 delegate: ItemDelegate {
                     id: languageOption

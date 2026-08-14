@@ -339,6 +339,18 @@
         <source>Enter Recipient!</source>
         <translation>Введіть отримувача!</translation>
     </message>
+    <message>
+        <source>Edit Draft</source>
+        <translation>Редагувати чернетку</translation>
+    </message>
+    <message>
+        <source>Reply</source>
+        <translation>Відповісти</translation>
+    </message>
+    <message>
+        <source>Forward</source>
+        <translation>Переслати</translation>
+    </message>
 </context>
 <context>
     <name>RegistrationQML</name>

@@ -53,6 +53,7 @@ ApplicationWindow {
         window.selectedFolder = "inbox";
     }
     function formatEmailTime(input_time) {
+        let dummy = Localization.currentLanguage;
         let message_date = parseDatabaseTimestamp(input_time);
         if (!message_date)
             return String(input_time);
@@ -64,17 +65,19 @@ ApplicationWindow {
         if (is_same_day) {
             return Qt.formatDateTime(message_date, "hh:mm");
         } else {
-            return Qt.formatDateTime(message_date, "MMMM dd").toLowerCase();
+            return Qt.formatDateTime(message_date, "MMMM dd", Qt.locale(Localization.currentLanguage)).toLowerCase();
         }
     }
     function formatEmailTimeFull(input_time) {
+        let dummy = Localization.currentLanguage;
         let message_date = parseDatabaseTimestamp(input_time);
         if (!message_date)
             return String(input_time);
 
-        let time_formatted = Qt.formatDateTime(message_date, "hh:mm");
+        let loc = Qt.locale(Localization.currentLanguage);
+        let time_formatted = Qt.formatDateTime(message_date, "hh:mm", loc);
 
-        let date_formatted = Qt.formatDateTime(message_date, "MMMM dd").toLowerCase();
+        let date_formatted = Qt.formatDateTime(message_date, "MMMM dd", loc).toLowerCase();
 
         return time_formatted + ", " + date_formatted;
     }
@@ -186,7 +189,7 @@ ApplicationWindow {
                 item.isDraft = false;
                 item.isReply = false;
                 item.isForward = false;
-                item.newTitle = "New Message";
+                item.newTitle = qsTr("New Message");
             }
         }
 

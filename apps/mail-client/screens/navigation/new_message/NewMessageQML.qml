@@ -64,22 +64,29 @@ Rectangle {
             x: 12
             y: 9
 
-            Text {
-                id: newMessageTitleText
+    function getDisplayTitle() {
+        if (isReply) return qsTr("Reply");
+        if (isForward) return qsTr("Forward");
+        if (isDraft) return qsTr("Edit Draft");
+        return qsTr("New Message");
+    }
 
-                anchors.fill: parent
-                color: "#ffffff"
-                font.family: "Segoe UI"
-                font.pixelSize: 14
-                font.weight: Font.Normal
-                horizontalAlignment: Text.AlignLeft
-                lineHeight: 20
-                lineHeightMode: Text.FixedHeight
-                text: newTitle
-                textFormat: Text.PlainText
-                verticalAlignment: Text.AlignVCenter
-                wrapMode: Text.Wrap
-            }
+    Text {
+        id: newMessageTitleText
+
+        anchors.fill: parent
+        color: "#ffffff"
+        font.family: "Segoe UI"
+        font.pixelSize: 14
+        font.weight: Font.Normal
+        horizontalAlignment: Text.AlignLeft
+        lineHeight: 20
+        lineHeightMode: Text.FixedHeight
+        text: getDisplayTitle()
+        textFormat: Text.PlainText
+        verticalAlignment: Text.AlignVCenter
+        wrapMode: Text.Wrap
+    }
         }
 
         // Wrapper
