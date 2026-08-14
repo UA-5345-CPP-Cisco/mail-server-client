@@ -31,7 +31,7 @@ Rectangle {
         if(selectedFolder === "starred") return qsTr("starred");
         if(selectedFolder === "archive") return qsTr("archive");
 
-        return "default";
+        return qsTr("default");
     }
 
     color: Color.background

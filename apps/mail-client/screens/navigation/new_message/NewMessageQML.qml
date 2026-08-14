@@ -12,7 +12,7 @@ Rectangle {
     property string newRecipient: ""
     property string newSubject: ""
     property string newText: ""
-    property string newTitle: "New Message"
+    property string newTitle: qsTr("New Message")
 
     signal draftChanged(string index, string subject, string recipient, string text)
     signal draftFinished(string index, string subject, string recipient, string text)
@@ -438,7 +438,7 @@ Rectangle {
             height: 32
             radius: 14
             scale: sentClickArea.containsMouse ? 1.05 : 1.0
-            width: 63
+            width: Math.max(63, sentButtonText.implicitWidth + 24)
             x: 12
 
             Behavior on scale {
@@ -457,7 +457,7 @@ Rectangle {
 
                 onClicked: {
                     if (recipientTextField.text === "") {
-                        recipientTextField.text = "Enter Recipient!";
+                        recipientTextField.text = qsTr("Enter Recipient!");
                     } else if (recipientTextField.text === "inboxtest") {
                         let recipient_text = recipientTextField.text.trim() === "" ? "empty" : recipientTextField.text;
                         let subject_text = subjectTextField.text.trim() === "" ? "empty" : subjectTextField.text;
@@ -514,7 +514,8 @@ Rectangle {
             radius: 4
             scale: deleteClickArea.containsMouse ? 1.2 : 1.0
             width: 28
-            x: 85
+            anchors.left: buttonToSentMessage.right
+            anchors.leftMargin: 10
 
             Behavior on scale {
                 NumberAnimation {

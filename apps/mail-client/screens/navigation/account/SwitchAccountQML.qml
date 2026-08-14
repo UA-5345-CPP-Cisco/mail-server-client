@@ -204,7 +204,9 @@ Rectangle
                 id: addButtonText
                 x: 60
                 y: 18
+                width: parent.width - 70
                 height: 20
+                elide: Text.ElideRight
                 text: qsTr("Add account")
                 color: Color.primaryText
                 font.family: "Segoe UI"

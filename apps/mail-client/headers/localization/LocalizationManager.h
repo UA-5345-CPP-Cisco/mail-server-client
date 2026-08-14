@@ -6,34 +6,33 @@
 
 class QQmlEngine;
 
-namespace ISXMail
-{
+namespace ISXMail {
 
-class LocalizationManager : public QObject
-{
-    Q_OBJECT
+    class LocalizationManager : public QObject
+    {
+        Q_OBJECT
 
-    Q_PROPERTY(QString currentLanguage READ CurrentLanguage NOTIFY languageChanged)
-    Q_PROPERTY(QString effectiveLocale READ EffectiveLocale NOTIFY languageChanged)
+        Q_PROPERTY(QString currentLanguage READ CurrentLanguage NOTIFY languageChanged)
+        Q_PROPERTY(QString effectiveLocale READ EffectiveLocale NOTIFY languageChanged)
 
-public:
-    explicit LocalizationManager(QQmlEngine* engine, QObject* parent = nullptr);
+    public:
+        explicit LocalizationManager(QQmlEngine* engine, QObject* parent = nullptr);
 
-    QString CurrentLanguage() const;
-    QString EffectiveLocale() const;
+        QString CurrentLanguage() const;
+        QString EffectiveLocale() const;
 
-    Q_INVOKABLE bool SetLanguage(const QString& language_code);
+        Q_INVOKABLE bool SetLanguage(const QString& language_code);
 
-signals:
-    void languageChanged();
+    signals:
+        void languageChanged();
 
-private:
-    bool ApplyLanguage(const QString& language_code, bool persist);
+    private:
+        bool ApplyLanguage(const QString& language_code, bool persist);
 
-    QQmlEngine* m_engine = nullptr;
-    QTranslator m_translator;
-    QString m_current_language;
-    QString m_effective_locale;
-};
+        QQmlEngine* m_engine = nullptr;
+        QTranslator m_translator;
+        QString m_current_language;
+        QString m_effective_locale;
+    };
 
 } // namespace ISXMail

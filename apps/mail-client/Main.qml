@@ -520,14 +520,14 @@ ApplicationWindow {
                 font.family: "Segoe UI"
                 font.pixelSize: 28
                 font.weight: Font.Bold
-                text: emailsModel.isLoading ? "server loading" : "server failed"
+                text: emailsModel.isLoading ? qsTr("server loading") : qsTr("server failed")
             }
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: "#cccccc"
                 font.family: "Segoe UI"
                 font.pixelSize: 14
-                text: "click to retry"
+                text: qsTr("click to retry")
                 visible: emailsModel.serverError
             }
         }

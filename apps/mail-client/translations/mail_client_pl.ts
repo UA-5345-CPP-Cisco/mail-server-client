@@ -4,10 +4,62 @@
 <context>
     <name>AddAccountQML</name>
     <message>
-        <location filename="../cmake-build-debug/qtapptestmail/screens/navigation/account/AddAccountQML.qml" line="244"/>
-        <location filename="../screens/navigation/account/AddAccountQML.qml" line="244"/>
-        <source>Add an Account</source>
-        <translation>Dodaj konto</translation>
+        <location filename="../cmake-build-debug/qtapptestmail/screens/navigation/account/AddAccountQML.qml" line="275"/>
+        <location filename="../screens/navigation/account/AddAccountQML.qml" line="275"/>
+        <source>Welcome</source>
+        <translation>Witaj</translation>
+    </message>
+    <message>
+        <source>Invalid email or password</source>
+        <translation>Nieprawidłowy email lub hasło</translation>
+    </message>
+    <message>
+        <source>Internal database error</source>
+        <translation>Wewnętrzny błąd bazy danych</translation>
+    </message>
+    <message>
+        <source>System error</source>
+        <translation>Błąd systemu</translation>
+    </message>
+    <message>
+        <source>User already exists</source>
+        <translation>Użytkownik już istnieje</translation>
+    </message>
+    <message>
+        <source>An unknown error occurred</source>
+        <translation>Wystąpił nieznany błąd</translation>
+    </message>
+    <message>
+        <source>Cannot be empty</source>
+        <translation>Nie może być puste</translation>
+    </message>
+    <message>
+        <source>Invalid email format</source>
+        <translation>Nieprawidłowy format email</translation>
+    </message>
+    <message>
+        <source>Password must be at least 6 characters long</source>
+        <translation>Hasło musi mieć co najmniej 6 znaków</translation>
+    </message>
+    <message>
+        <source>Password cannot contain simple sequences</source>
+        <translation>Hasło nie może zawierać prostych sekwencji</translation>
+    </message>
+    <message>
+        <source>Password cannot contain repeated characters</source>
+        <translation>Hasło nie może zawierać powtarzających się znaków</translation>
+    </message>
+    <message>
+        <source>Password must contain at least one uppercase letter</source>
+        <translation>Hasło musi zawierać co najmniej jedną wielką literę</translation>
+    </message>
+    <message>
+        <source>Password must contain at least one number</source>
+        <translation>Hasło musi zawierać co najmniej jedną cyfrę</translation>
+    </message>
+    <message>
+        <source>Password must contain at least one special character</source>
+        <translation>Hasło musi zawierać co najmniej jeden symbol specjalny</translation>
     </message>
     <message>
         <location filename="../cmake-build-debug/qtapptestmail/screens/navigation/account/AddAccountQML.qml" line="289"/>
@@ -143,6 +195,10 @@ lub służbowego</translation>
         <source>Search mail</source>
         <translation>Wyszukaj pocztę</translation>
     </message>
+    <message>
+        <source>default</source>
+        <translation>domyślny</translation>
+    </message>
 </context>
 <context>
     <name>ListItem</name>
@@ -191,6 +247,10 @@ lub służbowego</translation>
         <source>Sign In</source>
         <translation>Zaloguj się</translation>
     </message>
+    <message>
+        <source>Please fill in all fields</source>
+        <translation>Wypełnij wszystkie pola</translation>
+    </message>
 </context>
 <context>
     <name>NavigationQML</name>
@@ -236,6 +296,14 @@ lub służbowego</translation>
         <source>Settings</source>
         <translation>Ustawienia</translation>
     </message>
+    <message>
+        <source>Sign in</source>
+        <translation>Zaloguj się</translation>
+    </message>
+    <message>
+        <source>No account active</source>
+        <translation>Brak aktywnego konta</translation>
+    </message>
 </context>
 <context>
     <name>NewMessageQML</name>
@@ -262,6 +330,14 @@ lub służbowego</translation>
         <location filename="../screens/navigation/new_message/NewMessageQML.qml" line="487"/>
         <source>Send</source>
         <translation>Wyślij</translation>
+    </message>
+    <message>
+        <source>New Message</source>
+        <translation>Nowa wiadomość</translation>
+    </message>
+    <message>
+        <source>Enter Recipient!</source>
+        <translation>Wprowadź odbiorcę!</translation>
     </message>
 </context>
 <context>
@@ -303,6 +379,33 @@ lub służbowego</translation>
         <location filename="../screens/navigation/account/RegistrationQML.qml" line="479"/>
         <source>Register with Google</source>
         <translation>Zarejestruj się przez Google</translation>
+    </message>
+    <message>
+        <source>Confirm Password</source>
+        <translation>Potwierdź hasło</translation>
+    </message>
+    <message>
+        <source>Please confirm your password</source>
+        <translation>Potwierdź swoje hasło</translation>
+    </message>
+    <message>
+        <source>Passwords do not match</source>
+        <translation>Hasła nie są zgodne</translation>
+    </message>
+</context>
+<context>
+    <name>Main</name>
+    <message>
+        <source>server loading</source>
+        <translation>ładowanie serwera</translation>
+    </message>
+    <message>
+        <source>server failed</source>
+        <translation>błąd serwera</translation>
+    </message>
+    <message>
+        <source>click to retry</source>
+        <translation>kliknij, aby spróbować ponowne</translation>
     </message>
 </context>
 <context>

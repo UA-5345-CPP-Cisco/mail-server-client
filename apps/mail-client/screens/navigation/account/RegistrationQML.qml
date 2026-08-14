@@ -170,6 +170,8 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 12
             visible: nameError !== ""
+            width: parent.width
+            wrapMode: Text.WordWrap
             topPadding: -14
         }
 
@@ -250,6 +252,8 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 12
             visible: emailError !== ""
+            width: parent.width
+            wrapMode: Text.WordWrap
             topPadding: -14
         }
 
@@ -353,6 +357,8 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 12
             visible: passwordError !== ""
+            width: parent.width
+            wrapMode: Text.WordWrap
             topPadding: -14
         }
 
@@ -366,7 +372,7 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 14
             leftPadding: 16
-            placeholderText: "Confirm Password"
+            placeholderText: qsTr("Confirm Password")
             placeholderTextColor: Color.secondaryText
             rightPadding: 16
             topPadding: 12
@@ -453,6 +459,8 @@ Item {
             font.family: "Segoe UI"
             font.pixelSize: 12
             visible: confirmPasswordError !== ""
+            width: parent.width
+            wrapMode: Text.WordWrap
             topPadding: -14
         }
 
@@ -511,11 +519,11 @@ Item {
                     var confirm_password_error = ""
                     if (passwordConfirmationTextField.text === "")
                     {
-                        confirm_password_error = "Please confirm your password"
+                        confirm_password_error = qsTr("Please confirm your password")
                     }
                     else if (passwordTextField.text !== passwordConfirmationTextField.text)
                     {
-                        confirm_password_error = "Passwords do not match"
+                        confirm_password_error = qsTr("Passwords do not match")
                     }
 
                     nameError = name_error
@@ -538,6 +546,9 @@ Item {
          font.pixelSize: 12
          visible: rootItem.generalError !== ""
          anchors.horizontalCenter: parent.horizontalCenter
+         horizontalAlignment: Text.AlignHCenter
+         width: parent.width
+         wrapMode: Text.WordWrap
         }
     }
 }

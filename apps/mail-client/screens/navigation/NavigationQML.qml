@@ -105,7 +105,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 20
                     lineHeightMode: Text.FixedHeight
-                    text: CurrentUser.isAuthorized ? CurrentUser.username : "Sign in"
+                    text: CurrentUser.isAuthorized ? CurrentUser.username : qsTr("Sign in")
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
@@ -133,7 +133,7 @@ Rectangle {
                     horizontalAlignment: Text.AlignLeft
                     lineHeight: 16
                     lineHeightMode: Text.FixedHeight
-                    text: CurrentUser.isAuthorized ? CurrentUser.email : "No account active"
+                    text: CurrentUser.isAuthorized ? CurrentUser.email : qsTr("No account active")
                     textFormat: Text.PlainText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width

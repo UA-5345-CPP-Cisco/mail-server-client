@@ -119,7 +119,6 @@ namespace ISXMail {
             return item.id >= 0 && !item.is_draft;
         }
 
-
     } // namespace
 
     EmailListModel::EmailListModel(QObject* parent)
@@ -294,7 +293,8 @@ namespace ISXMail {
     void EmailListModel::registerInboxMessageCallback(InboxMessageCallback callback)
     {
         m_inbox_callbacks.push_back(callback);
-        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::registerInboxMessageCallback: callback was added");
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                          "EmailListModel::registerInboxMessageCallback: callback was added");
     }
 
     bool EmailListModel::SetStarred(int row, bool starred)
@@ -321,12 +321,14 @@ namespace ISXMail {
     {
         const QString current_email = ISXCurrentUser::CurrentUser::GetInstance().email();
         if (current_email.trimmed().isEmpty()) {
-            ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::RefreshFromServer: no current email was found!");
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                              "EmailListModel::RefreshFromServer: no current email was found!");
             return false;
         }
 
         if (m_isLoading) {
-            ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::RefreshFromServer: still loading....");
+            ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                              "EmailListModel::RefreshFromServer: still loading....");
             return false;
         }
 
@@ -422,26 +424,28 @@ namespace ISXMail {
                         continue;
                     }
 
-                const QString raw_content = QString::fromStdString(body);
-                const QString content = StripMessageHeaders(raw_content);
-                const QString display_subject = DisplaySubject(QString::fromStdString(subject), raw_content);
-                const bool is_draft = mail.contains("is_draft") && mail.at("is_draft").is_bool()
-                                          ? mail.at("is_draft").as_bool()
-                                          : status == "draft";
-                const bool is_archive = mail.contains("is_archive") && mail.at("is_archive").is_bool()
-                                            ? mail.at("is_archive").as_bool()
-                                            : false;
-                const bool is_sent = mail.contains("is_sent") && mail.at("is_sent").is_bool()
-                                         ? mail.at("is_sent").as_bool()
-                                         : is_current_sender && !is_draft && !is_archive;
-                const bool is_inbox = mail.contains("is_inbox") && mail.at("is_inbox").is_bool()
-                                          ? mail.at("is_inbox").as_bool()
-                                          : is_recipient && !is_current_sender && !is_draft && !is_archive;
-                const std::int64_t id = mail.contains("id") && mail.at("id").is_int64() ? mail.at("id").as_int64() : -1;
-                const bool is_starred = mail.contains("is_starred") && mail.at("is_starred").is_bool()
-                                            ? mail.at("is_starred").as_bool()
-                                            : false;
-                const bool is_seen = mail.contains("is_seen") && mail.at("is_seen").is_bool() ? mail.at("is_seen").as_bool() : false;
+                    const QString raw_content = QString::fromStdString(body);
+                    const QString content = StripMessageHeaders(raw_content);
+                    const QString display_subject = DisplaySubject(QString::fromStdString(subject), raw_content);
+                    const bool is_draft = mail.contains("is_draft") && mail.at("is_draft").is_bool()
+                                              ? mail.at("is_draft").as_bool()
+                                              : status == "draft";
+                    const bool is_archive = mail.contains("is_archive") && mail.at("is_archive").is_bool()
+                                                ? mail.at("is_archive").as_bool()
+                                                : false;
+                    const bool is_sent = mail.contains("is_sent") && mail.at("is_sent").is_bool()
+                                             ? mail.at("is_sent").as_bool()
+                                             : is_current_sender && !is_draft && !is_archive;
+                    const bool is_inbox = mail.contains("is_inbox") && mail.at("is_inbox").is_bool()
+                                              ? mail.at("is_inbox").as_bool()
+                                              : is_recipient && !is_current_sender && !is_draft && !is_archive;
+                    const std::int64_t id =
+                        mail.contains("id") && mail.at("id").is_int64() ? mail.at("id").as_int64() : -1;
+                    const bool is_starred = mail.contains("is_starred") && mail.at("is_starred").is_bool()
+                                                ? mail.at("is_starred").as_bool()
+                                                : false;
+                    const bool is_seen =
+                        mail.contains("is_seen") && mail.at("is_seen").is_bool() ? mail.at("is_seen").as_bool() : false;
 
                     server_data.push_back({id,
                                            is_inbox,
@@ -493,7 +497,8 @@ namespace ISXMail {
         connect(thread, &QThread::finished, thread, &QObject::deleteLater);
         thread->start();
 
-        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::RefreshFromServer: data was refreshed from server!");
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                          "EmailListModel::RefreshFromServer: data was refreshed from server!");
         return true;
     }
 
@@ -532,9 +537,9 @@ namespace ISXMail {
         endResetModel();
         emit dataAdded();
 
-        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel::ReplaceData: data was replaced successfully!");
+        ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
+                                          "EmailListModel::ReplaceData: data was replaced successfully!");
     }
-
 
     bool EmailListModel::setData(const QModelIndex& index, const QVariant& value, int role)
     {

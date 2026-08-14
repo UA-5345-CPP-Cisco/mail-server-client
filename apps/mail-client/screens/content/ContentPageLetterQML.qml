@@ -284,7 +284,7 @@ Rectangle {
             height: 38
             radius: 10
             scale: clickAreaReply.containsMouse ? 1.1 : 1.0
-            width: 66
+            width: Math.max(66, reply.implicitWidth + 24)
 
             Behavior on scale {
                 NumberAnimation {
@@ -335,7 +335,6 @@ Rectangle {
                 text: qsTr("Reply")
                 textFormat: Text.PlainText
                 verticalAlignment: Text.AlignVCenter
-                width: 35
             }
         }
 
@@ -352,7 +351,7 @@ Rectangle {
             height: 38
             radius: 10
             scale: clickAreaForward.containsMouse ? 1.1 : 1.0
-            width: 85
+            width: Math.max(85, forward.implicitWidth + 24)
 
             Behavior on scale {
                 NumberAnimation {
@@ -403,7 +402,6 @@ Rectangle {
                 text: qsTr("Forward")
                 textFormat: Text.PlainText
                 verticalAlignment: Text.AlignVCenter
-                width: 52
             }
         }
 

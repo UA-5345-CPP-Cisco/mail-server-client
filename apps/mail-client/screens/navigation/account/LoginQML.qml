@@ -290,7 +290,7 @@ Item {
 
                     if (emailTextField.text === "" || passwordTextField.text === "")
                     {
-                        rootItem.generalError = "Please fill in all fields"
+                        rootItem.generalError = qsTr("Please fill in all fields")
                     }
                     else
                     {
@@ -308,6 +308,9 @@ Item {
             font.pixelSize: 12
             visible: rootItem.generalError !== ""
             anchors.horizontalCenter: parent.horizontalCenter
+            horizontalAlignment: Text.AlignHCenter
+            width: parent.width
+            wrapMode: Text.WordWrap
             topPadding: -10
         }
     }

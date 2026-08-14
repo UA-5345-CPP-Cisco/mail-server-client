@@ -343,7 +343,7 @@ Rectangle {
 
                     color: Color.transparent
                     height: 36
-                    width: 76
+                    width: 240
                     x: 30
 
                     Rectangle {
@@ -351,12 +351,13 @@ Rectangle {
 
                         color: Color.transparent
                         height: 20
-                        width: 76
+                        width: 240
 
                         Text {
                             id: themeTitleText
 
                             color: Color.primaryText
+                            elide: Text.ElideRight
                             font.family: "Segoe UI"
 
                             font.pixelSize: 14
@@ -368,7 +369,7 @@ Rectangle {
                             text: qsTr("Theme")
                             textFormat: Text.PlainText
                             verticalAlignment: Text.AlignVCenter
-                            width: 70
+                            width: 240
                         }
                     }
                     Rectangle {
@@ -376,13 +377,14 @@ Rectangle {
 
                         color: Color.transparent
                         height: 16
-                        width: 76
+                        width: 240
                         y: 20
 
                         Text {
                             id: themeSubtitleText
 
                             color: Color.secondaryText
+                            elide: Text.ElideRight
                             font.family: "Segoe UI"
                             font.pixelSize: 12
                             font.weight: Font.Normal
@@ -395,7 +397,7 @@ Rectangle {
                                 : qsTr("Current theme: Light")
                             textFormat: Text.PlainText
                             verticalAlignment: Text.AlignVCenter
-                            width: 90
+                            width: 240
                         }
                     }
                 }
@@ -584,13 +586,14 @@ Rectangle {
 
                     color: Color.transparent
                     height: 16
-                    width: 196
+                    width: 240
                     y: 20
 
                     Text {
                         id: accountSubtitleText
 
                         color: Color.secondaryText
+                        elide: Text.ElideRight
                         font.family: "Segoe UI"
                         font.pixelSize: 12
                         font.weight: Font.Normal
@@ -601,7 +604,7 @@ Rectangle {
                         text: qsTr("Manage your profile and preferences")
                         textFormat: Text.PlainText
                         verticalAlignment: Text.AlignVCenter
-                        width: 197
+                        width: 240
                     }
                 }
             }
@@ -714,13 +717,14 @@ Rectangle {
 
                     color: Color.transparent
                     height: 16
-                    width: 180
+                    width: 240
                     y: 20
 
                     Text {
                         id: generalSubtitleText
 
                         color: Color.secondaryText
+                        elide: Text.ElideRight
                         font.family: "Segoe UI"
                         font.pixelSize: 12
                         font.weight: Font.Normal
@@ -731,7 +735,7 @@ Rectangle {
                         text: qsTr("Notifications, language, and more")
                         textFormat: Text.PlainText
                         verticalAlignment: Text.AlignVCenter
-                        width: 181
+                        width: 240
                     }
                 }
             }
@@ -770,7 +774,7 @@ Rectangle {
                 height: 16
                 text: qsTr("Choose the interface language")
                 verticalAlignment: Text.AlignVCenter
-                width: 144
+                width: 170
                 x: 46
                 y: 31
             }

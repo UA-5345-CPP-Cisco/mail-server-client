@@ -4,10 +4,62 @@
 <context>
     <name>AddAccountQML</name>
     <message>
-        <location filename="../cmake-build-debug/qtapptestmail/screens/navigation/account/AddAccountQML.qml" line="244"/>
-        <location filename="../screens/navigation/account/AddAccountQML.qml" line="244"/>
-        <source>Add an Account</source>
-        <translation>Додати обліковий запис</translation>
+        <location filename="../cmake-build-debug/qtapptestmail/screens/navigation/account/AddAccountQML.qml" line="275"/>
+        <location filename="../screens/navigation/account/AddAccountQML.qml" line="275"/>
+        <source>Welcome</source>
+        <translation>Ласкаво просимо</translation>
+    </message>
+    <message>
+        <source>Invalid email or password</source>
+        <translation>Невірна електронна пошта або пароль</translation>
+    </message>
+    <message>
+        <source>Internal database error</source>
+        <translation>Внутрішня помилка бази даних</translation>
+    </message>
+    <message>
+        <source>System error</source>
+        <translation>Системна помилка</translation>
+    </message>
+    <message>
+        <source>User already exists</source>
+        <translation>Користувач вже існує</translation>
+    </message>
+    <message>
+        <source>An unknown error occurred</source>
+        <translation>Сталася невідома помилка</translation>
+    </message>
+    <message>
+        <source>Cannot be empty</source>
+        <translation>Поле не може бути порожнім</translation>
+    </message>
+    <message>
+        <source>Invalid email format</source>
+        <translation>Невірний формат електронної пошти</translation>
+    </message>
+    <message>
+        <source>Password must be at least 6 characters long</source>
+        <translation>Пароль має містити щонайменше 6 символів</translation>
+    </message>
+    <message>
+        <source>Password cannot contain simple sequences</source>
+        <translation>Пароль не може містити прості послідовності</translation>
+    </message>
+    <message>
+        <source>Password cannot contain repeated characters</source>
+        <translation>Пароль не може містити повторювані символи</translation>
+    </message>
+    <message>
+        <source>Password must contain at least one uppercase letter</source>
+        <translation>Пароль має містити щонайменше одну велику літеру</translation>
+    </message>
+    <message>
+        <source>Password must contain at least one number</source>
+        <translation>Пароль має містити щонайменше одну цифру</translation>
+    </message>
+    <message>
+        <source>Password must contain at least one special character</source>
+        <translation>Пароль має містити щонайменше один спеціальний символ</translation>
     </message>
     <message>
         <location filename="../cmake-build-debug/qtapptestmail/screens/navigation/account/AddAccountQML.qml" line="289"/>
@@ -143,6 +195,10 @@
         <source>Search mail</source>
         <translation>Пошук пошти</translation>
     </message>
+    <message>
+        <source>default</source>
+        <translation>за замовчуванням</translation>
+    </message>
 </context>
 <context>
     <name>ListItem</name>
@@ -191,6 +247,10 @@
         <source>Sign In</source>
         <translation>Увійти</translation>
     </message>
+    <message>
+        <source>Please fill in all fields</source>
+        <translation>Будь ласка, заповніть усі поля</translation>
+    </message>
 </context>
 <context>
     <name>NavigationQML</name>
@@ -236,6 +296,14 @@
         <source>Settings</source>
         <translation>Налаштування</translation>
     </message>
+    <message>
+        <source>Sign in</source>
+        <translation>Увійти</translation>
+    </message>
+    <message>
+        <source>No account active</source>
+        <translation>Немає активного облікового запису</translation>
+    </message>
 </context>
 <context>
     <name>NewMessageQML</name>
@@ -262,6 +330,14 @@
         <location filename="../screens/navigation/new_message/NewMessageQML.qml" line="487"/>
         <source>Send</source>
         <translation>Надіслати</translation>
+    </message>
+    <message>
+        <source>New Message</source>
+        <translation>Нове повідомлення</translation>
+    </message>
+    <message>
+        <source>Enter Recipient!</source>
+        <translation>Введіть отримувача!</translation>
     </message>
 </context>
 <context>
@@ -303,6 +379,33 @@
         <location filename="../screens/navigation/account/RegistrationQML.qml" line="479"/>
         <source>Register with Google</source>
         <translation>Зареєструватися через Google</translation>
+    </message>
+    <message>
+        <source>Confirm Password</source>
+        <translation>Підтвердіть пароль</translation>
+    </message>
+    <message>
+        <source>Please confirm your password</source>
+        <translation>Будь ласка, підтвердіть свій пароль</translation>
+    </message>
+    <message>
+        <source>Passwords do not match</source>
+        <translation>Паролі не збігаються</translation>
+    </message>
+</context>
+<context>
+    <name>Main</name>
+    <message>
+        <source>server loading</source>
+        <translation>завантаження сервера</translation>
+    </message>
+    <message>
+        <source>server failed</source>
+        <translation>помилка сервера</translation>
+    </message>
+    <message>
+        <source>click to retry</source>
+        <translation>натисніть, щоб повторити</translation>
     </message>
 </context>
 <context>
