@@ -225,14 +225,7 @@ Rectangle
                 onClicked:
                 {
                     switchAccountRectangle.addAccountRequested()
-                    authLoader.active = true
-                    if (String( authLoader.source) === "")
-                    {
-                        authLoader.source = "screens/navigation/account/AddAccountQML.qml"
-                    } else
-                    {
-                        authLoader.source = ""
-                    }
+                    window.openAuthWindow()
                 }
             }
         }

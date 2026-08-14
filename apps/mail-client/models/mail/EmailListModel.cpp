@@ -125,6 +125,16 @@ namespace ISXMail {
         : QAbstractListModel(parent)
     {
         ISXService::Service::Logger().Log(Logging::LogLevel::Debug, "EmailListModel: constructed");
+        connect(&ISXCurrentUser::CurrentUser::GetInstance(),
+                &ISXCurrentUser::CurrentUser::authorizationChanged,
+                this,
+                [this]() {
+                    if (!ISXCurrentUser::CurrentUser::GetInstance().is_authorized()) {
+                        beginResetModel();
+                        m_data.clear();
+                        endResetModel();
+                    }
+                });
     }
 
     bool EmailListModel::isLoading() const

@@ -43,24 +43,24 @@ Rectangle {
     {
         var value = text.trim();
         var value_lower = text.trim().toLowerCase()
-        const layouts = 
+        const layouts =
         [
-            "qwertyuiop", 
-            "asdfghjkl", 
-            "zxcvbnm", 
+            "qwertyuiop",
+            "asdfghjkl",
+            "zxcvbnm",
             "1234567890"
         ];
 
-        if (type === "name") 
+        if (type === "name")
         {
-            if (value.length === 0) 
+            if (value.length === 0)
             {
                 return qsTr("Cannot be empty")
             }
             return ""
         }
 
-        if (type === "email") 
+        if (type === "email")
         {
             if (value.length === 0)
             {
@@ -68,7 +68,7 @@ Rectangle {
             }
 
             var email_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-            if (!email_regex.test(value)) 
+            if (!email_regex.test(value))
             {
                 return qsTr("Invalid email format")
             }
@@ -76,28 +76,28 @@ Rectangle {
             return ""
         }
 
-        if (type === "password") 
+        if (type === "password")
         {
-            if (value.length === 0) 
+            if (value.length === 0)
             {
                 return qsTr("Cannot be empty")
             }
 
-            if (value.length < 6) 
+            if (value.length < 6)
             {
                 return qsTr("Password must be at least 6 characters long")
             }
 
-            if (value.length < 10) 
+            if (value.length < 10)
             {
-                for (let layout of layouts) 
+                for (let layout of layouts)
                 {
-                    for (let i = 0; i <= layout.length - 5; i++) 
+                    for (let i = 0; i <= layout.length - 5; i++)
                     {
                         let forward = layout.substring(i, i + 5);
                         let backward = forward.split("").reverse().join("");
             
-                        if (value_lower.includes(forward) || value_lower.includes(backward)) 
+                        if (value_lower.includes(forward) || value_lower.includes(backward))
                         {
                             return qsTr("Password cannot contain simple sequences");
                         }
@@ -105,17 +105,17 @@ Rectangle {
                 }
             }
 
-            if (/(.)\1{4,}/.test(value)) 
+            if (/(.)\1{4,}/.test(value))
             {
                 return qsTr("Password cannot contain repeated characters");
             }
 
-            if (!/[A-Z]/.test(value)) 
+            if (!/[A-Z]/.test(value))
             {
                 return qsTr("Password must contain at least one uppercase letter")
             }
 
-            if (!/\d/.test(value)) 
+            if (!/\d/.test(value))
             {
                 return qsTr("Password must contain at least one number")
             }
@@ -153,7 +153,7 @@ Rectangle {
         width: 40
         z: 10
 
-        visible: !initialSetupRequired
+        visible: !window.accountsRequired
 
         Behavior on scale {
             id: closeScaleBehavior

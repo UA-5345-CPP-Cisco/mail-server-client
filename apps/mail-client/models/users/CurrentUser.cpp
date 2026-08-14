@@ -139,4 +139,9 @@ namespace ISXCurrentUser {
 
     void CurrentUser::SaveAvatarFromSqlite(const QString& local_path) {}
 
+    void CurrentUser::NotifyNoAccountsLeft()
+    {
+        emit noAccountsLeft();
+    }
+
 } // namespace ISXCurrentUser

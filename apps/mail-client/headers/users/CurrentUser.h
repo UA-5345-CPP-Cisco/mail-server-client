@@ -28,6 +28,7 @@ namespace ISXCurrentUser {
         QString avatar_path() const;
         void SaveAvatarToSqlite(const QString& local_path);
         void SaveAvatarFromSqlite(const QString& local_path);
+        void NotifyNoAccountsLeft();
 
         Q_INVOKABLE void Authorize(const QString& username, const QString& email, const QString& avatar_path = "");
         Q_INVOKABLE void Logout();
@@ -37,6 +38,7 @@ namespace ISXCurrentUser {
         // SIGNALS
         void authorizationChanged();
         void profileChanged();
+        void noAccountsLeft(); 
 
     private:
         // CONSTRUCTORS

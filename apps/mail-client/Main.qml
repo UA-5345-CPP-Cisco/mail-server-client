@@ -15,19 +15,25 @@ ApplicationWindow {
     property int draftsCount: draftModel.totalEmailsCount
     property int inboxCount: inboxModel.totalEmailsCount
     property var selectedEmail: null
+
     //properties
     property string selectedFolder: "inbox"
     property int sentCount: sentModel.totalEmailsCount
     property int starredCount: starredModel.totalEmailsCount
+
+    property bool accountsRequired: initialSetupRequired
+    property bool authWindowOpen: false
 
     // for adding avatar
     function avatarInitial(name) {
         var trimmedName = String(name).trim();
         return trimmedName.length > 0 ? trimmedName.charAt(0).toUpperCase() : "?";
     }
+    function openAuthWindow() {
+        window.authWindowOpen = true;
+    }
     function closeAuthWindow() {
-        authLoader.active = false;
-        authLoader.source = "";
+        window.authWindowOpen = false;
     }
     //FunctionSorter
     function closeMessageWindow() {
@@ -444,11 +450,11 @@ ApplicationWindow {
     Loader {
         id: authLoader
 
-        active: initialSetupRequired
+        active: window.accountsRequired || window.authWindowOpen
         anchors.centerIn: parent
         height: item ? item.implicitHeight : 0
         opacity: status === Loader.Ready ? 1 : 0
-        source: initialSetupRequired ? "screens/navigation/account/AddAccountQML.qml" : ""
+        source: (window.accountsRequired || window.authWindowOpen) ? "screens/navigation/account/AddAccountQML.qml" : ""
         width: item ? item.implicitWidth : 0
         z: 1000
 
@@ -459,13 +465,36 @@ ApplicationWindow {
         }
 
         Shortcut {
-            //enabled: authLoader.active
             sequence: "Escape"
-            enabled: !initialSetupRequired
+            enabled: !window.accountsRequired
 
             onActivated: {
                 closeAuthWindow();
             }
+        }
+    }
+
+    // Connections to handle authorization changes
+    Connections {
+        target: CurrentUser
+
+        function onAuthorizationChanged() 
+        {
+            if (CurrentUser.isAuthorized) 
+            {
+                window.accountsRequired = false;
+                window.authWindowOpen = false;
+                showInboxForCurrentUser();
+            } else 
+            {
+                window.selectedEmail = null;
+            }
+        }
+
+        function onNoAccountsLeft()
+        {
+            window.selectedEmail = null;
+            window.accountsRequired = true;
         }
     }
 

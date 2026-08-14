@@ -1,14 +1,14 @@
 import QtQuick
 import QtQuick.Effects
 import QtQuick.Shapes
+import QtQuick.Controls
 
 Rectangle
 {
     id: rootRectangle
     height: 72
     color: Color.transparent
-    anchors.left: parent.left
-    anchors.right: parent.right
+    width: ListView.view.width
 
     required property string accountName
     required property string accountEmail
@@ -19,6 +19,47 @@ Rectangle
     required property int index
 
     signal selected()
+    signal deleteRequested(int index)
+
+    Menu {
+        id: contextMenu
+
+        background: Rectangle {
+            border.color: Color.outline
+            border.width: 1
+            color: Color.background
+            implicitHeight: 40
+            implicitWidth: 200
+            radius: 8
+        }
+
+        MenuItem {
+            text: "Delete account"
+            
+            implicitHeight: 40
+            implicitWidth: 200
+            padding: 0
+
+            background: Rectangle {
+                anchors.fill: parent
+                color: parent.hovered ? Color.highlight : Color.transparent
+                radius: 4
+            }
+
+            contentItem: Text {
+                color: Color.secondaryText
+                font.family: "Segoe UI"
+                font.pixelSize: 13
+                leftPadding: 16
+                text: parent.text 
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            onTriggered: {
+                accountModel.RemoveAccount(index)
+            }
+        }
+    }
 
     Rectangle
     {
@@ -149,10 +190,20 @@ Rectangle
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
 
-            onClicked:
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+            onClicked: (mouse) =>
             {
-                if (accountModel.SetActiveAccount(index)) {
-                    rootRectangle.selected()
+                if (mouse.button === Qt.LeftButton)
+                {
+                    if (accountModel.SetActiveAccount(index)) 
+                    {
+                        rootRectangle.selected()
+                    }
+                }
+                else if (mouse.button === Qt.RightButton) 
+                {
+                    contextMenu.popup(mouse.x, mouse.y)
                 }
             }
         }
