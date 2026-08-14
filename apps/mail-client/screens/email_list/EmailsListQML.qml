@@ -11,6 +11,11 @@ Rectangle {
     signal emailOpenRequested(int index, string theme, string name, string sendTo, string content, string time, bool starred)
     signal starredItemClicked(bool starred)
 
+    function showPopup(msg) {
+        statePopup.message = String(msg);
+        statePopup.show();
+    }
+
     function activeSearchModel() {
         if (sourceModel === inboxModel)
             return inboxSearchModel;
@@ -523,5 +528,14 @@ Rectangle {
             right: parent.right
             top: separatorLine.bottom
         }
+    }
+
+    StatePopup {
+        id: statePopup
+
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 16
+        anchors.horizontalCenter: parent.horizontalCenter
+        z: 999
     }
 }

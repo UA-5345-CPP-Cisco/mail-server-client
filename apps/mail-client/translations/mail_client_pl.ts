@@ -407,6 +407,34 @@ lub służbowego</translation>
         <source>click to retry</source>
         <translation>kliknij, aby spróbować ponowne</translation>
     </message>
+    <message>
+        <source>Draft is saved</source>
+        <translation>Wersja robocza została zapisana</translation>
+    </message>
+    <message>
+        <source>Email is sent</source>
+        <translation>Wiadomość została wysłana</translation>
+    </message>
+    <message>
+        <source>Email is starred</source>
+        <translation>Dodano do oznaczonych</translation>
+    </message>
+    <message>
+        <source>Email is unstarred</source>
+        <translation>Usunięto z oznaczonych</translation>
+    </message>
+    <message>
+        <source>Email is archived</source>
+        <translation>Wiadomość została zarchiwizowana</translation>
+    </message>
+    <message>
+        <source>Email is unarchived</source>
+        <translation>Wiadomość została przywrócona z archiwum</translation>
+    </message>
+    <message>
+        <source>Email is deleted</source>
+        <translation>Wiadomość została usunięta</translation>
+    </message>
 </context>
 <context>
     <name>SettingsQML</name>

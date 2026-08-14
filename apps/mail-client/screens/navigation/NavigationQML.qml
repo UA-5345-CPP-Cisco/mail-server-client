@@ -15,8 +15,9 @@ Rectangle {
 
     function showPopup(msg)
     {
-        statePopup.message = String(msg);
-        statePopup.show();
+        if (typeof rootWindow !== "undefined" && rootWindow.showPopup) {
+            rootWindow.showPopup(String(msg));
+        }
     }
 
     function closeAccountMenu()
@@ -908,18 +909,7 @@ Rectangle {
         }
     }
 
-    // State popup shown when Settings is clicked; slides up out of the footer, hovers, then slides back down and disappears
-    StatePopup {
-        id: statePopup
 
-        anchors.bottom: footerNavigation.top
-        anchors.bottomMargin: 8
-        anchors.left: navigationQML.left
-        anchors.right: navigationQML.right
-        anchors.leftMargin: 8
-        anchors.rightMargin: 8
-        z: 999
-    }
 
     // Loader for Account change popup
     Loader {

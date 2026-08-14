@@ -407,6 +407,34 @@
         <source>click to retry</source>
         <translation>натисніть, щоб повторити</translation>
     </message>
+    <message>
+        <source>Draft is saved</source>
+        <translation>Чернетку збережено</translation>
+    </message>
+    <message>
+        <source>Email is sent</source>
+        <translation>Лист надіслано</translation>
+    </message>
+    <message>
+        <source>Email is starred</source>
+        <translation>Лист додано до обраного</translation>
+    </message>
+    <message>
+        <source>Email is unstarred</source>
+        <translation>Лист вилучено з обраного</translation>
+    </message>
+    <message>
+        <source>Email is archived</source>
+        <translation>Лист заархівовано</translation>
+    </message>
+    <message>
+        <source>Email is unarchived</source>
+        <translation>Лист розархівовано</translation>
+    </message>
+    <message>
+        <source>Email is deleted</source>
+        <translation>Лист видалено</translation>
+    </message>
 </context>
 <context>
     <name>SettingsQML</name>

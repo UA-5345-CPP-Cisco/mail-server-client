@@ -198,7 +198,7 @@ Rectangle {
             text: qsTr("Draft")
             textFormat: Text.PlainText
             verticalAlignment: Text.AlignVCenter
-            width: 28
+            width: parent.width
         }
     }
     MouseArea {
