@@ -17,12 +17,9 @@ class MailMessageRepository
   public:
   explicit MailMessageRepository(Database& database);
 
-  std::int64_t CreateMessage(const std::optional<std::int64_t>& sender_user_id,
-                             const std::string& sender_email,
-                             const std::optional<std::string>& subject,
+  std::int64_t CreateMessage(const std::optional<std::string>& subject,
                              const std::string& body,
                              const std::optional<std::int64_t>& reply_to_message_id,
-                             bool is_inbox,
                              MailMessageStatus status = MailMessageStatus::Queued);
 
   std::optional<MailMessageRecord> FindById(std::int64_t message_id) const;
@@ -34,14 +31,6 @@ class MailMessageRepository
   bool FinalizeDelivery(std::int64_t message_id);
 
   std::vector<MailMessageRecord> FindAll() const;
-
-  bool UpdateStarred(std::int64_t message_id, bool starred);
-
-  bool UpdateArchive(std::int64_t message_id, bool archive);
-
-  bool UpdateSeen(std::int64_t message_id, bool seen);
-
-  int DeleteArchivedOlderThanDays(int days);
 
   bool DeleteMessage(std::int64_t message_id);
 

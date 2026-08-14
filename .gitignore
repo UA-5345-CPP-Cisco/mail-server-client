@@ -3,6 +3,7 @@ build/
 out/
 Debug/
 Release/
+release/
 x64/
 x86/
 [Aa][Rr][Mm]/
@@ -13,6 +14,7 @@ CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
 compile_commands.json
+
 
 *.d
 *.slo
@@ -42,6 +44,7 @@ compile_commands.json
 *.cache
 *.lastbuildstate
 
+
 *.db
 *.db-wal
 *.db-shm
@@ -59,3 +62,5 @@ data/*
 *.sln.docstates
 *.sln
 *.vcxproj*
+
+*.zip

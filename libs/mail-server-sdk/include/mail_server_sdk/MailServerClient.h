@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -23,6 +24,16 @@ class MailServerClient
                                             std::vector<std::string> to,
                                             std::string subject,
                                             std::string body) const;
+
+  [[nodiscard]] http::HttpResponse StarMail(std::int64_t message_id, std::string user_email) const;
+
+  [[nodiscard]] http::HttpResponse UnstarMail(std::int64_t message_id, std::string user_email) const;
+
+  [[nodiscard]] http::HttpResponse ArchiveMail(std::int64_t message_id, std::string user_email) const;
+
+  [[nodiscard]] http::HttpResponse UnarchiveMail(std::int64_t message_id, std::string user_email) const;
+
+  [[nodiscard]] http::HttpResponse DeleteMail(std::int64_t message_id, std::string user_email) const;
 
   private:
   http::HttpClient m_http_client;

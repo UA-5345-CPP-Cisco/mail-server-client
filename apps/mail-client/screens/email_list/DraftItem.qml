@@ -81,7 +81,7 @@ Rectangle {
                     lineHeight: 20
                     lineHeightMode: Text.FixedHeight
                     text: searchModel ? searchModel.HighlightAllFoundWords(theme, searchModel.SearchedText) : theme
-                    textFormat: searchModel && searchModel.SearchedText.length > 0 ? Text.RichText : Text.PlainText
+                    textFormat: Text.RichText
                     verticalAlignment: Text.AlignVCenter
                     width: parent.width
                 }
@@ -143,7 +143,7 @@ Rectangle {
                 lineHeightMode: Text.FixedHeight
                 maximumLineCount: 1
                 text: searchModel ? searchModel.HighlightAllFoundWords(name, searchModel.SearchedText) : name
-                textFormat: searchModel && searchModel.SearchedText.length > 0 ? Text.RichText : Text.PlainText
+                textFormat: Text.RichText
                 verticalAlignment: Text.AlignVCenter
                 width: parent.width
                 wrapMode: Text.NoWrap
@@ -174,11 +174,10 @@ Rectangle {
                 lineHeight: 16
                 lineHeightMode: Text.FixedHeight
                 text: searchModel ? searchModel.HighlightAllFoundWords(preview, searchModel.SearchedText) : preview
-                textFormat: searchModel && searchModel.SearchedText.length > 0 ? Text.RichText : Text.PlainText
+                textFormat: Text.RichText
                 verticalAlignment: Text.AlignVCenter
                 width: parent.width
-                wrapMode: Text.NoWrap
-                elide: Text.ElideRight
+                wrapMode: Text.Wrap
             }
         }
 

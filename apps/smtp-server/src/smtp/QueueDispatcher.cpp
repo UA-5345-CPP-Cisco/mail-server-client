@@ -14,14 +14,14 @@ QueueDispatcher::QueueDispatcher(DeliveryConfig config,
                                  Concurrency::IThreadPool& threadPool,
                                  Storage::UserRepository& users,
                                  Storage::MailMessageRepository& mailMessages,
-                                 Storage::MessageRecipientRepository& messageRecipients,
+                                 Storage::MailMessageActorRepository& messageActors,
                                  std::mutex& storageMutex,
                                  Logging::ILogger& logger) :
   config_(config),
   threadPool_(threadPool),
   users_(users),
   mailMessages_(mailMessages),
-  messageRecipients_(messageRecipients),
+  messageActors_(messageActors),
   storageMutex_(storageMutex),
   logger_(logger)
 {
@@ -43,58 +43,58 @@ void QueueDispatcher::Poll()
   const std::size_t maximumInt = static_cast<std::size_t>(std::numeric_limits<int>::max());
   const int limit = static_cast<int>(config_.batchSize > maximumInt ? maximumInt : config_.batchSize);
 
-  std::vector<Storage::MessageRecipientRecord> recipients;
+  std::vector<Storage::MailMessageActorRecord> recipients;
   {
     std::lock_guard<std::mutex> lock(storageMutex_);
-    recipients = messageRecipients_.ClaimReadyRecipients(limit);
+    recipients = messageActors_.ClaimReadyRecipients(limit);
 
-    for (const Storage::MessageRecipientRecord& recipient : recipients)
+    for (const Storage::MailMessageActorRecord& recipient : recipients)
     {
       mailMessages_.UpdateStatus(
         recipient.message_id, Storage::MailMessageStatus::Queued, Storage::MailMessageStatus::Sending);
     }
   }
 
-  for (const Storage::MessageRecipientRecord& recipient : recipients)
+  for (const Storage::MailMessageActorRecord& recipient : recipients)
   {
     try
     {
       threadPool_.Enqueue([recipient,
                            &users = users_,
                            &mailMessages = mailMessages_,
-                           &messageRecipients = messageRecipients_,
+                           &messageActors = messageActors_,
                            &storageMutex = storageMutex_,
                            &logger = logger_]
-                          { Deliver(recipient, users, mailMessages, messageRecipients, storageMutex, logger); });
+                          { Deliver(recipient, users, mailMessages, messageActors, storageMutex, logger); });
     }
     catch (const std::exception& error)
     {
       std::lock_guard<std::mutex> lock(storageMutex_);
-      messageRecipients_.MarkFailed(recipient.id, error.what());
+      messageActors_.MarkFailed(recipient.id, error.what());
       mailMessages_.FinalizeDelivery(recipient.message_id);
     }
   }
 }
 
-void QueueDispatcher::Deliver(Storage::MessageRecipientRecord recipient,
+void QueueDispatcher::Deliver(Storage::MailMessageActorRecord recipient,
                               Storage::UserRepository& users,
                               Storage::MailMessageRepository& mailMessages,
-                              Storage::MessageRecipientRepository& messageRecipients,
+                              Storage::MailMessageActorRepository& messageActors,
                               std::mutex& storageMutex,
                               Logging::ILogger& logger) noexcept
 {
   try
   {
     std::lock_guard<std::mutex> lock(storageMutex);
-    const std::optional<Storage::UserRecord> user = users.FindByEmail(recipient.recipient_email);
+    const std::optional<Storage::UserRecord> user = users.FindByEmail(recipient.actor_email);
 
     if (user && user->status == Storage::UserStatus::Active)
     {
-      messageRecipients.MarkDelivered(recipient.id);
+      messageActors.MarkDelivered(recipient.id);
     }
     else
     {
-      messageRecipients.MarkFailed(recipient.id, "Recipient is not an active local user");
+      messageActors.MarkFailed(recipient.id, "Recipient is not an active local user");
     }
 
     mailMessages.FinalizeDelivery(recipient.message_id);
@@ -105,7 +105,7 @@ void QueueDispatcher::Deliver(Storage::MessageRecipientRecord recipient,
     try
     {
       std::lock_guard<std::mutex> lock(storageMutex);
-      messageRecipients.MarkFailed(recipient.id, error.what());
+      messageActors.MarkFailed(recipient.id, error.what());
       mailMessages.FinalizeDelivery(recipient.message_id);
     }
     catch (...)
@@ -118,7 +118,7 @@ void QueueDispatcher::Deliver(Storage::MessageRecipientRecord recipient,
     try
     {
       std::lock_guard<std::mutex> lock(storageMutex);
-      messageRecipients.MarkFailed(recipient.id, "Unhandled local delivery error");
+      messageActors.MarkFailed(recipient.id, "Unhandled local delivery error");
       mailMessages.FinalizeDelivery(recipient.message_id);
     }
     catch (...)

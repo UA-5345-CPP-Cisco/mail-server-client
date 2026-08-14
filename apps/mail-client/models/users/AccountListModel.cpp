@@ -2,9 +2,7 @@
 
 #include <QSettings>
 
-#include "database/DatabaseManager.h"
 #include "users/CurrentUser.h"
-#include "mail_storage/UserRepository.h"
 #include "service/Service.h"
 
 namespace ISXMail {
@@ -38,13 +36,8 @@ namespace ISXMail {
 
     AccountListModel::AccountListModel(QObject* parent)
         : QAbstractListModel(parent)
-        , m_database(ISXDatabaseManager::DatabaseManager::DatabasePath())
     {
-        if (!LoadFromSettings()) {
-            ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
-                                        "AccountListModel: loading from database...");
-            LoadFromDatabase();
-        }
+        LoadFromSettings();
         ISXService::Service::Logger().Log(Logging::LogLevel::Debug,
                                       "AccountListModel: constructed");
     }
@@ -184,21 +177,11 @@ namespace ISXMail {
             return false;
         }
 
-        Storage::UserRepository repo(m_database);
-
         for (size_t i = 0; i < m_data.size(); ++i) {
             const bool should_be_active = (static_cast<int>(i) == row);
 
             if (m_data[i].is_active != should_be_active) {
                 m_data[i].is_active = should_be_active;
-
-                std::string std_email = m_data[i].account_email.toStdString();
-                auto user_record = repo.FindByEmail(std_email);
-
-                if (user_record.has_value()) {
-                    auto db_status = should_be_active ? Storage::UserStatus::Active : Storage::UserStatus::Disabled;
-                    repo.UpdateStatus(user_record->id, db_status);
-                }
 
                 const QModelIndex idx = index(static_cast<int>(i));
                 emit dataChanged(idx, idx, {IsActiveRole});
@@ -224,49 +207,6 @@ namespace ISXMail {
             if (m_data[i].is_active)
                 return static_cast<int>(i);
         return -1;
-    }
-
-    void AccountListModel::LoadFromDatabase()
-    {
-        m_data.clear();
-
-        Storage::UserRepository user_repo(m_database);
-        std::vector<Storage::UserRecord> db_users = user_repo.FindAll();
-
-        std::vector<AccountData> loaded_accounts;
-        int saved_active_row = -1;
-        int counter = 0;
-
-        for (const auto& user : db_users) {
-            AccountData account;
-            account.account_name = QString::fromStdString(user.username);
-            account.account_email = QString::fromStdString(user.email);
-            account.avatar_url = "";
-            account.avatar_color = "#3b82f6";
-
-            account.avatar_initial = account.account_name.isEmpty() ? '?' : account.account_name.at(0).toUpper();
-            account.is_active = false;
-
-            if (user.status == Storage::UserStatus::Active) {
-                saved_active_row = static_cast<int>(loaded_accounts.size());
-            }
-
-            loaded_accounts.push_back(account);
-        }
-
-        if (!loaded_accounts.empty()) {
-            beginInsertRows(QModelIndex(), 0, static_cast<int>(loaded_accounts.size()) - 1);
-            m_data = std::move(loaded_accounts);
-            endInsertRows();
-
-            if (saved_active_row != -1) {
-                SetActiveAccount(saved_active_row);
-            } else {
-                SetActiveAccount(0);
-            }
-        }
-
-        ISXService::Service::Logger().Log(Logging::LogLevel::Debug, GetStdString("AccountListModel::LoadFromDatabase: accounts was loaded from database"));
     }
 
     QString AccountListModel::DefaultDatabasePath() const

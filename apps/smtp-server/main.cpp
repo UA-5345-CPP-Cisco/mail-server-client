@@ -7,8 +7,8 @@
 #include "SMTP_Server.hpp"
 #include "logger/Logger.h"
 #include "mail_storage/Database.h"
+#include "mail_storage/MailMessageActorRepository.h"
 #include "mail_storage/MailMessageRepository.h"
-#include "mail_storage/MessageRecipientRepository.h"
 #include "mail_storage/MigrationRunner.h"
 #include "mail_storage/UserRepository.h"
 #include "smtp/AuthService.hpp"
@@ -44,13 +44,13 @@ int main(int argumentCount, char* arguments[])
     Storage::MigrationRunner migrationRunner(database, configuration.Database().migrationsPath);
     migrationRunner.Run();
     Storage::MailMessageRepository mailMessages(database);
-    Storage::MessageRecipientRepository messageRecipients(database);
+    Storage::MailMessageActorRepository messageActors(database);
     Storage::UserRepository users(database);
     std::mutex storageMutex;
     Logging::Logger logger;
     Concurrency::ThreadPool threadPool;
     smtp::QueueDispatcher queueDispatcher(
-      configuration.Server().delivery, threadPool, users, mailMessages, messageRecipients, storageMutex, logger);
+      configuration.Server().delivery, threadPool, users, mailMessages, messageActors, storageMutex, logger);
 
     const std::string username = ReadEnv("SMTP_AUTH_USER");
     const std::string password = ReadEnv("SMTP_AUTH_PASSWORD");
@@ -65,7 +65,7 @@ int main(int argumentCount, char* arguments[])
                                               authService,
                                               database,
                                               mailMessages,
-                                              messageRecipients,
+                                              messageActors,
                                               storageMutex,
                                               queueDispatcher,
                                               logger};

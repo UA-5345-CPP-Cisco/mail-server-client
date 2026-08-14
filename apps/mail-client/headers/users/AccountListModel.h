@@ -6,8 +6,6 @@
 
 #include <vector>
 
-#include "mail_storage/Database.h"
-
 namespace ISXMail {
 
     struct AccountData
@@ -61,12 +59,9 @@ namespace ISXMail {
         void activeAccountChanged(int row);
 
     private:
-        void LoadFromDatabase();
         bool LoadFromSettings();
         void SaveToSettings();
-        QString DefaultDatabasePath() const;
 
-        Storage::Database m_database;
         std::vector<AccountData> m_data;
     };
 

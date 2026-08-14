@@ -6,8 +6,9 @@
 
 namespace Storage {
 
-enum class RecipientType
+enum class MailMessageActorType
 {
+  From,
   To,
   Cc,
   Bcc
@@ -24,17 +25,21 @@ enum class DeliveryStatus
   Failed
 };
 
-struct MessageRecipientRecord
+struct MailMessageActorRecord
 {
   std::int64_t id{};
   std::int64_t message_id{};
-  std::string recipient_email;
-  RecipientType recipient_type{RecipientType::To};
-  DeliveryStatus delivery_status{DeliveryStatus::Pending};
+  std::string actor_email;
+  MailMessageActorType actor_type{MailMessageActorType::To};
+  std::optional<DeliveryStatus> delivery_status;
   int attempt_count{};
   std::optional<std::string> next_attempt_at;
   std::optional<std::string> last_error;
   std::optional<std::string> delivered_at;
+  std::optional<std::string> read_at;
+  std::optional<std::string> starred_at;
+  std::optional<std::string> archived_at;
+  std::optional<std::string> deleted_at;
 };
 
 } // namespace Storage
