@@ -47,3 +47,8 @@ if(MSVC)
 else()
     target_compile_options(mail_server PRIVATE -Wall -Wextra -Wpedantic)
 endif()
+
+if(WIN32)
+    target_compile_definitions(mail_server PRIVATE _WIN32_WINNT=0x0A00)
+    target_link_libraries(mail_server PRIVATE ws2_32 mswsock)
+endif()
