@@ -10,6 +10,29 @@
 
 namespace smtp {
 
+namespace {
+
+/// Best-effort bookkeeping for a recipient whose delivery failed.
+/// Invoked from exception handlers, so it must never throw itself.
+void MarkDeliveryFailed(const Storage::MailMessageActorRecord& recipient,
+                        Storage::MailMessageRepository& mailMessages,
+                        Storage::MailMessageActorRepository& messageActors,
+                        std::mutex& storageMutex,
+                        const std::string& reason) noexcept
+{
+  try
+  {
+    std::lock_guard<std::mutex> lock(storageMutex);
+    messageActors.MarkFailed(recipient.id, reason);
+    mailMessages.FinalizeDelivery(recipient.message_id);
+  }
+  catch (...)
+  {
+  }
+}
+
+} // namespace
+
 QueueDispatcher::QueueDispatcher(DeliveryConfig config,
                                  Concurrency::IThreadPool& threadPool,
                                  Storage::UserRepository& users,
@@ -102,28 +125,13 @@ void QueueDispatcher::Deliver(Storage::MailMessageActorRecord recipient,
   catch (const std::exception& error)
   {
     logger.Log(Logging::LogLevel::Error, error.what());
-    try
-    {
-      std::lock_guard<std::mutex> lock(storageMutex);
-      messageActors.MarkFailed(recipient.id, error.what());
-      mailMessages.FinalizeDelivery(recipient.message_id);
-    }
-    catch (...)
-    {
-    }
+    MarkDeliveryFailed(recipient, mailMessages, messageActors, storageMutex, error.what());
   }
   catch (...)
   {
-    logger.Log(Logging::LogLevel::Error, "Unhandled local delivery error");
-    try
-    {
-      std::lock_guard<std::mutex> lock(storageMutex);
-      messageActors.MarkFailed(recipient.id, "Unhandled local delivery error");
-      mailMessages.FinalizeDelivery(recipient.message_id);
-    }
-    catch (...)
-    {
-    }
+    const std::string reason = "Unhandled local delivery error";
+    logger.Log(Logging::LogLevel::Error, reason);
+    MarkDeliveryFailed(recipient, mailMessages, messageActors, storageMutex, reason);
   }
 }
 

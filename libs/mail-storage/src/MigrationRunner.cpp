@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "../include/mail_storage/Statement.h"
+#include "../include/mail_storage/Transaction.h"
 
 namespace Storage {
 
@@ -102,30 +103,15 @@ std::vector<MigrationRunner::Migration> MigrationRunner::LoadMigrations() const
 void MigrationRunner::ApplyMigration(const Migration& migration)
 {
   const std::string sql = ReadMigration(migration.path);
-  m_database.Execute("BEGIN IMMEDIATE;");
+  Transaction transaction(m_database);
 
-  try
+  if (!IsMigrationApplied(migration.version))
   {
-    if (!IsMigrationApplied(migration.version))
-    {
-      m_database.Execute(sql);
-      RecordMigration(migration);
-    }
-
-    m_database.Execute("COMMIT;");
+    m_database.Execute(sql);
+    RecordMigration(migration);
   }
-  catch (...)
-  {
-    try
-    {
-      m_database.Execute("ROLLBACK;");
-    }
-    catch (...)
-    {
-    }
 
-    throw;
-  }
+  transaction.Commit();
 }
 
 bool MigrationRunner::IsMigrationApplied(int version) const

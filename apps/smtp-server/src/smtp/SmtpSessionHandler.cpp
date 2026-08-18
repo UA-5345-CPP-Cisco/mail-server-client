@@ -6,6 +6,8 @@
 #include <stdexcept>
 #include <string_view>
 
+#include <mail_storage/Transaction.h>
+
 #include "smtp/Session.hpp"
 
 namespace smtp {
@@ -559,35 +561,21 @@ void SmtpSessionHandler::HandleDisconnected(const SmtpEvent&, SmtpSessionState& 
 std::int64_t SmtpSessionHandler::StoreMessage(const SmtpSessionState& state, SmtpSessionContext& context)
 {
   std::lock_guard<std::mutex> lock(context.storageMutex);
-  context.database.Execute("BEGIN IMMEDIATE;");
+  Storage::Transaction transaction(context.database);
 
-  try
+  const std::int64_t messageId = context.mailMessages.CreateMessage(
+    std::nullopt, state.messageBuffer, std::nullopt, Storage::MailMessageStatus::Queued);
+
+  context.messageActors.CreateActor(messageId, state.sender, Storage::MailMessageActorType::From, std::nullopt);
+
+  for (const std::string& recipient : state.recipients)
   {
-    const std::int64_t messageId = context.mailMessages.CreateMessage(
-      std::nullopt, state.messageBuffer, std::nullopt, Storage::MailMessageStatus::Queued);
-
-    context.messageActors.CreateActor(messageId, state.sender, Storage::MailMessageActorType::From, std::nullopt);
-
-    for (const std::string& recipient : state.recipients)
-    {
-      context.messageActors.CreateActor(
-        messageId, recipient, Storage::MailMessageActorType::To, Storage::DeliveryStatus::Queued);
-    }
-
-    context.database.Execute("COMMIT;");
-    return messageId;
+    context.messageActors.CreateActor(
+      messageId, recipient, Storage::MailMessageActorType::To, Storage::DeliveryStatus::Queued);
   }
-  catch (...)
-  {
-    try
-    {
-      context.database.Execute("ROLLBACK;");
-    }
-    catch (...)
-    {
-    }
-    throw;
-  }
+
+  transaction.Commit();
+  return messageId;
 }
 
 void SmtpSessionHandler::ResetMailTransaction(SmtpSessionState& state)

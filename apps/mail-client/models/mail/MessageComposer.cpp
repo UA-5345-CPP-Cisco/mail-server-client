@@ -2,6 +2,8 @@
 
 #include <optional>
 
+#include <mail_storage/Transaction.h>
+
 #include "headers/database/DatabaseManager.h"
 #include "headers/service/Service.h"
 
@@ -84,37 +86,23 @@ namespace ISXMail {
             return false;
         }
 
-        m_database.Execute("BEGIN IMMEDIATE;");
+        Storage::Transaction transaction(m_database);
 
-        try {
-            const std::int64_t message_id = m_repository.CreateMessage(
-                ToOptionalString(subject), body.toStdString(), std::nullopt, Storage::MailMessageStatus::Draft);
+        const std::int64_t message_id = m_repository.CreateMessage(
+            ToOptionalString(subject), body.toStdString(), std::nullopt, Storage::MailMessageStatus::Draft);
 
-            m_actor_repository.CreateActor(
-                message_id, sender_email.toStdString(), Storage::MailMessageActorType::From, std::nullopt);
+        m_actor_repository.CreateActor(
+            message_id, sender_email.toStdString(), Storage::MailMessageActorType::From, std::nullopt);
 
-            if (!recipient_email.trimmed().isEmpty()) {
-                m_actor_repository.CreateActor(message_id,
-                                               recipient_email.toStdString(),
-                                               Storage::MailMessageActorType::To,
-                                               Storage::DeliveryStatus::Pending);
-            }
-            m_database.Execute("COMMIT;");
-            return true;
-        } catch (...) {
-            ISXService::Service::Logger().Log(Logging::LogLevel::Error,
-                                              "MessageComposer::SaveDraft: exception occurred, attempting ROLLBACK");
-            try {
-                m_database.Execute("ROLLBACK;");
-                ISXService::Service::Logger().Log(Logging::LogLevel::Info,
-                                                  "MessageComposer::SaveDraft: rollback succeeded");
-            } catch (...) {
-                ISXService::Service::Logger().Log(Logging::LogLevel::Error,
-                                                  "MessageComposer::SaveDraft: rollback failed");
-            }
-
-            throw;
+        if (!recipient_email.trimmed().isEmpty()) {
+            m_actor_repository.CreateActor(message_id,
+                                           recipient_email.toStdString(),
+                                           Storage::MailMessageActorType::To,
+                                           Storage::DeliveryStatus::Pending);
         }
+
+        transaction.Commit();
+        return true;
     }
 
 } // namespace ISXMail
